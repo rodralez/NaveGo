@@ -112,7 +112,7 @@ P = diag([ [0.5 0.5 5].*d2r gps.stdv gps.std imu.gb_fix imu.ab_fix imu.gb_drift 
 % dp = diag(Dp);
 
 PP(1,:) = (diag(P)');
-B(1,:) = [gb_fix', ab_fix', gb_drift', ab_drift'];
+B(1,:)  = [gb_fix', ab_fix', gb_drift', ab_drift'];
 
 % SINS index
 i = 2;
