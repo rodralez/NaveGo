@@ -29,8 +29,8 @@ function pos = pos_update(pos, vel, dt)
 % Journal of Control Engineering and Applied Informatics, vol. 17, 
 % issue 2, pp. 110-120, 2015. Eq. 18.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2015/07/18
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
@@ -41,16 +41,22 @@ v_n = vel(1);
 v_e = vel(2);
 v_d = vel(3);
 
+%% H
+h  = (hc - (v_d * dt));
+
+if h < 0
+    h = 0;
+end
+%% Lat
 if (isa(hc,'single')) 
     [RM,~] = radius(lat_old, 'single');
 else
     [RM,~] = radius(lat_old, 'double');
 end
 
-h  = (hc - (v_d * dt));
-
 lat = (lat_old + ( v_n / (RM + (h)) ) * dt);
 
+%% Lon
 if (isa(hc,'single')) 
     [~, RN] = radius(lat, 'single');
 else
@@ -59,5 +65,7 @@ end
 
 lon = (lon_old + (v_e / ((RN + h) * cos (lat))) * dt );    
 
+%% Pos
 pos = [lat lon h]';
+
 end

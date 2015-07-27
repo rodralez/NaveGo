@@ -46,7 +46,7 @@ Vn =  upd(1);
 Ve =  upd(2);
 Vd =  upd(3);
 lat = upd(4);
-h   = (upd(5));
+% h   = upd(5);
 fn =  upd(6);
 fe =  upd(7);
 fd =  upd(8);
@@ -54,15 +54,16 @@ fd =  upd(8);
 if (isa(Vn,'single')) 
     [RM,RN] = radius(lat, 'single');
     Om = single(7.292115e-5);
+    I = single(eye(3));
+    Z = single(zeros(3));
 else
     [RM,RN] = radius(lat, 'double');
     Om = 7.292115e-5;
+    I = eye(3);
+    Z = zeros(3);
 end
 
 RO = sqrt(RN*RM);
-
-I = eye(3);
-Z = zeros(3);
 
 a11 = 0;
 a12 = -((Om * sin(lat)) + (Ve/(RO) * tan(lat)));
@@ -178,6 +179,18 @@ F= [ Fee  Fev  Fep   (-DCMbn*Frog)  Z       (-DCMbn*Frog)   Z;
      Z    Z    Z     Z        Z             Z    Faa;
      ]; 
 
+% Grover 12.58
+% Hasnur 6.15
+
+% F= [ Fee  Fev  Fep   (-DCMbn*Frog)  Z    Z   Z;
+%      Fve  Fvv  Fvp   Z       (DCMbn*Fva)    Z    Z; 
+%      Fpe  Fpv  Fpp   Z        Z             Z    Z;
+%      Z    Z    Z     Z        Z             Z    Z;
+%      Z    Z    Z     Z        Z             Z    Z;
+%      Z    Z    Z     Z        Z             Fgg  Z;
+%      Z    Z    Z     Z        Z             Z    Faa;
+%      ]; 
+ 
  G = [ -DCMbn   Z     Z    Z; 
         Z      DCMbn Z    Z;
         Z      Z     Z    Z; 

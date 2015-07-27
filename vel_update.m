@@ -29,16 +29,16 @@ function [vel_upd, coriolis] = vel_update(fn, velold, omega_ie_N, omega_en_N, g,
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21, 
 % issue 3, pp. 272-287, 2015. Eq. 17.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2015/07/18
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
     S = skewm(velold);
 
-    coriolis = S * (omega_en_N + 2*omega_ie_N);
+    coriolis = S * (omega_en_N + 2 * omega_ie_N);
 
-    fn_cor = fn + coriolis + g;
+    fn_cor = fn + coriolis - g;
 
     vel_upd = velold + fn_cor * dt;
 
