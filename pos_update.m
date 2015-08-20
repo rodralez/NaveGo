@@ -41,13 +41,13 @@ v_n = vel(1);
 v_e = vel(2);
 v_d = vel(3);
 
-%% H
+%% Altitude
 h  = (hc - (v_d * dt));
 
 if h < 0
     h = 0;
 end
-%% Lat
+%% Latitude
 if (isa(hc,'single')) 
     [RM,~] = radius(lat_old, 'single');
 else
@@ -56,7 +56,7 @@ end
 
 lat = (lat_old + ( v_n / (RM + (h)) ) * dt);
 
-%% Lon
+%% Longitude
 if (isa(hc,'single')) 
     [~, RN] = radius(lat, 'single');
 else

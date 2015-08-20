@@ -41,9 +41,9 @@ global d2r
 
 %% PARAMETERS
 
-% GPS_DATA      = 'ON';
-% IMU1_DATA     = 'ON';
-% IMU2_DATA     = 'ON';
+GPS_DATA      = 'ON';
+IMU1_DATA     = 'ON';
+IMU2_DATA     = 'ON';
 
 IMU1_SINS     = 'ON';
 IMU2_SINS     = 'ON';

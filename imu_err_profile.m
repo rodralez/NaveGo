@@ -25,14 +25,15 @@ function imu_nav = imu_err_profile(imu, dt)
 % Journal of Control Engineering and Applied Informatics, vol. 17, 
 % issue 2, pp. 110-120, 2015. Eq. 9, 14, and 30.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2015/20/08
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
 d2r = (pi/180);     % deg to rad
 g2mss = 9.81;       % g to m/s^2
 
+% Noise PSD
 imu_nav.arw = (imu.arw ./ 60) .* d2r;   % deg/root-hour -> rad/s/root-Hz
 imu_nav.vrw = (imu.vrw ./ 60);          % m/s/root-hour -> m/s^2/root-Hz
 
@@ -50,15 +51,15 @@ imu_nav.gb_drift = imu.gb_drift .* d2r;             % deg/s -> rad/s;
 
 % Dynamic bias PSD
 if (isinf(imu.gcorr))
-    imu_nav.gb_n = imu_nav.gb_drift;  % rad/s/root-Hz;
+    imu_nav.gpsd = imu_nav.gb_drift;  % rad/s (approximation)
 else
-    imu_nav.gb_n = imu_nav.gb_drift .* sqrt(imu.gcorr);  % rad/s/root-Hz; 
+    imu_nav.gpsd = imu_nav.gb_drift .* sqrt(imu.gcorr);  % rad/s/root-Hz; 
 end
 
 if (isinf(imu.acorr))
-    imu_nav.ab_n = imu_nav.ab_drift;  % m/s^2/root-Hz
+    imu_nav.apsd = imu_nav.ab_drift;  % m/s^2 (approximation)
 else
-    imu_nav.ab_n = imu_nav.ab_drift .* sqrt(imu.acorr);  % m/s^2/root-Hz
+    imu_nav.apsd = imu_nav.ab_drift .* sqrt(imu.acorr);  % m/s^2/root-Hz
 end
 
 % Correlation time

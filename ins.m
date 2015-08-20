@@ -55,18 +55,14 @@ if strcmp(precision, 'single')
     PP = single(zeros(ttg,21));   
     X =  single(zeros(ttg,21));   
     B =  single(zeros(ttg,12));  
-%     gb_drift = single(zeros(3,1)); 
-%     ab_drift = single(zeros(3,1));
-%     gb_fix =   single(zeros(3,1));
-%     ab_fix =   single(zeros(3,1));
+
     gb_drift = single(imu.gb_drift');
     ab_drift = single(imu.ab_drift');
     gb_fix = single(imu.gb_fix');
     ab_fix = single(imu.ab_fix');
      
     % Initialize
-    vel_e(1,:) = single(zeros(1,3));
-    
+    vel_e(1,:) = single(zeros(1,3));    
     x = single(zeros(21,1));
 else
     
@@ -83,15 +79,12 @@ else
     PP = (zeros(ttg,21));   
     X =  (zeros(ttg,21));   
     B =  (zeros(ttg,12));  
+    
     gb_drift = imu.gb_drift';
     ab_drift = imu.ab_drift';
     gb_fix = imu.gb_fix';
     ab_fix = imu.ab_fix';
-%     gb_drift = (zeros(3,1)); 
-%     ab_drift = (zeros(3,1));
-%     gb_fix =   (zeros(3,1));
-%     ab_fix =   (zeros(3,1));
-
+    
     % Initialize    
     vel_e(1,:) = zeros(1,3); 
     x = (zeros(21,1));
@@ -114,8 +107,8 @@ quaold = euler2qua([roll_e(1); pitch_e(1); yaw_e(1);]);
 
 % Kalman filter matrices
 R = diag([gps.stdv gps.stdm].^2);
-Q = (diag([imu.arw imu.vrw imu.gb_n imu.ab_n ].^2));
-P = diag([ [0.5 0.5 5].*d2r gps.stdv gps.std imu.gb_fix imu.ab_fix imu.gb_drift imu.ab_drift].^2) ; 
+Q = (diag([imu.arw imu.vrw imu.gpsd imu.apsd ].^2));
+P = diag([ [5 5 5 ].*d2r gps.stdv gps.std imu.gb_fix imu.ab_fix imu.gb_drift imu.ab_drift].^2); 
 % [Up, Dp] = myUD(P);
 % dp = diag(Dp);
 
@@ -145,8 +138,6 @@ for j = 2:ttg
         % Correct inertial sensors
         wb_fix(i,:) = (imu.wb(i,:)' + gb_drift + gb_fix);
         fb_fix(i,:) = (imu.fb(i,:)' + ab_drift + ab_fix); 
-%         wb_fix(i,:) = (imu.wb(i,:)');
-%         fb_fix(i,:) = (imu.fb(i,:)'); 
         
         % Attitude computer
         omega_ie_N = earthrate(lat_e(i-1), precision); 
@@ -202,7 +193,7 @@ for j = 2:ttg
          Z Z Tpr Z Z Z Z; ]; 
         
     % Execute the extended Kalman filter
-%     x = [zeros(1,9) gb_fix', ab_fix', gb_drift', ab_drift' ]';
+%     x = [zeros(1,9) gb_fix', ab_fix', gb_drift', ab_drift']';
     
     [xu, P] = kalman(x, y, F, H, G, P, Q, R, dtg);        
 %     [xu, Up, dp] = ud_filter(x, y, F, H, G, Q, R, Up, dp, dtg);  
@@ -238,10 +229,6 @@ for j = 2:ttg
     ab_fix = ab_fix - xu(13:15);
     gb_drift = gb_drift - xu(16:18); 
     ab_drift = ab_drift - xu(19:21);
-%     gb_fix = xu(10:12); 
-%     ab_fix = xu(13:15);
-%     gb_drift = xu(16:18); 
-%     ab_drift = xu(19:21);
     
     B(j,:) = [gb_fix', ab_fix', gb_drift', ab_drift'];
 end 
