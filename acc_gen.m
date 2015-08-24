@@ -1,8 +1,8 @@
 function [fb] = acc_gen (ref, imu)
-% acc_gen: generates gyros measurements from reference data and imu
-%          error profile.
+% acc_gen: generates simulated accelerometers measurements from reference
+%           data and imu error profile.
 %
-%   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
+%   Copyright (C) 2014, Rodrigo González, all rights reserved. 
 %     
 %   This file is part of NaveGo, an open-source MATLAB toolbox for 
 %   simulation of integrated navigation systems.
@@ -26,27 +26,29 @@ function [fb] = acc_gen (ref, imu)
 % Journal of Control Engineering and Applied Informatics, vol. 17, 
 % issue 2, pp. 110-120, 2015. Sec. 2.2.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2015/08/20
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
-if (isfield(ref, 'acc'))    
+% If accelerations are provided...
+if (isfield(ref, 'fb'))    
     
-    acc_ned = ref.acc;
-    
+    acc_b = ref.fb;
+
+% Obtain acceleration from velocity    
 elseif (isfield(ref, 'vel'))
     
     acc_raw = (diff(ref.vel)) ./ [diff(ref.t) diff(ref.t) diff(ref.t)];
     acc_raw = [ 0 0 0; acc_raw; ];
     acc_ned = sgolayfilt(acc_raw, 15, 299);
+    acc_b = acc_nav2body(acc_ned, ref.DCMnb); 
 else
 
 %   Method: LLH > ECEF > NED  
-    [~, acc_ned] = pllh2vned (ref); 
+    [~, acc_ned] = pllh2vned (ref);
+    acc_b = acc_nav2body(acc_ned, ref.DCMnb); 
 end
-
-acc_b = acc_nav2body(acc_ned, ref.DCMnb); 
 
 g_n = gravity(ref.lat, ref.h);       
 cor_n = coriolis(ref.lat, ref.vel, ref.h); 
@@ -90,9 +92,9 @@ else
     end
 end
 
-fb = acc_b - cor_b - g_b + ...
+fb = acc_b - cor_b + g_b + ...
      [imu.astd(1)  .*r1  imu.astd(2)  .*r2  imu.astd(3)  .*r3 ] + ...
      [ab_fix(1).*o   ab_fix(2).*o   ab_fix(3).*o] + ...
      acorr; 
-
+ 
 end
