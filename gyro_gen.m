@@ -1,7 +1,8 @@
 function wb = gyro_gen (ref, imu)
-% gyro_gen: generates simulated gyros measurements.
+% gyro_gen: generates simulated gyros measurements from reference data and 
+%          imu error profile.
 %
-%   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
+%   Copyright (C) 2014, Rodrigo González, all rights reserved. 
 %     
 %   This file is part of NaveGo, an open-source MATLAB toolbox for 
 %   simulation of integrated navigation systems.
@@ -19,21 +20,28 @@ function wb = gyro_gen (ref, imu)
 %   License along with this program. If not, see 
 %   <http://www.gnu.org/licenses/>.
 %
-% Reference:
+% Reference: 
 %			R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
 % simulation framework for low-cost integrated navigation systems, 
 % Journal of Control Engineering and Applied Informatics, vol. 17, 
 % issue 2, pp. 110-120, 2015. Sec. 2.1.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2015/08/20
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
 % True gyro
-gyro_raw = gyro_gen_delta(ref.DCMnb, diff(ref.t));
-gyro_raw = [gyro_raw; 0 0 0;];
-gyro_true_b  = sgolayfilt(gyro_raw, 15, 299);
+if (isfield(ref, 'wb'))    
+    
+    gyro_b = ref.wb;
+
+% Obtain gyros from DCM    
+else
+    gyro_raw = gyro_gen_delta(ref.DCMnb, diff(ref.t));
+    gyro_raw = [gyro_raw; 0 0 0;];
+    gyro_b  = sgolayfilt(gyro_raw, 15, 299);
+end
 
 % omega_en_n and omega_ie_n
 gyro_err_b = zeros(ref.kn, 3); 
@@ -76,7 +84,7 @@ else
     end
 end
 
-wb = gyro_true_b + gyro_err_b + ...
+wb = gyro_b + gyro_err_b + ...
      [imu.gstd(1).*r1    imu.gstd(2).*r2    imu.gstd(3).*r3 ] + ...
      [gb_fix(1).*o   gb_fix(2).*o   gb_fix(3).*o] + ...
      gcorr; 

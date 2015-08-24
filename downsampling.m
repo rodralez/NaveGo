@@ -19,8 +19,8 @@ function [ref_ds] = downsampling (ref, dt_b)
 %   License along with this program. If not, see 
 %   <http://www.gnu.org/licenses/>.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2015/08/20
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
@@ -32,6 +32,11 @@ if (dt_b >= dt_r)
 else
     
     error('downsampling: dt_r > dt_b')    
+end
+
+if (isfield(ref, 'fb')) 
+    ref_ds.fb  = ref.fb (1:dspl:end, :);
+    ref_ds.wb  = ref.wb(1:dspl:end, :);
 end
 
 ref_ds.roll  = ref.roll (1:dspl:end, :);
