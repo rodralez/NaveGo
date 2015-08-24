@@ -108,9 +108,9 @@ quaold = euler2qua([roll_e(1); pitch_e(1); yaw_e(1);]);
 % Kalman filter matrices
 R = diag([gps.stdv gps.stdm].^2);
 Q = (diag([imu.arw imu.vrw imu.gpsd imu.apsd ].^2));
-P = diag([ [5 5 5 ].*d2r gps.stdv gps.std imu.gb_fix imu.ab_fix imu.gb_drift imu.ab_drift].^2); 
-% [Up, Dp] = myUD(P);
-% dp = diag(Dp);
+P = diag([ [1 1 5 ].*d2r gps.stdv gps.std imu.gb_fix imu.ab_fix imu.gb_drift imu.ab_drift].^2); 
+[Up, Dp] = myUD(P);
+dp = diag(Dp);
 
 PP(1,:) = (diag(P)');
 B(1,:)  = [gb_fix', ab_fix', gb_drift', ab_drift'];
