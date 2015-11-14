@@ -109,8 +109,6 @@ quaold = euler2qua([roll_e(1); pitch_e(1); yaw_e(1);]);
 R = diag([gps.stdv gps.stdm].^2);
 Q = (diag([imu.arw imu.vrw imu.gpsd imu.apsd ].^2));
 P = diag([ [1 1 5 ].*d2r gps.stdv gps.std imu.gb_fix imu.ab_fix imu.gb_drift imu.ab_drift].^2); 
-[Up, Dp] = myUD(P);
-dp = diag(Dp);
 
 PP(1,:) = (diag(P)');
 B(1,:)  = [gb_fix', ab_fix', gb_drift', ab_drift'];
@@ -188,11 +186,7 @@ for j = 2:ttg
     H = [Z I Z Z Z Z Z;
          Z Z Tpr Z Z Z Z; ]; 
         
-%     x = [zeros(1,9) gb_fix', ab_fix', gb_drift', ab_drift']';
-
-%     [xu, P] = kalman(x, y, F, H, G, P, Q, R, dtg);        
-    [xu, Up, dp] = ud_filter(x, y, F, H, G, Q, R, Up, dp, dtg);  
-    P = Up * diag(dp) * Up'; 
+    [xu, P] = kalman(x, y, F, H, G, P, Q, R, dtg);        
       
     X(j,:) = xu';
     PP(j,:) = diag(P)';
