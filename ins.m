@@ -1,4 +1,4 @@
-function [estimates, wb_fix, fb_fix] = ins(imu, gps, ref, precision)
+function [estimates] = ins(imu, gps, ref, precision)
 % ins: integrates IMU and GPS measurements using an Extended Kalman filter
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
@@ -25,8 +25,8 @@ function [estimates, wb_fix, fb_fix] = ins(imu, gps, ref, precision)
 % Journal of Control Engineering and Applied Informatics, vol. 17, 
 % issue 2, pp. 110-120, 2015. Alg. 2.
 %
-% Version: 001
-% Date:    2015/07/02
+% Version: 002
+% Date:    2015/08/24
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
@@ -118,12 +118,6 @@ B(1,:)  = [gb_fix', ab_fix', gb_drift', ab_drift'];
 % SINS index
 i = 2;
 
-wb_fix = zeros(tto,3);
-fb_fix = zeros(tto,3);
-
-wb_fix(1,:) = imu.wb(1,:);
-fb_fix(1,:) = imu.fb(1,:);
-
 % GPS clock is the master clock
 for j = 2:ttg
 
@@ -136,13 +130,13 @@ for j = 2:ttg
         dti = tins(i) - tins(i-1);
 
         % Correct inertial sensors
-        wb_fix(i,:) = (imu.wb(i,:)' + gb_drift + gb_fix);
-        fb_fix(i,:) = (imu.fb(i,:)' + ab_drift + ab_fix); 
+        wb_fix = (imu.wb(i,:)' + gb_drift + gb_fix);
+        fb_fix = (imu.fb(i,:)' + ab_drift + ab_fix); 
         
         % Attitude computer
         omega_ie_N = earthrate(lat_e(i-1), precision); 
         omega_en_N = transportrate(lat_e(i-1), vel_e(i-1,1), vel_e(i-1,2), h_e(i-1));
-        [quanew, DCMbn_new, ang_v] = att_update(wb_fix(i,:)', DCMbn_old, quaold, ... 
+        [quanew, DCMbn_new, ang_v] = att_update(wb_fix, DCMbn_old, quaold, ... 
                                                   omega_ie_N, omega_en_N, dti); 
         roll_e(i) = ang_v(1);
         pitch_e(i)= ang_v(2); 
@@ -154,7 +148,7 @@ for j = 2:ttg
         g = gravity(lat_e(i-1), h_e(i-1));   
         
         % Velocity Computer
-        fn = DCMbn_new * (fb_fix(i,:)');
+        fn = DCMbn_new * (fb_fix);
         vel_upd = vel_update(fn, vel_e(i-1,:)', omega_ie_N, omega_en_N, g', dti); %
         vel_e (i,:) = vel_upd';   
 
@@ -184,7 +178,9 @@ for j = 2:ttg
 
     yv = (vel_e (i-1,:) - gps.vel(j,:))';      
     y = [ yv' yp' ]';
-         
+    
+    % Execute the extended Kalman filter
+        
     % Update matrices F and G
     [F, G] = F_update(upd, DCMbn_new, imu);
     
@@ -192,12 +188,11 @@ for j = 2:ttg
     H = [Z I Z Z Z Z Z;
          Z Z Tpr Z Z Z Z; ]; 
         
-    % Execute the extended Kalman filter
 %     x = [zeros(1,9) gb_fix', ab_fix', gb_drift', ab_drift']';
-    
-    [xu, P] = kalman(x, y, F, H, G, P, Q, R, dtg);        
-%     [xu, Up, dp] = ud_filter(x, y, F, H, G, Q, R, Up, dp, dtg);  
-%     P = Up * diag(dp) * Up'; 
+
+%     [xu, P] = kalman(x, y, F, H, G, P, Q, R, dtg);        
+    [xu, Up, dp] = ud_filter(x, y, F, H, G, Q, R, Up, dp, dtg);  
+    P = Up * diag(dp) * Up'; 
       
     X(j,:) = xu';
     PP(j,:) = diag(P)';
