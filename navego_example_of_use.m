@@ -1,5 +1,5 @@
 % Example of use of NAVEGO. 
-% Comparison of IMU ADIS16405 and IMU ADIS16488 performances
+% Comparison between ADIS16405 IMU and ADIS16488 IMU performances
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
@@ -45,8 +45,8 @@ GPS_DATA      = 'ON';
 IMU1_DATA     = 'ON';
 IMU2_DATA     = 'ON';
 
-IMU1_SINS     = 'ON';
-IMU2_SINS     = 'ON';
+IMU1_INS     = 'ON';
+IMU2_INS     = 'ON';
 
 RMSE          = 'ON';
 PLOT          = 'ON';
@@ -54,8 +54,8 @@ PLOT          = 'ON';
 if (~exist('GPS_DATA','var')),  GPS_DATA  = 'OFF'; end
 if (~exist('IMU1_DATA','var')), IMU1_DATA = 'OFF'; end
 if (~exist('IMU2_DATA','var')), IMU2_DATA = 'OFF'; end
-if (~exist('IMU1_SINS','var')), IMU1_SINS = 'OFF'; end
-if (~exist('IMU2_SINS','var')), IMU2_SINS = 'OFF'; end
+if (~exist('IMU1_SINS','var')), IMU1_INS = 'OFF'; end
+if (~exist('IMU2_SINS','var')), IMU2_INS = 'OFF'; end
 if (~exist('RMSE','var')), RMSE = 'OFF'; end
 if (~exist('PLOT','var')), PLOT = 'OFF'; end
 
@@ -116,10 +116,10 @@ imu2 = imu_err_profile(ADIS16488, dt);
 
 %% GPS Garmin 5-18 Hz error profile
 
-gps.stdm  = [5, 5, 10];                 % m
-gps.stdv  = 0.1 * kt2ms .* ones(1,3);   % knot -> m/s
-gps.larm  = zeros(3,1);                 % Lever arm
-gps.freq = 5;                           % Hertz
+gps.stdm = [5, 5, 10];                 % m
+gps.stdv = 0.1 * kt2ms .* ones(1,3);   % knot -> m/s
+gps.larm = zeros(3,1);                 % Lever arm
+gps.freq = 5;                          % Hertz
 
 
 %% SIMULATE GPS
@@ -209,7 +209,7 @@ end
 
 %% imu1/GPS INTEGRATION WITH FK
 
-if strcmp(IMU1_SINS, 'ON')
+if strcmp(IMU1_INS, 'ON')
     
     fprintf('SINS/GPS integration using IMU1... \n')
 
@@ -249,7 +249,7 @@ if strcmp(IMU1_SINS, 'ON')
         ref_g.h   = ref_g.h  (1:fgx, :);    
         ref_g.vel = ref_g.vel(1:fgx, :);  
     else
-    % Eliminate extra inertial meausurements beginnig at gps.t(end)    
+    % Eliminate extra inertial meausurements begining at gps.t(end)    
         fgx  = find(imu1.t > gps.t(end), 1, 'first' ); 
         
         imu1.t  = imu1.t  (1:fgx, :);
@@ -279,7 +279,7 @@ end
     
 %% imu2/GPS INTEGRATION WITH FK
 
-if strcmp(IMU2_SINS, 'ON')
+if strcmp(IMU2_INS, 'ON')
     
     fprintf('\nSINS/GPS integration using IMU2... \n')
 
@@ -319,7 +319,7 @@ if strcmp(IMU2_SINS, 'ON')
         ref_g.h   = ref_g.h(1:fgx, :);    
         ref_g.vel = ref_g.vel(1:fgx, :);  
     else        
-    % Eliminate extra inertial meausurements beginnig at gps.t(end)    
+    % Eliminate extra inertial meausurements begining at gps.t(end)    
         fgx  = find(imu2.t > gps.t(end), 1, 'first' ); 
         
         imu2.t  = imu2.t  (1:fgx, :);

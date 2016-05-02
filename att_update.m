@@ -24,23 +24,22 @@ function [quanew, DCMbn_new, ang_v] = att_update(w, DCMbn_old, quaold, omega_ie_
 % mation of Dynamic Systems, 2nd Ed. Chapman and Hall/CRC, USA. 
 % Eq. 7.39, p. 458.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2016/04/26
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
 % Corrected gyros output
 w_bn = ( w - DCMbn_old' * (omega_ie_N + omega_en_N))'; 
 
-%% Quaternion version
+%% Quaternion update
 
 quanew =    qua_update(quaold, w_bn, dt);
 quanew =    quanew/norm(quanew);
 DCMbn_new = qua2dcm(quanew); 
-% ang_v =     qua2euler(quanew);
-ang_v =     dcm2euler(DCMbn_new);
+ang_v =     qua2euler(quanew);
 
-%% DCM version
+%% DCM update
 
 % ang = w_bn * dt;
 % DCMbn_new = dcm_update(DCMbn_old, ang);

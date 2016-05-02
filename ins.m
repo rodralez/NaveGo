@@ -20,13 +20,13 @@ function [estimates] = ins(imu, gps, ref, precision)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference: 
-%			R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
+%   R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
 % simulation framework for low-cost integrated navigation systems, 
 % Journal of Control Engineering and Applied Informatics, vol. 17, 
 % issue 2, pp. 110-120, 2015. Alg. 2.
 %
-% Version: 002
-% Date:    2015/08/24
+% Version: 003
+% Date:    2016/04/26
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
@@ -37,17 +37,17 @@ if nargin < 4, precision = 'double'; end
 tins = imu.t;
 tgps = gps.t;
 
-tto = (max(size(tins)));
+tti = (max(size(tins)));
 ttg = (max(size(tgps)));
 
 if strcmp(precision, 'single')
 
     % Allocate memory for estimates
-    roll_e  =  single(zeros (tto,1));
-    pitch_e =  single(zeros (tto,1));
-    yaw_e   =  single(zeros (tto,1));
-    vel_e   =  single(zeros (tto,3));
-    h_e     =  single(zeros (tto,1));
+    roll_e  =  single(zeros (tti,1));
+    pitch_e =  single(zeros (tti,1));
+    yaw_e   =  single(zeros (tti,1));
+    vel_e   =  single(zeros (tti,3));
+    h_e     =  single(zeros (tti,1));
 
     I =  single(eye(3));
     Z =  single(zeros(3));
@@ -67,18 +67,20 @@ if strcmp(precision, 'single')
 else
     
     % Allocate memory for estimates
-    roll_e  =  (zeros (tto,1));
-    pitch_e =  (zeros (tto,1));
-    yaw_e   =  (zeros (tto,1));
-    vel_e   =  (zeros (tto,3));
-    h_e     =  (zeros (tto,1));
+    roll_e  =  (zeros (tti,1));
+    pitch_e =  (zeros (tti,1));
+    yaw_e   =  (zeros (tti,1));
+    vel_e   =  (zeros (tti,3));
+    h_e     =  (zeros (tti,1));
 
     I =  (eye(3));
     Z =  (zeros(3));
     Y =  (zeros(ttg,6));  
     PP = (zeros(ttg,21));   
     X =  (zeros(ttg,21));   
-    B =  (zeros(ttg,12));  
+    B =  (zeros(ttg,12)); 
+    WB_FIX = (zeros(tti,3)); 
+    FB_FIX=  (zeros(tti,3)); 
     
     gb_drift = imu.gb_drift';
     ab_drift = imu.ab_drift';
@@ -90,13 +92,14 @@ else
     x = (zeros(21,1));
 end
 
-lat_e   =  (zeros (tto,1));
-lon_e   =  (zeros (tto,1));
+lat_e   =  (zeros (tti,1));
+lon_e   =  (zeros (tti,1));
     
-% Initialize estimates at t=1
+% Initialize estimates at tti=1
 roll_e (1) = ref.roll(1);
 pitch_e(1) = ref.pitch(1);
 yaw_e(1)   = ref.yaw(1);
+vel_e(1,:) = gps.vel(1,:);
 lat_e(1) =   double(gps.lat(1));
 lon_e(1) =   double(gps.lon(1));
 h_e(1)   =   gps.h(1);
@@ -106,9 +109,9 @@ DCMbn_old = DCMnb_old';
 quaold = euler2qua([roll_e(1); pitch_e(1); yaw_e(1);]);
 
 % Kalman filter matrices
-R = diag([gps.stdv gps.stdm].^2);
-Q = (diag([imu.arw imu.vrw imu.gpsd imu.apsd ].^2));
-P = diag([ [1 1 5 ].*d2r gps.stdv gps.std imu.gb_fix imu.ab_fix imu.gb_drift imu.ab_drift].^2); 
+R = diag([gps.stdv, gps.stdm].^2);
+Q = (diag([imu.arw, imu.vrw, imu.gpsd, imu.apsd].^2));
+P = diag([ [1 1 1].*d2r, gps.stdv, gps.std, imu.gstd, imu.astd, imu.gb_drift, imu.ab_drift].^2); 
 
 PP(1,:) = (diag(P)');
 B(1,:)  = [gb_fix', ab_fix', gb_drift', ab_drift'];
@@ -121,15 +124,15 @@ for j = 2:ttg
 
     while (tins(i) <= tgps(j))
     
-        % Print a dot every 10,000 SINS executions
+        % Print a dot on console every 10,000 SINS executions
         if (mod(i,10000) == 0), fprintf('. '); end     
         
         % SINS period
         dti = tins(i) - tins(i-1);
 
         % Correct inertial sensors
-        wb_fix = (imu.wb(i,:)' + gb_drift + gb_fix);
-        fb_fix = (imu.fb(i,:)' + ab_drift + ab_fix); 
+        wb_fix = (imu.wb(i,:)' - gb_drift - gb_fix);
+        fb_fix = (imu.fb(i,:)' - ab_drift - ab_fix); 
         
         % Attitude computer
         omega_ie_N = earthrate(lat_e(i-1), precision); 
@@ -157,6 +160,9 @@ for j = 2:ttg
         % Compass Computer        
 %         yawm_e(i) = ( hd_update (imu.mb(i,:), roll_e(i),  pitch_e(i), D) );
         
+        WB_FIX(i,:) = wb_fix';
+        FB_FIX(i,:) = fb_fix';
+    
         % Index
         i = i + 1;
     end
@@ -188,9 +194,6 @@ for j = 2:ttg
         
     [xu, P] = kalman(x, y, F, H, G, P, Q, R, dtg);        
       
-    X(j,:) = xu';
-    PP(j,:) = diag(P)';
-    
     % DCM correction
     E = skewm(xu(1:3));    
     DCMbn_old = (eye(3) + E) * DCMbn_new;
@@ -201,9 +204,9 @@ for j = 2:ttg
     quaold = quaold/norm(quaold);
     
     % Attitude correction
-    roll_e(i-1)  = roll_e(i-1) - xu(1);
+    roll_e(i-1)  = roll_e(i-1)  - xu(1);
     pitch_e(i-1) = pitch_e(i-1) - xu(2);
-    yaw_e(i-1)   = yaw_e(i-1)  - xu(3);            
+    yaw_e(i-1)   = yaw_e(i-1)   - xu(3);            
     % Velocity correction
     vel_e (i-1,1) = vel_e (i-1,1) - xu(4);
     vel_e (i-1,2) = vel_e (i-1,2) - xu(5);
@@ -219,6 +222,9 @@ for j = 2:ttg
     gb_drift = gb_drift - xu(16:18); 
     ab_drift = ab_drift - xu(19:21);
     
+    X(j,:) = xu';
+    PP(j,:) = diag(P)';
+    Y(j,:) = y';
     B(j,:) = [gb_fix', ab_fix', gb_drift', ab_drift'];
 end 
 
@@ -234,4 +240,7 @@ end
     estimates.B  = B;
     estimates.Y  = Y;
     estimates.X  = X;
+    estimates.WB_FIX = WB_FIX;
+    estimates.FB_FIX = FB_FIX;    
+    
 end

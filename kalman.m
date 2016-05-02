@@ -73,7 +73,7 @@ Qd = (G * Q * G') .* dt;
 
 % Step 4, predict Pp
 xp = A * xu;
-Pp = A * Pu * A' + Qd;
-Pp =  0.5 * (Pp + Pp');
+Pp = (A * Pu * A') + Qd;
+Pp =  0.5 .* (Pp + Pp');
 
 end

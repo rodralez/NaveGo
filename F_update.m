@@ -170,8 +170,8 @@ else
     Fgg = diag(-1./imu.gcorr);
 end
 
-F= [ Fee  Fev  Fep   (-DCMbn*Frog)  Z       (-DCMbn*Frog)   Z;
-     Fve  Fvv  Fvp   Z       (DCMbn*Fva)    Z       (DCMbn*Fva); 
+F= [ Fee  Fev  Fep   (DCMbn*Frog)  Z       (DCMbn*Frog)   Z;
+     Fve  Fvv  Fvp   Z       (-DCMbn*Fva)    Z       (-DCMbn*Fva); 
      Fpe  Fpv  Fpp   Z        Z             Z    Z;
      Z    Z    Z     Z        Z             Z    Z;
      Z    Z    Z     Z        Z             Z    Z;
