@@ -115,6 +115,8 @@ P = diag([ [1 1 1].*d2r, gps.stdv, gps.std, imu.gstd, imu.astd, imu.gb_drift, im
 
 PP(1,:) = (diag(P)');
 B(1,:)  = [gb_fix', ab_fix', gb_drift', ab_drift'];
+WB_FIX(1,:) = imu.wb(1,:)';
+FB_FIX(1,:) = imu.fb(1,:)';
 
 % SINS index
 i = 2;

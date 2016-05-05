@@ -37,27 +37,28 @@ clear
 fprintf('\nStarting simulation ... \n')
 
 %% Global variables
+
 global d2r
 
 %% PARAMETERS
 
-GPS_DATA      = 'ON';
-IMU1_DATA     = 'ON';
-IMU2_DATA     = 'ON';
+% GPS_DATA  = 'ON';
+% IMU1_DATA = 'ON';
+% IMU2_DATA = 'ON';
 
-IMU1_INS     = 'ON';
-IMU2_INS     = 'ON';
+IMU1_INS  = 'ON';
+IMU2_INS  = 'ON';
 
-RMSE          = 'ON';
-PLOT          = 'ON';
+RMSE      = 'ON';
+PLOT      = 'ON';
 
 if (~exist('GPS_DATA','var')),  GPS_DATA  = 'OFF'; end
 if (~exist('IMU1_DATA','var')), IMU1_DATA = 'OFF'; end
 if (~exist('IMU2_DATA','var')), IMU2_DATA = 'OFF'; end
-if (~exist('IMU1_SINS','var')), IMU1_INS = 'OFF'; end
-if (~exist('IMU2_SINS','var')), IMU2_INS = 'OFF'; end
-if (~exist('RMSE','var')), RMSE = 'OFF'; end
-if (~exist('PLOT','var')), PLOT = 'OFF'; end
+if (~exist('IMU1_INS','var')),  IMU1_INS = 'OFF'; end
+if (~exist('IMU2_INS','var')),  IMU2_INS = 'OFF'; end
+if (~exist('RMSE','var')),      RMSE = 'OFF'; end
+if (~exist('PLOT','var')),      PLOT = 'OFF'; end
 
     
 %% CONVERSIONS
