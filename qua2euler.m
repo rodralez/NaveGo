@@ -1,4 +1,4 @@
-function ang_v = qua2euler(qua)
+function ang_v = qua2euler(qin)
 % qua2dcm: transforms quaternion to Euler angles.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
@@ -20,21 +20,29 @@ function ang_v = qua2euler(qua)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference: 
-% 			Farrell, J. (2008). Aided Navigation: GPS With High Rate
-% Sensors. McGraw-Hill Professional, USA. Eq. 10.3-10.5, pp. 354-355.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2016/05/09
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
-    q4 = qua(4); q1 = qua(1); q2 = qua(2); q3 = qua(3);
+% Crassidis quaternion format
+    qua(:,1) = qin(:,4);
+    qua(:,2) = qin(:,1);
+    qua(:,3) = qin(:,2);
+    qua(:,4) = qin(:,3);
+    
+    r11 = 2.*(qua(:,2).*qua(:,3) + qua(:,1).*qua(:,4));
+    r12 = qua(:,1).^2 + qua(:,2).^2 - qua(:,3).^2 - qua(:,4).^2;
 
-    phi =   atan2( (2*((q4*q1)+(q2*q3))) ./ (1-(2*(((q1)^2) + ((q2)^2)))) , 1); % C_32 / C_33
+    r21 = -2.*(qua(:,2).*qua(:,4) - qua(:,1).*qua(:,3));
 
-    theta = asin(2*((q4*q2)-(q1*q3))); % - C_31
+    r31 = 2.*(qua(:,3).*qua(:,4) + qua(:,1).*qua(:,2));
+    r32 = qua(:,1).^2 - qua(:,2).^2 - qua(:,3).^2 + qua(:,4).^2;
 
-    psi =   atan2(2*(q4*q3+q1*q2), 1-2*(((q2)^2) + ((q3)^2)));  % C_21 / C_11
+    psi = atan2( r11, r12 );
+    theta = asin( r21 );
+    phi = atan2( r31, r32 );
 
     ang_v = [phi theta psi];
 

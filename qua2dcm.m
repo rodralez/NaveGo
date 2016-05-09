@@ -1,4 +1,4 @@
-function DCMbn = qua2dcm(qua_vec)
+function DCMbn = qua2dcm(qin)
 % qua2dcm: transforms quaternion to DCM.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
@@ -33,8 +33,9 @@ function DCMbn = qua2dcm(qua_vec)
 % Date:    2014/09/11
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
-  
-a = qua_vec(4); b = qua_vec(1); c = qua_vec(2); d = qua_vec(3);
+ 
+% Crassidis quaternion format
+a = qin(4); b = qin(1); c = qin(2); d = qin(3);
 
 DCMbn(1,1) = a*a + b*b - c*c - d*d;
 DCMbn(1,2) = 2*(b*c - a*d);
@@ -45,5 +46,6 @@ DCMbn(2,3) = 2*(c*d - a*b);
 DCMbn(3,1) = 2*(b*d - a*c);
 DCMbn(3,2) = 2*(c*d + a*b);
 DCMbn(3,3) = a*a - b*b - c*c + d*d;
+
 
 end

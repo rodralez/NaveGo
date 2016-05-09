@@ -20,25 +20,21 @@ function qua = euler2qua(euler)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference: 
-%			Titterton, D.H. and Weston, J.L. (2004). Strapdown
-% Inertial Navigation Technology (2nd Ed.). Institution
-% of Engineering and Technology, USA. Eq. 3.65, p. 46.  
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2016/05/09
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
+ 
+    c_eul = cos( euler./2 );
+    s_eul = sin( euler./2 );
 
-  phi = euler(1); theta = euler(2); psi = euler(3);
+    q = [   c_eul(:,1).*c_eul(:,2).*c_eul(:,3) + s_eul(:,1).*s_eul(:,2).*s_eul(:,3), ...
+            c_eul(:,1).*c_eul(:,2).*s_eul(:,3) - s_eul(:,1).*s_eul(:,2).*c_eul(:,3), ...
+            c_eul(:,1).*s_eul(:,2).*c_eul(:,3) + s_eul(:,1).*c_eul(:,2).*s_eul(:,3), ...
+            s_eul(:,1).*c_eul(:,2).*c_eul(:,3) - c_eul(:,1).*s_eul(:,2).*s_eul(:,3)];
 
-  cpsi2 = cos(psi/2); spsi2 = sin(psi/2);
-  cthe2 = cos(theta/2); sthe2 = sin(theta/2);
-  cphi2 = cos(phi/2); sphi2 = sin(phi/2);
+    % Crassidis quaternion format
+    qua = [q(:,2) q(:,3) q(:,4) q(:,1)]';
 
-  a = cphi2*cthe2*cpsi2 + sphi2*sthe2*spsi2;
-  b = sphi2*cthe2*cpsi2 - cphi2*sthe2*spsi2;
-  c = cphi2*sthe2*cpsi2 + sphi2*cthe2*spsi2;
-  d = cphi2*cthe2*spsi2 + sphi2*sthe2*cpsi2;
-  
-  qua = [b c d a]';
 end

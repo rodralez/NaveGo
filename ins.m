@@ -106,14 +106,15 @@ h_e(1)   =   gps.h(1);
 
 DCMnb_old = euler2dcm([roll_e(1); pitch_e(1); yaw_e(1);]);
 DCMbn_old = DCMnb_old';
-quaold = euler2qua([roll_e(1); pitch_e(1); yaw_e(1);]);
+quaold = euler2qua([yaw_e(1) pitch_e(1) roll_e(1)]);
 
 % Kalman filter matrices
 R = diag([gps.stdv, gps.stdm].^2);
 Q = (diag([imu.arw, imu.vrw, imu.gpsd, imu.apsd].^2));
 P = diag([ [1 1 1].*d2r, gps.stdv, gps.std, imu.gstd, imu.astd, imu.gb_drift, imu.ab_drift].^2); 
 
-PP(1,:) = (diag(P)');
+% Initialize matrices for INS performance analysis
+PP(1,:) = diag(P)';
 B(1,:)  = [gb_fix', ab_fix', gb_drift', ab_drift'];
 WB_FIX(1,:) = imu.wb(1,:)';
 FB_FIX(1,:) = imu.fb(1,:)';
@@ -139,6 +140,7 @@ for j = 2:ttg
         % Attitude computer
         omega_ie_N = earthrate(lat_e(i-1), precision); 
         omega_en_N = transportrate(lat_e(i-1), vel_e(i-1,1), vel_e(i-1,2), h_e(i-1));
+        
         [quanew, DCMbn_new, ang_v] = att_update(wb_fix, DCMbn_old, quaold, ... 
                                                   omega_ie_N, omega_en_N, dti); 
         roll_e(i) = ang_v(1);

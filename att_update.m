@@ -29,7 +29,7 @@ function [quanew, DCMbn_new, ang_v] = att_update(w, DCMbn_old, quaold, omega_ie_
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
-% Corrected gyros output
+% Corrected gyros output for Earth rate and Transport rate
 w_bn = ( w - DCMbn_old' * (omega_ie_N + omega_en_N))'; 
 
 %% Quaternion update
@@ -37,7 +37,7 @@ w_bn = ( w - DCMbn_old' * (omega_ie_N + omega_en_N))';
 quanew =    qua_update(quaold, w_bn, dt);
 quanew =    quanew/norm(quanew);
 DCMbn_new = qua2dcm(quanew); 
-ang_v =     qua2euler(quanew);
+ang_v =     qua2euler(quanew');
 
 %% DCM update
 
