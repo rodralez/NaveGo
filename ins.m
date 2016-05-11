@@ -106,7 +106,7 @@ h_e(1)   =   gps.h(1);
 
 DCMnb_old = euler2dcm([roll_e(1); pitch_e(1); yaw_e(1);]);
 DCMbn_old = DCMnb_old';
-quaold = euler2qua([yaw_e(1) pitch_e(1) roll_e(1)]);
+quaold = euler2qua([roll_e(1) pitch_e(1) yaw_e(1)]);
 
 % Kalman filter matrices
 R = diag([gps.stdv, gps.stdm].^2);

@@ -26,23 +26,24 @@ function ang_v = qua2euler(qin)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
-% Crassidis quaternion format
+% Quaternion format used in Crassidis quaternion update.
     qua(:,1) = qin(:,4);
     qua(:,2) = qin(:,1);
     qua(:,3) = qin(:,2);
     qua(:,4) = qin(:,3);
     
-    r11 = 2.*(qua(:,2).*qua(:,3) + qua(:,1).*qua(:,4));
-    r12 = qua(:,1).^2 + qua(:,2).^2 - qua(:,3).^2 - qua(:,4).^2;
+% ZYX rotation sequence
+    c1 = 2.*(qua(:,2).*qua(:,3) + qua(:,1).*qua(:,4));
+    c2 = qua(:,1).^2 + qua(:,2).^2 - qua(:,3).^2 - qua(:,4).^2;
 
-    r21 = -2.*(qua(:,2).*qua(:,4) - qua(:,1).*qua(:,3));
+    c3 = -2.*(qua(:,2).*qua(:,4) - qua(:,1).*qua(:,3));
 
-    r31 = 2.*(qua(:,3).*qua(:,4) + qua(:,1).*qua(:,2));
-    r32 = qua(:,1).^2 - qua(:,2).^2 - qua(:,3).^2 + qua(:,4).^2;
+    c4 = 2.*(qua(:,3).*qua(:,4) + qua(:,1).*qua(:,2));
+    c5 = qua(:,1).^2 - qua(:,2).^2 - qua(:,3).^2 + qua(:,4).^2;
 
-    psi = atan2( r11, r12 );
-    theta = asin( r21 );
-    phi = atan2( r31, r32 );
+    psi = atan2( c1, c2 );  % yaw
+    theta = asin( c3 );     % pitch
+    phi = atan2( c4, c5 );  % roll
 
     ang_v = [phi theta psi];
 

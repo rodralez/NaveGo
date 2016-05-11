@@ -36,21 +36,29 @@ function quanew = qua_update(quaold, w_bn, dt)
 
  wnorm=norm(w_bn);
  
- if wnorm == 0, 
-     quanew = quaold;     
+ if wnorm == 0,
+     
+     quanew = quaold;
  else
      
-  co=cos(0.5*wnorm*dt);
-  si=sin(0.5*wnorm*dt);
-  n1 = w_bn(1)/wnorm;   n2=w_bn(2)/wnorm;  n3=w_bn(3)/wnorm;
-  qw1=n1*si; qw2=n2*si; qw3=n3*si; qw4=co;
- 
-  om=[qw4  qw3 -qw2 qw1;
-     -qw3  qw4  qw1 qw2;
-      qw2 -qw1  qw4 qw3;
-     -qw1 -qw2 -qw3 qw4];
- 
-  quanew = om * quaold;
+     co=cos(0.5*wnorm*dt);
+     si=sin(0.5*wnorm*dt);
+     
+     n1 = w_bn(1)/wnorm;
+     n2 = w_bn(2)/wnorm;
+     n3 = w_bn(3)/wnorm;
+     
+     qw1 = n1*si;
+     qw2 = n2*si;
+     qw3 = n3*si;
+     qw4 = co;
+     
+     om=[qw4  qw3 -qw2 qw1;
+         -qw3  qw4  qw1 qw2;
+         qw2 -qw1  qw4 qw3;
+         -qw1 -qw2 -qw3 qw4];
+     
+     quanew = om * quaold;
 
  end
  
