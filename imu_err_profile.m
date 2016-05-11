@@ -26,7 +26,7 @@ function imu_nav = imu_err_profile(imu, dt)
 % issue 2, pp. 110-120, 2015. Eq. 9, 14, and 30.
 %
 % Version: 002
-% Date:    2015/20/08
+% Date:    2015/08/20
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 

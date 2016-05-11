@@ -1,4 +1,4 @@
-function  [xpo, Upr, dpr] = UD_filtering(xpr, y, F, H, G, Q, R, Upr, dpr, dt)
+function  [xpo, Upr, dpr] = ud_filtering(xpr, y, F, H, G, Q, R, Upr, dpr, dt)
 % ud_filter
 %
 % Author:       Rodrigo Gonzalez, rodralez@frm.utn.edu.ar

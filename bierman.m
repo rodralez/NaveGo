@@ -71,7 +71,7 @@ function [xpo, Upo, Dpo] = bierman(z, r, h, xpr, Upr, Dpr)
 
 n = length(xpr);
 % xpo = zeros(n,1);
-Upo = zeros(n); 
+Upo = zeros(n);
 
 dpr = diag(Dpr);
 
@@ -81,62 +81,28 @@ dz = z - h * xpr;       % dz, scalar
 
 beta = zeros(n+1,1);
 beta(1) = r;
-c  = a .* b; 
- 
-for j = 2:n+1 
+c  = a .* b;
 
+for j = 2:n+1
+    
     beta(j) = beta(j-1) + c(j-1);
 end
-gamma = 1 ./ beta;    
 
-lambda = -a .* gamma(1:n);      
+gamma = 1 ./ beta;
+lambda = -a .* gamma(1:n);
 dpo = beta(1:n) .* gamma(2:end) .* dpr;
 
-
-for j = 1:n 
-
-     for i = 1:j 
-
-        Upo(i,j) = Upr(i,j) + b(i) * lambda(j); 
-        b(i) = b(i) + b(j) * Upr(i,j);           
-     end  
+for j = 1:n
+    
+    for i = 1:j
+        
+        Upo(i,j) = Upr(i,j) + b(i) * lambda(j);
+        b(i) = b(i) + b(j) * Upr(i,j);
+    end
 end
 
 xpo = xpr + b * (gamma(n+1)* dz);
 
 Dpo = diag(dpo);
-
-%% Grewal (does not work)
-
-% delta = z;
-% n = size(max(xpr));
-% v = zeros(n,1);
-% w = zeros(n,1);
-% 
-% for j = 1: n,
-% 	delta = delta - h(j) * xpo(j);
-% 	v ( j) = h(j);
-% 	for i = 1: j - 1,
-% 	v ( j) = v ( j) + Upo (i, j)*h (i);
-% 	end;
-% end;
-% sigma = r;
-% for j = 1:n,
-% 	nu = v ( j);
-% 	v ( j) = v ( j)*Dpo ( j, j);
-% 	w ( j) = nu;
-% 	for i = 1: j - 1,
-% 		tau = Upo (i, j)*nu;
-% 		Upo (i, j) = Upo (i, j) - nu*w (i)/sigma;
-% 		w (i) = w (i) + tau;
-% 	end;
-% 	Dpo ( j, j) = Dpo ( j, j)*sigma;
-% 	sigma = sigma + nu*v ( j);
-% 	Dpo ( j, j) = Dpo ( j, j)*sigma;
-% end;
-% epsilon = delta/sigma;
-% for i = 1: n,
-% 	xpo (i) = xpo (i) + v (i)*epsilon;
-% end;
 
 end
