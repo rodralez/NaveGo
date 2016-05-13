@@ -38,7 +38,7 @@ function [vel_upd, coriolis] = vel_update(fn, velold, omega_ie_N, omega_en_N, g,
 
     coriolis = S * (omega_en_N + 2 * omega_ie_N);
 
-    fn_cor = fn + coriolis + g;
+    fn_cor = fn + coriolis - g;
 
     vel_upd = velold + fn_cor * dt;
 
