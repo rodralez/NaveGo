@@ -37,7 +37,7 @@ w_bn = ( w - DCMbn_old' * (omega_ie_N + omega_en_N))';
 quanew =    qua_update(quaold, w_bn, dt);
 quanew =    quanew/norm(quanew);
 DCMbn_new = qua2dcm(quanew); 
-ang_v =     qua2euler(quanew');
+ang_v =     qua2euler(quanew);
 
 %% DCM update
 
