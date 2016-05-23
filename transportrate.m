@@ -50,7 +50,6 @@ else
     omega_en_N(1,1) = (Ve /(RN + h));                 % North 
     omega_en_N(2,1) = (-(Vn /(RM + h)));              % East
     omega_en_N(3,1) = (-(Ve * tan(lat) / (RN + h)));  % Down
-
 end                               
 
 end

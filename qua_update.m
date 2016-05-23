@@ -59,6 +59,6 @@ else
         -qw1 -qw2 -qw3 qw4];
     
     quanew = om * quaold;
- end
+end
 
 end

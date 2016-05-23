@@ -33,7 +33,7 @@
 clc
 close all 
 clear
-matlabrc
+% matlabrc
 
 fprintf('\nStarting simulation ... \n')
 
