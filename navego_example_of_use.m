@@ -29,11 +29,15 @@
 % Date:    2014/09/18
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
+%
+% KNOWN ISSUES: acceleration in Z axis is considered negative downward because 
+% Navego works (surprisingly) better this way. This Z axis orientation does 
+% not correspond with NED coordinates.
 
 clc
 close all 
 clear
-% matlabrc
+matlabrc
 
 fprintf('\nStarting simulation ... \n')
 
@@ -157,6 +161,10 @@ if strcmp(IMU1_DATA, 'ON')
     imu1.freq = ref1_i.freq;
 
     fprintf('Generating IMU1 ACCR data... \n')
+
+% KNOWN ISSUES: acceleration in Z axis is considered negative downward because 
+% Navego works (surprisingly) better this way. This Z axis orientation does 
+% not correspond with NED coordinates.
 
     fb = acc_gen (ref1_i, imu1);
     imu1.fb = fb;

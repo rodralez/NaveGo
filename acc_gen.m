@@ -63,7 +63,7 @@ for i = 1:ref.kn
     cor_b(i,:) = corb';
 end
 
-% Set static bias
+% Set static bias randomly
 a = -imu.ab_fix(1);
 b = imu.ab_fix(1);
 ab_fix = (b-a).*rand(3,1) + a;
@@ -92,7 +92,11 @@ else
     end
 end
 
-fb = acc_b - cor_b + g_b + ...
+% KNOWN ISSUES: acceleration in Z axis is considered negative downward because 
+% Navego works (surprisingly) better this way. This Z axis orientation does 
+% not correspond with NED coordinates. So, g is negative in the following equation.
+
+fb = acc_b - cor_b - g_b + ...
      [imu.astd(1)  .*r1  imu.astd(2)  .*r2  imu.astd(3)  .*r3 ] + ...
      [ab_fix(1) .*o   ab_fix(2) .*o   ab_fix(3) .*o] + ...
      acorr; 
