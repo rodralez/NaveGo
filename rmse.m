@@ -1,5 +1,5 @@
 function rmserr = rmse (estimate, true)
-% rmserr:  Rooted mean squarred error
+% rmse:  Rooted mean squarred error
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
