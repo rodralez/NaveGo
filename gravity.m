@@ -29,8 +29,8 @@ function g_n = gravity(lat, h)
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 16.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2016/08/04
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -43,13 +43,11 @@ h = abs(h);
 sin1 = sin(lat);
 sin2 = sin(2.*lat);
 
-g0 = 9.780318*( 1 + 5.3024e-03.*(sin1).^2 - 5.9e-06.*(sin2).^2);
+g0 = 9.780318 * ( 1 + 5.3024e-03.*(sin1).^2 - 5.9e-06.*(sin2).^2 );
 
-if (isa(h,'single'))
-    
+if (isa(h,'single'))    
     [RM,RN] = radius(lat, 'single');
-else
-    
+else    
     [RM,RN] = radius(lat);
 end
 
@@ -57,7 +55,13 @@ Ro = sqrt(RN .* RM);
 
 g = (g0 ./ (1 + (h ./ Ro)).^2);
 
-g_n = [zeros(size(g)) zeros(size(g)) g];
+if (isa(h,'single'))    
+    zg = single(zeros(size(g)));
+else    
+    zg = (zeros(size(g)));
+end
+
+g_n = [zg zg g];
 
 end
 
