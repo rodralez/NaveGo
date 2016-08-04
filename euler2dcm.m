@@ -1,5 +1,5 @@
 function DCMnb = euler2dcm(euler)
-% ecef2ned: converts from Euler angles to DCM nav to body.
+% euler2dcm: converts from Euler angles to DCM nav-to-body.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
