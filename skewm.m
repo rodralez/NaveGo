@@ -1,5 +1,5 @@
 function S = skewm(v)
-% skewm: forms skew-symmetric matrix from 3-elements vector.
+% skewm: forms skew-symmetric matrix from a 3-elements vector.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
