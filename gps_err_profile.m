@@ -1,5 +1,5 @@
 function  gps = gps_err_profile (lat, h, gps)
-% gps_err_profile: converts GPS standar deviation from meters to radians.
+% gps_err_profile: converts GPS standard deviation from meters to radians.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
