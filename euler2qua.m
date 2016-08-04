@@ -1,5 +1,6 @@
 function qua = euler2qua(euler)
 % euler2qua: converts from Euler angles to quaternions.
+% 
 % euler = [roll, pitch, yaw]
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
