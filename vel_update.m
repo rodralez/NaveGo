@@ -42,7 +42,7 @@ coriolis = S * (omega_en_N + 2 * omega_ie_N);
 % Navego works (surprisingly) better this way. This Z axis orientation does 
 % not correspond with NED coordinates. So, g is positive in the following equation.
 
-fn_cor = fn - coriolis + g;
+fn_cor = fn - coriolis - (-g);
 
 vel_upd = velold + fn_cor * dt;
 
