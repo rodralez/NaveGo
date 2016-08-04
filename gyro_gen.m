@@ -73,43 +73,44 @@ r3=randn(N,1);
 r4=randn(N,1);
 r5=randn(N,1);
 r6=randn(N,1);
+
 o=ones(N,1);
 
-% if (isinf(imu.gcorr))
-%     sigmc = imu.gb_drift;
-%     b_drift = [sigmc(1).*r4 sigmc(2).*r5 sigmc(3).*r6];
-% else
-%     % Gyro correlation noise
-%     b_drift = zeros(N,3);
-%     dt=mean(diff(imu.t));
-%     alpha = exp(-dt./imu.gcorr);
-%     sigmc = imu.gb_drift .* sqrt(1 - alpha.^2);
-%     b_drift(1,:) = gb_fix' + [sigmc(1).*r4(1) sigmc(2).*r5(1) sigmc(3).*r6(1)];
-% 
-%     for i=2:N    
-%         b_drift (i,:) = alpha .* b_drift (i-1,:) + [sigmc(1).*r4(i) sigmc(2).*r5(i) sigmc(3).*r6(i)]; 
-%     end
-% end
-
-% Simulate bias instability (Jerath)
-if (isinf(imu.acorr))
-    
+if (isinf(imu.gcorr))
     sigmc = imu.gb_drift;
     b_drift = [sigmc(1).*r4 sigmc(2).*r5 sigmc(3).*r6];
 else
-    TC = imu.gcorr;
-    B = imu.gb_drift;
-    dt = mean(diff(imu.t));
-    
+    % Gyro correlation noise
     b_drift = zeros(N,3);
-    b_drift(1,:) = zeros(1,3);
-    
-    for i = 2:1:N
-        
-        bdot = (-dt./TC) * b_drift(i-1) + B .* randn(1,3);
-        b_drift(i,:) = b_drift(i-1,:) + bdot;
+    dt=mean(diff(imu.t));
+    alpha = exp(-dt./imu.gcorr);
+    sigmc = imu.gb_drift .* sqrt(1 - alpha.^2);
+    b_drift(1,:) = gb_fix' + [sigmc(1).*r4(1) sigmc(2).*r5(1) sigmc(3).*r6(1)];
+
+    for i=2:N    
+        b_drift (i,:) = alpha .* b_drift (i-1,:) + [sigmc(1).*r4(i) sigmc(2).*r5(i) sigmc(3).*r6(i)]; 
     end
 end
+
+% Simulate bias instability (Jerath)
+% if (isinf(imu.acorr))
+%     
+%     sigmc = imu.gb_drift;
+%     b_drift = [sigmc(1).*r4 sigmc(2).*r5 sigmc(3).*r6];
+% else
+%     TC = imu.gcorr;
+%     B = imu.gb_drift;
+%     dt = mean(diff(imu.t));
+%     
+%     b_drift = zeros(N,3);
+%     b_drift(1,:) = zeros(1,3);
+%     
+%     for i = 2:1:N
+%         
+%         bdot = (-dt./TC) * b_drift(i-1) + B .* randn(1,3);
+%         b_drift(i,:) = b_drift(i-1,:) + bdot;
+%     end
+% end
 
 wb = gyro_b + gyro_err_b + ...
      [imu.gstd(1).*r1    imu.gstd(2).*r2    imu.gstd(3).*r3 ] + ...
