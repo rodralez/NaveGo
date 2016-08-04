@@ -1,7 +1,7 @@
 function deltha = gyro_gen_delta(DCMnb, dt)
 % gyro_gen_delta: calculates gyros delta measurements.
 %
-%   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
+%   Copyright (C) 2014, Rodrigo González, all rights reserved. 
 %     
 %   This file is part of NaveGo, an open-source MATLAB toolbox for 
 %   simulation of integrated navigation systems.
