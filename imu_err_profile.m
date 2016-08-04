@@ -30,11 +30,11 @@ function imu_nav = imu_err_profile(imu, dt)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
-d2r = (pi/180);     % deg to rad
-g2mss = 9.81;       % g to m/s^2
+D2R = (pi/180);     % deg to rad
+G2MSS = 9.81;       % g to m/s^2
 
 % Noise PSD
-imu_nav.arw = (imu.arw ./ 60) .* d2r;   % deg/root-hour -> rad/s/root-Hz
+imu_nav.arw = (imu.arw ./ 60) .* D2R;   % deg/root-hour -> rad/s/root-Hz
 imu_nav.vrw = (imu.vrw ./ 60);          % m/s/root-hour -> m/s^2/root-Hz
 
 % Sigmas
@@ -42,12 +42,12 @@ imu_nav.astd   = imu_nav.vrw ./ sqrt(dt); % m/s^2/root-Hz  ->  m/s^2
 imu_nav.gstd   = imu_nav.arw ./ sqrt(dt); % rad/s/root-Hz  ->  rad/s
 
 % Static bias
-imu_nav.ab_fix = imu.ab_fix .* 0.001 * g2mss;    % mg -> m/s^2
-imu_nav.gb_fix = imu.gb_fix .* d2r;              % deg/s -> rad/s;
+imu_nav.ab_fix = imu.ab_fix .* 0.001 * G2MSS;    % mg -> m/s^2
+imu_nav.gb_fix = imu.gb_fix .* D2R;              % deg/s -> rad/s;
 
 % Dynamic bias
-imu_nav.ab_drift = imu.ab_drift .* 0.001 .* g2mss;  % mg -> m/s^2
-imu_nav.gb_drift = imu.gb_drift .* d2r;             % deg/s -> rad/s;
+imu_nav.ab_drift = imu.ab_drift .* 0.001 .* G2MSS;  % mg -> m/s^2
+imu_nav.gb_drift = imu.gb_drift .* D2R;             % deg/s -> rad/s;
 
 % Dynamic bias PSD
 if (isinf(imu.gcorr))
