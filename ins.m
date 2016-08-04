@@ -1,4 +1,4 @@
-function [estimates] = ins(imu, gps, ref, precision)
+function [ins_est] = ins(imu, gps, ref, precision)
 % ins: integrates IMU and GPS measurements using an Extended Kalman filter
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -42,67 +42,80 @@ ttg = (max(size(tgps)));
 
 if strcmp(precision, 'single')
     
-    % Allocate memory for estimates
+    % Preallocate memory for estimates
     roll_e  =  single(zeros (tti,1));
     pitch_e =  single(zeros (tti,1));
     yaw_e   =  single(zeros (tti,1));
     vel_e   =  single(zeros (tti,3));
     h_e     =  single(zeros (tti,1));
+    x = single(zeros(21,1));
     
+    % Constant matrix
     I =  single(eye(3));
     Z =  single(zeros(3));
-    Y =  single(zeros(ttg,6));
-    PP = single(zeros(ttg,21));
-    X =  single(zeros(ttg,21));
-    B =  single(zeros(ttg,12));
     
+    % Matrices for later analysis
+    Y_inno =  single(zeros(ttg,6));     % Kalman filter innovations
+    P_diag = single(zeros(ttg,21));     % Diagonal from matrix P
+    X =  single(zeros(ttg,21));         % Evolution of Kalman filter states
+    Bias_comp =  single(zeros(ttg,12)); % Bias compensantion after Kalman filter correction
+    
+    % Initialize bias variables
     gb_drift = single(imu.gb_drift');
     ab_drift = single(imu.ab_drift');
     gb_fix = single(imu.gb_fix');
     ab_fix = single(imu.ab_fix');
-    
-    % Initialize
     vel_e(1,:) = single(zeros(1,3));
-    x = single(zeros(21,1));
+
+    % Initialize estimates at tti=1
+    roll_e (1) = single(ref.roll(1));
+    pitch_e(1) = single(ref.pitch(1));
+    yaw_e(1)   = single(ref.yaw(1));
+    vel_e(1,:) = single(gps.vel(1,:));    
+    h_e(1)     = single(gps.h(1));
+    vel_e(1,:) = single(zeros(1,3)); 
+    
 else
     
-    % Allocate memory for estimates
+    % Preallocate memory for estimates
     roll_e  =  (zeros (tti,1));
     pitch_e =  (zeros (tti,1));
     yaw_e   =  (zeros (tti,1));
     vel_e   =  (zeros (tti,3));
     h_e     =  (zeros (tti,1));
+    x = (zeros(21,1));  
     
+    % Constant matrix
     I =  (eye(3));
     Z =  (zeros(3));
-    Y =  (zeros(ttg,6));
-    PP = (zeros(ttg,21));
-    X =  (zeros(ttg,21));
-    B =  (zeros(ttg,12));
-    WB_FIX = (zeros(tti,3));
-    FB_FIX=  (zeros(tti,3));
     
+    % Matrices for later analysis
+    Y_inno =  (zeros(ttg,6));       % Kalman filter innovations
+    P_diag = (zeros(ttg,21));       % Diagonal from matrix P
+    X =  (zeros(ttg,21));           % Evolution of Kalman filter states
+    Bias_comp =  (zeros(ttg,12));   % Bias compensantion after Kalman filter correction
+    
+    % Initialize bias variables
     gb_drift = imu.gb_drift';
     ab_drift = imu.ab_drift';
     gb_fix = imu.gb_fix';
     ab_fix = imu.ab_fix';
     
-    % Initialize
-    vel_e(1,:) = zeros(1,3);
-    x = (zeros(21,1));
+    % Initialize estimates at tti=1
+    roll_e (1) = ref.roll(1);
+    pitch_e(1) = ref.pitch(1);
+    yaw_e(1)   = ref.yaw(1);
+    vel_e(1,:) = gps.vel(1,:);    
+    h_e(1)     = gps.h(1);
+    vel_e(1,:) = zeros(1,3);     
+   
 end
 
-lat_e   =  (zeros (tti,1));
-lon_e   =  (zeros (tti,1));
-
-% Initialize estimates at tti=1
-roll_e (1) = ref.roll(1);
-pitch_e(1) = ref.pitch(1);
-yaw_e(1)   = ref.yaw(1);
-vel_e(1,:) = gps.vel(1,:);
+% Lat and lon cannot be set in single precision. They need full precision.
+lat_e   =  zeros (tti,1);
+lon_e   =  zeros (tti,1);
 lat_e(1) =   double(gps.lat(1));
 lon_e(1) =   double(gps.lon(1));
-h_e(1)   =   gps.h(1);
 
 DCMnb_old = euler2dcm([roll_e(1); pitch_e(1); yaw_e(1);]);
 DCMbn_old = DCMnb_old';
@@ -114,8 +127,8 @@ Q = (diag([imu.arw, imu.vrw, imu.gpsd, imu.apsd].^2));
 P = diag([ [1 1 1].*d2r, gps.stdv, gps.std, imu.gstd, imu.astd, imu.gb_drift, imu.ab_drift].^2);
 
 % Initialize matrices for INS performance analysis
-PP(1,:) = diag(P)';
-B(1,:)  = [gb_fix', ab_fix', gb_drift', ab_drift'];
+P_diag(1,:) = diag(P)';
+Bias_comp(1,:)  = [gb_fix', ab_fix', gb_drift', ab_drift'];
 WB_FIX(1,:) = imu.wb(1,:)';
 FB_FIX(1,:) = imu.fb(1,:)';
 
@@ -152,17 +165,17 @@ for j = 2:ttg
         % Gravity computer
         g = gravity(lat_e(i-1), h_e(i-1));
         
-        % Velocity Computer
+        % Velocity computer
         fn = DCMbn_new * (fb_fix);
         vel_upd = vel_update(fn, vel_e(i-1,:)', omega_ie_N, omega_en_N, g', dti); %
         vel_e (i,:) = vel_upd';
         
-        % Position Computer
+        % Position computer
         pos = pos_update([lat_e(i-1) lon_e(i-1) double(h_e(i-1))], double(vel_e(i,:)), double(dti) );
         lat_e(i)=pos(1); lon_e(i)=pos(2); h_e(i)=single(pos(3));
         
-        % Compass Computer
-        %         yawm_e(i) = ( hd_update (imu.mb(i,:), roll_e(i),  pitch_e(i), D) );
+        % Magnetic heading computer
+        %  yawm_e(i) = hd_update (imu.mb(i,:), roll_e(i),  pitch_e(i), D);
         
         WB_FIX(i,:) = wb_fix';
         FB_FIX(i,:) = fb_fix';
@@ -227,24 +240,22 @@ for j = 2:ttg
     ab_drift = ab_drift - xu(19:21);
     
     X(j,:) = xu';
-    PP(j,:) = diag(P)';
-    Y(j,:) = y';
-    B(j,:) = [gb_fix', ab_fix', gb_drift', ab_drift'];
+    P_diag(j,:) = diag(P)';
+    Y_inno(j,:) = y';
+    Bias_comp(j,:) = [gb_fix', ab_fix', gb_drift', ab_drift'];
 end
 
-estimates.t     = tins(1:i-1, :);
-estimates.roll  = roll_e(1:i-1, :);
-estimates.pitch = pitch_e(1:i-1, :);
-estimates.yaw = yaw_e(1:i-1, :);
-estimates.vel = vel_e(1:i-1, :);
-estimates.lat = lat_e(1:i-1, :);
-estimates.lon = lon_e(1:i-1, :);
-estimates.h   = h_e(1:i-1, :);
-estimates.PP = PP;
-estimates.B  = B;
-estimates.Y  = Y;
-estimates.X  = X;
-estimates.WB_FIX = WB_FIX;
-estimates.FB_FIX = FB_FIX;
-
+% Estimates from INS procedure
+ins_est.t     = tins(1:i-1, :);     % IMU time
+ins_est.roll  = roll_e(1:i-1, :);   % Roll
+ins_est.pitch = pitch_e(1:i-1, :);  % Pitch      
+ins_est.yaw = yaw_e(1:i-1, :);      % Yaw
+ins_est.vel = vel_e(1:i-1, :);      % NED velocity
+ins_est.lat = lat_e(1:i-1, :);      % Latitude
+ins_est.lon = lon_e(1:i-1, :);      % Longitude
+ins_est.h   = h_e(1:i-1, :);        % Altitude
+ins_est.P_diag = P_diag;            % P matrix diagonal
+ins_est.Bias_comp = Bias_comp;      % Kalman filter bias compensations
+ins_est.Y  = Y_inno;                % Kalman filter innovations
+ins_est.X  = X;                     % Kalman filter states
 end
