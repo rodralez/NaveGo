@@ -37,7 +37,7 @@
 clc
 close all 
 clear
-matlabrc
+% matlabrc
 
 fprintf('\nStarting simulation ... \n')
 
@@ -83,18 +83,19 @@ load ref.mat
 
 %% IMU ADIS16405 error profile
     
-ADIS16405.arw       = 2   .* ones(1,3);       % deg/root-hour
-ADIS16405.vrw       = 0.2 .* ones(1,3);       % m/s/root-hour
-ADIS16405.m_psd     = 0.066 .* ones(1,3);     % mgauss/root-Hz
-ADIS16405.gb_fix    = 3 .* ones(1,3);         % deg/s
-ADIS16405.ab_fix    = 50 .* ones(1,3);        % mg      
-ADIS16405.gb_drift  = 0.007 .* ones(1,3);     % deg/s
-ADIS16405.ab_drift  = 0.2 .* ones(1,3);       % mg      
-ADIS16405.gcorr     = inf;                    % s
-ADIS16405.acorr     = inf;                    % s
-ADIS16405.freq      = 100;                    % Hz
+ADIS16405.arw       = 2   .* ones(1,3);     % deg/root-hour
+ADIS16405.vrw       = 0.2 .* ones(1,3);     % m/s/root-hour
+ADIS16405.m_psd     = 0.066 .* ones(1,3);   % mgauss/root-Hz
+ADIS16405.gb_fix    = 3 .* ones(1,3);       % deg/s
+ADIS16405.ab_fix    = 50 .* ones(1,3);      % mg      
+ADIS16405.gb_drift  = 0.007 .* ones(1,3);   % deg/s
+ADIS16405.ab_drift  = 0.2 .* ones(1,3);     % mg      
+ADIS16405.gcorr     = 100 .* ones(1,3);                  % s
+ADIS16405.acorr     = 100 .* ones(1,3);                  % s
+ADIS16405.freq      = 100;                  % Hz
 
-ref1_i = downsampling (ref, 1/ADIS16405.freq);  
+% ref1_i = downsampling (ref, 1/ADIS16405.freq);  
+ref1_i = ref;
 
 dt = mean(diff(ref1_i.t));                     % Mean period
 
@@ -110,11 +111,12 @@ ADIS16488.gb_fix = 0.2  .* ones(1,3);       % deg/s
 ADIS16488.ab_fix = 16   .* ones(1,3);       % mg      
 ADIS16488.gb_drift = 6.5/3600  .* ones(1,3);% deg/s
 ADIS16488.ab_drift = 0.1  .* ones(1,3);     % mg      
-ADIS16488.gcorr = inf;                      % s
-ADIS16488.acorr = inf;                      % s
+ADIS16488.gcorr = 100 .* ones(1,3);         % s
+ADIS16488.acorr = 100 .* ones(1,3);         % s
 ADIS16488.freq = 100;                       % Hz
 
-ref2_i = downsampling (ref, 1/ADIS16488.freq);  
+% ref2_i = downsampling (ref, 1/ADIS16488.freq);  
+ref2_i = ref;
 
 dt = mean(diff(ref2_i.t));                  % Mean period
 
@@ -259,7 +261,7 @@ if strcmp(IMU1_INS, 'ON')
         ref_g.h   = ref_g.h  (1:fgx, :);    
         ref_g.vel = ref_g.vel(1:fgx, :);  
     else
-    % Eliminate extra inertial meausurements begining at gps.t(end)    
+    % Delete extra inertial meausurements begining at gps.t(end)    
         fgx  = find(imu1.t > gps.t(end), 1, 'first' ); 
         
         imu1.t  = imu1.t  (1:fgx, :);
@@ -276,7 +278,7 @@ if strcmp(IMU1_INS, 'ON')
         ref1_i.vel   = ref1_i.vel  (1:fgx, :);         
     end    
     
-    [imu1_e] = ins(imu1, gps, ref1_i);
+    [imu1_e] = ins(imu1, gps, ref1_i, 'double');
     
     save imu1_e.mat imu1_e    
    
@@ -345,9 +347,8 @@ if strcmp(IMU2_INS, 'ON')
         ref2_i.h     = ref2_i.h    (1:fgx, :);
         ref2_i.vel   = ref2_i.vel  (1:fgx, :);  
     end    
-
     
-    [imu2_e] = ins(imu2, gps, ref2_i);
+    [imu2_e] = ins(imu2, gps, ref2_i, 'single');
     
     save imu2_e.mat imu2_e
     
@@ -514,7 +515,7 @@ fprintf( ' Altitude,  IMU2 = %.4e m, GPS = %.4e. m\n', ...
 
 if (strcmp(PLOT,'ON'))
 
-sig3_rr = abs(imu1_e.PP.^(0.5)).*3;
+sig3_rr = abs(imu1_e.P_diag.^(0.5)).*3;
 
 % TRAJECTORY
 figure; 
