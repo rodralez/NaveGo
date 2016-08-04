@@ -1,5 +1,5 @@
 function cor_b = coriolis_b(lat, vel, h, DCMnb)
-% cor_b: projects Coriolis forces from navigation frame to the body frame
+% coriolis_b: projects Coriolis forces from navigation frame to the body frame
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
