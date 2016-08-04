@@ -1,5 +1,5 @@
 function [RM,RN] = radius(lat, precision)
-% radius: calculates meridian radius and normal radius. 
+% radius: calculates meridian and normal radiuses. 
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
