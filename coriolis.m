@@ -1,5 +1,5 @@
 function cor_n = coriolis(lat, vel, h)
-% cor_n: calculates Coriolis forces in the navigation frame.
+% coriolis: calculates Coriolis forces in the navigation frame.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
