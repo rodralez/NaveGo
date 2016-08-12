@@ -129,8 +129,6 @@ P = diag([ [1 1 1].*d2r, gps.stdv, gps.std, imu.gstd, imu.astd, imu.gb_drift, im
 % Initialize matrices for INS performance analysis
 P_diag(1,:) = diag(P)';
 Bias_comp(1,:)  = [gb_fix', ab_fix', gb_drift', ab_drift'];
-WB_FIX(1,:) = imu.wb(1,:)';
-FB_FIX(1,:) = imu.fb(1,:)';
 
 % SINS index
 i = 2;
@@ -176,9 +174,6 @@ for j = 2:ttg
         
         % Magnetic heading computer
         %  yawm_e(i) = hd_update (imu.mb(i,:), roll_e(i),  pitch_e(i), D);
-        
-        WB_FIX(i,:) = wb_fix';
-        FB_FIX(i,:) = fb_fix';
         
         % Index
         i = i + 1;
@@ -239,6 +234,7 @@ for j = 2:ttg
     gb_drift = gb_drift - xu(16:18);
     ab_drift = ab_drift - xu(19:21);
     
+    % Matrices for INS performance analysis
     X(j,:) = xu';
     P_diag(j,:) = diag(P)';
     Y_inno(j,:) = y';
@@ -256,6 +252,6 @@ ins_est.lon = lon_e(1:i-1, :);      % Longitude
 ins_est.h   = h_e(1:i-1, :);        % Altitude
 ins_est.P_diag = P_diag;            % P matrix diagonal
 ins_est.Bias_comp = Bias_comp;      % Kalman filter bias compensations
-ins_est.Y  = Y_inno;                % Kalman filter innovations
-ins_est.X  = X;                     % Kalman filter states
+ins_est.Y_inno = Y_inno;            % Kalman filter innovations
+ins_est.X = X;                      % Kalman filter states
 end

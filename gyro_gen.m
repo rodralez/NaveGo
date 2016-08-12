@@ -92,26 +92,6 @@ else
     end
 end
 
-% Simulate bias instability (Jerath)
-% if (isinf(imu.acorr))
-%     
-%     sigmc = imu.gb_drift;
-%     b_drift = [sigmc(1).*r4 sigmc(2).*r5 sigmc(3).*r6];
-% else
-%     TC = imu.gcorr;
-%     B = imu.gb_drift;
-%     dt = mean(diff(imu.t));
-%     
-%     b_drift = zeros(N,3);
-%     b_drift(1,:) = zeros(1,3);
-%     
-%     for i = 2:1:N
-%         
-%         bdot = (-dt./TC) * b_drift(i-1) + B .* randn(1,3);
-%         b_drift(i,:) = b_drift(i-1,:) + bdot;
-%     end
-% end
-
 wb = gyro_b + gyro_err_b + ...
      [imu.gstd(1).*r1    imu.gstd(2).*r2    imu.gstd(3).*r3 ] + ...
      [gb_fix(1).*o   gb_fix(2).*o   gb_fix(3).*o] + ...
