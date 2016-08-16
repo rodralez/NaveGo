@@ -1,7 +1,7 @@
 # NaveGo
 ________
 
-[![Releases](https://img.shields.io/badge/release-v0.7--alpha-blue.svg?style=plastic)](https://github.com/rodralez/NaveGo/releases) [![DOI](https://zenodo.org/badge/23904/rodralez/NaveGo.svg)](https://zenodo.org/badge/latestdoi/23904/rodralez/NaveGo)
+[![Releases](https://img.shields.io/badge/release-v0.7--alpha-green.svg?style=plastic)](https://github.com/rodralez/NaveGo/releases) [![DOI](https://zenodo.org/badge/23904/rodralez/NaveGo.svg)](https://zenodo.org/badge/latestdoi/23904/rodralez/NaveGo)
 
 NaveGo: an open-source MATLAB toolbox for simulating integrated navigation systems.
 
