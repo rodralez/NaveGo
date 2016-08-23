@@ -66,11 +66,11 @@ if (~exist('RMSE','var')),      RMSE = 'OFF'; end
 if (~exist('PLOT','var')),      PLOT = 'OFF'; end
 
     
-%% CONVERSIONS
+%% CONVERSION CONSTANTS
 
 ms2kmh = 3.6;       % m/s to km/h  
-d2r = (pi/180);     % degrees to rad
-r2d = (180/pi);     % rad to degrees
+d2r = (pi/180);     % degrees to radians
+r2d = (180/pi);     % radians to degrees
 mss2g = (1/9.81);   % m/s^2 to g  
 g2mss = 9.81;
 kt2ms = 0.514444444;% knot to m/s
@@ -90,16 +90,19 @@ ADIS16405.gb_fix    = 3 .* ones(1,3);       % deg/s
 ADIS16405.ab_fix    = 50 .* ones(1,3);      % mg      
 ADIS16405.gb_drift  = 0.007 .* ones(1,3);   % deg/s
 ADIS16405.ab_drift  = 0.2 .* ones(1,3);     % mg      
-ADIS16405.gcorr     = 100 .* ones(1,3);                  % s
-ADIS16405.acorr     = 100 .* ones(1,3);                  % s
+ADIS16405.gcorr     = 100 .* ones(1,3);     % s
+ADIS16405.acorr     = 100 .* ones(1,3);     % s
 ADIS16405.freq      = 100;                  % Hz
 
-% ref1_i = downsampling (ref, 1/ADIS16405.freq);  
+% ref1_i = downsampling (ref, 1/ADIS16405.freq);  % Resample if ref and imu
+                                                  % have differente operation frequencies.
+
 ref1_i = ref;
 
-dt = mean(diff(ref1_i.t));                     % Mean period
+dt = mean(diff(ref1_i.t));                  % Mean period
 
-imu1 = imu_err_profile(ADIS16405, dt);
+
+imu1 = imu_err_profile(ADIS16405, dt);      % Transform IMU manufacturer units to SI units
 
 
 %% IMU ADIS16488 error profile
@@ -115,30 +118,30 @@ ADIS16488.gcorr = 100 .* ones(1,3);         % s
 ADIS16488.acorr = 100 .* ones(1,3);         % s
 ADIS16488.freq = 100;                       % Hz
 
-% ref2_i = downsampling (ref, 1/ADIS16488.freq);  
+% ref2_i = downsampling (ref, 1/ADIS16488.freq);  % Resample if ref and imu
+                                                  % have differente operation frequencies.
 ref2_i = ref;
 
 dt = mean(diff(ref2_i.t));                  % Mean period
 
-imu2 = imu_err_profile(ADIS16488, dt);
+imu2 = imu_err_profile(ADIS16488, dt);      % Transform IMU manufacturer error units to SI units.
 
 %% GPS Garmin 5-18 Hz error profile
 
 gps.stdm = [5, 5, 10];                 % m
 gps.stdv = 0.1 * kt2ms .* ones(1,3);   % knot -> m/s
 gps.larm = zeros(3,1);                 % Lever arm
-gps.freq = 5;                          % Hertz
-
+gps.freq = 5;                          % Hz
 
 %% SIMULATE GPS
 
-rng('shuffle')
+rng('shuffle')                  % Reset pseudo-random seed
 
-if strcmp(GPS_DATA, 'ON')
+if strcmp(GPS_DATA, 'ON')       % If GPS simulated data is required ...
 
-    fprintf('Generating GPS data... \n')
+    fprintf('Simulating GPS data... \n')
 
-    gps = gps_err_profile(ref.lat(1), ref.h(1), gps); 
+    gps = gps_err_profile(ref.lat(1), ref.h(1), gps); % Transform GPS manufacturer error units to SI units.
     
     [gps, ref_g] = gps_gen(ref, gps);
     
@@ -155,7 +158,7 @@ end
 
 %% SIMULATE imu1
 
-rng('shuffle')
+rng('shuffle')                  % Reset pseudo-random seed
 
 if strcmp(IMU1_DATA, 'ON')
 

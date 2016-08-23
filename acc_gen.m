@@ -1,9 +1,16 @@
 function [fb] = acc_gen (ref, imu)
 % acc_gen: generates simulated accelerometers measurements from reference
 %           data and imu error profile.
+% INPUT:
+%		ref: data structure with true trajectory.
+%		imu: data structure with IMU error profile.
+%
+% OUTPUT:
+%		fb: Nx3 matrix with [fx, fy, fz] simulated accelerations in the
+%		body frame.
 %
 %   Copyright (C) 2014, Rodrigo González, all rights reserved. 
-%     
+%    
 %   This file is part of NaveGo, an open-source MATLAB toolbox for 
 %   simulation of integrated navigation systems.
 %     
