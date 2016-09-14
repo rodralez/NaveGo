@@ -25,14 +25,10 @@
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015. Eq. 26.
 %
-% Version: 001
-% Date:    2014/09/18
+% Version: 002
+% Date:    2016/09/14
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
-%
-% KNOWN ISSUES: acceleration in Z axis is considered negative downward because
-% Navego works (surprisingly) better this way. This Z axis orientation does
-% not correspond with NED coordinates.
 
 clc
 close all
