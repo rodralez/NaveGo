@@ -43,15 +43,15 @@ global d2r
 
 %% PARAMETERS
 
-GPS_DATA  = 'ON';
-IMU1_DATA = 'ON';
-IMU2_DATA = 'ON';
+GPS_DATA  = 'ON';   % Simulate GPS data
+IMU1_DATA = 'ON';   % Simulate ADIS16405 IMU data
+IMU2_DATA = 'ON';   % Simulate ADIS16488 IMU data
 
-IMU1_INS  = 'ON';
-IMU2_INS  = 'ON';
+IMU1_INS  = 'ON';   % Execute INS/GPS integration for ADIS16405 IMU
+IMU2_INS  = 'ON';   % Execute INS/GPS integration for ADIS16488 IMU
 
-RMSE      = 'ON';
-PLOT      = 'ON';
+RMSE      = 'ON';   % Show on consolte RMSE results.
+PLOT      = 'ON';   % Plot results.
 
 if (~exist('GPS_DATA','var')),  GPS_DATA  = 'OFF'; end
 if (~exist('IMU1_DATA','var')), IMU1_DATA = 'OFF'; end
@@ -70,13 +70,13 @@ mss2g = (1/9.81);   % m/s^2 to g
 g2mss = 9.81;
 kt2ms = 0.514444444;% knot to m/s
 
-%% LOAD REF DATA
+%% LOAD REFERENCE DATA
 
-fprintf('Loading trajectory generator data... \n')
+fprintf('Loading dataset from a trajectory generator... \n')
 
 load ref.mat
 
-%% IMU ADIS16405 error profile
+%% ADIS16405 IMU error profile
 
 ADIS16405.arw       = 2   .* ones(1,3);     % deg/root-hour
 ADIS16405.vrw       = 0.2 .* ones(1,3);     % m/s/root-hour
@@ -98,7 +98,7 @@ dt = mean(diff(ref_1.t));                   % Mean period
 imu1 = imu_err_profile(ADIS16405, dt);      % Transform IMU manufacturer units to SI units
 
 
-%% IMU ADIS16488 error profile
+%% ADIS16488 IMU error profile
 
 ADIS16488.arw = 0.3     .* ones(1,3);       % degrees/root-hour
 ADIS16488.vrw = 0.029   .* ones(1,3);       % m/s/root-hour
@@ -119,7 +119,7 @@ dt = mean(diff(ref_2.t));                     % Mean period
 
 imu2 = imu_err_profile(ADIS16488, dt);      % Transform IMU manufacturer error units to SI units.
 
-%% GPS Garmin 5-18 Hz error profile
+%% Garmin 5-18 Hz GPS error profile
 
 gps.stdm = [5, 5, 10];                 % m
 gps.stdv = 0.1 * kt2ms .* ones(1,3);   % knot -> m/s
@@ -216,13 +216,14 @@ else
     load ref_2.mat
 end
 
-%% imu1/GPS INTEGRATION WITH FK
+%% imu1/GPS INTEGRATION WITH EFK
 
 if strcmp(IMU1_INS, 'ON')
     
-    fprintf('SINS/GPS integration using IMU1... \n')
+    fprintf('INS/GPS integration for IMU1... \n')
     
     % Sincronize GPS data with IMU data.
+    
     % Guarantee that gps.t(1) < imu1.t(1) < gps.t(2)
     if (imu1.t(1) < gps.t(1)),
         
@@ -284,18 +285,19 @@ if strcmp(IMU1_INS, 'ON')
     
 else
     
-    fprintf('Loading SINS/GPS integration using IMU1... \n')
+    fprintf('Loading INS/GPS integration for IMU1... \n')
     
     load imu1_e.mat
 end
 
-%% imu2/GPS INTEGRATION WITH FK
+%% imu2/GPS INTEGRATION WITH EFK
 
 if strcmp(IMU2_INS, 'ON')
     
-    fprintf('\nSINS/GPS integration using IMU2... \n')
+    fprintf('\nINS/GPS integration for IMU2... \n')
     
     % Sincronize GPS data with IMU data.
+    
     % Guarantee that gps.t(1) < imu2.t(1) < gps.t(2)
     if (imu2.t(1) < gps.t(1)),
         
@@ -357,7 +359,7 @@ if strcmp(IMU2_INS, 'ON')
     
 else
     
-    fprintf('Loading SINS/GPS integration using IMU2... \n')
+    fprintf('Loading INS/GPS integration for IMU2... \n')
     
     load imu2_e.mat
 end
@@ -366,7 +368,7 @@ end
 
 to = (ref.t(end) - ref.t(1));
 
-fprintf('\n>> Navigation time: %4.3f min. or %4.3f sec. \n', (to/60), to)
+fprintf('\n>> Navigation time: %4.2f minutes or %4.2f seconds. \n', (to/60), to)
 
 %% Print RMSE IMU1
 
@@ -418,7 +420,7 @@ RMSE_ve_g   = rmse (gps.vel(:,2),   ref_g.vel(:,2));
 RMSE_vd_g   = rmse (gps.vel(:,3),   ref_g.vel(:,3));
 
 % Print RMSE
-fprintf( '\n>> RMSE IMU1\n');
+fprintf( '\n>> RMSE for IMU1\n');
 
 fprintf( ' Roll,  IMU1 = %.4e deg.\n', ...
     RMSE_roll);
@@ -491,7 +493,7 @@ RMSE_ve_g   = rmse (gps.vel(:,2),   ref_g.vel(:,2));
 RMSE_vd_g   = rmse (gps.vel(:,3),   ref_g.vel(:,3));
 
 % Print into console
-fprintf( '\n>> RMSE IMU2\n');
+fprintf( '\n>> RMSE for IMU2\n');
 
 fprintf( ' Roll,  IMU2 = %.4e deg.\n', ...
     RMSE_roll);
