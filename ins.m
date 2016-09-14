@@ -40,7 +40,7 @@ tgps = gps.t;
 tti = (max(size(tins)));
 ttg = (max(size(tgps)));
 
-if strcmp(precision, 'single')
+if strcmp(precision, 'single')  % single precision
     
     % Preallocate memory for estimates
     roll_e  =  single(zeros (tti,1));
@@ -50,7 +50,7 @@ if strcmp(precision, 'single')
     h_e     =  single(zeros (tti,1));
     x = single(zeros(21,1));
     
-    % Constant matrix
+    % Constant matrices
     I =  single(eye(3));
     Z =  single(zeros(3));
     
@@ -58,9 +58,9 @@ if strcmp(precision, 'single')
     Y_inno =  single(zeros(ttg,6));     % Kalman filter innovations
     P_diag = single(zeros(ttg,21));     % Diagonal from matrix P
     X =  single(zeros(ttg,21));         % Evolution of Kalman filter states
-    Bias_comp =  single(zeros(ttg,12)); % Bias compensantion after Kalman filter correction
+    Bias_comp =  single(zeros(ttg,12)); % Biases compensantions after Kalman filter correction
     
-    % Initialize bias variables
+    % Initialize biases variables
     gb_drift = single(imu.gb_drift');
     ab_drift = single(imu.ab_drift');
     gb_fix = single(imu.gb_fix');
@@ -75,7 +75,7 @@ if strcmp(precision, 'single')
     h_e(1)     = single(gps.h(1));
     vel_e(1,:) = single(zeros(1,3)); 
     
-else
+else % double precision
     
     % Preallocate memory for estimates
     roll_e  =  (zeros (tti,1));
@@ -85,7 +85,7 @@ else
     h_e     =  (zeros (tti,1));
     x = (zeros(21,1));  
     
-    % Constant matrix
+    % Constant matrices
     I =  (eye(3));
     Z =  (zeros(3));
     
@@ -93,22 +93,21 @@ else
     Y_inno =  (zeros(ttg,6));       % Kalman filter innovations
     P_diag = (zeros(ttg,21));       % Diagonal from matrix P
     X =  (zeros(ttg,21));           % Evolution of Kalman filter states
-    Bias_comp =  (zeros(ttg,12));   % Bias compensantion after Kalman filter correction
+    Bias_comp =  (zeros(ttg,12));   % Biases compensantions after Kalman filter correction
     
-    % Initialize bias variables
+    % Initialize biases variables
     gb_drift = imu.gb_drift';
     ab_drift = imu.ab_drift';
     gb_fix = imu.gb_fix';
     ab_fix = imu.ab_fix';
     
-    % Initialize estimates at tti=1
+    % Initialize estimates at tti = 1
     roll_e (1) = ref.roll(1);
     pitch_e(1) = ref.pitch(1);
     yaw_e(1)   = ref.yaw(1);
     vel_e(1,:) = gps.vel(1,:);    
     h_e(1)     = gps.h(1);
-    vel_e(1,:) = zeros(1,3);     
-   
+    vel_e(1,:) = zeros(1,3);        
 end
 
 % Lat and lon cannot be set in single precision. They need full precision.
@@ -124,7 +123,7 @@ quaold = euler2qua([roll_e(1) pitch_e(1) yaw_e(1)]);
 % Kalman filter matrices
 R = diag([gps.stdv, gps.stdm].^2);
 Q = (diag([imu.arw, imu.vrw, imu.gpsd, imu.apsd].^2));
-P = diag([ [1 1 1].*d2r, gps.stdv, gps.std, imu.gstd, imu.astd, imu.gb_drift, imu.ab_drift].^2);
+P = diag([ [1 1 5].*d2r, gps.stdv, gps.std, imu.gstd, imu.astd, imu.gb_drift, imu.ab_drift].^2);
 
 % Initialize matrices for INS performance analysis
 P_diag(1,:) = diag(P)';
@@ -175,7 +174,7 @@ for j = 2:ttg
         % Magnetic heading computer
         %  yawm_e(i) = hd_update (imu.mb(i,:), roll_e(i),  pitch_e(i), D);
         
-        % Index
+        % Index for SINS navigation update
         i = i + 1;
     end
     
@@ -204,7 +203,7 @@ for j = 2:ttg
     H = [Z I Z Z Z Z Z;
         Z Z Tpr Z Z Z Z; ];
     
-    [xu, P] = kalman(x, y, F, H, G, P, Q, R, dtg);
+    [xu, P] = kalman(x, y, F, H, G, P, Q, R, dtg); % 
     
     % DCM correction
     E = skewm(xu(1:3));
@@ -251,7 +250,7 @@ ins_est.lat = lat_e(1:i-1, :);      % Latitude
 ins_est.lon = lon_e(1:i-1, :);      % Longitude
 ins_est.h   = h_e(1:i-1, :);        % Altitude
 ins_est.P_diag = P_diag;            % P matrix diagonal
-ins_est.Bias_comp = Bias_comp;      % Kalman filter bias compensations
+ins_est.Bias_comp = Bias_comp;      % Kalman filter biases compensations
 ins_est.Y_inno = Y_inno;            % Kalman filter innovations
 ins_est.X = X;                      % Kalman filter states
 end

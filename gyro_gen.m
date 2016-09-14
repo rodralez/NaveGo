@@ -74,7 +74,7 @@ if (isinf(imu.gcorr))
 else
     % Gyro correlation noise
     gcorr = zeros(ref.kn,3);
-    dt=mean(diff(imu.t));
+    dt=mean(diff(ref.t));
     alpha = exp(-dt./imu.gcorr);
     sigmc = imu.gb_drift .* sqrt(1 - alpha.^2);
     gcorr(1,:) = gb_fix' + [sigmc(1).*r4(1) sigmc(2).*r5(1) sigmc(3).*r6(1)];

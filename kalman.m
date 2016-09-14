@@ -37,8 +37,8 @@ IS = (R + H * P * H');
 K = (P * H') / (IS) ;
 
 % Step 2, update vector state
-% xu = x + K * (y - H*x);
-xu = K*y;
+xu = x + K * (y - H*x);
+% xu = K*y;                 % This expression can be used when x = 0.
 
 % Step 3, update covariance matrix
 Pu = (I - K*H) * P ;
