@@ -72,9 +72,9 @@ kt2ms = 0.514444444;% knot to m/s
 
 %% LOAD REFERENCE DATA
 
-fprintf('Loading dataset from a trajectory generator... \n')
+fprintf('Loading reference dataset from a trajectory generator... \n')
 
-load ref.mat
+load ref.mat 
 
 %% ADIS16405 IMU error profile
 
@@ -138,7 +138,7 @@ if strcmp(GPS_DATA, 'ON')               % If GPS simulated data is required ...
     
     [gps, ref_g] = gps_gen(ref, gps);   % Generate GPS dataset from reference dataset.
                                         % ref_g is the ref dataset
-                                        % resampled using GPS time.
+                                        % resampled at GPS vector time.
     save gps.mat gps
     save ref_g.mat ref_g
     
@@ -157,17 +157,13 @@ rng('shuffle')                  % Reset pseudo-random seed
 if strcmp(IMU1_DATA, 'ON')
     
     fprintf('Generating IMU1 ACCR data... \n')
-    
-    % KNOWN ISSUES: acceleration in Z axis is considered negative downward because
-    % Navego works (surprisingly) better this way. This Z axis orientation does
-    % not correspond with NED coordinates.
-    
-    fb = acc_gen (ref_1, imu1);
+        
+    fb = acc_gen (ref_1, imu1); % Generate acc in the body frame
     imu1.fb = fb;
     
     fprintf('Generating IMU1 GYRO data... \n')
     
-    wb = gyro_gen (ref_1, imu1);
+    wb = gyro_gen (ref_1, imu1);% Generate gyro in the body frame
     imu1.wb = wb;
     
     imu1.t = ref_1.t;
@@ -193,12 +189,12 @@ if strcmp(IMU2_DATA, 'ON')
     
     fprintf('Generating IMU2 ACCR data... \n')
     
-    fb = acc_gen (ref_2, imu2);
+    fb = acc_gen (ref_2, imu2); % Generate acc in the body frame
     imu2.fb = fb;
     
     fprintf('Generating IMU2 GYRO data... \n')
     
-    wb = gyro_gen (ref_2, imu2);
+    wb = gyro_gen (ref_2, imu2);% Generate gyro in the body frame
     imu2.wb = wb;
     
     imu2.t = ref_2.t;
@@ -259,7 +255,7 @@ if strcmp(IMU1_INS, 'ON')
         ref_g.h   = ref_g.h  (1:fgx, :);
         ref_g.vel = ref_g.vel(1:fgx, :);
     else
-        % Delete extra inertial meausurements begining at gps.t(end)
+        % Delete extra inertial measurements beginning at gps.t(end)
         fgx  = find(imu1.t > gps.t(end), 1, 'first' );
         
         imu1.t  = imu1.t  (1:fgx, :);
@@ -333,7 +329,7 @@ if strcmp(IMU2_INS, 'ON')
         ref_g.h   = ref_g.h(1:fgx, :);
         ref_g.vel = ref_g.vel(1:fgx, :);
     else
-        % Eliminate extra inertial meausurements begining at gps.t(end)
+        % Delete extra inertial measurements beginning at gps.t(end)
         fgx  = find(imu2.t > gps.t(end), 1, 'first' );
         
         imu2.t  = imu2.t  (1:fgx, :);
@@ -370,7 +366,7 @@ to = (ref.t(end) - ref.t(1));
 
 fprintf('\n>> Navigation time: %4.2f minutes or %4.2f seconds. \n', (to/60), to)
 
-%% Print RMSE IMU1
+%% Print RMSE from IMU1
 
 fe = max(size(imu1_e.t));
 fr = max(size(ref_1.t));
@@ -443,7 +439,7 @@ fprintf( ' Longitude, IMU1 = %.4e m, GPS = %.4e. m\n', ...
 fprintf( ' Altitude,  IMU1 = %.4e m, GPS = %.4e. m\n', ...
     RMSE_h, RMSE_h_g);
 
-%% Print RMSE IMU2
+%% Print RMSE from IMU2
 
 fe = max(size(imu2_e.t));
 fr = max(size(ref_2.t));
