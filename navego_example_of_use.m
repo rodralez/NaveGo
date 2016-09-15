@@ -26,7 +26,7 @@
 % issue 2, pp. 110-120, 2015. Eq. 26.
 %
 % Version: 002
-% Date:    2016/09/14
+% Date:    2016/09/15
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
