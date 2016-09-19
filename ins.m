@@ -176,6 +176,7 @@ for j = 2:ttg
         
         % Index for SINS navigation update
         i = i + 1;
+        
     end
     
     % GPS period

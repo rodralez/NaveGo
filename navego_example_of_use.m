@@ -25,8 +25,8 @@
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015. Eq. 26.
 %
-% Version: 002
-% Date:    2016/09/15
+% Version: 003
+% Date:    2016/09/19
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -43,6 +43,9 @@ global d2r
 
 %% PARAMETERS
 
+% Comment parameters in order to not execute a particular portion of
+% this example
+
 GPS_DATA  = 'ON';   % Simulate GPS data
 IMU1_DATA = 'ON';   % Simulate ADIS16405 IMU data
 IMU2_DATA = 'ON';   % Simulate ADIS16488 IMU data
@@ -52,6 +55,8 @@ IMU2_INS  = 'ON';   % Execute INS/GPS integration for ADIS16488 IMU
 
 RMSE      = 'ON';   % Show on consolte RMSE results.
 PLOT      = 'ON';   % Plot results.
+
+% If not executed, load a dataset previously saved.
 
 if (~exist('GPS_DATA','var')),  GPS_DATA  = 'OFF'; end
 if (~exist('IMU1_DATA','var')), IMU1_DATA = 'OFF'; end
@@ -75,6 +80,25 @@ kt2ms = 0.514444444;% knot to m/s
 fprintf('Loading reference dataset from a trajectory generator... \n')
 
 load ref.mat 
+
+% ref.mat contains the reference dataset from which inertial sensors and 
+% GPS wil be simulated. It must contain the following fields:
+
+%         t: time vector (seconds).
+%       lat: latitude vector (radians).
+%       lon: longitude vector (radians).
+%         h: altitude vector (meters).
+%       vel: NED velocities vectors, [north east down] (meters/s).
+%      roll: roll angle vector (radians).
+%     pitch: pitch angle vector (radians).
+%       yaw: yaw angle vector (radians).
+%        kn: number of elements of time vector.
+%     DCMnb: Direct Cosine Matrix nav-to-body, with 'kn'rows and 9
+%     columns. Each row contains the elements of one matrix ordered by 
+%     columns as [a11 a21 a31 a12 a22 a32 a13 a23 a33]. Use reshape 
+%     built-in function to get the original 3x3 matrix
+%     (reshape(DCMnb(n,:),3,3)).
+%      freq: sampling frequency (Hz).
 
 %% ADIS16405 IMU error profile
 
@@ -115,7 +139,7 @@ ADIS16488.freq = 100;                       % Hz
                                                 
 ref_2 = ref;
 
-dt = mean(diff(ref_2.t));                     % Mean period
+dt = mean(diff(ref_2.t));                   % Mean period
 
 imu2 = imu_err_profile(ADIS16488, dt);      % Transform IMU manufacturer error units to SI units.
 
@@ -240,7 +264,7 @@ if strcmp(IMU1_INS, 'ON')
     end
     
     % Guarantee that imu1.t(end-1) < gps.t(end) < imu1.t(end)
-    if (imu1.t(end) < gps.t(end)),
+    if (imu1.t(end) <= gps.t(end)),
         
         fgx  = find(gps.t < imu1.t(end), 1, 'last' );
         
@@ -254,22 +278,6 @@ if strcmp(IMU1_INS, 'ON')
         ref_g.lon = ref_g.lon(1:fgx, :);
         ref_g.h   = ref_g.h  (1:fgx, :);
         ref_g.vel = ref_g.vel(1:fgx, :);
-    else
-        % Delete extra inertial measurements beginning at gps.t(end)
-        fgx  = find(imu1.t > gps.t(end), 1, 'first' );
-        
-        imu1.t  = imu1.t  (1:fgx, :);
-        imu1.fb = imu1.fb (1:fgx, :);
-        imu1.wb = imu1.wb (1:fgx, :);
-        
-        ref_1.t     = ref_1.t    (1:fgx, :);
-        ref_1.roll  = ref_1.roll (1:fgx, :);
-        ref_1.pitch = ref_1.pitch(1:fgx, :);
-        ref_1.yaw   = ref_1.yaw  (1:fgx, :);
-        ref_1.lat   = ref_1.lat  (1:fgx, :);
-        ref_1.lon   = ref_1.lon  (1:fgx, :);
-        ref_1.h     = ref_1.h    (1:fgx, :);
-        ref_1.vel   = ref_1.vel  (1:fgx, :);
     end
     
     % Execute INS/GPS integration
@@ -314,7 +322,7 @@ if strcmp(IMU2_INS, 'ON')
     end
     
     % Guarantee that imu2.t(end-1) < gps.t(end) < imu2.t(end)
-    if (imu2.t(end) < gps.t(end)),
+    if (imu2.t(end) <= gps.t(end)),
         
         fgx  = find(gps.t < imu2.t(end), 1, 'last' );
         
@@ -328,22 +336,6 @@ if strcmp(IMU2_INS, 'ON')
         ref_g.lon = ref_g.lon(1:fgx, :);
         ref_g.h   = ref_g.h(1:fgx, :);
         ref_g.vel = ref_g.vel(1:fgx, :);
-    else
-        % Delete extra inertial measurements beginning at gps.t(end)
-        fgx  = find(imu2.t > gps.t(end), 1, 'first' );
-        
-        imu2.t  = imu2.t  (1:fgx, :);
-        imu2.fb = imu2.fb (1:fgx, :);
-        imu2.wb = imu2.wb (1:fgx, :);
-        
-        ref_2.t     = ref_2.t    (1:fgx, :);
-        ref_2.roll  = ref_2.roll (1:fgx, :);
-        ref_2.pitch = ref_2.pitch(1:fgx, :);
-        ref_2.yaw   = ref_2.yaw  (1:fgx, :);
-        ref_2.lat   = ref_2.lat  (1:fgx, :);
-        ref_2.lon   = ref_2.lon  (1:fgx, :);
-        ref_2.h     = ref_2.h    (1:fgx, :);
-        ref_2.vel   = ref_2.vel  (1:fgx, :);
     end
     
     % Execute INS/GPS integration
