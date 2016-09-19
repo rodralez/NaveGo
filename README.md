@@ -20,4 +20,4 @@ The underlying mathematical model of NaveGo is based on two articles that are re
 
 * R. Gonzalez, J.I. Giribet, and H.D. Patiño. An approach to benchmarking of loosely coupled low-cost navigation systems. Mathematical and Computer Modelling of Dynamical Systems, vol. 21, issue 3, pp. 272-287, 2015. [Link](http://www.tandfonline.com/doi/abs/10.1080/13873954.2014.952642).
 
-
+The file `navego_example_of_use.m` tries to demonstrate the use of NaveGo. It compares the performances of two simulated IMUs, ADIS16405 IMU and ADIS16488 IMU. 
