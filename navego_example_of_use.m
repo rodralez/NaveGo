@@ -113,6 +113,8 @@ ADIS16405.gcorr     = 100 .* ones(1,3);     % s
 ADIS16405.acorr     = 100 .* ones(1,3);     % s
 ADIS16405.freq      = 100;                  % Hz
 
+ADIS16405.att_init = [0.5 0.5 1].*d2r;      % [roll pitch yaw] Initial attitude for the matrix P in Kalman filter
+
 % ref_1 = downsampling (ref, 1/ADIS16405.freq); % Resample ref if ref and imu
                                                 % have differente operation frequencies.
 ref_1 = ref;
@@ -135,7 +137,9 @@ ADIS16488.gcorr = 100 .* ones(1,3);         % s
 ADIS16488.acorr = 100 .* ones(1,3);         % s
 ADIS16488.freq = 100;                       % Hz
 
-% imu2 = downsampling (ref, 1/ADIS16488.freq);  % Resample if ref and imu have differente operation frequencies.
+ADIS16488.att_init = [0.5 0.5 1].*d2r;      % Initial attitude for the matrix P in Kalman filter
+
+% ref_2 = downsampling (ref, 1/ADIS16488.freq);  % Resample if ref and imu have differente operation frequencies.
                                                 
 ref_2 = ref;
 

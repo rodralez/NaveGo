@@ -123,7 +123,7 @@ quaold = euler2qua([roll_e(1) pitch_e(1) yaw_e(1)]);
 % Kalman filter matrices
 R = diag([gps.stdv, gps.stdm].^2);
 Q = (diag([imu.arw, imu.vrw, imu.gpsd, imu.apsd].^2));
-P = diag([ [0.5 0.5 1].*d2r, gps.stdv, gps.std, imu.gstd, imu.astd, imu.gb_drift, imu.ab_drift].^2);
+P = diag([imu.att_init, gps.stdv, gps.std, imu.gstd, imu.astd, imu.gb_drift, imu.ab_drift].^2);
 
 % Initialize matrices for INS performance analysis
 P_diag(1,:) = diag(P)';
@@ -139,6 +139,8 @@ for j = 2:ttg
         
         % Print a dot on console every 10,000 SINS executions
         if (mod(i,10000) == 0), fprintf('. '); end
+        % Print a return on console every 100,000 SINS executions
+        if (mod(i,100000) == 0), fprintf('\n'); end
         
         % SINS period
         dti = tins(i) - tins(i-1);
@@ -179,11 +181,7 @@ for j = 2:ttg
         
     end
     
-    % GPS period
-    dtg = tgps(j) - tgps(j-1);
-    
-    % Vector to update matrix F
-    upd = [vel_e(i-1,:) lat_e(i-1) h_e(i-1) fn'];
+    %% Innovation update section
     
     [RM,RN] = radius(lat_e(i-1), precision);
     Tpr = diag([(RM+h_e(i-1)), (RN+h_e(i-1))*cos(lat_e(i-1)), -1]);  % rad-to-meters
@@ -195,7 +193,13 @@ for j = 2:ttg
     yv = (vel_e (i-1,:) - gps.vel(j,:))';
     y = [ yv' yp' ]';
     
-    % Execute the extended Kalman filter
+    %% Kalman filter update section
+    
+    % GPS period
+    dtg = tgps(j) - tgps(j-1);
+    
+    % Vector to update matrix F
+    upd = [vel_e(i-1,:) lat_e(i-1) h_e(i-1) fn'];
     
     % Update matrices F and G
     [F, G] = F_update(upd, DCMbn_new, imu);
@@ -204,7 +208,10 @@ for j = 2:ttg
     H = [Z I Z Z Z Z Z;
         Z Z Tpr Z Z Z Z; ];
     
+    % Execute the extended Kalman filter
     [xu, P] = kalman(x, y, F, H, G, P, Q, R, dtg); % 
+    
+    %% Corrections section
     
     % DCM correction
     E = skewm(xu(1:3));
@@ -213,7 +220,7 @@ for j = 2:ttg
     % Quaternion correction
     antm = [0 quanew(3) -quanew(2); -quanew(3) 0 quanew(1); quanew(2) -quanew(1) 0];
     quaold = quanew + 0.5 .* [quanew(4)*eye(3) + antm; -1.*[quanew(1) quanew(2) quanew(3)]] * xu(1:3);
-    quaold = quaold/norm(quaold);
+    quaold = quaold/norm(quaold);       % Brute force normalization
     
     % Attitude correction
     roll_e(i-1)  = roll_e(i-1)  - xu(1);
@@ -234,24 +241,24 @@ for j = 2:ttg
     gb_drift = gb_drift - xu(16:18);
     ab_drift = ab_drift - xu(19:21);
     
-    % Matrices for INS performance analysis
+    % Matrices for later INS/GPS performance analysis
     X(j,:) = xu';
     P_diag(j,:) = diag(P)';
     Y_inno(j,:) = y';
     Bias_comp(j,:) = [gb_fix', ab_fix', gb_drift', ab_drift'];
 end
 
-% Estimates from INS procedure
+% Estimates from INS/GPS procedure
 ins_est.t     = tins(1:i-1, :);     % IMU time
 ins_est.roll  = roll_e(1:i-1, :);   % Roll
 ins_est.pitch = pitch_e(1:i-1, :);  % Pitch      
 ins_est.yaw = yaw_e(1:i-1, :);      % Yaw
-ins_est.vel = vel_e(1:i-1, :);      % NED velocity
+ins_est.vel = vel_e(1:i-1, :);      % NED velocities
 ins_est.lat = lat_e(1:i-1, :);      % Latitude
 ins_est.lon = lon_e(1:i-1, :);      % Longitude
 ins_est.h   = h_e(1:i-1, :);        % Altitude
-ins_est.P_diag = P_diag;            % P matrix diagonal
+ins_est.P_diag = P_diag;            % P matrix diagonals
 ins_est.Bias_comp = Bias_comp;      % Kalman filter biases compensations
 ins_est.Y_inno = Y_inno;            % Kalman filter innovations
-ins_est.X = X;                      % Kalman filter states
+ins_est.X = X;                      % Kalman filter states evolution
 end
