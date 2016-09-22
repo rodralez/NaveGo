@@ -30,8 +30,6 @@ function [ins_est] = ins(imu, gps, ref, precision)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-global d2r
-
 if nargin < 4, precision = 'double'; end
 
 tins = imu.t;
