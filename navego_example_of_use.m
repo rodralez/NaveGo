@@ -51,9 +51,9 @@ fprintf('\nStarting simulation ... \n')
 
 % global D2R
 
-%% PARAMETERS
+%% CODE EXECUTION PARAMETERS
 
-% Comment parameters in order to not execute a particular portion of code
+% Comment any of the following parameter in order to NOT execute a particular portion of code
 
 GPS_DATA  = 'ON';   % Simulate GPS data
 IMU1_DATA = 'ON';   % Simulate ADIS16405 IMU data
@@ -65,7 +65,7 @@ IMU2_INS  = 'ON';   % Execute INS/GPS integration for ADIS16488 IMU
 RMSE      = 'ON';   % Show on consolte RMSE results.
 PLOT      = 'ON';   % Plot results.
 
-% If a particular portion of code not executed, load a dataset previously saved.
+% If a particular parameter is commented above, set its value to OFF.
 
 if (~exist('GPS_DATA','var')),  GPS_DATA  = 'OFF'; end
 if (~exist('IMU1_DATA','var')), IMU1_DATA = 'OFF'; end
