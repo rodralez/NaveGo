@@ -77,12 +77,15 @@ if (~exist('PLOT','var')),      PLOT = 'OFF'; end
 
 %% CONVERSION CONSTANTS
 
-MS2KMH = 3.6;       % m/s to km/h
+G = 9.81;           % Gravity constant, m/s^2
+MSS2G = (1/G);      % m/s^2 to g
+G2MSS = G;          % g to m/s^2
+
 D2R = (pi/180);     % degrees to radians
 R2D = (180/pi);     % radians to degrees
-MSS2G = (1/9.81);   % m/s^2 to g
-G2MSS = 9.81;
-KT2MS = 0.514444444;% knot to m/s
+
+KT2MS = 0.514444;   % knot to m/s
+MS2KMH = 3.6;       % m/s to km/h
 
 %% LOAD REFERENCE DATA
 
