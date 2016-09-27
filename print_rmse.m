@@ -1,5 +1,5 @@
 function ref_imu = print_rmse (imu_e, ref_imu, gps, ref_g, string)
-% print_rmse: print on console Root Mean Squarred Errors between INS/GPS
+% print_rmse: print on console Root Mean Squared Errors between INS/GPS
 % and reference, and GPS-only and reference as well.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
