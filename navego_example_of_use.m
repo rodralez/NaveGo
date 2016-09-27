@@ -1,7 +1,8 @@
 % Example of use of NaveGo.
 % 
-% Main goal: to compare two INS/GPS systems performances, one using an 
-% ADIS16405 IMU and another using an ADIS16488 IMU.
+% Main goal: to compare two INS/GPS systems performances, one using a 
+% simulated ADIS16405 IMU and simulated GPS, and another using a 
+% simulated ADIS16488 IMU and a simulated GPS.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -35,6 +36,10 @@
 % of Freedom Inertial Sensor. Rev. G. 
 % http://www.analog.com/media/en/technical-documentation/data-sheets/ADIS16488.pdf
 %
+%			Garmin International, Inc. GPS 18x TECHNICAL SPECIFICATIONS.
+% Revision D. October 2011. 
+% http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
+% 
 % Version: 004
 % Date:    2016/09/22
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
@@ -49,23 +54,24 @@ fprintf('\nStarting simulation ... \n')
 
 %% GLOBAL VARIABLES
 
-% global D2R
+global D2R
+global R2D
 
 %% CODE EXECUTION PARAMETERS
 
-% Comment any of the following parameter in order to NOT execute a particular portion of code
+% Comment any of the following parameters in order to NOT execute a particular portion of code
 
-GPS_DATA  = 'ON';   % Simulate GPS data
-IMU1_DATA = 'ON';   % Simulate ADIS16405 IMU data
-IMU2_DATA = 'ON';   % Simulate ADIS16488 IMU data
-
-IMU1_INS  = 'ON';   % Execute INS/GPS integration for ADIS16405 IMU
-IMU2_INS  = 'ON';   % Execute INS/GPS integration for ADIS16488 IMU
+% GPS_DATA  = 'ON';   % Simulate GPS data
+% IMU1_DATA = 'ON';   % Simulate ADIS16405 IMU data
+% IMU2_DATA = 'ON';   % Simulate ADIS16488 IMU data
+% 
+% IMU1_INS  = 'ON';   % Execute INS/GPS integration for ADIS16405 IMU
+% IMU2_INS  = 'ON';   % Execute INS/GPS integration for ADIS16488 IMU
 
 RMSE      = 'ON';   % Show on consolte RMSE results.
 PLOT      = 'ON';   % Plot results.
 
-% If a particular parameter is commented above, set its value to OFF.
+% If a particular parameter is commented above, set its value to 'OFF'.
 
 if (~exist('GPS_DATA','var')),  GPS_DATA  = 'OFF'; end
 if (~exist('IMU1_DATA','var')), IMU1_DATA = 'OFF'; end
@@ -93,8 +99,8 @@ fprintf('Loading reference dataset from a trajectory generator... \n')
 
 load ref.mat
 
-% ref.mat contains the reference dataset from which inertial sensors and
-% GPS wil be simulated. It must contain the following fields:
+% ref.mat contains the reference data structure from which inertial 
+% sensors and GPS wil be simulated. It must contain the following fields:
 
 %         t: time vector (seconds).
 %       lat: latitude vector (radians).
@@ -105,50 +111,50 @@ load ref.mat
 %     pitch: pitch angle vector (radians).
 %       yaw: yaw angle vector (radians).
 %        kn: number of elements of time vector.
-%     DCMnb: Direct Cosine Matrix nav-to-body, with 'kn'rows and 9
+%     DCMnb: Direct Cosine Matrix nav-to-body, with 'kn' rows and 9
 %     columns. Each row contains the elements of one matrix ordered by
-%     columns as [a11 a21 a31 a12 a22 a32 a13 a23 a33]. Use reshape
-%     built-in function to get the original 3x3 matrix
-%     (reshape(DCMnb(n,:),3,3)).
+%     columns as [a11 a21 a31 a12 a22 a32 a13 a23 a33]. Use reshape()
+%     built-in MATLAB function to get the original 3x3 matrix
+%     (reshape(DCMnb(row,:),3,3)).
 %      freq: sampling frequency (Hz).
 
 %% ADIS16405 IMU error profile
 
-ADIS16405.arw       = 2   .* ones(1,3);     % Angle random walks [X Y Z], deg/root-hour
-ADIS16405.vrw       = 0.2 .* ones(1,3);     % Velocity random walks [X Y Z], m/s/root-hour
-ADIS16405.gb_fix    = 3 .* ones(1,3);       % Gyro static biases [X Y Z], deg/s
-ADIS16405.ab_fix    = 50 .* ones(1,3);      % Acc static biases [X Y Z], mg
-ADIS16405.gb_drift  = 0.007 .* ones(1,3);   % Gyro dynamic biases [X Y Z], deg/s
-ADIS16405.ab_drift  = 0.2 .* ones(1,3);     % Acc dynamic biases [X Y Z], mg
-ADIS16405.gcorr     = 100 .* ones(1,3);     % Gyro correlation times [X Y Z], s
-ADIS16405.acorr     = 100 .* ones(1,3);     % Acc correlation times [X Y Z], s
-ADIS16405.freq      = 100;                  % IMU operation frequency [X Y Z], Hz
-% ADIS16405.m_psd     = 0.066 .* ones(1,3);   % Magnetometer noise [X Y Z], mgauss/root-Hz
+ADIS16405.arw       = 2   .* ones(1,3);     % Angle random walks [X Y Z] (deg/root-hour)
+ADIS16405.vrw       = 0.2 .* ones(1,3);     % Velocity random walks [X Y Z] (m/s/root-hour)
+ADIS16405.gb_fix    = 3 .* ones(1,3);       % Gyro static biases [X Y Z] (deg/s)
+ADIS16405.ab_fix    = 50 .* ones(1,3);      % Acc static biases [X Y Z] (mg)
+ADIS16405.gb_drift  = 0.007 .* ones(1,3);   % Gyro dynamic biases [X Y Z] (deg/s)
+ADIS16405.ab_drift  = 0.2 .* ones(1,3);     % Acc dynamic biases [X Y Z] (mg)
+ADIS16405.gcorr     = 100 .* ones(1,3);     % Gyro correlation times [X Y Z] (seconds)
+ADIS16405.acorr     = 100 .* ones(1,3);     % Acc correlation times [X Y Z] (seconds)
+ADIS16405.freq      = 100;                  % IMU operation frequency [X Y Z] (Hz)
+% ADIS16405.m_psd     = 0.066 .* ones(1,3);   % Magnetometer noise [X Y Z] (mgauss/root-Hz)
 
 % ref_1 = downsampling (ref, 1/ADIS16405.freq); % Resample ref if ref and imu
                                                 % have differente operation frequencies.
 ref_1 = ref;
 
-dt = mean(diff(ref_1.t));               % Mean period
+dt = mean(diff(ref_1.t));               % IMU mean period
 
 imu1 = imu_err_profile(ADIS16405, dt);  % Transform IMU manufacturer units to SI units
 
-imu1.att_init = [1 1 5] .* D2R;         % [roll pitch yaw] Initial attitude for matrix P in Kalman filter
+imu1.att_init = [1 1 5] .* D2R;         % Initial attitude for matrix P in Kalman filter, [roll pitch yaw] (radians)  
 imu1.t = ref_1.t;                       % IMU time vector
 imu1.freq = ref_1.freq;                 % IMU operation frequency
 
 %% ADIS16488 IMU error profile
 
-ADIS16488.arw = 0.3     .* ones(1,3);       % Angle random walks [X Y Z], deg/root-hour
-ADIS16488.vrw = 0.029   .* ones(1,3);       % Velocity random walks [X Y Z], m/s/root-hour
-ADIS16488.gb_fix = 0.2  .* ones(1,3);       % Gyro static biases [X Y Z], deg/s
-ADIS16488.ab_fix = 16   .* ones(1,3);       % Acc static biases [X Y Z], mg
-ADIS16488.gb_drift = 6.5/3600  .* ones(1,3);% Gyro dynamic biases [X Y Z], deg/s
-ADIS16488.ab_drift = 0.1  .* ones(1,3);     % Acc dynamic biases [X Y Z], mg
-ADIS16488.gcorr = 100 .* ones(1,3);         % Gyro correlation times [X Y Z], s
-ADIS16488.acorr = 100 .* ones(1,3);         % Acc correlation times [X Y Z], s
-ADIS16488.freq = 100;                       % IMU operation frequency [X Y Z], Hz
-% ADIS16488.m_psd = 0.054 .* ones(1,3);        % Magnetometer noise [X Y Z], mgauss/root-Hz
+ADIS16488.arw = 0.3     .* ones(1,3);       % Angle random walks [X Y Z] (deg/root-hour)
+ADIS16488.vrw = 0.029   .* ones(1,3);       % Velocity random walks [X Y Z] (m/s/root-hour)
+ADIS16488.gb_fix = 0.2  .* ones(1,3);       % Gyro static biases [X Y Z] (deg/s)
+ADIS16488.ab_fix = 16   .* ones(1,3);       % Acc static biases [X Y Z] (mg)
+ADIS16488.gb_drift = 6.5/3600  .* ones(1,3);% Gyro dynamic biases [X Y Z] (deg/s)
+ADIS16488.ab_drift = 0.1  .* ones(1,3);     % Acc dynamic biases [X Y Z] (mg)
+ADIS16488.gcorr = 100 .* ones(1,3);         % Gyro correlation times [X Y Z] (seconds)
+ADIS16488.acorr = 100 .* ones(1,3);         % Acc correlation times [X Y Z] (seconds)
+ADIS16488.freq = 100;                       % IMU operation frequency [X Y Z] (Hz)
+% ADIS16488.m_psd = 0.054 .* ones(1,3);        % Magnetometer noise [X Y Z] (mgauss/root-Hz)
 
 % ref_2 = downsampling (ref, 1/ADIS16488.freq);  % Resample if ref and imu 
                                                  % have differente operation frequencies.
@@ -164,16 +170,16 @@ imu2.freq = ref_2.freq;                 % IMU operation frequency
 
 %% Garmin 5-18 Hz GPS error profile
 
-gps.stdm = [5, 5, 10];                 % GPS positions standard deviations [lat lon h], m
-gps.stdv = 0.1 * KT2MS .* ones(1,3);   % GPS velocities standard deviations [Vn Ve Vd], knot -> m/s
-gps.larm = zeros(3,1);                 % GPS lever arm [X Y Z], m
-gps.freq = 5;                          % GPS operation frequency, Hz
+gps.stdm = [5, 5, 10];                 % GPS positions standard deviations [lat lon h] (meters)
+gps.stdv = 0.1 * KT2MS .* ones(1,3);   % GPS velocities standard deviations [Vn Ve Vd] (meters/s)
+gps.larm = zeros(3,1);                 % GPS lever arm [X Y Z] (meters)
+gps.freq = 5;                          % GPS operation frequency (Hz)
 
 %% SIMULATE GPS
 
 rng('shuffle')                          % Reset pseudo-random seed
 
-if strcmp(GPS_DATA, 'ON')               % If simulation fo GPS data is required ...
+if strcmp(GPS_DATA, 'ON')               % If simulation of GPS data is required ...
     
     fprintf('Simulating GPS data... \n')
     
@@ -197,7 +203,7 @@ end
 
 rng('shuffle')                  % Reset pseudo-random seed
 
-if strcmp(IMU1_DATA, 'ON')      % If simulation fo IMU1 data is required ...
+if strcmp(IMU1_DATA, 'ON')      % If simulation of IMU1 data is required ...
     
     fprintf('Generating IMU1 ACCR data... \n')
     
@@ -223,9 +229,9 @@ end
 
 %% SIMULATE IMU2
 
-rng('shuffle')
+rng('shuffle')					% Reset pseudo-random seed
 
-if strcmp(IMU2_DATA, 'ON')      % If simulation fo IMU2 data is required ...
+if strcmp(IMU2_DATA, 'ON')      % If simulation of IMU2 data is required ...
     
     fprintf('Generating IMU2 ACCR data... \n')
     
@@ -373,149 +379,11 @@ fprintf('\n>> Navigation time: %4.2f minutes or %4.2f seconds. \n', (to/60), to)
 
 %% Print RMSE from IMU1
 
-fe = max(size(imu1_e.t));
-fr = max(size(ref_1.t));
-
-% Adjust ref size if it is bigger than estimates
-if (fe < fr)
-    
-    ref_1.t     = ref_1.t(1:fe, :);
-    ref_1.roll  = ref_1.roll(1:fe, :);
-    ref_1.pitch = ref_1.pitch(1:fe, :);
-    ref_1.yaw   = ref_1.yaw(1:fe, :);
-    ref_1.vel   = ref_1.vel(1:fe, :);
-    ref_1.lat   = ref_1.lat(1:fe, :);
-    ref_1.lon   = ref_1.lon(1:fe, :);
-    ref_1.h     = ref_1.h(1:fe, :);
-    ref_1.DCMnb = ref_1.DCMnb(1:fe, :);
-end
-
-[RN,RE] = radius(imu1_e.lat(1), 'double');
-lat2m = (RN + double(imu1_e.h(1)));
-lon2m = (RE + double(imu1_e.h(1))) .* cos(imu1_e.lat(1));
-
-RMSE_roll   = rmse (imu1_e.roll ,  ref_1.roll)  .*R2D;
-RMSE_pitch  = rmse (imu1_e.pitch,  ref_1.pitch) .*R2D;
-% RMSE_yaw    = rmse (imu1_e.yaw,   ref_1.yaw).*r2d;
-
-% Only compare those estimates that have a diff. < pi with respect to ref
-idx = find ( abs(imu1_e.yaw - ref_1.yaw) < pi );
-RMSE_yaw    = rmse (imu1_e.yaw(idx),   ref_1.yaw(idx)).*R2D;
-
-RMSE_lat    = rmse (imu1_e.lat, ref_1.lat) .*lat2m;
-RMSE_lon    = rmse (imu1_e.lon, ref_1.lon) .*lon2m;
-RMSE_h      = rmse (imu1_e.h,         ref_1.h);
-RMSE_vn     = rmse (imu1_e.vel(:,1),  ref_1.vel(:,1));
-RMSE_ve     = rmse (imu1_e.vel(:,2),  ref_1.vel(:,2));
-RMSE_vd     = rmse (imu1_e.vel(:,3),  ref_1.vel(:,3));
-
-[RN,RE] = radius(gps.lat(1), 'double');
-lat2m = (RN + double(gps.h(1)));
-lon2m = (RE + double(gps.h(1))) .* cos(gps.lat(1));
-
-RMSE_lat_g  = rmse (gps.lat, ref_g.lat) .*lat2m;
-RMSE_lon_g  = rmse (gps.lon, ref_g.lon) .*lon2m;
-RMSE_h_g    = rmse (gps.h-gps.larm(3), ref_g.h);
-RMSE_vn_g   = rmse (gps.vel(:,1),   ref_g.vel(:,1));
-RMSE_ve_g   = rmse (gps.vel(:,2),   ref_g.vel(:,2));
-RMSE_vd_g   = rmse (gps.vel(:,3),   ref_g.vel(:,3));
-
-% Print RMSE
-fprintf( '\n>> RMSE for IMU1\n');
-
-fprintf( ' Roll,  IMU1 = %.4e deg.\n', ...
-    RMSE_roll);
-fprintf( ' Pitch, IMU1 = %.4e deg.\n', ...
-    RMSE_pitch);
-fprintf( ' Yaw,   IMU1 = %.4e deg.\n\n', ...
-    RMSE_yaw);
-
-fprintf( ' Vel. N, IMU1 = %.4e m/s, GPS = %.4e. m/s\n', ...
-    RMSE_vn, RMSE_vn_g);
-fprintf( ' Vel. E, IMU1 = %.4e m/s, GPS = %.4e. m/s\n', ...
-    RMSE_ve, RMSE_ve_g);
-fprintf( ' Vel. D, IMU1 = %.4e m/s, GPS = %.4e. m/s\n\n', ...
-    RMSE_vd, RMSE_vd_g);
-
-fprintf( ' Latitude,  IMU1 = %.4e m, GPS = %.4e. m\n', ...
-    RMSE_lat, RMSE_lat_g);
-fprintf( ' Longitude, IMU1 = %.4e m, GPS = %.4e. m\n', ...
-    RMSE_lon, RMSE_lon_g);
-fprintf( ' Altitude,  IMU1 = %.4e m, GPS = %.4e. m\n', ...
-    RMSE_h, RMSE_h_g);
+ref_1 = print_rmse (imu1_e, ref_1, gps, ref_g);
 
 %% Print RMSE from IMU2
 
-fe = max(size(imu2_e.t));
-fr = max(size(ref_2.t));
-
-% Adjust ref size if it is bigger than estimates
-if (fe < fr)
-    
-    ref_2.t     = ref_2.t(1:fe, :);
-    ref_2.roll  = ref_2.roll(1:fe, :);
-    ref_2.pitch = ref_2.pitch(1:fe, :);
-    ref_2.yaw = ref_2.yaw(1:fe, :);
-    ref_2.vel = ref_2.vel(1:fe, :);
-    ref_2.lat = ref_2.lat(1:fe, :);
-    ref_2.lon = ref_2.lon(1:fe, :);
-    ref_2.h = ref_2.h(1:fe, :);
-    ref_2.DCMnb = ref_2.DCMnb(1:fe, :);
-end
-
-[RN,RE] = radius(imu2_e.lat(1), 'double');
-lat2m = (RN + double(imu2_e.h(1)));
-lon2m = (RE + double(imu2_e.h(1))) .* cos(imu2_e.lat(1));
-
-RMSE_roll   = rmse (imu2_e.roll ,     ref_2.roll)  .*R2D;
-RMSE_pitch  = rmse (imu2_e.pitch,     ref_2.pitch) .*R2D;
-% RMSE_yaw    = rmse (imu1_e.yaw,   ref_1.yaw).*r2d;
-
-% Only compare those estimates that have a diff. < pi with respect to ref
-idx = find ( abs(imu2_e.yaw - ref_2.yaw) < pi );
-RMSE_yaw    = rmse (imu2_e.yaw(idx),   ref_2.yaw(idx)).*R2D;
-
-RMSE_lat    = rmse (imu2_e.lat, ref_2.lat) .*lat2m;
-RMSE_lon    = rmse (imu2_e.lon, ref_2.lon) .*lon2m;
-RMSE_h      = rmse (imu2_e.h,         ref_2.h);
-RMSE_vn     = rmse (imu2_e.vel(:,1),  ref_2.vel(:,1));
-RMSE_ve     = rmse (imu2_e.vel(:,2),  ref_2.vel(:,2));
-RMSE_vd     = rmse (imu2_e.vel(:,3),  ref_2.vel(:,3));
-
-[RN,RE] = radius(gps.lat(1), 'double');
-lat2m = (RN + double(gps.h(1)));
-lon2m = (RE + double(gps.h(1))) .* cos(gps.lat(1));
-
-RMSE_lat_g  = rmse (gps.lat, ref_g.lat) .*lat2m;
-RMSE_lon_g  = rmse (gps.lon, ref_g.lon) .*lon2m;
-RMSE_h_g    = rmse (gps.h-gps.larm(3), ref_g.h); %
-RMSE_vn_g   = rmse (gps.vel(:,1),   ref_g.vel(:,1));
-RMSE_ve_g   = rmse (gps.vel(:,2),   ref_g.vel(:,2));
-RMSE_vd_g   = rmse (gps.vel(:,3),   ref_g.vel(:,3));
-
-% Print into console
-fprintf( '\n>> RMSE for IMU2\n');
-
-fprintf( ' Roll,  IMU2 = %.4e deg.\n', ...
-    RMSE_roll);
-fprintf( ' Pitch, IMU2 = %.4e deg.\n', ...
-    RMSE_pitch);
-fprintf( ' Yaw,   IMU2 = %.4e deg.\n\n', ...
-    RMSE_yaw);
-
-fprintf( ' Vel. N, IMU2 = %.4e m/s, GPS = %.4e. m/s\n', ...
-    RMSE_vn, RMSE_vn_g);
-fprintf( ' Vel. E, IMU2 = %.4e m/s, GPS = %.4e. m/s\n', ...
-    RMSE_ve, RMSE_ve_g);
-fprintf( ' Vel. D, IMU2 = %.4e m/s, GPS = %.4e. m/s\n\n', ...
-    RMSE_vd, RMSE_vd_g);
-
-fprintf( ' Latitude,  IMU2 = %.4e m, GPS = %.4e. m\n', ...
-    RMSE_lat, RMSE_lat_g);
-fprintf( ' Longitude, IMU2 = %.4e m, GPS = %.4e. m\n', ...
-    RMSE_lon, RMSE_lon_g);
-fprintf( ' Altitude,  IMU2 = %.4e m, GPS = %.4e. m\n', ...
-    RMSE_h, RMSE_h_g);
+ref_2 = print_rmse (imu2_e, ref_2, gps, ref_g);
 
 %% PLOT
 
@@ -673,8 +541,8 @@ if (strcmp(PLOT,'ON'))
     % [RNs,REs] = arrayfun(fh, lat_rs);
     
     [RN,RE]  = radius(imu1_e.lat, 'double');
-    lat2m = RN + imu1_e.h;
-    lon2m = (RE + imu1_e.h).*cos(imu1_e.lat);
+    LAT2M = RN + imu1_e.h;
+    LON2M = (RE + imu1_e.h).*cos(imu1_e.lat);
     
     [RN,RE]  = radius(gps.lat, 'double');
     lat2m_g = RN + gps.h;
@@ -684,9 +552,9 @@ if (strcmp(PLOT,'ON'))
     subplot(311)
     plot(gps.t, lat2m_g.*(gps.lat - ref_g.lat), '-c')
     hold on
-    plot(imu1_e.t, lat2m.*(imu1_e.lat - ref_1.lat), '-b')
+    plot(imu1_e.t, LAT2M.*(imu1_e.lat - ref_1.lat), '-b')
     hold on
-    plot(imu2_e.t, lat2m.*(imu2_e.lat - ref_2.lat), '-r')
+    plot(imu2_e.t, LAT2M.*(imu2_e.lat - ref_2.lat), '-r')
     hold on
     plot (gps.t, lat2m_g.*sig3_rr(:,7), '--k', gps.t, -lat2m_g.*sig3_rr(:,7), '--k' )
     xlabel('Time [s]')
@@ -697,9 +565,9 @@ if (strcmp(PLOT,'ON'))
     subplot(312)
     plot(gps.t, lon2m_g.*(gps.lon - ref_g.lon), '-c')
     hold on
-    plot(imu1_e.t, lon2m.*(imu1_e.lon - ref_1.lon), '-b')
+    plot(imu1_e.t, LON2M.*(imu1_e.lon - ref_1.lon), '-b')
     hold on
-    plot(imu2_e.t, lon2m.*(imu2_e.lon - ref_2.lon), '-r')
+    plot(imu2_e.t, LON2M.*(imu2_e.lon - ref_2.lon), '-r')
     hold on
     plot(gps.t, lon2m_g.*sig3_rr(:,8), '--k', gps.t, -lon2m_g.*sig3_rr(:,8), '--k' )
     xlabel('Time [s]')
