@@ -30,7 +30,7 @@ global R2D
 fe = max(size(imu_e.t));
 fr = max(size(ref_imu.t));
 
-% Adjust ref size if it is bigger than estimates size
+% Reduce ref size if it is bigger than estimates size
 if (fe < fr)
     
     ref_imu.t     = ref_imu.t(1:fe, :);
@@ -45,8 +45,8 @@ if (fe < fr)
 end
 
 [RN,RE] = radius(imu_e.lat(1), 'double');
-LAT2M = (RN + double(imu_e.h(1)));                        % Latitude to meters contant                       
-LON2M = (RE + double(imu_e.h(1))) .* cos(imu_e.lat(1));   % Longitude to meters contant
+LAT2M = (RN + double(imu_e.h(1)));                        % Latitude to meters constant                       
+LON2M = (RE + double(imu_e.h(1))) .* cos(imu_e.lat(1));   % Longitude to meters constant
 
 % INS/GPS attitude RMSE
 RMSE_roll   = rmse (imu_e.roll ,  ref_imu.roll)  .* R2D;
@@ -67,8 +67,8 @@ RMSE_lon    = rmse (imu_e.lon, ref_imu.lon) .* LON2M;
 RMSE_h      = rmse (imu_e.h,         ref_imu.h);
 
 [RN,RE] = radius(gps.lat(1), 'double');
-LAT2M = (RN + double(gps.h(1)));                        % Latitude to meters contant 
-LON2M = (RE + double(gps.h(1))) .* cos(gps.lat(1));     % Longitude to meters contant
+LAT2M = (RN + double(gps.h(1)));                        % Latitude to meters constant 
+LON2M = (RE + double(gps.h(1))) .* cos(gps.lat(1));     % Longitude to meters constant
 
 % GPS RMSE
 RMSE_lat_g  = rmse (gps.lat, ref_g.lat) .* LAT2M;
