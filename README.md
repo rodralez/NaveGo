@@ -36,18 +36,18 @@ close all
 clear
 matlabrc
 
-```
-
-```matlab
 fprintf('\nStarting simulation ... \n')
 ```
 
 ###  GLOBAL VARIABLES
 
+```matlab
 global D2R
 global R2D
-
+```
 ###  CODE EXECUTION PARAMETERS
+
+```matlab
 
 % Comment any of the following parameters in order to NOT execute a particular portion of code
 
@@ -71,7 +71,11 @@ if (~exist('IMU2_INS','var')),  IMU2_INS = 'OFF'; end
 if (~exist('RMSE','var')),      RMSE = 'OFF'; end
 if (~exist('PLOT','var')),      PLOT = 'OFF'; end
 
+```
+
 ### CONVERSION CONSTANTS
+
+```matlab
 
 G = 9.81;           % Gravity constant, m/s^2
 G2MSS = G;          % g to m/s^2
@@ -83,7 +87,11 @@ R2D = (180/pi);     % radians to degrees
 KT2MS = 0.514444;   % knot to m/s
 MS2KMH = 3.6;       % m/s to km/h
 
+```
+
 ### LOAD REFERENCE DATA
+
+```matlab
 
 fprintf('Loading reference dataset from a trajectory generator... \n')
 
@@ -108,7 +116,11 @@ load ref.mat
 %     (reshape(DCMnb(row,:),3,3)).
 %      freq: sampling frequency (Hz).
 
+```
+
 ### ADIS16405 IMU error profile
+
+```matlab
 
 ADIS16405.arw       = 2   .* ones(1,3);     % Angle random walks [X Y Z] (deg/root-hour)
 ADIS16405.vrw       = 0.2 .* ones(1,3);     % Velocity random walks [X Y Z] (m/s/root-hour)
@@ -133,7 +145,11 @@ imu1.att_init = [1 1 5] .* D2R;         % Initial attitude for matrix P in Kalma
 imu1.t = ref_1.t;                       % IMU time vector
 imu1.freq = ref_1.freq;                 % IMU operation frequency
 
+```
+
 ### ADIS16488 IMU error profile
+
+```matlab
 
 ADIS16488.arw = 0.3     .* ones(1,3);       % Angle random walks [X Y Z] (deg/root-hour)
 ADIS16488.vrw = 0.029   .* ones(1,3);       % Velocity random walks [X Y Z] (m/s/root-hour)
@@ -158,14 +174,22 @@ imu2.att_init = [0.5 0.5 1] .* D2R;     % [roll pitch yaw] Initial attitude for 
 imu2.t = ref_2.t;                       % IMU time vector
 imu2.freq = ref_2.freq;                 % IMU operation frequency
 
+```
+
 ### Garmin 5-18 Hz GPS error profile
+
+```matlab
 
 gps.stdm = [5, 5, 10];                 % GPS positions standard deviations [lat lon h] (meters)
 gps.stdv = 0.1 * KT2MS .* ones(1,3);   % GPS velocities standard deviations [Vn Ve Vd] (meters/s)
 gps.larm = zeros(3,1);                 % GPS lever arm [X Y Z] (meters)
 gps.freq = 5;                          % GPS operation frequency (Hz)
 
+```
+
 ### SIMULATE GPS
+
+```matlab
 
 rng('shuffle')                          % Reset pseudo-random seed
 
@@ -189,7 +213,11 @@ else
     load ref_g.mat
 end
 
+```
+
 ### SIMULATE IMU1
+
+```matlab
 
 rng('shuffle')                  % Reset pseudo-random seed
 
@@ -217,7 +245,11 @@ else
     load ref_1.mat
 end
 
+```
+
 ### SIMULATE IMU2
+
+```matlab
 
 rng('shuffle')					% Reset pseudo-random seed
 
@@ -245,7 +277,11 @@ else
     load ref_2.mat
 end
 
+```
+
 ### IMU1/GPS INTEGRATION WITH EFK
+
+```matlab
 
 if strcmp(IMU1_INS, 'ON')
     
@@ -303,7 +339,11 @@ else
     load imu1_e.mat
 end
 
+```
+
 ### IMU2/GPS INTEGRATION WITH EFK
+
+```matlab
 
 if strcmp(IMU2_INS, 'ON')
     
@@ -361,16 +401,30 @@ else
     load imu2_e.mat
 end
 
+```
+
 ### Print navigation time
+
+```matlab
 
 to = (ref.t(end) - ref.t(1));
 
 fprintf('\n>> Navigation time: %4.2f minutes or %4.2f seconds. \n', (to/60), to)
 
+```
+
 ### Print RMSE from IMU1
+
+```matlab
 
 ref_1 = print_rmse (imu1_e, ref_1, gps, ref_g, 'IMU1/GPS');
 
+```
+
 ### Print RMSE from IMU2
 
+```matlab
+
 ref_2 = print_rmse (imu2_e, ref_2, gps, ref_g, 'IMU2/GPS');
+
+```
