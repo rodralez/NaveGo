@@ -1,4 +1,29 @@
-function ref_imu = print_rmse (imu_e, ref_imu, gps, ref_g)
+function ref_imu = print_rmse (imu_e, ref_imu, gps, ref_g, string)
+% print_rmse: print on console Root Mean Squarred Errors between INS/GPS
+% and reference, and GPS-only and reference as well.
+%
+%   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
+%     
+%   This file is part of NaveGo, an open-source MATLAB toolbox for 
+%   simulation of integrated navigation systems.
+%     
+%   NaveGo is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU Lesser General Public License (LGPL) 
+%   version 3 as published by the Free Software Foundation.
+% 
+%   This program is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU Lesser General Public License for more details.
+% 
+%   You should have received a copy of the GNU Lesser General Public 
+%   License along with this program. If not, see 
+%   <http://www.gnu.org/licenses/>.
+%
+% Version: 001
+% Date:    2016/09/27
+% Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
+% URL:     https://github.com/rodralez/navego 
 
 global R2D
 
@@ -20,8 +45,8 @@ if (fe < fr)
 end
 
 [RN,RE] = radius(imu_e.lat(1), 'double');
-LAT2M = (RN + double(imu_e.h(1)));                         % Lat to meters contant                       
-LON2M = (RE + double(imu_e.h(1))) .* cos(imu_e.lat(1));   % Lon to meters contant
+LAT2M = (RN + double(imu_e.h(1)));                        % Latitude to meters contant                       
+LON2M = (RE + double(imu_e.h(1))) .* cos(imu_e.lat(1));   % Longitude to meters contant
 
 % INS/GPS attitude RMSE
 RMSE_roll   = rmse (imu_e.roll ,  ref_imu.roll)  .* R2D;
@@ -42,8 +67,8 @@ RMSE_lon    = rmse (imu_e.lon, ref_imu.lon) .* LON2M;
 RMSE_h      = rmse (imu_e.h,         ref_imu.h);
 
 [RN,RE] = radius(gps.lat(1), 'double');
-LAT2M = (RN + double(gps.h(1)));                        % Lat to meters contant 
-LON2M = (RE + double(gps.h(1))) .* cos(gps.lat(1));     % Lon to meters contant
+LAT2M = (RN + double(gps.h(1)));                        % Latitude to meters contant 
+LON2M = (RE + double(gps.h(1))) .* cos(gps.lat(1));     % Longitude to meters contant
 
 % GPS RMSE
 RMSE_lat_g  = rmse (gps.lat, ref_g.lat) .* LAT2M;
@@ -54,26 +79,18 @@ RMSE_ve_g   = rmse (gps.vel(:,2),   ref_g.vel(:,2));
 RMSE_vd_g   = rmse (gps.vel(:,3),   ref_g.vel(:,3));
 
 % Print RMSE
-fprintf( '\n>> RMSE for IMU1\n');
+fprintf( '\n>> RMSE for %s\n', string);
 
-fprintf( ' Roll,  IMU1 = %.4e deg.\n', ...
-    RMSE_roll);
-fprintf( ' Pitch, IMU1 = %.4e deg.\n', ...
-    RMSE_pitch);
-fprintf( ' Yaw,   IMU1 = %.4e deg.\n\n', ...
-    RMSE_yaw);
+fprintf( ' Roll,  %s = %.4e deg\n', string, RMSE_roll);
+fprintf( ' Pitch, %s = %.4e deg\n', string, RMSE_pitch);
+fprintf( ' Yaw,   %s = %.4e deg\n\n', string, RMSE_yaw);
 
-fprintf( ' Vel. N, IMU1 = %.4e m/s, GPS = %.4e. m/s\n', ...
-    RMSE_vn, RMSE_vn_g);
-fprintf( ' Vel. E, IMU1 = %.4e m/s, GPS = %.4e. m/s\n', ...
-    RMSE_ve, RMSE_ve_g);
-fprintf( ' Vel. D, IMU1 = %.4e m/s, GPS = %.4e. m/s\n\n', ...
-    RMSE_vd, RMSE_vd_g);
+fprintf( ' Vel. N, %s = %.4e m/s, GPS = %.4e m/s\n', string, RMSE_vn, RMSE_vn_g);
+fprintf( ' Vel. E, %s = %.4e m/s, GPS = %.4e m/s\n', string, RMSE_ve, RMSE_ve_g);
+fprintf( ' Vel. D, %s = %.4e m/s, GPS = %.4e m/s\n\n', string, RMSE_vd, RMSE_vd_g);
 
-fprintf( ' Latitude,  IMU1 = %.4e m, GPS = %.4e. m\n', ...
-    RMSE_lat, RMSE_lat_g);
-fprintf( ' Longitude, IMU1 = %.4e m, GPS = %.4e. m\n', ...
-    RMSE_lon, RMSE_lon_g);
-fprintf( ' Altitude,  IMU1 = %.4e m, GPS = %.4e. m\n', ...
-    RMSE_h, RMSE_h_g);
+fprintf( ' Latitude,  %s = %.4e m, GPS = %.4e m\n', string, RMSE_lat, RMSE_lat_g);
+fprintf( ' Longitude, %s = %.4e m, GPS = %.4e m\n', string, RMSE_lon, RMSE_lon_g);
+fprintf( ' Altitude,  %s = %.4e m, GPS = %.4e m\n', string, RMSE_h, RMSE_h_g);
 
+end

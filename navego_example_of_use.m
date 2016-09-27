@@ -2,7 +2,7 @@
 % 
 % Main goal: to compare two INS/GPS systems performances, one using a 
 % simulated ADIS16405 IMU and simulated GPS, and another using a 
-% simulated ADIS16488 IMU and a simulated GPS.
+% simulated ADIS16488 IMU and the same simulated GPS.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -40,8 +40,8 @@
 % Revision D. October 2011. 
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 % 
-% Version: 004
-% Date:    2016/09/22
+% Version: 005
+% Date:    2016/09/27
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -61,12 +61,12 @@ global R2D
 
 % Comment any of the following parameters in order to NOT execute a particular portion of code
 
-% GPS_DATA  = 'ON';   % Simulate GPS data
-% IMU1_DATA = 'ON';   % Simulate ADIS16405 IMU data
-% IMU2_DATA = 'ON';   % Simulate ADIS16488 IMU data
-% 
-% IMU1_INS  = 'ON';   % Execute INS/GPS integration for ADIS16405 IMU
-% IMU2_INS  = 'ON';   % Execute INS/GPS integration for ADIS16488 IMU
+GPS_DATA  = 'ON';   % Simulate GPS data
+IMU1_DATA = 'ON';   % Simulate ADIS16405 IMU data
+IMU2_DATA = 'ON';   % Simulate ADIS16488 IMU data
+
+IMU1_INS  = 'ON';   % Execute INS/GPS integration for ADIS16405 IMU
+IMU2_INS  = 'ON';   % Execute INS/GPS integration for ADIS16488 IMU
 
 RMSE      = 'ON';   % Show on consolte RMSE results.
 PLOT      = 'ON';   % Plot results.
@@ -84,8 +84,8 @@ if (~exist('PLOT','var')),      PLOT = 'OFF'; end
 %% CONVERSION CONSTANTS
 
 G = 9.81;           % Gravity constant, m/s^2
-MSS2G = (1/G);      % m/s^2 to g
 G2MSS = G;          % g to m/s^2
+MSS2G = (1/G);      % m/s^2 to g
 
 D2R = (pi/180);     % degrees to radians
 R2D = (180/pi);     % radians to degrees
@@ -379,11 +379,11 @@ fprintf('\n>> Navigation time: %4.2f minutes or %4.2f seconds. \n', (to/60), to)
 
 %% Print RMSE from IMU1
 
-ref_1 = print_rmse (imu1_e, ref_1, gps, ref_g);
+ref_1 = print_rmse (imu1_e, ref_1, gps, ref_g, 'IMU1/GPS');
 
 %% Print RMSE from IMU2
 
-ref_2 = print_rmse (imu2_e, ref_2, gps, ref_g);
+ref_2 = print_rmse (imu2_e, ref_2, gps, ref_g, 'IMU2/GPS');
 
 %% PLOT
 
