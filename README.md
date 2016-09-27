@@ -9,9 +9,9 @@ NaveGo: an open-source MATLAB toolbox for simulating integrated navigation syste
 
 We are looking for contributors for NaveGo! Until now, NaveGo is a one-man project. We hope the navigation community compromise and contribute with this open-source tool.
 
-You can contribute in many ways, reporting bugs or asking for new features as well.
+You can contribute in many ways, writing code, writing a manual, reporting bugs or asking for new features as well.
 
-If you are interested, please contact Dr. Rodrigo Gonzalez at rodralez [at] frm [dot] utn [dot] edu [dot] ar.
+If you are interested, please feel free to contact Dr. Rodrigo Gonzalez at rodralez [at] frm [dot] utn [dot] edu [dot] ar.
 
 ## Documentation
 
@@ -39,13 +39,13 @@ matlabrc
 fprintf('\nStarting simulation ... \n')
 ```
 
-###  GLOBAL VARIABLES
+###  Global variables
 
 ```matlab
 global D2R
 global R2D
 ```
-###  CODE EXECUTION PARAMETERS
+###  Code execution parameters
 
 ```matlab
 
@@ -73,7 +73,7 @@ if (~exist('PLOT','var')),      PLOT = 'OFF'; end
 
 ```
 
-### CONVERSION CONSTANTS
+### Conversion constants
 
 ```matlab
 
@@ -89,7 +89,7 @@ MS2KMH = 3.6;       % m/s to km/h
 
 ```
 
-### LOAD REFERENCE DATA
+### Load reference data
 
 ```matlab
 
@@ -187,7 +187,7 @@ gps.freq = 5;                          % GPS operation frequency (Hz)
 
 ```
 
-### SIMULATE GPS
+### Simulate GPS
 
 ```matlab
 
@@ -215,7 +215,7 @@ end
 
 ```
 
-### SIMULATE IMU1
+### Simulate IMU1
 
 ```matlab
 
@@ -247,7 +247,7 @@ end
 
 ```
 
-### SIMULATE IMU2
+### Simulate IMU2
 
 ```matlab
 
@@ -279,7 +279,7 @@ end
 
 ```
 
-### IMU1/GPS INTEGRATION WITH EFK
+### IMU1/GPS integration with EKF
 
 ```matlab
 
@@ -341,7 +341,7 @@ end
 
 ```
 
-### IMU2/GPS INTEGRATION WITH EFK
+### IMU2/GPS integration with EKF
 
 ```matlab
 
