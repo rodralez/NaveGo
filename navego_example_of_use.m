@@ -171,26 +171,23 @@ gps.freq = 5;                          % GPS operation frequency (Hz)
 
 %% SIMULATE GPS
 
-rng('shuffle')                          % Reset pseudo-random seed
+rng('shuffle')                  % Reset pseudo-random seed
 
-if strcmp(GPS_DATA, 'ON')               % If simulation of GPS data is required ...
+if strcmp(GPS_DATA, 'ON')       % If simulation of GPS data is required ...
     
     fprintf('Simulating GPS data... \n')
     
     gps = gps_err_profile(ref.lat(1), ref.h(1), gps); % Transform GPS manufacturer error units to SI units.
     
-    [gps, ref_g] = gps_gen(ref, gps);   % Generate GPS dataset from reference dataset.
-    % ref_g is the ref dataset
-    % resampled at GPS vector time.
+    [gps] = gps_gen(ref, gps);  % Generate GPS dataset from reference dataset.
+
     save gps.mat gps
-    save ref_g.mat ref_g
     
 else
     
     fprintf('Loading GPS data... \n') 
     
     load gps.mat
-    load ref_g.mat
 end
 
 %% SIMULATE IMU1
@@ -340,7 +337,7 @@ fprintf('\n>> Navigation time: %4.2f minutes or %4.2f seconds. \n', (to/60), to)
 
 %% Print RMSE from IMU1
 
-ref_1 = print_rmse (imu1_e, gps, ref, 'IMU1/GPS');
+[ref_1, ref_g] = print_rmse (imu1_e, gps, ref, 'IMU1/GPS');
 
 %% Print RMSE from IMU2
 
