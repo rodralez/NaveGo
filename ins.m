@@ -25,8 +25,8 @@ function [ins_est] = ins(imu, gps, ref, att_mode, precision)
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015. Alg. 2.
 %
-% Version: 003
-% Date:    2016/04/26
+% Version: 004
+% Date:    2016/10/25
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 

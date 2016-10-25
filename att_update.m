@@ -25,28 +25,28 @@ function [quanew, DCMbn_new, ang_v] = att_update(w, DCMbn_old, quaold, omega_ie_
 % Eq. 7.39, p. 458.
 %
 % Version: 002
-% Date:    2016/04/26
+% Date:    2016/10/25
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-%% Corrected gyros output for Earth rate and Transport rate
+%% Correct gyros output for Earth rate and Transport rate
 w_bn = ( w - DCMbn_old' * (omega_ie_N + omega_en_N))';
 
 if strcmp(mode, 'quaternion')
 %% Quaternion update   
-    quanew =    qua_update(quaold, w_bn, dt);
-    quanew =    quanew/norm(quanew);
+    quanew    = qua_update(quaold, w_bn, dt);
+    quanew    = quanew/norm(quanew);
     DCMbn_new = qua2dcm(quanew);
-    ang_v =     qua2euler(quanew);
-
+    ang_v     = qua2euler(quanew);
     
 elseif strcmp(mode, 'dcm')
 %% DCM update    
     
-    ang = w_bn * dt;
+    ang       = w_bn * dt;
     DCMbn_new = dcm_update(DCMbn_old, ang);
-    ang_v = dcm2euler(DCMbn_new);
-    quanew = euler2qua(ang_v);
+    ang_v     = dcm2euler(DCMbn_new);
+    quanew    = euler2qua(ang_v);
+    quanew    = quanew/norm(quanew);
     
 else
     error('ERROR in att_update: no mode defined.')
