@@ -40,15 +40,15 @@
 % Revision D. October 2011. 
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 % 
-% Version: 005
-% Date:    2016/09/27
+% Version: 006
+% Date:    2016/10/25
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
 clc
 close all
 clear
-matlabrc
+% matlabrc
 
 fprintf('\nStarting simulation ... \n')
 
@@ -68,17 +68,15 @@ IMU2_DATA = 'ON';   % Simulate ADIS16488 IMU data
 IMU1_INS  = 'ON';   % Execute INS/GPS integration for ADIS16405 IMU
 IMU2_INS  = 'ON';   % Execute INS/GPS integration for ADIS16488 IMU
 
-RMSE      = 'ON';   % Show on consolte RMSE results.
 PLOT      = 'ON';   % Plot results.
 
-% If a particular parameter is commented above, set its value to 'OFF'.
+% If a particular parameter is commented above, it is set by default to 'OFF'.
 
 if (~exist('GPS_DATA','var')),  GPS_DATA  = 'OFF'; end
 if (~exist('IMU1_DATA','var')), IMU1_DATA = 'OFF'; end
 if (~exist('IMU2_DATA','var')), IMU2_DATA = 'OFF'; end
 if (~exist('IMU1_INS','var')),  IMU1_INS = 'OFF'; end
 if (~exist('IMU2_INS','var')),  IMU2_INS = 'OFF'; end
-if (~exist('RMSE','var')),      RMSE = 'OFF'; end
 if (~exist('PLOT','var')),      PLOT = 'OFF'; end
 
 %% CONVERSION CONSTANTS
@@ -131,17 +129,15 @@ ADIS16405.acorr     = 100 .* ones(1,3);     % Acc correlation times [X Y Z] (sec
 ADIS16405.freq      = 100;                  % IMU operation frequency [X Y Z] (Hz)
 % ADIS16405.m_psd     = 0.066 .* ones(1,3);   % Magnetometer noise [X Y Z] (mgauss/root-Hz)
 
-% ref_1 = downsampling (ref, 1/ADIS16405.freq); % Resample ref if ref and imu
-                                                % have differente operation frequencies.
-ref_1 = ref;
+% ref dataset is used to simulate IMU sensors.
 
-dt = mean(diff(ref_1.t));               % IMU mean period
+dt = mean(diff(ref.t));               % IMU mean period
 
 imu1 = imu_err_profile(ADIS16405, dt);  % Transform IMU manufacturer units to SI units
 
 imu1.att_init = [1 1 5] .* D2R;         % Initial attitude for matrix P in Kalman filter, [roll pitch yaw] (radians)  
-imu1.t = ref_1.t;                       % IMU time vector
-imu1.freq = ref_1.freq;                 % IMU operation frequency
+imu1.t = ref.t;                       % IMU time vector
+imu1.freq = ref.freq;                 % IMU operation frequency
 
 %% ADIS16488 IMU error profile
 
@@ -156,17 +152,15 @@ ADIS16488.acorr = 100 .* ones(1,3);         % Acc correlation times [X Y Z] (sec
 ADIS16488.freq = 100;                       % IMU operation frequency [X Y Z] (Hz)
 % ADIS16488.m_psd = 0.054 .* ones(1,3);        % Magnetometer noise [X Y Z] (mgauss/root-Hz)
 
-% ref_2 = downsampling (ref, 1/ADIS16488.freq);  % Resample if ref and imu 
-                                                 % have differente operation frequencies.
-ref_2 = ref;
+% ref dataset is used to simulate IMU sensors.
 
-dt = mean(diff(ref_2.t));               % Mean period
+dt = mean(diff(ref.t));               % Mean period
 
 imu2 = imu_err_profile(ADIS16488, dt);  % Transform IMU manufacturer error units to SI units.
 
 imu2.att_init = [0.5 0.5 1] .* D2R;     % [roll pitch yaw] Initial attitude for matrix P in Kalman filter
-imu2.t = ref_2.t;                       % IMU time vector
-imu2.freq = ref_2.freq;                 % IMU operation frequency
+imu2.t = ref.t;                       % IMU time vector
+imu2.freq = ref.freq;                 % IMU operation frequency
 
 %% Garmin 5-18 Hz GPS error profile
 
@@ -207,24 +201,21 @@ if strcmp(IMU1_DATA, 'ON')      % If simulation of IMU1 data is required ...
     
     fprintf('Generating IMU1 ACCR data... \n')
     
-    fb = acc_gen (ref_1, imu1); % Generate acc in the body frame
+    fb = acc_gen (ref, imu1); % Generate acc in the body frame
     imu1.fb = fb;
     
     fprintf('Generating IMU1 GYRO data... \n')
     
-    wb = gyro_gen (ref_1, imu1);% Generate gyro in the body frame
+    wb = gyro_gen (ref, imu1);% Generate gyro in the body frame
     imu1.wb = wb;
     
     save imu1.mat imu1
-    save ref_1.mat ref_1
-    
     clear wb fb;
     
 else
     fprintf('Loading IMU1 data... \n')
     
     load imu1.mat
-    load ref_1.mat
 end
 
 %% SIMULATE IMU2
@@ -235,16 +226,15 @@ if strcmp(IMU2_DATA, 'ON')      % If simulation of IMU2 data is required ...
     
     fprintf('Generating IMU2 ACCR data... \n')
     
-    fb = acc_gen (ref_2, imu2); % Generate acc in the body frame
+    fb = acc_gen (ref, imu2); % Generate acc in the body frame
     imu2.fb = fb;
     
     fprintf('Generating IMU2 GYRO data... \n')
     
-    wb = gyro_gen (ref_2, imu2);% Generate gyro in the body frame
+    wb = gyro_gen (ref, imu2);% Generate gyro in the body frame
     imu2.wb = wb;
     
     save imu2.mat imu2
-    save ref_2.mat ref_2
     
     clear wb fb;
     
@@ -252,7 +242,6 @@ else
     fprintf('Loading IMU2 data... \n')
     
     load imu2.mat
-    load ref_2.mat
 end
 
 %% IMU1/GPS INTEGRATION WITH EFK
@@ -270,16 +259,7 @@ if strcmp(IMU1_INS, 'ON')
         
         imu1.t  = imu1.t  (igx:end, :);
         imu1.fb = imu1.fb (igx:end, :);
-        imu1.wb = imu1.wb (igx:end, :);
-        
-        ref_1.t     = ref_1.t    (igx:end, :);
-        ref_1.roll  = ref_1.roll (igx:end, :);
-        ref_1.pitch = ref_1.pitch(igx:end, :);
-        ref_1.yaw   = ref_1.yaw  (igx:end, :);
-        ref_1.lat   = ref_1.lat  (igx:end, :);
-        ref_1.lon   = ref_1.lon  (igx:end, :);
-        ref_1.h     = ref_1.h    (igx:end, :);
-        ref_1.vel   = ref_1.vel  (igx:end, :);
+        imu1.wb = imu1.wb (igx:end, :);        
     end
     
     % Guarantee that imu1.t(end-1) < gps.t(end) < imu1.t(end)
@@ -292,16 +272,11 @@ if strcmp(IMU1_INS, 'ON')
         gps.lon = gps.lon(1:fgx, :);
         gps.h   = gps.h  (1:fgx, :);
         gps.vel = gps.vel(1:fgx, :);
-        ref_g.t   = ref_g.t  (1:fgx, :);
-        ref_g.lat = ref_g.lat(1:fgx, :);
-        ref_g.lon = ref_g.lon(1:fgx, :);
-        ref_g.h   = ref_g.h  (1:fgx, :);
-        ref_g.vel = ref_g.vel(1:fgx, :);
     end
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    [imu1_e] = ins(imu1, gps, ref_1, 'double');
+    [imu1_e] = ins(imu1, gps, ref, 'quaternion', 'double');
     % ---------------------------------------------------------------------
     
     save imu1_e.mat imu1_e
@@ -319,7 +294,7 @@ if strcmp(IMU2_INS, 'ON')
     
     fprintf('\nINS/GPS integration for IMU2... \n')
     
-    % Sincronize GPS data with IMU data.
+    % Sincronize GPS data and IMU data.
     
     % Guarantee that gps.t(1) < imu2.t(1) < gps.t(2)
     if (imu2.t(1) < gps.t(1)),
@@ -328,16 +303,7 @@ if strcmp(IMU2_INS, 'ON')
         
         imu2.t  = imu2.t  (igx:end, :);
         imu2.fb = imu2.fb (igx:end, :);
-        imu2.wb = imu2.wb (igx:end, :);
-        
-        ref_2.t     = ref_2.t    (igx:end, :);
-        ref_2.roll  = ref_2.roll (igx:end, :);
-        ref_2.pitch = ref_2.pitch(igx:end, :);
-        ref_2.yaw   = ref_2.yaw  (igx:end, :);
-        ref_2.lat   = ref_2.lat  (igx:end, :);
-        ref_2.lon   = ref_2.lon  (igx:end, :);
-        ref_2.h     = ref_2.h    (igx:end, :);
-        ref_2.vel   = ref_2.vel  (igx:end, :);
+        imu2.wb = imu2.wb (igx:end, :);        
     end
     
     % Guarantee that imu2.t(end-1) < gps.t(end) < imu2.t(end)
@@ -345,21 +311,16 @@ if strcmp(IMU2_INS, 'ON')
         
         fgx  = find(gps.t < imu2.t(end), 1, 'last' );
         
-        gps.t = gps.t(1:fgx, :);
+        gps.t   = gps.t  (1:fgx, :);
         gps.lat = gps.lat(1:fgx, :);
         gps.lon = gps.lon(1:fgx, :);
-        gps.h   = gps.h(1:fgx, :);
+        gps.h   = gps.h  (1:fgx, :);
         gps.vel = gps.vel(1:fgx, :);
-        ref_g.t   = ref_g.t(1:fgx, :);
-        ref_g.lat = ref_g.lat(1:fgx, :);
-        ref_g.lon = ref_g.lon(1:fgx, :);
-        ref_g.h   = ref_g.h(1:fgx, :);
-        ref_g.vel = ref_g.vel(1:fgx, :);
     end
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    [imu2_e] = ins(imu2, gps, ref_2, 'double');
+    [imu2_e] = ins(imu2, gps, ref, 'quaternion', 'double');
     % ---------------------------------------------------------------------
     
     save imu2_e.mat imu2_e
@@ -379,11 +340,11 @@ fprintf('\n>> Navigation time: %4.2f minutes or %4.2f seconds. \n', (to/60), to)
 
 %% Print RMSE from IMU1
 
-ref_1 = print_rmse (imu1_e, ref_1, gps, ref_g, 'IMU1/GPS');
+ref_1 = print_rmse (imu1_e, gps, ref, 'IMU1/GPS');
 
 %% Print RMSE from IMU2
 
-ref_2 = print_rmse (imu2_e, ref_2, gps, ref_g, 'IMU2/GPS');
+ref_2 = print_rmse (imu2_e, gps, ref, 'IMU2/GPS');
 
 %% PLOT
 

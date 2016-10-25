@@ -1,4 +1,4 @@
-function ref_imu = print_rmse (imu_e, ref_imu, gps, ref_g, string)
+function [imu_r, gps_r] = print_rmse (imu, gps, ref, string)
 % print_rmse: print on console Root Mean Squared Errors between INS/GPS
 % and reference, and GPS-only and reference as well.
 %
@@ -20,63 +20,69 @@ function ref_imu = print_rmse (imu_e, ref_imu, gps, ref_g, string)
 %   License along with this program. If not, see 
 %   <http://www.gnu.org/licenses/>.
 %
-% Version: 001
-% Date:    2016/09/27
+% Version: 002
+% Date:    2016/10/25
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
 global R2D
 
-fe = max(size(imu_e.t));
-fr = max(size(ref_imu.t));
+gps_r.t = gps.t;
+gps_r.lat = interp1(ref.t, ref.lat, gps.t, 'linear');
+gps_r.lon = interp1(ref.t, ref.lon, gps.t, 'linear');
+gps_r.h   = interp1(ref.t, ref.h,   gps.t, 'linear');
+gps_r.vel = interp1(ref.t, ref.vel, gps.t, 'linear');
 
-% Reduce ref size if it is bigger than estimates size
-if (fe < fr)
-    
-    ref_imu.t     = ref_imu.t(1:fe, :);
-    ref_imu.roll  = ref_imu.roll(1:fe, :);
-    ref_imu.pitch = ref_imu.pitch(1:fe, :);
-    ref_imu.yaw   = ref_imu.yaw(1:fe, :);
-    ref_imu.vel   = ref_imu.vel(1:fe, :);
-    ref_imu.lat   = ref_imu.lat(1:fe, :);
-    ref_imu.lon   = ref_imu.lon(1:fe, :);
-    ref_imu.h     = ref_imu.h(1:fe, :);
-    ref_imu.DCMnb = ref_imu.DCMnb(1:fe, :);
+if( isnan(gps_r.lat))
+    error('ERROR in print_rmse: NaN elements in GPS reference vector')
 end
 
-[RN,RE] = radius(imu_e.lat(1), 'double');
-LAT2M = (RN + double(imu_e.h(1)));                        % Latitude to meters constant                       
-LON2M = (RE + double(imu_e.h(1))) .* cos(imu_e.lat(1));   % Longitude to meters constant
+imu_r.t = imu.t;
+imu_r.roll  = interp1(ref.t, ref.roll,  imu.t, 'linear');
+imu_r.pitch = interp1(ref.t, ref.pitch, imu.t, 'linear');
+imu_r.yaw   = interp1(ref.t, ref.yaw,   imu.t, 'linear');
+imu_r.lat = interp1(ref.t, ref.lat, imu.t, 'linear');
+imu_r.lon = interp1(ref.t, ref.lon, imu.t, 'linear');
+imu_r.h   = interp1(ref.t, ref.h,   imu.t, 'linear');
+imu_r.vel = interp1(ref.t, ref.vel, imu.t, 'linear');
+
+if( isnan(imu_r.lat))
+    error('ERROR in print_rmse: NaN elements in IMU reference vector')
+end
+
+[RN,RE] = radius(imu.lat(1), 'double');
+LAT2M = (RN + double(imu.h(1)));                        % Latitude to meters constant                       
+LON2M = (RE + double(imu.h(1))) .* cos(imu.lat(1));   % Longitude to meters constant
 
 % INS/GPS attitude RMSE
-RMSE_roll   = rmse (imu_e.roll ,  ref_imu.roll)  .* R2D;
-RMSE_pitch  = rmse (imu_e.pitch,  ref_imu.pitch) .* R2D;
-% RMSE_yaw    = rmse (imu1_e.yaw,   ref_imu.yaw).*r2d;
+RMSE_roll   = rmse (imu.roll ,  imu_r.roll)  .* R2D;
+RMSE_pitch  = rmse (imu.pitch,  imu_r.pitch) .* R2D;
+% RMSE_yaw    = rmse (imu1_e.yaw,   imu_r.yaw).*r2d;
 % Only compare those estimates that have a diff. < pi with respect to ref
-idx = find ( abs(imu_e.yaw - ref_imu.yaw) < pi );
-RMSE_yaw    = rmse (imu_e.yaw(idx),   ref_imu.yaw(idx)).* R2D;
+idx = find ( abs(imu.yaw - imu_r.yaw) < pi );
+RMSE_yaw    = rmse (imu.yaw(idx),   imu_r.yaw(idx)).* R2D;
 
 % INS/GPS velocity RMSE
-RMSE_vn     = rmse (imu_e.vel(:,1),  ref_imu.vel(:,1));
-RMSE_ve     = rmse (imu_e.vel(:,2),  ref_imu.vel(:,2));
-RMSE_vd     = rmse (imu_e.vel(:,3),  ref_imu.vel(:,3));
+RMSE_vn     = rmse (imu.vel(:,1),  imu_r.vel(:,1));
+RMSE_ve     = rmse (imu.vel(:,2),  imu_r.vel(:,2));
+RMSE_vd     = rmse (imu.vel(:,3),  imu_r.vel(:,3));
 
 % INS/GPS position RMSE
-RMSE_lat    = rmse (imu_e.lat, ref_imu.lat) .* LAT2M;
-RMSE_lon    = rmse (imu_e.lon, ref_imu.lon) .* LON2M;
-RMSE_h      = rmse (imu_e.h,         ref_imu.h);
+RMSE_lat    = rmse (imu.lat, imu_r.lat) .* LAT2M;
+RMSE_lon    = rmse (imu.lon, imu_r.lon) .* LON2M;
+RMSE_h      = rmse (imu.h,         imu_r.h);
 
 [RN,RE] = radius(gps.lat(1), 'double');
 LAT2M = (RN + double(gps.h(1)));                        % Latitude to meters constant 
 LON2M = (RE + double(gps.h(1))) .* cos(gps.lat(1));     % Longitude to meters constant
 
 % GPS RMSE
-RMSE_lat_g  = rmse (gps.lat, ref_g.lat) .* LAT2M;
-RMSE_lon_g  = rmse (gps.lon, ref_g.lon) .* LON2M;
-RMSE_h_g    = rmse (gps.h-gps.larm(3), ref_g.h);
-RMSE_vn_g   = rmse (gps.vel(:,1),   ref_g.vel(:,1));
-RMSE_ve_g   = rmse (gps.vel(:,2),   ref_g.vel(:,2));
-RMSE_vd_g   = rmse (gps.vel(:,3),   ref_g.vel(:,3));
+RMSE_lat_g  = rmse (gps.lat, gps_r.lat) .* LAT2M;
+RMSE_lon_g  = rmse (gps.lon, gps_r.lon) .* LON2M;
+RMSE_h_g    = rmse (gps.h-gps.larm(3), gps_r.h);
+RMSE_vn_g   = rmse (gps.vel(:,1),   gps_r.vel(:,1));
+RMSE_ve_g   = rmse (gps.vel(:,2),   gps_r.vel(:,2));
+RMSE_vd_g   = rmse (gps.vel(:,3),   gps_r.vel(:,3));
 
 % Print RMSE
 fprintf( '\n>> RMSE for %s\n', string);

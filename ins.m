@@ -1,4 +1,4 @@
-function [ins_est] = ins(imu, gps, ref, precision)
+function [ins_est] = ins(imu, gps, ref, att_mode, precision)
 % ins: integrates IMU and GPS measurements using an Extended Kalman filter
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -30,7 +30,8 @@ function [ins_est] = ins(imu, gps, ref, precision)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-if nargin < 4, precision = 'double'; end
+if nargin < 4, att_mode = 'quaternion'; end
+if nargin < 5, precision = 'double'; end
 
 tins = imu.t;
 tgps = gps.t;
@@ -147,31 +148,31 @@ for j = 2:ttg
         wb_fix = (imu.wb(i,:)' - gb_drift - gb_fix);
         fb_fix = (imu.fb(i,:)' - ab_drift - ab_fix);
         
-        % Attitude computer
+        % Attitude update
         omega_ie_N = earthrate(lat_e(i-1), precision);
         omega_en_N = transportrate(lat_e(i-1), vel_e(i-1,1), vel_e(i-1,2), h_e(i-1));
         
         [quanew, DCMbn_new, ang_v] = att_update(wb_fix, DCMbn_old, quaold, ...
-            omega_ie_N, omega_en_N, dti);
+                                     omega_ie_N, omega_en_N, dti, att_mode);
         roll_e(i) = ang_v(1);
         pitch_e(i)= ang_v(2);
         yaw_e(i)  = ang_v(3);
         DCMbn_old = DCMbn_new;
         quaold = quanew;
         
-        % Gravity computer
+        % Gravity update
         g = gravity(lat_e(i-1), h_e(i-1));
         
-        % Velocity computer
+        % Velocity update
         fn = DCMbn_new * (fb_fix);
         vel_upd = vel_update(fn, vel_e(i-1,:)', omega_ie_N, omega_en_N, g', dti); %
         vel_e (i,:) = vel_upd';
         
-        % Position computer
+        % Position update
         pos = pos_update([lat_e(i-1) lon_e(i-1) double(h_e(i-1))], double(vel_e(i,:)), double(dti) );
-        lat_e(i)=pos(1); lon_e(i)=pos(2); h_e(i)=single(pos(3));
+        lat_e(i)=pos(1); lon_e(i)=pos(2); h_e(i)=(pos(3));
         
-        % Magnetic heading computer
+        % Magnetic heading update
         %  yawm_e(i) = hd_update (imu.mb(i,:), roll_e(i),  pitch_e(i), D);
         
         % Index for SINS navigation update
@@ -203,8 +204,8 @@ for j = 2:ttg
     [F, G] = F_update(upd, DCMbn_new, imu);
     
     % Update matrix H
-    H = [Z I Z Z Z Z Z;
-        Z Z Tpr Z Z Z Z; ];
+    H = [Z I Z   Z Z Z Z;
+         Z Z Tpr Z Z Z Z; ];
     
     % Execute the extended Kalman filter
     [xu, P] = kalman(x, y, F, H, G, P, Q, R, dtg); % 
