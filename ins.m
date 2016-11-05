@@ -138,8 +138,8 @@ for j = 2:ttg
         
         % Print a dot on console every 10,000 SINS executions
         if (mod(i,10000) == 0), fprintf('. '); end
-        % Print a return on console every 100,000 SINS executions
-        if (mod(i,100000) == 0), fprintf('\n'); end
+        % Print a return on console every 500,000 SINS executions
+        if (mod(i,500000) == 0), fprintf('\n'); end
         
         % SINS period
         dti = tins(i) - tins(i-1);
@@ -209,8 +209,8 @@ for j = 2:ttg
     
     % Execute the extended Kalman filter
     [xu, P] = kalman(x, y, F, H, G, P, Q, R, dtg); % 
-    
-    %% Corrections section
+     
+    %% Corrections section 
     
     % DCM correction
     E = skewm(xu(1:3));

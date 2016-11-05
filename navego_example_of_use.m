@@ -40,17 +40,20 @@
 % Revision D. October 2011. 
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 % 
-% Version: 006
-% Date:    2016/10/25
+% Version: 007
+% Date:    2016/11/02
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
 clc
 close all
 clear
-% matlabrc
+matlabrc
 
-fprintf('\nStarting simulation ... \n')
+versionstr = 'NaveGo, release v0.7.1-alpha';
+
+fprintf('\n%s.\n', versionstr)
+fprintf('\nNaveGo: starting simulation ... \n')
 
 %% GLOBAL VARIABLES
 
@@ -93,7 +96,7 @@ MS2KMH = 3.6;       % m/s to km/h
 
 %% LOAD REFERENCE DATA
 
-fprintf('Loading reference dataset from a trajectory generator... \n')
+fprintf('NaveGo: loading reference dataset from a trajectory generator... \n')
 
 load ref.mat
 
@@ -118,47 +121,47 @@ load ref.mat
 
 %% ADIS16405 IMU error profile
 
-ADIS16405.arw       = 2   .* ones(1,3);     % Angle random walks [X Y Z] (deg/root-hour)
-ADIS16405.vrw       = 0.2 .* ones(1,3);     % Velocity random walks [X Y Z] (m/s/root-hour)
-ADIS16405.gb_fix    = 3 .* ones(1,3);       % Gyro static biases [X Y Z] (deg/s)
-ADIS16405.ab_fix    = 50 .* ones(1,3);      % Acc static biases [X Y Z] (mg)
-ADIS16405.gb_drift  = 0.007 .* ones(1,3);   % Gyro dynamic biases [X Y Z] (deg/s)
-ADIS16405.ab_drift  = 0.2 .* ones(1,3);     % Acc dynamic biases [X Y Z] (mg)
-ADIS16405.gcorr     = 100 .* ones(1,3);     % Gyro correlation times [X Y Z] (seconds)
-ADIS16405.acorr     = 100 .* ones(1,3);     % Acc correlation times [X Y Z] (seconds)
-ADIS16405.freq      = 100;                  % IMU operation frequency [X Y Z] (Hz)
-% ADIS16405.m_psd     = 0.066 .* ones(1,3);   % Magnetometer noise [X Y Z] (mgauss/root-Hz)
+ADIS16405.arw      = 2   .* ones(1,3);     % Angle random walks [X Y Z] (deg/root-hour)
+ADIS16405.vrw      = 0.2 .* ones(1,3);     % Velocity random walks [X Y Z] (m/s/root-hour)
+ADIS16405.gb_fix   = 3   .* ones(1,3);     % Gyro static biases [X Y Z] (deg/s)
+ADIS16405.ab_fix   = 50  .* ones(1,3);     % Acc static biases [X Y Z] (mg)
+ADIS16405.gb_drift = 0.007 .* ones(1,3);   % Gyro dynamic biases [X Y Z] (deg/s)
+ADIS16405.ab_drift = 0.2 .* ones(1,3);     % Acc dynamic biases [X Y Z] (mg)
+ADIS16405.gb_corr  = 100 .* ones(1,3);     % Gyro correlation times [X Y Z] (seconds)
+ADIS16405.ab_corr  = 100 .* ones(1,3);     % Acc correlation times [X Y Z] (seconds)
+% ADIS16405.freq     = 100;                  % IMU operation frequency [X Y Z] (Hz)
+% ADIS16405.m_psd     = 0.066 .* ones(1,3);  % Magnetometer noise [X Y Z] (mgauss/root-Hz)
 
 % ref dataset is used to simulate IMU sensors.
 
 dt = mean(diff(ref.t));               % IMU mean period
 
-imu1 = imu_err_profile(ADIS16405, dt);  % Transform IMU manufacturer units to SI units
+imu1 = imu_err_profile(ADIS16405, dt);% Transform IMU manufacturer units to SI units
 
-imu1.att_init = [1 1 5] .* D2R;         % Initial attitude for matrix P in Kalman filter, [roll pitch yaw] (radians)  
+imu1.att_init = [1 1 5] .* D2R;       % Initial attitude for matrix P in Kalman filter, [roll pitch yaw] (radians)  
 imu1.t = ref.t;                       % IMU time vector
 imu1.freq = ref.freq;                 % IMU operation frequency
 
 %% ADIS16488 IMU error profile
 
-ADIS16488.arw = 0.3     .* ones(1,3);       % Angle random walks [X Y Z] (deg/root-hour)
-ADIS16488.vrw = 0.029   .* ones(1,3);       % Velocity random walks [X Y Z] (m/s/root-hour)
-ADIS16488.gb_fix = 0.2  .* ones(1,3);       % Gyro static biases [X Y Z] (deg/s)
-ADIS16488.ab_fix = 16   .* ones(1,3);       % Acc static biases [X Y Z] (mg)
+ADIS16488.arw      = 0.3  .* ones(1,3);     % Angle random walks [X Y Z] (deg/root-hour)
+ADIS16488.vrw      = 0.029.* ones(1,3);     % Velocity random walks [X Y Z] (m/s/root-hour)
+ADIS16488.gb_fix   = 0.2  .* ones(1,3);     % Gyro static biases [X Y Z] (deg/s)
+ADIS16488.ab_fix   = 16   .* ones(1,3);     % Acc static biases [X Y Z] (mg)
 ADIS16488.gb_drift = 6.5/3600  .* ones(1,3);% Gyro dynamic biases [X Y Z] (deg/s)
 ADIS16488.ab_drift = 0.1  .* ones(1,3);     % Acc dynamic biases [X Y Z] (mg)
-ADIS16488.gcorr = 100 .* ones(1,3);         % Gyro correlation times [X Y Z] (seconds)
-ADIS16488.acorr = 100 .* ones(1,3);         % Acc correlation times [X Y Z] (seconds)
-ADIS16488.freq = 100;                       % IMU operation frequency [X Y Z] (Hz)
-% ADIS16488.m_psd = 0.054 .* ones(1,3);        % Magnetometer noise [X Y Z] (mgauss/root-Hz)
+ADIS16488.gb_corr  = 100  .* ones(1,3);     % Gyro correlation times [X Y Z] (seconds)
+ADIS16488.ab_corr  = 100  .* ones(1,3);     % Acc correlation times [X Y Z] (seconds)
+% ADIS16488.freq     = 100;                   % IMU operation frequency [X Y Z] (Hz)
+% ADIS16488.m_psd = 0.054 .* ones(1,3);       % Magnetometer noise [X Y Z] (mgauss/root-Hz)
 
 % ref dataset is used to simulate IMU sensors.
 
-dt = mean(diff(ref.t));               % Mean period
+dt = mean(diff(ref.t));               % IMU mean period
 
-imu2 = imu_err_profile(ADIS16488, dt);  % Transform IMU manufacturer error units to SI units.
+imu2 = imu_err_profile(ADIS16488, dt);% Transform IMU manufacturer error units to SI units.
 
-imu2.att_init = [0.5 0.5 1] .* D2R;     % [roll pitch yaw] Initial attitude for matrix P in Kalman filter
+imu2.att_init = [0.5 0.5 1] .* D2R;   % Initial attitude for matrix P in Kalman filter, [roll pitch yaw] (radians)  
 imu2.t = ref.t;                       % IMU time vector
 imu2.freq = ref.freq;                 % IMU operation frequency
 
@@ -175,7 +178,7 @@ rng('shuffle')                  % Reset pseudo-random seed
 
 if strcmp(GPS_DATA, 'ON')       % If simulation of GPS data is required ...
     
-    fprintf('Simulating GPS data... \n')
+    fprintf('NaveGo: simulating GPS data... \n')
     
     gps = gps_err_profile(ref.lat(1), ref.h(1), gps); % Transform GPS manufacturer error units to SI units.
     
@@ -185,7 +188,7 @@ if strcmp(GPS_DATA, 'ON')       % If simulation of GPS data is required ...
     
 else
     
-    fprintf('Loading GPS data... \n') 
+    fprintf('NaveGo: loading GPS data... \n') 
     
     load gps.mat
 end
@@ -196,12 +199,12 @@ rng('shuffle')                  % Reset pseudo-random seed
 
 if strcmp(IMU1_DATA, 'ON')      % If simulation of IMU1 data is required ...
     
-    fprintf('Generating IMU1 ACCR data... \n')
+    fprintf('NaveGo: generating IMU1 ACCR data... \n')
     
     fb = acc_gen (ref, imu1); % Generate acc in the body frame
     imu1.fb = fb;
     
-    fprintf('Generating IMU1 GYRO data... \n')
+    fprintf('NaveGo: generating IMU1 GYRO data... \n')
     
     wb = gyro_gen (ref, imu1);% Generate gyro in the body frame
     imu1.wb = wb;
@@ -210,7 +213,7 @@ if strcmp(IMU1_DATA, 'ON')      % If simulation of IMU1 data is required ...
     clear wb fb;
     
 else
-    fprintf('Loading IMU1 data... \n')
+    fprintf('NaveGo: loading IMU1 data... \n')
     
     load imu1.mat
 end
@@ -221,12 +224,12 @@ rng('shuffle')					% Reset pseudo-random seed
 
 if strcmp(IMU2_DATA, 'ON')      % If simulation of IMU2 data is required ...
     
-    fprintf('Generating IMU2 ACCR data... \n')
+    fprintf('NaveGo: generating IMU2 ACCR data... \n')
     
     fb = acc_gen (ref, imu2); % Generate acc in the body frame
     imu2.fb = fb;
     
-    fprintf('Generating IMU2 GYRO data... \n')
+    fprintf('NaveGo: generating IMU2 GYRO data... \n')
     
     wb = gyro_gen (ref, imu2);% Generate gyro in the body frame
     imu2.wb = wb;
@@ -236,7 +239,7 @@ if strcmp(IMU2_DATA, 'ON')      % If simulation of IMU2 data is required ...
     clear wb fb;
     
 else
-    fprintf('Loading IMU2 data... \n')
+    fprintf('NaveGo: loading IMU2 data... \n')
     
     load imu2.mat
 end
@@ -245,7 +248,7 @@ end
 
 if strcmp(IMU1_INS, 'ON')
     
-    fprintf('INS/GPS integration for IMU1... \n')
+    fprintf('NaveGo: INS/GPS integration for IMU1... \n')
     
     % Sincronize GPS data with IMU data.
     
@@ -280,7 +283,7 @@ if strcmp(IMU1_INS, 'ON')
     
 else
     
-    fprintf('Loading INS/GPS integration for IMU1... \n')
+    fprintf('NaveGo: loading INS/GPS integration for IMU1... \n')
     
     load imu1_e.mat
 end
@@ -289,7 +292,7 @@ end
 
 if strcmp(IMU2_INS, 'ON')
     
-    fprintf('\nINS/GPS integration for IMU2... \n')
+    fprintf('\nNaveGo: INS/GPS integration for IMU2... \n')
     
     % Sincronize GPS data and IMU data.
     
@@ -324,7 +327,7 @@ if strcmp(IMU2_INS, 'ON')
     
 else
     
-    fprintf('Loading INS/GPS integration for IMU2... \n')
+    fprintf('NaveGo: loading INS/GPS integration for IMU2... \n')
     
     load imu2_e.mat
 end
@@ -333,7 +336,7 @@ end
 
 to = (ref.t(end) - ref.t(1));
 
-fprintf('\n>> Navigation time: %4.2f minutes or %4.2f seconds. \n', (to/60), to)
+fprintf('\nNaveGo: navigation time: %4.2f minutes or %4.2f seconds. \n', (to/60), to)
 
 %% Print RMSE from IMU1
 

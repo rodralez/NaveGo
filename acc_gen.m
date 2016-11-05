@@ -84,24 +84,24 @@ r5=randn(ref.kn,1);
 r6=randn(ref.kn,1);
 o=ones(ref.kn,1);
 
-if (isinf(imu.acorr))
+if (isinf(imu.ab_corr))
     sigmc = imu.ab_drift;
-    acorr = [sigmc(1).*r4 sigmc(2).*r5 sigmc(3).*r6];
+    ab_corr = [sigmc(1).*r4 sigmc(2).*r5 sigmc(3).*r6];
 else
     % Acc correlation noise
-    acorr = zeros(ref.kn,3);
+    ab_corr = zeros(ref.kn,3);
     dt = mean(diff(ref.t));
-    alpha = exp(-dt./imu.acorr);
+    alpha = exp(-dt./imu.ab_corr);
     sigmc = imu.ab_drift .* sqrt(1 - alpha.^2);
-    acorr(1,:) = ab_fix' + [sigmc(1).*r4(1) sigmc(2).*r5(1) sigmc(3).*r6(1)];
+    ab_corr(1,:) = ab_fix' + [sigmc(1).*r4(1) sigmc(2).*r5(1) sigmc(3).*r6(1)];
     for i = 2:ref.kn    
-        acorr (i,:) = alpha .* acorr (i-1,:) + [sigmc(1).*r4(i) sigmc(2).*r5(i) sigmc(3).*r6(i)]; 
+        ab_corr (i,:) = alpha .* ab_corr (i-1,:) + [sigmc(1).*r4(i) sigmc(2).*r5(i) sigmc(3).*r6(i)]; 
     end
 end
 
 fb = acc_b - cor_b + g_b + ...
      [imu.astd(1)  .*r1  imu.astd(2)  .*r2  imu.astd(3)  .*r3 ] + ...
      [ab_fix(1) .*o   ab_fix(2) .*o   ab_fix(3) .*o] + ...
-     acorr; 
+     ab_corr; 
  
 end

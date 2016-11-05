@@ -158,16 +158,16 @@ Fpp = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
 Fva  = I;
 Frog = I;
 
-if (isinf(imu.acorr))
+if (isinf(imu.ab_corr))
     Faa = Z;
 else
-    Faa = diag(-1./imu.acorr);
+    Faa = diag(-1./imu.ab_corr);
 end
 
-if (isinf(imu.gcorr))
+if (isinf(imu.gb_corr))
     Fgg = Z;
 else
-    Fgg = diag(-1./imu.gcorr);
+    Fgg = diag(-1./imu.gb_corr);
 end
 
 F= [ Fee  Fev  Fep   (DCMbn*Frog)  Z       (DCMbn*Frog)   Z;

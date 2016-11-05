@@ -66,12 +66,12 @@ Pu = (I - K*H) * P ;
 
 % *************************************************************************
 
-% Discretization of the continous-time system.
+% Discretization of continous-time system
 % A =  expm(F*dt);
 A = I + (F*dt);
 Qd = (G * Q * G') .* dt;
 
-% Step 4, predict Pp
+% Step 4, predict xp and Pp
 xp = A * xu;
 Pp = (A * Pu * A') + Qd;
 Pp =  0.5 .* (Pp + Pp');

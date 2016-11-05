@@ -68,25 +68,25 @@ r5=randn(ref.kn,1);
 r6=randn(ref.kn,1);
 o=ones(ref.kn,1);
 
-if (isinf(imu.gcorr))
+if (isinf(imu.gb_corr))
     sigmc = imu.gb_drift;
-    gcorr = [sigmc(1).*r4 sigmc(2).*r5 sigmc(3).*r6];
+    gb_corr = [sigmc(1).*r4 sigmc(2).*r5 sigmc(3).*r6];
 else
     % Gyro correlation noise
-    gcorr = zeros(ref.kn,3);
+    gb_corr = zeros(ref.kn,3);
     dt=mean(diff(ref.t));
-    alpha = exp(-dt./imu.gcorr);
+    alpha = exp(-dt./imu.gb_corr);
     sigmc = imu.gb_drift .* sqrt(1 - alpha.^2);
-    gcorr(1,:) = gb_fix' + [sigmc(1).*r4(1) sigmc(2).*r5(1) sigmc(3).*r6(1)];
+    gb_corr(1,:) = gb_fix' + [sigmc(1).*r4(1) sigmc(2).*r5(1) sigmc(3).*r6(1)];
 
     for i=2:ref.kn    
-        gcorr (i,:) = alpha .* gcorr (i-1,:) + [sigmc(1).*r4(i) sigmc(2).*r5(i) sigmc(3).*r6(i)]; 
+        gb_corr (i,:) = alpha .* gb_corr (i-1,:) + [sigmc(1).*r4(i) sigmc(2).*r5(i) sigmc(3).*r6(i)]; 
     end
 end
 
 wb = gyro_b + gyro_err_b + ...
      [imu.gstd(1).*r1    imu.gstd(2).*r2    imu.gstd(3).*r3 ] + ...
      [gb_fix(1).*o   gb_fix(2).*o   gb_fix(3).*o] + ...
-     gcorr; 
+     gb_corr; 
 
 end

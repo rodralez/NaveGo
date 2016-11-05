@@ -50,21 +50,21 @@ imu_nav.ab_drift = imu.ab_drift .* 0.001 .* G2MSS;  % mg -> m/s^2
 imu_nav.gb_drift = imu.gb_drift .* D2R;             % deg/s -> rad/s;
 
 % Dynamic bias PSD
-if (isinf(imu.gcorr))
+if (isinf(imu.gb_corr))
     imu_nav.gpsd = imu_nav.gb_drift;  % rad/s (approximation)
 else
-    imu_nav.gpsd = imu_nav.gb_drift .* sqrt(imu.gcorr);  % rad/s/root-Hz; 
+    imu_nav.gpsd = imu_nav.gb_drift .* sqrt(imu.gb_corr);  % rad/s/root-Hz; 
 end
 
-if (isinf(imu.acorr))
+if (isinf(imu.ab_corr))
     imu_nav.apsd = imu_nav.ab_drift;  % m/s^2 (approximation)
 else
-    imu_nav.apsd = imu_nav.ab_drift .* sqrt(imu.acorr);  % m/s^2/root-Hz
+    imu_nav.apsd = imu_nav.ab_drift .* sqrt(imu.ab_corr);  % m/s^2/root-Hz
 end
 
 % Correlation time
-imu_nav.acorr = imu.acorr;
-imu_nav.gcorr = imu.gcorr;
+imu_nav.ab_corr = imu.ab_corr;
+imu_nav.gb_corr = imu.gb_corr;
 
 % MAG
 %imu_nav.mstd = (imu.m_psd .* 1e-3) ./ sqrt(dt) .* 1e-4; % mgauss/root-Hz -> tesla
