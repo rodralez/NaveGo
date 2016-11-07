@@ -30,7 +30,7 @@
 %       Tianjin, China.
 %
 % Version: 001
-% Date:    2016/11/04
+% Date:    2016/11/07
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -50,11 +50,11 @@ load stim300
 
 [stim300, tau1_m, allan1_m] = allan_imu (stim300);
 
-imu1_arw = stim300.arw
-imu1_vrw = stim300.vrw
+stim300_arw = stim300.arw
+istim300_vrw = stim300.vrw
 
-imu1_ab_drift = stim300.ab_drift
-imu1_gb_drift = stim300.gb_drift
+stim300_ab_drift = stim300.ab_drift
+stim300_gb_drift = stim300.gb_drift
 
-imu1_ab_corr = stim300.ab_corr
-imu1_gb_corr = stim300.gb_corr
+stim300_ab_corr = stim300.ab_corr
+stim300_gb_corr = stim300.gb_corr
