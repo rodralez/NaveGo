@@ -50,7 +50,7 @@ close all
 clear
 matlabrc
 
-versionstr = 'NaveGo, release v0.7.1-alpha';
+versionstr = 'NaveGo, release v0.8.0-alpha';
 
 fprintf('\n%s.\n', versionstr)
 fprintf('\nNaveGo: starting simulation ... \n')

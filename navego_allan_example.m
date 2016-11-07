@@ -39,7 +39,7 @@ clear
 close all
 matlabrc
 
-versionstr = 'NaveGo, release v0.7.1-alpha';
+versionstr = 'NaveGo, release v0.8.0-alpha';
 
 fprintf('\n%s.\n', versionstr)
 fprintf('\nNaveGo: starting Allan variance analysis ... \n')

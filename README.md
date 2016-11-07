@@ -37,7 +37,7 @@ The underlying mathematical model of NaveGo is based on two articles that are re
 
 * R. Gonzalez, J.I. Giribet, and H.D. Patiño. An approach to benchmarking of loosely coupled low-cost navigation systems. Mathematical and Computer Modelling of Dynamical Systems, vol. 21, issue 3, pp. 272-287, 2015. [Link](http://www.tandfonline.com/doi/abs/10.1080/13873954.2014.952642).
 
-## Working example
+## INS/GPS working example
 
 The file `navego_example_of_use.m` tries to demonstrate the use of NaveGo. It compares the performances of two simulated IMUs, ADIS16405 IMU and ADIS16488 IMU, integrated with a simulated GPS.
 
@@ -423,3 +423,9 @@ http://www.analog.com/media/en/technical-documentation/data-sheets/ADIS16488.pdf
 * Garmin International, Inc. GPS 18x TECHNICAL SPECIFICATIONS.
 Revision D. October 2011. 
 http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
+
+
+## Allan variance analysis working example
+
+Just execute the file `navego_allan_example.m`. It process 2-hours static measurements from an STIM300 IMU.
+
