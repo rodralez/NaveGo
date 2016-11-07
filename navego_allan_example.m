@@ -24,7 +24,7 @@
 %       Sensonor AS. STIM300 Inertial Measurement Unit 
 %       http://www.sensonor.com/gyro-products/inertial-measurement-units/stim300.aspx7.
 %
-%       Four hours of static measurements from STIM300 IMU were generously
+%       Two hours of static measurements from STIM300 IMU were generously
 %       provided by Prof. Zhu, Dr. Yang, and Mr. Bo Sun, all from the Laboratory 
 %       of Precision Measuring Technology and Instruments, Tianjin University, 
 %       Tianjin, China.

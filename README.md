@@ -5,11 +5,28 @@
 
 NaveGo: an open-source MATLAB toolbox for simulating integrated navigation systems.
 
+## Features
+
+Main features of NaveGo are:
+
+* Simulation of an inertial navigation system (INS).
+
+* Simulation of a loosely-coupled integrated navigation system (INS/GPS).
+
+* Implementation of the Allan variance procedure in order to characterize the typical errors of an IMU. 
+
+* Simulation of IMU sensors (in a very early stage).
+
 ## Contributions
 
 We are looking for contributors for NaveGo! Until now, NaveGo is a one-man project. We hope the navigation community compromise and contribute with this open-source tool.
 
-You can contribute in many ways, writing code, writing a manual, reporting bugs or asking for new features as well.
+You can contribute in many ways: 
+
+* Writing code. 
+* Writing a manual. 
+* Reporting bugs.
+* Suggesting new features.
 
 If you are interested, please feel free to contact Dr. Rodrigo Gonzalez at rodralez [at] frm [dot] utn [dot] edu [dot] ar.
 
