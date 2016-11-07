@@ -51,7 +51,7 @@ load stim300
 [stim300, tau1_m, allan1_m] = allan_imu (stim300);
 
 stim300_arw = stim300.arw
-istim300_vrw = stim300.vrw
+stim300_vrw = stim300.vrw
 
 stim300_ab_drift = stim300.ab_drift
 stim300_gb_drift = stim300.gb_drift
