@@ -244,7 +244,7 @@ else
     load imu2.mat
 end
 
-%% IMU1/GPS INTEGRATION WITH EFK
+%% INS/GPS integration using IMU1
 
 if strcmp(IMU1_INS, 'ON')
     
@@ -288,7 +288,7 @@ else
     load imu1_e.mat
 end
 
-%% IMU2/GPS INTEGRATION WITH EFK
+%% INS/GPS integration using IMU2
 
 if strcmp(IMU2_INS, 'ON')
     

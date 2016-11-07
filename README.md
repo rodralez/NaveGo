@@ -283,7 +283,7 @@ end
 
 ```
 
-### IMU1/GPS integration with EKF
+### INS/GPS integration using IMU1
 
 ```matlab
 
@@ -331,7 +331,7 @@ end
 
 ```
 
-### IMU2/GPS integration with EKF
+### INS/GPS integration using IMU2
 
 ```matlab
 
