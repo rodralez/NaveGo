@@ -185,13 +185,6 @@ imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude alig
 
 %% Garmin 5-18 Hz GPS error profile
 
-gps.stdm = [5, 5, 10];                 % GPS positions standard deviations [lat lon h] (meters)
-gps.stdv = 0.1 * KT2MS .* ones(1,3);   % GPS velocities standard deviations [Vn Ve Vd] (meters/s)
-gps.larm = zeros(3,1);                 % GPS lever arm [X Y Z] (meters)
-gps.freq = 5;                          % GPS operation frequency (Hz)
-
-%% SIMULATE GPS
-
 % GPS data structure:
 %         t: Mx1 time vector (seconds).
 %       lat: Mx1 latitude (radians).
@@ -203,6 +196,13 @@ gps.freq = 5;                          % GPS operation frequency (Hz)
 %      stdv: 1x3 velocity standard deviations (m/s).
 %      larm: 3x1 lever arm (x-right, y-fwd, z-down) (m).
 %      freq: 1x1 sampling frequency (Hz).
+
+gps.stdm = [5, 5, 10];                 % GPS positions standard deviations [lat lon h] (meters)
+gps.stdv = 0.1 * KT2MS .* ones(1,3);   % GPS velocities standard deviations [Vn Ve Vd] (meters/s)
+gps.larm = zeros(3,1);                 % GPS lever arm [X Y Z] (meters)
+gps.freq = 5;                          % GPS operation frequency (Hz)
+
+%% SIMULATE GPS
 
 rng('shuffle')                  % Reset pseudo-random seed
 
@@ -374,7 +374,7 @@ ref_g = navego_interpolation (gps, ref);
 
 to = (ref.t(end) - ref.t(1));
 
-fprintf('\nNaveGo: navigation time: %4.2f minutes or %4.2f seconds. \n', (to/60), to)
+fprintf('\nNaveGo: navigation time of %4.2f minutes or %4.2f seconds. \n', (to/60), to)
 
 %% Print RMSE from IMU1
 
