@@ -34,7 +34,7 @@ function quanew = qua_update(quaold, w_bn, dt)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-wnorm=norm(w_bn);
+wnorm = norm(w_bn);
 
 if wnorm == 0,
     

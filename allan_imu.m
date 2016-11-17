@@ -154,10 +154,10 @@ for i=1:3
     loglog(tau, allan, plot_line(i,:));
     hold on
     
-    vrw = find_rw (tau, allan, dt);
+    vrw = allan_get_rw (tau, allan, dt);
     imu.vrw(i) = vrw;
     
-    [b_drift, t_corr] = find_b_drift (tau, allan);
+    [b_drift, t_corr] = allan_get_bdrift (tau, allan);
     imu.ab_drift(i) = b_drift;
     imu.ab_corr(i) = t_corr;
     
@@ -188,10 +188,10 @@ for i=1:3
     loglog(tau, allan, plot_line(i,:));
     hold on
     
-    arw = find_rw (tau, allan, dt);
+    arw = allan_get_rw (tau, allan, dt);
     imu.arw(i) = arw;
     
-    [b_drift, t_corr] = find_b_drift (tau, allan);
+    [b_drift, t_corr] = allan_get_bdrift (tau, allan);
     imu.gb_drift(i) = b_drift;
     imu.gb_corr(i) = t_corr;
     

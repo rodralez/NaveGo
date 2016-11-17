@@ -37,9 +37,13 @@ The underlying mathematical model of NaveGo is based on two articles that are re
 
 * R. Gonzalez, J.I. Giribet, and H.D. Patiño. An approach to benchmarking of loosely coupled low-cost navigation systems. Mathematical and Computer Modelling of Dynamical Systems, vol. 21, issue 3, pp. 272-287, 2015. [Link](http://www.tandfonline.com/doi/abs/10.1080/13873954.2014.952642).
 
+## Allan variance working example
+
+Just execute the file `navego_allan_example.m`. It process 2-hours static measurements from an Sensonor STIM300 IMU.
+
 ## INS/GPS working example
 
-The file `navego_example_of_use.m` tries to demonstrate the use of NaveGo. It compares the performances of two simulated IMUs, ADIS16405 IMU and ADIS16488 IMU, integrated with a simulated GPS.
+The file `navego_example.m` tries to demonstrate the use of NaveGo. It compares the performances of two simulated IMUs, ADIS16405 IMU and ADIS16488 IMU, both integrated with a simulated GPS.
 
 Next, a description of this file.
 
@@ -317,7 +321,7 @@ if strcmp(IMU1_INS, 'ON')
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    [imu1_e] = ins(imu1, gps, ref, 'quaternion', 'double');
+    [imu1_e] = ins_gps(imu1, gps, ref, 'quaternion', 'double');
     % ---------------------------------------------------------------------
     
     save imu1_e.mat imu1_e
@@ -365,7 +369,7 @@ if strcmp(IMU2_INS, 'ON')
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    [imu2_e] = ins(imu2, gps, ref, 'quaternion', 'double');
+    [imu2_e] = ins_gps(imu2, gps, ref, 'quaternion', 'double');
     % ---------------------------------------------------------------------
     
     save imu2_e.mat imu2_e
@@ -407,25 +411,27 @@ ref_2 = print_rmse (imu2_e, gps, ref, 'IMU2/GPS');
 
 ### References
 
-* R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
-simulation framework for low-cost integrated navigation systems,
-Journal of Control Engineering and Applied Informatics, vol. 17,
-issue 2, pp. 110-120, 2015. Eq. 26.
+* R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a simulation framework for low-cost integrated navigation systems, Journal of Control Engineering and Applied Informatics, vol. 17, issue 2, pp. 110-120, 2015. Eq. 26.
 
-* Analog Devices. ADIS16400/ADIS16405 datasheet. High Precision 
-Tri-Axis Gyroscope, Accelerometer, Magnetometer. Rev. B. 
+* Analog Devices. ADIS16400/ADIS16405 datasheet. High Precision Tri-Axis Gyroscope, Accelerometer, Magnetometer. Rev. B. 
 http://www.analog.com/media/en/technical-documentation/data-sheets/ADIS16400_16405.pdf
 
-* Analog Devices. ADIS16488 datasheet. Tactical Grade Ten Degrees 
-of Freedom Inertial Sensor. Rev. G. 
+* Analog Devices. ADIS16488 datasheet. Tactical Grade Ten Degrees of Freedom Inertial Sensor. Rev. G. 
 http://www.analog.com/media/en/technical-documentation/data-sheets/ADIS16488.pdf
 
-* Garmin International, Inc. GPS 18x TECHNICAL SPECIFICATIONS.
-Revision D. October 2011. 
+* Garmin International, Inc. GPS 18x TECHNICAL SPECIFICATIONS. Revision D. October 2011. 
 http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 
 
-## Allan variance analysis working example
+## Acknowledgment
 
-Just execute the file `navego_allan_example.m`. It process 2-hours static measurements from an STIM300 IMU.
+We would like to thank to many people that have contribute to make NaveGo a better tool:
+
+* Dr. Juan Ignacio Giribet (Universidad Nacional de Buenos Aires, Argentina) for this continuous support on theory aspects of INS/GPS systems.
+
+* Dr. Charles K. Toth (The Ohio State University, USA), Dr. Allison Kealy, and M.Sc. Azmir Hasnur-Rabiain (both from The University of Melbourne, Australia) for generously sharing IMU and GPS datasets, and in particular, for Hasnur-Rabiain's unselfish help.
+
+* Prof. Zhu, Dr. Yang, and Mr. Bo Sun, all from the Laboratory of Precision Measuring Technology and Instruments, Tianjin University, Tianjin, China, for contribution static measurements to test NaveGo Allan variance routines.
+
+* Dr. Paolo Dabove and Dr. Marco Piras (both from DIATI, Politecnico di Torino, Italy) for helping to debug NaveGo and suggesting new features.
 

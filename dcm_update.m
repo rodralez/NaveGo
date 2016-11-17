@@ -22,7 +22,7 @@ function [DCMbn_new,A] = dcm_update(DCMbn_old, ang)
 % Reference:
 %			Titterton, D.H. and Weston, J.L. (2004). Strapdown
 % Inertial Navigation Technology (2nd Ed.). Institution
-% of Engineering and Technology, USA. Eq. 11.4.
+% of Engineering and Technology, USA. Eq. 11.4 and 11.10.
 %
 % Version: 001
 % Date:    2014/09/11

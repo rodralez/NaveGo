@@ -21,7 +21,7 @@
 %
 % References:
 %
-%       Sensonor AS. STIM300 Inertial Measurement Unit 
+%       Sensonor AS. Sensonor STIM300 Inertial Measurement Unit 
 %       http://www.sensonor.com/gyro-products/inertial-measurement-units/stim300.aspx7.
 %
 %       Two hours of static measurements from STIM300 IMU were generously

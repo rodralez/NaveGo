@@ -26,7 +26,7 @@
 %           R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
 % simulation framework for low-cost integrated navigation systems,
 % Journal of Control Engineering and Applied Informatics, vol. 17,
-% issue 2, pp. 110-120, 2015. Eq. 26.
+% issue 2, pp. 110-120, 2015.
 %
 %           Analog Devices. ADIS16400/ADIS16405 datasheet. High Precision 
 % Tri-Axis Gyroscope, Accelerometer, Magnetometer. Rev. B. 
@@ -40,8 +40,8 @@
 % Revision D. October 2011. 
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 % 
-% Version: 007
-% Date:    2016/11/02
+% Version: 008
+% Date:    2016/11/17
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -64,9 +64,9 @@ global R2D
 
 % Comment any of the following parameters in order to NOT execute a particular portion of code
 
-GPS_DATA  = 'ON';   % Simulate GPS data
-IMU1_DATA = 'ON';   % Simulate ADIS16405 IMU data
-IMU2_DATA = 'ON';   % Simulate ADIS16488 IMU data
+% GPS_DATA  = 'ON';   % Simulate GPS data
+% IMU1_DATA = 'ON';   % Simulate ADIS16405 IMU data
+% IMU2_DATA = 'ON';   % Simulate ADIS16488 IMU data
 
 IMU1_INS  = 'ON';   % Execute INS/GPS integration for ADIS16405 IMU
 IMU2_INS  = 'ON';   % Execute INS/GPS integration for ADIS16488 IMU
@@ -103,23 +103,43 @@ load ref.mat
 % ref.mat contains the reference data structure from which inertial 
 % sensors and GPS wil be simulated. It must contain the following fields:
 
-%         t: time vector (seconds).
-%       lat: latitude vector (radians).
-%       lon: longitude vector (radians).
-%         h: altitude vector (meters).
-%       vel: NED velocities vectors, [north east down] (meter/s).
-%      roll: roll angle vector (radians).
-%     pitch: pitch angle vector (radians).
-%       yaw: yaw angle vector (radians).
-%        kn: number of elements of time vector.
-%     DCMnb: Direct Cosine Matrix nav-to-body, with 'kn' rows and 9
-%     columns. Each row contains the elements of one matrix ordered by
-%     columns as [a11 a21 a31 a12 a22 a32 a13 a23 a33]. Use reshape()
-%     built-in MATLAB function to get the original 3x3 matrix
-%     (reshape(DCMnb(row,:),3,3)).
+%         t: Nx1 time vector (seconds).
+%       lat: Nx1 latitude (radians).
+%       lon: Nx1 longitude (radians).
+%         h: Nx1 altitude (m).
+%       vel: Nx3 NED velocities (m/s).
+%      roll: Nx1 roll angles (radians).
+%     pitch: Nx1 pitch angles (radians).
+%       yaw: Nx1 yaw angle vector (radians).
+%        kn: 1x1 number of elements of time vector.
+%     DCMnb: Nx9 Direct Cosine Matrix nav-to-body. Each row contains 
+%            the elements of one matrix ordered by columns as 
+%            [a11 a21 a31 a12 a22 a32 a13 a23 a33].
 %      freq: sampling frequency (Hz).
 
 %% ADIS16405 IMU error profile
+
+% IMU data structure:
+%         t: Ix1 time vector (seconds).
+%        fb: Ix3 accelerations vector in body frame XYZ (m/s^2).
+%        wb: Ix3 turn rates vector in body frame XYZ (radians/s).
+%       arw: 1x3 angle random walks (rad/s/root-Hz).
+%       vrw: 1x3 angle velocity walks (m/s^2/root-Hz).
+%      gstd: 1x3 gyros standard deviations (radians/s).
+%      astd: 1x3 accrs standard deviations (m/s^2).
+%    gb_fix: 1x3 gyros static biases or turn-on biases (radians/s).
+%    ab_fix: 1x3 accrs static biases or turn-on biases (m/s^2).
+%  gb_drift: 1x3 gyros dynamic biases or bias instabilities (radians/s).
+%  ab_drift: 1x3 accrs dynamic biases or bias instabilities (m/s^2).
+%   gb_corr: 1x3 gyros correlation times (seconds).
+%   ab_corr: 1x3 accrs correlation times (seconds).
+%     gpsd : 1x3 gyros dynamic biases PSD (rad/s/root-Hz).
+%     apsd : 1x3 accrs dynamic biases PSD (m/s^2/root-Hz);
+%      freq: 1x1 sampling frequency (Hz).
+% ini_align: 1x3 initial attitude at ti(1).
+% ini_align_err: 1x3 initial attitude errors at ti(1).
+
+% ref dataset will be used to simulate IMU sensors.
 
 ADIS16405.arw      = 2   .* ones(1,3);     % Angle random walks [X Y Z] (deg/root-hour)
 ADIS16405.vrw      = 0.2 .* ones(1,3);     % Velocity random walks [X Y Z] (m/s/root-hour)
@@ -129,20 +149,20 @@ ADIS16405.gb_drift = 0.007 .* ones(1,3);   % Gyro dynamic biases [X Y Z] (deg/s)
 ADIS16405.ab_drift = 0.2 .* ones(1,3);     % Acc dynamic biases [X Y Z] (mg)
 ADIS16405.gb_corr  = 100 .* ones(1,3);     % Gyro correlation times [X Y Z] (seconds)
 ADIS16405.ab_corr  = 100 .* ones(1,3);     % Acc correlation times [X Y Z] (seconds)
-% ADIS16405.freq     = 100;                  % IMU operation frequency [X Y Z] (Hz)
-% ADIS16405.m_psd     = 0.066 .* ones(1,3);  % Magnetometer noise [X Y Z] (mgauss/root-Hz)
+ADIS16405.freq     = ref.freq;             % IMU operation frequency [X Y Z] (Hz)
+% ADIS16405.m_psd     = 0.066 .* ones(1,3);  % Magnetometer noise density [X Y Z] (mgauss/root-Hz)
 
-% ref dataset is used to simulate IMU sensors.
+ADIS16405.t = ref.t;                             % IMU time vector
+dt = mean(diff(ADIS16405.t));                    % IMU mean period
 
-dt = mean(diff(ref.t));               % IMU mean period
+imu1 = imu_err_profile(ADIS16405, dt);      % Transform IMU manufacturer error units to SI units.
 
-imu1 = imu_err_profile(ADIS16405, dt);% Transform IMU manufacturer units to SI units
-
-imu1.att_init = [1 1 5] .* D2R;       % Initial attitude for matrix P in Kalman filter, [roll pitch yaw] (radians)  
-imu1.t = ref.t;                       % IMU time vector
-imu1.freq = ref.freq;                 % IMU operation frequency
+imu1.ini_align_err = [1 1 5] .* D2R;                     % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)  
+imu1.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude align at t(1) (radians).
 
 %% ADIS16488 IMU error profile
+
+% ref dataset will be used to simulate IMU sensors.
 
 ADIS16488.arw      = 0.3  .* ones(1,3);     % Angle random walks [X Y Z] (deg/root-hour)
 ADIS16488.vrw      = 0.029.* ones(1,3);     % Velocity random walks [X Y Z] (m/s/root-hour)
@@ -152,18 +172,16 @@ ADIS16488.gb_drift = 6.5/3600  .* ones(1,3);% Gyro dynamic biases [X Y Z] (deg/s
 ADIS16488.ab_drift = 0.1  .* ones(1,3);     % Acc dynamic biases [X Y Z] (mg)
 ADIS16488.gb_corr  = 100  .* ones(1,3);     % Gyro correlation times [X Y Z] (seconds)
 ADIS16488.ab_corr  = 100  .* ones(1,3);     % Acc correlation times [X Y Z] (seconds)
-% ADIS16488.freq     = 100;                   % IMU operation frequency [X Y Z] (Hz)
-% ADIS16488.m_psd = 0.054 .* ones(1,3);       % Magnetometer noise [X Y Z] (mgauss/root-Hz)
+ADIS16488.freq     = ref.freq;              % IMU operation frequency [X Y Z] (Hz)
+% ADIS16488.m_psd = 0.054 .* ones(1,3);       % Magnetometer noise density [X Y Z] (mgauss/root-Hz)
 
-% ref dataset is used to simulate IMU sensors.
+ADIS16488.t = ref.t;                             % IMU time vector
+dt = mean(diff(ADIS16488.t));                    % IMU mean period
 
-dt = mean(diff(ref.t));               % IMU mean period
+imu2 = imu_err_profile(ADIS16488, dt);      % Transform IMU manufacturer error units to SI units.
 
-imu2 = imu_err_profile(ADIS16488, dt);% Transform IMU manufacturer error units to SI units.
-
-imu2.att_init = [0.5 0.5 1] .* D2R;   % Initial attitude for matrix P in Kalman filter, [roll pitch yaw] (radians)  
-imu2.t = ref.t;                       % IMU time vector
-imu2.freq = ref.freq;                 % IMU operation frequency
+imu2.ini_align_err = [1 1 5] .* D2R;                     % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)  
+imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude align at t(1) (radians).
 
 %% Garmin 5-18 Hz GPS error profile
 
@@ -173,6 +191,18 @@ gps.larm = zeros(3,1);                 % GPS lever arm [X Y Z] (meters)
 gps.freq = 5;                          % GPS operation frequency (Hz)
 
 %% SIMULATE GPS
+
+% GPS data structure:
+%         t: Mx1 time vector (seconds).
+%       lat: Mx1 latitude (radians).
+%       lon: Mx1 longitude (radians).
+%         h: Mx1 altitude (m).
+%       vel: Mx3 NED velocities (m/s).
+%       std: 1x3 position standard deviations (rad, rad, m).
+%      stdm: 1x3 position standard deviations (m, m, m).
+%      stdv: 1x3 velocity standard deviations (m/s).
+%      larm: 3x1 lever arm (x-right, y-fwd, z-down) (m).
+%      freq: 1x1 sampling frequency (Hz).
 
 rng('shuffle')                  % Reset pseudo-random seed
 
@@ -210,6 +240,7 @@ if strcmp(IMU1_DATA, 'ON')      % If simulation of IMU1 data is required ...
     imu1.wb = wb;
     
     save imu1.mat imu1
+    
     clear wb fb;
     
 else
@@ -276,7 +307,7 @@ if strcmp(IMU1_INS, 'ON')
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    [imu1_e] = ins(imu1, gps, ref, 'quaternion', 'double');
+    [imu1_e] = ins_gps(imu1, gps, 'quaternion', 'double');
     % ---------------------------------------------------------------------
     
     save imu1_e.mat imu1_e
@@ -320,7 +351,7 @@ if strcmp(IMU2_INS, 'ON')
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    [imu2_e] = ins(imu2, gps, ref, 'quaternion', 'double');
+    [imu2_e] = ins_gps(imu2, gps, 'quaternion', 'double');
     % ---------------------------------------------------------------------
     
     save imu2_e.mat imu2_e
@@ -332,6 +363,13 @@ else
     load imu2_e.mat
 end
 
+
+%% Interpolate reference dataset 
+
+ref_1 = navego_interpolation (imu1_e, ref);
+ref_2 = navego_interpolation (imu2_e, ref);
+ref_g = navego_interpolation (gps, ref);
+
 %% Print navigation time
 
 to = (ref.t(end) - ref.t(1));
@@ -340,11 +378,11 @@ fprintf('\nNaveGo: navigation time: %4.2f minutes or %4.2f seconds. \n', (to/60)
 
 %% Print RMSE from IMU1
 
-[ref_1, ref_g] = print_rmse (imu1_e, gps, ref, 'IMU1/GPS');
+print_rmse (imu1_e, gps, ref_1, ref_g, 'INS/GPS IMU1');
 
 %% Print RMSE from IMU2
 
-ref_2 = print_rmse (imu2_e, gps, ref, 'IMU2/GPS');
+print_rmse (imu2_e, gps, ref_2, ref_g, 'INS/GPS IMU2');
 
 %% PLOT
 

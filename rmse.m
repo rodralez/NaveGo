@@ -1,5 +1,5 @@
 function rmserr = rmse (estimate, true)
-% rmse:  Rooted mean squarred error
+% rmse: rooted mean squarred error between two vectors.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
@@ -19,10 +19,14 @@ function rmserr = rmse (estimate, true)
 %   License along with this program. If not, see 
 %   <http://www.gnu.org/licenses/>.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2016/11/16
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
+
+if( any(isnan(estimate)) || any(isnan(true)))
+    error('rmse: input vector with one NaN value at least');
+end
 
 rmserr =  sqrt ( mean ( ( estimate - true).^2) ) ;
 

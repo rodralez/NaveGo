@@ -1,5 +1,5 @@
-function [b_drift, t_corr] = find_b_drift (tau, allan)
-% find_b_drift: find bias instability parameter from Allan variance.
+function [b_drift, t_corr] = allan_get_bdrift (tau, allan)
+% allan_get_bdrift: finds bias instability parameter from Allan variance.
 %
 % INPUT
 % - tau, Nx1 Allan variance time vector in seconds.

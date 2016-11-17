@@ -34,7 +34,7 @@ function DCMbn = qua2dcm(qin)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-% Quaternion format used in Crassidis quaternion update.
+% Quaternion format used in Crassidis' quaternion equations.
 a = qin(4); b = qin(1); c = qin(2); d = qin(3);
 
 DCMbn(1,1) = a*a + b*b - c*c - d*d;

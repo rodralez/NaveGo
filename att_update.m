@@ -30,6 +30,7 @@ function [quanew, DCMbn_new, ang_v] = att_update(w, DCMbn_old, quaold, omega_ie_
 % URL:     https://github.com/rodralez/navego
 
 %% Correct gyros output for Earth rate and Transport rate
+
 w_bn = ( w - DCMbn_old' * (omega_ie_N + omega_en_N))';
 
 if strcmp(mode, 'quaternion')
@@ -49,5 +50,7 @@ elseif strcmp(mode, 'dcm')
     quanew    = quanew/norm(quanew);
     
 else
-    error('ERROR in att_update: no mode defined.')
+    error('att_update: no attitude update mode defined.')
+end
+
 end

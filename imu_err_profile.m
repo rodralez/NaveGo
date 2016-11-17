@@ -25,19 +25,22 @@ function imu_nav = imu_err_profile(imu, dt)
 % Journal of Control Engineering and Applied Informatics, vol. 17, 
 % issue 2, pp. 110-120, 2015. Eq. 9, 14, and 30.
 %
-% Version: 002
-% Date:    2015/08/20
+% Version: 003
+% Date:    2016/11/17
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
 D2R = (pi/180);     % deg to rad
 G2MSS = 9.81;       % g to m/s^2
 
+% Copy previois fields
+imu_nav = imu;
+
 % Noise PSD
 imu_nav.arw = (imu.arw ./ 60) .* D2R;   % deg/root-hour -> rad/s/root-Hz
 imu_nav.vrw = (imu.vrw ./ 60);          % m/s/root-hour -> m/s^2/root-Hz
 
-% Sigmas
+% Standard deviations
 imu_nav.astd   = imu_nav.vrw ./ sqrt(dt); % m/s^2/root-Hz  ->  m/s^2
 imu_nav.gstd   = imu_nav.arw ./ sqrt(dt); % rad/s/root-Hz  ->  rad/s
 

@@ -43,29 +43,6 @@ xu = x + K * (y - H*x);
 % Step 3, update covariance matrix
 Pu = (I - K*H) * P ;
 
-% *************************************************************************
-% Sequential KF
-% *************************************************************************
-% l = max(size(R));
-% n = max(size(x));
-% xu = zeros(n,1);
-% K = zeros(n,l);
-% I = eye(n);
-% Pu = P;
-%
-% for j = 1:l
-%
-%     h = H(j,:);
-%     r = R(j,j);
-%     alpha = h * Pu * h' + r;
-%     k = Pu * h' / alpha;
-%     xu = xu + k*y(j);
-%     K(:,j) = k;
-%     Pu = (I - k*h) * Pu ;
-% end
-
-% *************************************************************************
-
 % Discretization of continous-time system
 % A =  expm(F*dt);
 A = I + (F*dt);

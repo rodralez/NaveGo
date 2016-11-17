@@ -26,7 +26,7 @@ function ang_v = qua2euler(qin)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-% Quaternion format used in Crassidis quaternion update.
+% Quaternion format used in Crassidis' quaternion equations.
 qua(1) = qin(4);
 qua(2) = qin(1);
 qua(3) = qin(2);
