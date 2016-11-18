@@ -136,8 +136,8 @@ load ref.mat
 %     gpsd : 1x3 gyros dynamic biases PSD (rad/s/root-Hz).
 %     apsd : 1x3 accrs dynamic biases PSD (m/s^2/root-Hz);
 %      freq: 1x1 sampling frequency (Hz).
-% ini_align: 1x3 initial attitude at ti(1).
-% ini_align_err: 1x3 initial attitude errors at ti(1).
+% ini_align: 1x3 initial attitude at t(1).
+% ini_align_err: 1x3 initial attitude errors at t(1).
 
 % ref dataset will be used to simulate IMU sensors.
 
@@ -362,7 +362,6 @@ else
     
     load imu2_e.mat
 end
-
 
 %% Interpolate reference dataset 
 

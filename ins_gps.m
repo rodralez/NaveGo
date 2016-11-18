@@ -1,5 +1,5 @@
 function [ins_gps_e] = ins_gps(imu, gps, att_mode, precision)
-% ins: loosely-coupled integrated navigation system. It integrates IMU and GPS 
+% ins: loosely-coupled integrated navigation system. It integrates IMU and GPS
 % measurements using an Extended Kalman filter.
 %
 % INPUT:
@@ -20,8 +20,8 @@ function [ins_gps_e] = ins_gps(imu, gps, att_mode, precision)
 %     gpsd : 1x3 gyros dynamic biases PSD (rad/s/root-Hz).
 %     apsd : 1x3 accrs dynamic biases PSD (m/s^2/root-Hz);
 %      freq: 1x1 sampling frequency (Hz).
-% ini_align: 1x3 initial attitude at ti(1).
-% ini_align_err: 1x3 initial attitude errors at ti(1).
+% ini_align: 1x3 initial attitude at t(1).
+% ini_align_err: 1x3 initial attitude errors at t(1).
 %
 %	gps, GPS data structure.
 %         t: Mx1 time vector (seconds).
@@ -35,7 +35,7 @@ function [ins_gps_e] = ins_gps(imu, gps, att_mode, precision)
 %      larm: 3x1 lever arm (x-right, y-fwd, z-down) (m).
 %      freq: 1x1 sampling frequency (Hz).
 %
-%	att_mode, attitude mode. 
+%	att_mode, attitude mode.
 %      'quaternion': attitude updated in quaternion format. Default value.
 %             'dcm': attitude updated in Direct Cosine Matrix format.
 %
@@ -47,7 +47,7 @@ function [ins_gps_e] = ins_gps(imu, gps, att_mode, precision)
 %   ins_gps_e, INS/GPS estimates data structure.
 %         t: Ix1 time vector (seconds).
 %      roll: Ix1 roll (radians).
-%     pitch: Ix1 pitch (radians).     
+%     pitch: Ix1 pitch (radians).
 %       yaw: Ix1 yaw (radians).
 %       vel: Ix3 NED velocities (m/s).
 %       lat: Ix1 latitude (radians).
@@ -122,12 +122,12 @@ if strcmp(precision, 'single')  % single precision
     gb_fix = single(imu.gb_fix');
     ab_fix = single(imu.ab_fix');
     vel_e(1,:) = single(zeros(1,3));
-
+    
     % Initialize estimates at tti=1
     roll_e (1) = single(imu.ini_align(1));
     pitch_e(1) = single(imu.ini_align(2));
     yaw_e(1)   = single(imu.ini_align(3));
-    vel_e(1,:) = single(gps.vel(1,:));    
+    vel_e(1,:) = single(gps.vel(1,:));
     h_e(1)     = single(gps.h(1));
     
 else % double precision
@@ -138,7 +138,7 @@ else % double precision
     yaw_e   =  (zeros (Mi, 1));
     vel_e   =  (zeros (Mi, 3));
     h_e     =  (zeros (Mi, 1));
-    x = (zeros(21,1));  
+    x = (zeros(21,1));
     
     % Constant matrices
     I =  (eye(3));
@@ -160,8 +160,8 @@ else % double precision
     roll_e (1) = imu.ini_align(1);
     pitch_e(1) = imu.ini_align(2);
     yaw_e(1)   = imu.ini_align(3);
-    vel_e(1,:) = gps.vel(1,:);    
-    h_e(1)     = gps.h(1);   
+    vel_e(1,:) = gps.vel(1,:);
+    h_e(1)     = gps.h(1);
 end
 
 % Lat and lon cannot be set in single precision. They need full (double) precision.
@@ -193,132 +193,142 @@ i = 2;
 % GPS clock is the master clock
 for j = 2:Mg
     
-    while (ti(i) <= tg(j))
-
-        %% INERTIAL NAVIGATION SYSTEM (INS)      
+    if (gps.nsat(j) > 4)
         
-        % Print a dot on console every 10,000 INS executions
-        if (mod(i,10000) == 0), fprintf('. '); end
-        % Print a return on console every 500,000 INS executions
-        if (mod(i,500000) == 0), fprintf('\n'); end
+        while (ti(i) < tg(j))
+            
+            %% INERTIAL NAVIGATION SYSTEM (INS)
+            
+            % Print a dot on console every 10,000 INS executions
+            if (mod(i,10000) == 0), fprintf('. '); end
+            % Print a return on console every 500,000 INS executions
+            if (mod(i,500000) == 0), fprintf('\n'); end
+            
+            % INS period
+            dti = ti(i) - ti(i-1);
+            
+            % Correct inertial sensors
+            wb_corrected = (imu.wb(i,:)' - gb_drift - gb_fix);
+            fb_corrected = (imu.fb(i,:)' - ab_drift - ab_fix);
+            
+            % Attitude update
+            omega_ie_N = earthrate(lat_e(i-1), precision);
+            omega_en_N = transportrate(lat_e(i-1), vel_e(i-1,1), vel_e(i-1,2), h_e(i-1));
+            
+            [qua_n, DCMbn_n, ang_v] = att_update(wb_corrected, DCMbn, qua, ...
+                omega_ie_N, omega_en_N, dti, att_mode);
+            roll_e(i) = ang_v(1);
+            pitch_e(i)= ang_v(2);
+            yaw_e(i)  = ang_v(3);
+            DCMbn = DCMbn_n;
+            qua = qua_n;
+            
+            % Gravity update
+            g = gravity(lat_e(i-1), h_e(i-1));
+            
+            % Velocity update
+            fn = DCMbn_n * (fb_corrected);
+            vel_upd = vel_update(fn, vel_e(i-1,:)', omega_ie_N, omega_en_N, g', dti); %
+            vel_e (i,:) = vel_upd';
+            
+            % Position update
+            pos = pos_update([lat_e(i-1) lon_e(i-1) double(h_e(i-1))], double(vel_e(i,:)), double(dti) );
+            lat_e(i) = pos(1); lon_e(i) = pos(2); h_e(i) = (pos(3));
+            
+            % Magnetic heading update
+            %  yawm_e(i) = hd_update (imu.mb(i,:), roll_e(i),  pitch_e(i), D);
+            
+            % Index for INS navigation update
+            i = i + 1;
+            
+        end
         
-        % INS period
-        dti = ti(i) - ti(i-1);
+        %% INNOVATIONS
         
-        % Correct inertial sensors
-        wb_corrected = (imu.wb(i,:)' - gb_drift - gb_fix);
-        fb_corrected = (imu.fb(i,:)' - ab_drift - ab_fix);
+        [RM,RN] = radius(lat_e(i-1), precision);
+        Tpr = diag([(RM+h_e(i-1)), (RN+h_e(i-1))*cos(lat_e(i-1)), -1]);  % radians-to-meters
         
-        % Attitude update
-        omega_ie_N = earthrate(lat_e(i-1), precision);
-        omega_en_N = transportrate(lat_e(i-1), vel_e(i-1,1), vel_e(i-1,2), h_e(i-1));
+        % Innovations
+        zp = Tpr * ([lat_e(i-1); lon_e(i-1); h_e(i-1);] ...
+            - [gps.lat(j); gps.lon(j); gps.h(j);]) + (DCMbn_n * gps.larm);
         
-        [qua_n, DCMbn_n, ang_v] = att_update(wb_corrected, DCMbn, qua, ...
-                                     omega_ie_N, omega_en_N, dti, att_mode);
-        roll_e(i) = ang_v(1);
-        pitch_e(i)= ang_v(2);
-        yaw_e(i)  = ang_v(3);
-        DCMbn = DCMbn_n;
-        qua = qua_n;
+        zv = (vel_e (i-1,:) - gps.vel(j,:))';
         
-        % Gravity update
-        g = gravity(lat_e(i-1), h_e(i-1));
+        z = [ zv' zp' ]';
         
-        % Velocity update
-        fn = DCMbn_n * (fb_corrected);
-        vel_upd = vel_update(fn, vel_e(i-1,:)', omega_ie_N, omega_en_N, g', dti); %
-        vel_e (i,:) = vel_upd';
+        %% KALMAN FILTER
         
-        % Position update
-        pos = pos_update([lat_e(i-1) lon_e(i-1) double(h_e(i-1))], double(vel_e(i,:)), double(dti) );
-        lat_e(i) = pos(1); lon_e(i) = pos(2); h_e(i) = (pos(3));
+        % GPS period
+        dtg = tg(j) - tg(j-1);
         
-        % Magnetic heading update
-        %  yawm_e(i) = hd_update (imu.mb(i,:), roll_e(i),  pitch_e(i), D);
+        % Vector to update matrix F
+        upd = [vel_e(i-1,:) lat_e(i-1) h_e(i-1) fn'];
         
-        % Index for INS navigation update
-        i = i + 1;
+        % Update matrices F and G
+        [S.F, S.G] = F_update(upd, DCMbn_n, imu);
         
+        % Update matrix H
+        S.H = [Z I Z   Z Z Z Z;
+            Z Z Tpr Z Z Z Z; ];
+        
+        % Execute the extended Kalman filter
+        [xu, S] = kalman(x, z, S, dtg);
+        
+        % Execute UD filter
+        %     [xu, Up, dp] = ud_filter(x, y, F, H, G, Q, R, Up, dp, dtg);
+        %     P = Up * diag(dp) * Up';
+        
+        %% INS/GPS CORRECTIONS
+        
+        % DCM correction
+        E = skewm(xu(1:3));
+        DCMbn = (eye(3) + E) * DCMbn_n;
+        
+        % Quaternion corrections
+        antm = [0 qua_n(3) -qua_n(2); -qua_n(3) 0 qua_n(1); qua_n(2) -qua_n(1) 0];
+        qua = qua_n + 0.5 .* [qua_n(4)*eye(3) + antm; -1.*[qua_n(1) qua_n(2) qua_n(3)]] * xu(1:3);
+        qua = qua/norm(qua);       % Brute force normalization
+        
+        % Attitude corrections
+        roll_e(i-1)  = roll_e(i-1)  - xu(1);
+        pitch_e(i-1) = pitch_e(i-1) - xu(2);
+        yaw_e(i-1)   = yaw_e(i-1)   - xu(3);
+        
+        % Velocity corrections
+        vel_e (i-1,1) = vel_e (i-1,1) - xu(4);
+        vel_e (i-1,2) = vel_e (i-1,2) - xu(5);
+        vel_e (i-1,3) = vel_e (i-1,3) - xu(6);
+        
+        % Position corrections
+        lat_e(i-1) = lat_e(i-1) - double(xu(7));
+        lon_e(i-1) = lon_e(i-1) - double(xu(8));
+        h_e(i-1)   = h_e(i-1)   - xu(9);
+        
+        % Biases corrections
+        gb_fix = gb_fix - xu(10:12);
+        ab_fix = ab_fix - xu(13:15);
+        gb_drift = gb_drift - xu(16:18);
+        ab_drift = ab_drift - xu(19:21);
+        
+        % Matrices for later INS/GPS performance analysis
+        X(j,:)   = xu';
+        P_d(j,:) = diag(S.P)';
+        Inn(j,:) = z';
+        B(j,:)   = [gb_fix', ab_fix', gb_drift', ab_drift'];
+    
+    
+    else
+        
+        fprintf('* '); 
+       
+        i = find ( ti <= tg(j), 1, 'last');
     end
-    
-    %% INNOVATIONS
-    
-    [RM,RN] = radius(lat_e(i-1), precision);
-    Tpr = diag([(RM+h_e(i-1)), (RN+h_e(i-1))*cos(lat_e(i-1)), -1]);  % radians-to-meters
-    
-    % Innovations
-    zp = Tpr * ([lat_e(i-1); lon_e(i-1); h_e(i-1);] ...
-        - [gps.lat(j); gps.lon(j); gps.h(j);]) + (DCMbn_n * gps.larm);
-    
-    zv = (vel_e (i-1,:) - gps.vel(j,:))';
-    
-    z = [ zv' zp' ]';
-    
-    %% KALMAN FILTER
-    
-    % GPS period
-    dtg = tg(j) - tg(j-1);
-    
-    % Vector to update matrix F
-    upd = [vel_e(i-1,:) lat_e(i-1) h_e(i-1) fn'];
-    
-    % Update matrices F and G
-    [S.F, S.G] = F_update(upd, DCMbn_n, imu);
-    
-    % Update matrix H
-    S.H = [Z I Z   Z Z Z Z;
-           Z Z Tpr Z Z Z Z; ];
-    
-    % Execute the extended Kalman filter
-    [xu, S] = kalman(x, z, S, dtg); 
-    
-    % Execute UD filter
-%     [xu, Up, dp] = ud_filter(x, y, F, H, G, Q, R, Up, dp, dtg);  
-%     P = Up * diag(dp) * Up'; 
-    
-    %% INS/GPS CORRECTIONS
-    
-    % DCM correction
-    E = skewm(xu(1:3));
-    DCMbn = (eye(3) + E) * DCMbn_n;
-    
-    % Quaternion corrections
-    antm = [0 qua_n(3) -qua_n(2); -qua_n(3) 0 qua_n(1); qua_n(2) -qua_n(1) 0];
-    qua = qua_n + 0.5 .* [qua_n(4)*eye(3) + antm; -1.*[qua_n(1) qua_n(2) qua_n(3)]] * xu(1:3);
-    qua = qua/norm(qua);       % Brute force normalization
-    
-    % Attitude corrections
-    roll_e(i-1)  = roll_e(i-1)  - xu(1);
-    pitch_e(i-1) = pitch_e(i-1) - xu(2);
-    yaw_e(i-1)   = yaw_e(i-1)   - xu(3);
-    
-    % Velocity corrections
-    vel_e (i-1,1) = vel_e (i-1,1) - xu(4);
-    vel_e (i-1,2) = vel_e (i-1,2) - xu(5);
-    vel_e (i-1,3) = vel_e (i-1,3) - xu(6);
-
-    % Position corrections
-    lat_e(i-1) = lat_e(i-1) - double(xu(7));
-    lon_e(i-1) = lon_e(i-1) - double(xu(8));
-    h_e(i-1)   = h_e(i-1)   - xu(9);
-    
-    % Biases corrections
-    gb_fix = gb_fix - xu(10:12);
-    ab_fix = ab_fix - xu(13:15);
-    gb_drift = gb_drift - xu(16:18);
-    ab_drift = ab_drift - xu(19:21);
-    
-    % Matrices for later INS/GPS performance analysis
-    X(j,:)   = xu';
-    P_d(j,:) = diag(S.P)';
-    Inn(j,:) = z';
-    B(j,:)   = [gb_fix', ab_fix', gb_drift', ab_drift'];
+        
 end
-
 % Estimates from INS/GPS procedure
 ins_gps_e.t     = ti(1:i-1, :);       % IMU time
 ins_gps_e.roll  = roll_e(1:i-1, :);   % Roll
-ins_gps_e.pitch = pitch_e(1:i-1, :);  % Pitch      
+ins_gps_e.pitch = pitch_e(1:i-1, :);  % Pitch
 ins_gps_e.yaw   = yaw_e(1:i-1, :);    % Yaw
 ins_gps_e.vel   = vel_e(1:i-1, :);    % NED velocities
 ins_gps_e.lat   = lat_e(1:i-1, :);    % Latitude
