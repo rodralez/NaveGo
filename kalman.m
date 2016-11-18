@@ -1,5 +1,27 @@
-function  [xu, Pp, K, xp] = kalman(x, y, F, H, G, P, Q, R, dt)
-% kalman: Kalman filter algorithm
+function  [xu, S, xp] = kalman(x, z, S, dt)
+% kalman: Kalman filter algorithm for NaveGo INS/GPS system.
+%
+% INPUT:
+%   x, 21x1 state vector.
+%   z, 6x1 innovations vector.
+%  dt, time period. 
+%   S, data structure with the following fields:
+%       F, 21x21 state transition matrix.
+%       H,  6x21 observation matrix.
+%       Q, 12x12 process noise covariance.
+%       R,  6x6  observation noise covariance.
+%       P, 21x21 a priori error covariance.
+%       G, 21x12 control-input matrix.      
+%
+% INPUT:
+%   xu, 21x1 a posteriori state vector.
+%   xp, 21x1 a priori state vector.
+%   S, the following fields are updated:
+%       A,  21x21 state transition matrix.
+%       K,  21x6  Kalman gain matrix.
+%       Qd, 21x6  discrete process noise covariance.
+%       P,  21x21 a posteriore error covariance.   
+%       C,   6x6  innovation (or residual) covariance.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -25,32 +47,32 @@ function  [xu, Pp, K, xp] = kalman(x, y, F, H, G, P, Q, R, dt)
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015. Alg. 1.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2016/11/18
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-I = eye(max(size(F)));
+I = eye(max(size(S.F)));
 
 % Step 1, update Kalman gain
-IS = (R + H * P * H');
-K = (P * H') / (IS) ;
+S.C = (S.R + S.H * S.P * S.H');
+S.K = (S.P * S.H') / (S.C) ;
 
 % Step 2, update vector state
-xu = x + K * (y - H*x);
-% xu = K*y;                 % This expression can be used when x = 0.
+xu = x + S.K * (z - S.H * x);
+% xu = S.K * z;                 % This expression can be used when x = 0.
 
 % Step 3, update covariance matrix
-Pu = (I - K*H) * P ;
+Pu = (I - S.K * S.H) * S.P ;
 
 % Discretization of continous-time system
-% A =  expm(F*dt);
-A = I + (F*dt);
-Qd = (G * Q * G') .* dt;
+S.A =  expm(S.F * dt);          % Exact expression
+% S.A = I + (S.F * dt);         % Approximated expression
+S.Qd = (S.G * S.Q * S.G') .* dt;
 
 % Step 4, predict xp and Pp
-xp = A * xu;
-Pp = (A * Pu * A') + Qd;
-Pp =  0.5 .* (Pp + Pp');
+xp = S.A * xu;
+S.P = (S.A * Pu * S.A') + S.Qd;
+S.P =  0.5 .* (S.P + S.P');
 
 end
