@@ -52,13 +52,6 @@ function  [xu, S, xp] = kalman(x, z, S, dt)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-    else
-        
-        fprintf('* '); 
-       
-        i = find ( ti <= tg(j), 1, 'last');
-    end
-
 I = eye(max(size(S.F)));
 
 % Step 1, update Kalman gain

@@ -35,19 +35,19 @@ w_bn = ( w - DCMbn' * (omega_ie_N + omega_en_N))';
 
 if strcmp(mode, 'quaternion')
 %% Quaternion update   
-    qua_n   = qua_update(qua, w_bn, dt);
-    qua_n   = qua_n/norm(qua_n);
-    DCMbn_n = qua2dcm(qua_n);
-    euler   = qua2euler(qua_n);
-    
+    qua_n   = qua_update(qua, w_bn, dt);    % Update quaternions
+    qua_n   = qua_n/norm(qua_n);            % Brute force normalization
+    DCMbn_n = qua2dcm(qua_n);               % Update DCM
+%     euler   = qua2euler(qua_n);             % Update Euler angles
+    euler   = w_bn * dt;                % Update Euler angles
 elseif strcmp(mode, 'dcm')
 %% DCM update    
     
-    euler   = w_bn * dt;
-    DCMbn_n = dcm_update(DCMbn, euler);
-    euler   = dcm2euler(DCMbn_n);
+    euler   = w_bn * dt;                % Update Euler angles
+    DCMbn_n = dcm_update(DCMbn, euler); % Update DCM
+%     euler   = dcm2euler(DCMbn_n);
     qua_n   = euler2qua(euler);
-    qua_n   = qua_n/norm(qua_n);
+    qua_n   = qua_n/norm(qua_n);        % Brute force normalization
     
 else
     error('att_update: no attitude update mode defined.')
