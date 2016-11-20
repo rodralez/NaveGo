@@ -1,4 +1,4 @@
-function ang_v = qua2euler(qin)
+function ang_v = qua2euler(qua)
 % qua2euler: transforms quaternion to Euler angles.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -27,10 +27,10 @@ function ang_v = qua2euler(qin)
 % URL:     https://github.com/rodralez/navego
 
 % Quaternion format used in Crassidis' quaternion equations.
-qua(1) = qin(4);
-qua(2) = qin(1);
-qua(3) = qin(2);
-qua(4) = qin(3);
+qua(1) = qua(4);
+qua(2) = qua(1);
+qua(3) = qua(2);
+qua(4) = qua(3);
 
 % ZYX rotation sequence
 c1 = 2.*(qua(2).*qua(3) + qua(1).*qua(4));
@@ -41,9 +41,9 @@ c3 = -2.*(qua(2).*qua(4) - qua(1).*qua(3));
 c4 = 2.*(qua(3).*qua(4) + qua(1).*qua(2));
 c5 = qua(1).^2 - qua(2).^2 - qua(3).^2 + qua(4).^2;
 
-psi = atan2( c1, c2 );  % yaw
+psi   = atan2( c1, c2 );  % yaw
 theta = asin( c3 );     % pitch
-phi = atan2( c4, c5 );  % roll
+phi   = atan2( c4, c5 );  % roll
 
 ang_v = [phi theta psi];
 

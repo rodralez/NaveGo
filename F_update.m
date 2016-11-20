@@ -110,7 +110,7 @@ a33 = 0 ;
 Fve = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
 
 a11 = Vd/(RO);
-a12 = -2*((Om * sin(lat)) + ((Ve/(RO)) * tan (lat))) ;
+a12 = -2*((Om * sin(lat)) + ((Ve/(RO)) * tan(lat))) ;
 a13 = Vn/RO ;
 a21 = (2*Om * sin(lat)) + ( (Ve/(RO)) * tan(lat) );
 a22 = (1/(RO)) * ((Vn * tan(lat)) + Vd) ;
@@ -170,8 +170,8 @@ else
     Fgg = diag(-1./imu.gb_corr);
 end
 
-F= [ Fee  Fev  Fep   (DCMbn*Frog)  Z       (DCMbn*Frog)   Z;
-    Fve  Fvv  Fvp   Z       (-DCMbn*Fva)    Z       (-DCMbn*Fva);
+F= [Fee  Fev  Fep   (DCMbn*Frog)  Z       (DCMbn*Frog)   Z;
+    Fve  Fvv  Fvp   Z       (-DCMbn*Fva)   Z       (-DCMbn*Fva);
     Fpe  Fpv  Fpp   Z        Z             Z    Z;
     Z    Z    Z     Z        Z             Z    Z;
     Z    Z    Z     Z        Z             Z    Z;
@@ -191,12 +191,11 @@ F= [ Fee  Fev  Fep   (DCMbn*Frog)  Z       (DCMbn*Frog)   Z;
 %      Z    Z    Z     Z        Z             Z    Faa;
 %      ];
 
-G = [ -DCMbn   Z     Z    Z;
-    Z      DCMbn Z    Z;
-    Z      Z     Z    Z;
-    Z      Z     Z    Z;
-    Z      Z     Z    Z;
-    Z      Z     I    Z;
-    Z      Z     Z    I;];
-end
-
+G = [ -DCMbn  Z     Z    Z;
+    Z      DCMbn 	Z    Z;
+    Z      Z     	Z    Z;
+    Z      Z     	Z    Z;
+    Z      Z     	Z    Z;
+    Z      Z     	I    Z;
+    Z      Z     	Z    I;];
+endS

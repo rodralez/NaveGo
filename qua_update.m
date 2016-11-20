@@ -1,4 +1,4 @@
-function quanew = qua_update(quaold, w_bn, dt)
+function qua_n = qua_update(qua, w_bn, dt)
 % qua_update: updates quaternions.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -38,7 +38,7 @@ wnorm = norm(w_bn);
 
 if wnorm == 0,
     
-    quanew = quaold;
+    qua_n = qua;
 else
     
     co=cos(0.5*wnorm*dt);
@@ -53,12 +53,12 @@ else
     qw3 = n3*si;
     qw4 = co;
     
-    om=[qw4  qw3 -qw2 qw1;
+    Om=[ qw4  qw3 -qw2 qw1;
         -qw3  qw4  qw1 qw2;
-        qw2 -qw1  qw4 qw3;
+         qw2 -qw1  qw4 qw3;
         -qw1 -qw2 -qw3 qw4];
     
-    quanew = om * quaold;
+    qua_n = Om * qua;
 end
 
 end

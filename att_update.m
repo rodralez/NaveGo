@@ -1,4 +1,4 @@
-function [quanew, DCMbn_new, ang_v] = att_update(w, DCMbn_old, quaold, omega_ie_N, omega_en_N, dt, mode )
+function [qua_n, DCMbn_n, euler] = att_update(w, DCMbn, qua, omega_ie_N, omega_en_N, dt, mode)
 % att_update: updates attitude using quaternion or DCM.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -31,23 +31,23 @@ function [quanew, DCMbn_new, ang_v] = att_update(w, DCMbn_old, quaold, omega_ie_
 
 %% Correct gyros output for Earth rate and Transport rate
 
-w_bn = ( w - DCMbn_old' * (omega_ie_N + omega_en_N))';
+w_bn = ( w - DCMbn' * (omega_ie_N + omega_en_N))';
 
 if strcmp(mode, 'quaternion')
 %% Quaternion update   
-    quanew    = qua_update(quaold, w_bn, dt);
-    quanew    = quanew/norm(quanew);
-    DCMbn_new = qua2dcm(quanew);
-    ang_v     = qua2euler(quanew);
+    qua_n   = qua_update(qua, w_bn, dt);
+    qua_n   = qua_n/norm(qua_n);
+    DCMbn_n = qua2dcm(qua_n);
+    euler   = qua2euler(qua_n);
     
 elseif strcmp(mode, 'dcm')
 %% DCM update    
     
-    ang       = w_bn * dt;
-    DCMbn_new = dcm_update(DCMbn_old, ang);
-    ang_v     = dcm2euler(DCMbn_new);
-    quanew    = euler2qua(ang_v);
-    quanew    = quanew/norm(quanew);
+    euler   = w_bn * dt;
+    DCMbn_n = dcm_update(DCMbn, euler);
+    euler   = dcm2euler(DCMbn_n);
+    qua_n   = euler2qua(euler);
+    qua_n   = qua_n/norm(qua_n);
     
 else
     error('att_update: no attitude update mode defined.')

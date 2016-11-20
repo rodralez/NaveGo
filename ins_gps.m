@@ -215,7 +215,7 @@ for j = 2:Mg
         omega_en_N = transportrate(lat_e(i-1), vel_e(i-1,1), vel_e(i-1,2), h_e(i-1));
         
         [qua_n, DCMbn_n, ang_v] = att_update(wb_corrected, DCMbn, qua, ...
-            omega_ie_N, omega_en_N, dti, att_mode);
+                                    omega_ie_N, omega_en_N, dti, att_mode);
         roll_e(i) = ang_v(1);
         pitch_e(i)= ang_v(2);
         yaw_e(i)  = ang_v(3);

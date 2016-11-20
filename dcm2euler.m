@@ -1,4 +1,4 @@
-function ang_v = dcm2euler(DCMbn)
+function euler = dcm2euler(DCMbn)
 % dcm2euler: converts from DCM to euler angles.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -38,6 +38,6 @@ phi =   atan( DCMbn(3,2) ./ DCMbn(3,3) ); % C_32 / C_33
 theta = asin(-DCMbn(3,1) ); % - C_31
 psi =   atan2( DCMbn(2,1), DCMbn(1,1) );  % C_21 / C_11
 
-ang_v = [phi theta psi];
+euler = [phi theta psi];
 
 end
