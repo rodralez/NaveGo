@@ -1,6 +1,14 @@
 function qua_n = qua_update(qua, w_bn, dt)
 % qua_update: updates quaternions.
 %
+% INPUT:
+%   qua,        4x1 quaternion.
+%   w_bn,       3x1 incremental turn rates in body-frame.
+%   dt,         1x1 INS time period.
+%
+% OUTPUT:
+%   qua_n,      4x1 updated quaternion.
+%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
 %   This file is part of NaveGo, an open-source MATLAB toolbox for
@@ -27,10 +35,10 @@ function qua_n = qua_update(qua, w_bn, dt)
 %
 %			Crassidis, J.L. and Junkins, J.L. (2011). Optimal Esti-
 % mation of Dynamic Systems, 2nd Ed. Chapman and Hall/CRC, USA.
-% Eq. 7.39, p. 458.
+% Eq. 7.39 and 7.40, p. 458.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2016/11/26
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 

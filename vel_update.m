@@ -1,4 +1,4 @@
-function [vel_upd, coriolis] = vel_update(fn, velold, omega_ie_N, omega_en_N, g, dt)
+function vel_n = vel_update(fn, vel, omega_ie_N, omega_en_N, g, dt)
 % vel_update: updates velocity in the NED frame.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -34,12 +34,23 @@ function [vel_upd, coriolis] = vel_update(fn, velold, omega_ie_N, omega_en_N, g,
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-S = skewm(velold);
+persistent fn_m
 
+if(isempty(fn_m))
+
+    fn_m = zeros(2,3);
+end
+
+S = skewm(vel);
+ 
 coriolis = S * (omega_en_N + 2 * omega_ie_N);
 
-fn_cor = fn - coriolis - (g);
+fn = fn - coriolis - (g);
 
-vel_upd = velold + fn_cor * dt;
+fn_m(1,:) = fn';
+
+vel_n = vel + trapz(fn_m) * dt;
+
+fn_m(2,:) =  fn_m(1,:);
 
 end

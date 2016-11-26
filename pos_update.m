@@ -29,43 +29,69 @@ function pos = pos_update(pos, vel, dt)
 % Journal of Control Engineering and Applied Informatics, vol. 17, 
 % issue 2, pp. 110-120, 2015. Eq. 18.
 %
-% Version: 002
-% Date:    2015/07/18
+% Version: 003
+% Date:    2016/11/21
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
-lat_old = pos(1); 
-lon_old = pos(2); 
-hc = (pos(3));
-v_n = vel(1);
-v_e = vel(2);
-v_d = vel(3);
+persistent vn_m
+persistent ve_m
+persistent vd_m
+
+if(isempty(vn_m))
+    vn_m = zeros(2,1);
+end
+if(isempty(ve_m))
+    ve_m = zeros(2,1);
+end
+if(isempty(vd_m))
+    vd_m = zeros(2,1);
+end
+
+lat = pos(1); 
+lon = pos(2); 
+h   = pos(3);
+vn  = vel(1);
+ve  = vel(2);
+vd  = vel(3);
 
 %% Altitude
-h  = (hc - (v_d * dt));
 
-if h < 0
-    h = 0;
+vd_m(1) = vd;
+h_n  = h - trapz(vd_m) * dt;
+vd_m(2) = vd_m(1);
+
+if h_n < 0
+    h_n = 0;
+    warning('pos_update: altitude is negative.')
 end
+
 %% Latitude
-if (isa(hc,'single')) 
-    [RM,~] = radius(lat_old, 'single');
+
+if (isa(h,'single')) 
+    [RM,~] = radius(lat, 'single');
 else
-    [RM,~] = radius(lat_old, 'double');
+    [RM,~] = radius(lat, 'double');
 end
 
-lat = (lat_old + ( v_n / (RM + (h)) ) * dt);
+vn_m(1) = vn / (RM + h_n);
+lat_n = lat + trapz(vn_m) * dt;
+vn_m(2) = vn_m(1);
 
 %% Longitude
-if (isa(hc,'single')) 
-    [~, RN] = radius(lat, 'single');
+
+if (isa(h,'single')) 
+    [~, RN] = radius(lat_n, 'single');
 else
-    [~, RN] = radius(lat, 'double');
+    [~, RN] = radius(lat_n, 'double');
 end
 
-lon = (lon_old + (v_e / ((RN + h) * cos (lat))) * dt );    
+ve_m(1) = ve / ((RN + h_n) * cos (lat_n));
+lon_n = lon + trapz(ve_m) * dt;
+ve_m(2) = ve_m(1);
 
-%% Pos
-pos = [lat lon h]';
+%% Position update
+
+pos = [lat_n lon_n h_n]';
 
 end

@@ -55,11 +55,6 @@ versionstr = 'NaveGo, release v0.8.0-alpha';
 fprintf('\n%s.\n', versionstr)
 fprintf('\nNaveGo: starting simulation ... \n')
 
-%% GLOBAL VARIABLES
-
-global D2R
-global R2D
-
 %% CODE EXECUTION PARAMETERS
 
 % Comment any of the following parameters in order to NOT execute a particular portion of code

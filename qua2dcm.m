@@ -1,6 +1,12 @@
 function DCMbn = qua2dcm(qua)
 % qua2dcm: transforms quaternion to DCM.
 %
+% INPUT:
+%   qua,        4x1 quaternion.
+%
+% OUTPUT:
+%   DCMbn,      3x3 DCM body-to-nav.
+%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
 %   This file is part of NaveGo, an open-source MATLAB toolbox for
@@ -29,8 +35,8 @@ function DCMbn = qua2dcm(qua)
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 14.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2016/11/26
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 

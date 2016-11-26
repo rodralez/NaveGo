@@ -1,5 +1,21 @@
-function [qua_n, DCMbn_n, euler] = att_update(w, DCMbn, qua, omega_ie_N, omega_en_N, dt, mode)
+function [qua_n, DCMbn_n, euler] = att_update(w_b, DCMbn, qua, omega_ie_N, omega_en_N, dt, att_mode)
 % att_update: updates attitude using quaternion or DCM.
+%
+% INPUT:
+%   w,          3x1 incremental turn rates in body-frame.
+%   DCMbn,      3x3 DCM body-to-nav.
+%   qua,        4x1 quaternion.
+%   omega_ie_N, 3x1 Earth rate.
+%   omega_en_N, 3x1 Transport rate.
+%   dt,         1x1 INS time period.
+%	att_mode,   attitude mode string.
+%      'quaternion': attitude updated in quaternion format. Default value.
+%             'dcm': attitude updated in Direct Cosine Matrix format.
+%
+% OUTPUT:
+%   qua_n,      4x1 updated quaternion.
+%   DCMbn_n,    3x3 updated DCM body-to-nav.
+%   euler,      3x1 updated Euler angles.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -24,30 +40,32 @@ function [qua_n, DCMbn_n, euler] = att_update(w, DCMbn, qua, omega_ie_N, omega_e
 % mation of Dynamic Systems, 2nd Ed. Chapman and Hall/CRC, USA.
 % Eq. 7.39, p. 458.
 %
-% Version: 002
-% Date:    2016/10/25
+% Version: 003
+% Date:    2016/11/26
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
+if nargin < 7, att_mode  = 'quaternion'; end
+
 %% Correct gyros output for Earth rate and Transport rate
 
-w_bn = ( w - DCMbn' * (omega_ie_N + omega_en_N))';
+w_bn = ( w_b - DCMbn' * (omega_ie_N + omega_en_N));
 
-if strcmp(mode, 'quaternion')
+if strcmp(att_mode, 'quaternion')
 %% Quaternion update   
     qua_n   = qua_update(qua, w_bn, dt);    % Update quaternions
-    qua_n   = qua_n/norm(qua_n);            % Brute force normalization
+    qua_n   = qua_n / norm(qua_n);          % Brute-force normalization
     DCMbn_n = qua2dcm(qua_n);               % Update DCM
     euler   = qua2euler(qua_n);             % Update Euler angles
     
-elseif strcmp(mode, 'dcm')
+elseif strcmp(att_mode, 'dcm')
 %% DCM update    
     
-    euler_i   = w_bn * dt;                  % Euler angles increments
+    euler_i = w_bn * dt;                    % Incremental Euler angles 
     DCMbn_n = dcm_update(DCMbn, euler_i);   % Update DCM
     euler   = dcm2euler(DCMbn_n);           % Update Euler angles
     qua_n   = euler2qua(euler);             % Update quaternions
-    qua_n   = qua_n/norm(qua_n);            % Brute force normalization
+    qua_n   = qua_n / norm(qua_n);          % Brute-force normalization
     
 else
     error('att_update: no attitude update mode defined.')

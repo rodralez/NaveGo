@@ -55,24 +55,24 @@ function  [xu, S, xp] = kalman(x, z, S, dt)
 I = eye(max(size(S.F)));
 
 % Step 1, update Kalman gain
-S.C = (S.R + S.H * S.P * S.H');
-S.K = (S.P * S.H') / (S.C) ;
+S.C = (S.R + S.H * S.Pp * S.H');
+S.K = (S.Pp * S.H') / (S.C) ;
 
 % Step 2, update vector state
 xu = x + S.K * (z - S.H * x);
 % xu = S.K * z;                 % This expression can be used when x = 0.
 
 % Step 3, update covariance matrix
-Pu = (I - S.K * S.H) * S.P ;
+S.Pu = (I - S.K * S.H) * S.Pp ;
 
 % Discretization of continous-time system
 S.A =  expm(S.F * dt);          % Exact expression
 % S.A = I + (S.F * dt);         % Approximated expression
 S.Qd = (S.G * S.Q * S.G') .* dt;
 
-% Step 4, predict xp and Pp
+% Step 4, predict xp and P
 xp = S.A * xu;
-S.P = (S.A * Pu * S.A') + S.Qd;
-S.P =  0.5 .* (S.P + S.P');
+S.Pp = (S.A * S.Pu * S.A') + S.Qd;
+S.Pp =  0.5 .* (S.Pp + S.Pp');
 
 end

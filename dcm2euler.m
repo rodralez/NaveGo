@@ -1,5 +1,11 @@
 function euler = dcm2euler(DCMbn)
-% dcm2euler: converts from DCM to euler angles.
+% dcm2euler: converts from DCM to Euler angles.
+%
+% INPUT:
+%   DCMbn,	3x3 DCM body-to-nav.
+%
+% OUTPUT:
+%   euler,	3x1 updated Euler angles.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -29,14 +35,14 @@ function euler = dcm2euler(DCMbn)
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 2, pp. 272-287. Eq. 15.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2016/11/26
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-phi =   atan( DCMbn(3,2) ./ DCMbn(3,3) ); % C_32 / C_33
-theta = asin(-DCMbn(3,1) ); % - C_31
-psi =   atan2( DCMbn(2,1), DCMbn(1,1) );  % C_21 / C_11
+phi   = atan( DCMbn(3,2) ./ DCMbn(3,3) ); 
+theta = asin(-DCMbn(3,1) ); 
+psi   = atan2( DCMbn(2,1), DCMbn(1,1) ); 
 
 euler = [phi theta psi];
 

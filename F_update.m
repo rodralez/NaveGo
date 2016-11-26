@@ -68,32 +68,32 @@ RO = sqrt(RN*RM);
 a11 = 0;
 a12 = -((Om * sin(lat)) + (Ve/(RO) * tan(lat)));
 a13 = Vn/(RO);
-a21 = (Om * sin(lat)) +  (Ve/(RO) * tan(lat) );
+a21 = (Om * sin(lat)) + (Ve/(RO) * tan(lat) );
 a22 = 0 ;
-a23 = (Om * cos(lat)) +  (Ve/(RO)) ;
+a23 = (Om * cos(lat)) + (Ve/(RO)) ;
 a31 = -Vn/(RO);
-a32 = -(Om * cos(lat)) - (Ve/(RO));
-a33 = 0 ;
+a32 = -Om * cos(lat) - (Ve/(RO));
+a33 = 0;
 Fee = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
 
 a11 = 0;
 a12 = 1/(RO);
 a13 = 0;
 a21 = -1/(RO);
-a22 = 0 ;
-a23 = 0 ;
-a31 = 0 ;
-a32 = -tan(lat)/RO ;
-a33 = 0 ;
+a22 = 0;
+a23 = 0;
+a31 = 0;
+a32 = -tan(lat)/RO;
+a33 = 0;
 Fev = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
 
 a11 = -Om * sin(lat);
 a12 = 0;
-a13 = -Ve/((RO)^2);
+a13 = -Ve/(RO^2);
 a21 = 0 ;
 a22 = 0 ;
-a23 = Vn/((RO)^2);
-a31 =  -(Om*cos(lat)) - (Ve/((RO)*(cos(lat))^2));
+a23 = Vn/(RO^2);
+a31 =  -Om*cos(lat) - (Ve/((RO)*(cos(lat))^2));
 a32 = 0 ;
 a33 = (Ve * tan(lat)) / (RO^2) ;
 Fep = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
@@ -122,8 +122,8 @@ Fvv = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
 
 a11 = -Ve*( (2*Om * cos(lat)) + (Ve/((RO)*(cos(lat))^2)));
 a12 = 0 ;
-a13 = 1/((RO)^2)*(((Ve^2)*tan(lat)) - (Vn*Vd) );
-a21 = 2*Om *((Vn*cos(lat)) - (Vd*sin(lat))) + ((Vn*Ve) / ((RO)*(cos(lat))^2)) ;
+a13 = 1 / (RO^2) * ( ((Ve^2) * tan(lat)) - (Vn * Vd) );
+a21 = 2*Om * ( (Vn * cos(lat)) - (Vd * sin(lat)) ) + ( (Vn * Ve) / (RO * (cos(lat))^2) ) ;
 a22 = 0 ;
 a23 = -(Ve/(RO^2)) * (Vn*tan(lat)+Vd);
 a31 = 2 * Om * Ve * sin(lat);
@@ -146,17 +146,14 @@ Fpv = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
 
 a11 = 0;
 a12 = 0;
-a13 = -Vn/((RO)^2);
-a21 = (Ve*tan(lat))/((RO)*cos(lat));
+a13 = -Vn/(RO^2);
+a21 = (Ve*tan(lat)) / (RO * cos(lat));
 a22 = 0;
-a23 = -Ve/(((RO)^2)*cos(lat));
+a23 = -Ve / (((RO)^2) * cos(lat));
 a31 = 0;
 a32 = 0;
 a33 = 0;
 Fpp = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
-
-Fva  = I;
-Frog = I;
 
 if (isinf(imu.ab_corr))
     Faa = Z;
@@ -170,8 +167,8 @@ else
     Fgg = diag(-1./imu.gb_corr);
 end
 
-F= [Fee  Fev  Fep   (DCMbn*Frog)  Z       (DCMbn*Frog)   Z;
-    Fve  Fvv  Fvp   Z       (-DCMbn*Fva)   Z       (-DCMbn*Fva);
+F= [Fee  Fev  Fep   (DCMbn)  Z       (DCMbn)   Z;
+    Fve  Fvv  Fvp   Z       (-DCMbn)   Z       (-DCMbn);
     Fpe  Fpv  Fpp   Z        Z             Z    Z;
     Z    Z    Z     Z        Z             Z    Z;
     Z    Z    Z     Z        Z             Z    Z;
@@ -179,20 +176,8 @@ F= [Fee  Fev  Fep   (DCMbn*Frog)  Z       (DCMbn*Frog)   Z;
     Z    Z    Z     Z        Z             Z    Faa;
     ];
 
-% Grover 12.58
-% Hasnur 6.15
-
-% F= [ Fee  Fev  Fep   (-DCMbn*Frog)  Z    Z   Z;
-%      Fve  Fvv  Fvp   Z       (DCMbn*Fva)    Z    Z;
-%      Fpe  Fpv  Fpp   Z        Z             Z    Z;
-%      Z    Z    Z     Z        Z             Z    Z;
-%      Z    Z    Z     Z        Z             Z    Z;
-%      Z    Z    Z     Z        Z             Fgg  Z;
-%      Z    Z    Z     Z        Z             Z    Faa;
-%      ];
-
-G = [ -DCMbn  Z     Z    Z;
-    Z      DCMbn 	Z    Z;
+G = [DCMbn  Z     Z    Z;
+    Z      -DCMbn 	Z    Z;
     Z      Z     	Z    Z;
     Z      Z     	Z    Z;
     Z      Z     	Z    Z;

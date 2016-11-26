@@ -1,5 +1,12 @@
-function [DCMbn_new,A] = dcm_update(DCMbn_old, ang)
-% dcm_update: updates DCM
+function DCMbn_n = dcm_update(DCMbn, euler)
+% dcm_update: updates DCM body-to-nav.
+%
+% INPUT:
+%   DCMbn,      3x3 DCM body-to-nav.
+%   euler,      3x1 Euler angles.
+%
+% OUTPUT:
+%   DCMbn_n,    3x3 updated DCM body-to-nav.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -24,13 +31,13 @@ function [DCMbn_new,A] = dcm_update(DCMbn_old, ang)
 % Inertial Navigation Technology (2nd Ed.). Institution
 % of Engineering and Technology, USA. Eq. 11.4 and 11.10.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2016/11/26
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-S = skewm(ang);
-magn = norm(ang);
+S = skewm(euler);
+magn = norm(euler);
 
 if magn == 0,
     
@@ -41,4 +48,4 @@ else
 end
 
 % Eq. 11.4, p. 311.
-DCMbn_new = DCMbn_old * A;
+DCMbn_n = DCMbn * A;

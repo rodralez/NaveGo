@@ -1,7 +1,11 @@
 function qua = euler2qua(euler)
 % euler2qua: converts from Euler angles to quaternions.
 % 
-% euler = [roll, pitch, yaw]
+% INPUT:
+%   euler,	3x1 Euler angles.
+%
+% OUTPUT:
+%   qua,    4x1 updated quaternion.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -23,8 +27,8 @@ function qua = euler2qua(euler)
 %
 % Reference:
 %
-% Version: 002
-% Date:    2016/05/09
+% Version: 003
+% Date:    2016/11/26
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -40,7 +44,7 @@ q = [ c_eul(1).*c_eul(2).*c_eul(3) + s_eul(1).*s_eul(2).*s_eul(3), ...
       c_eul(1).*s_eul(2).*c_eul(3) + s_eul(1).*c_eul(2).*s_eul(3), ...
       s_eul(1).*c_eul(2).*c_eul(3) - c_eul(1).*s_eul(2).*s_eul(3)];
 
-% Quaternion format used in Crassidis quaternion update.
+% Quaternion format used in Crassidis' quaternion update.
 qua = [q(2) q(3) q(4) q(1)]';
 
 end

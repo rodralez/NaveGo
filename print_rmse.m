@@ -25,40 +25,48 @@ function print_rmse (ins_gps, gps, ins_gps_r, gps_r, string)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
-global R2D
+D2R = (pi/180);     % degrees to rad
+R2D = (180/pi);     % rad to degrees
 
-[RN,RE] = radius(ins_gps.lat(1), 'double');
-LAT2M = (RN + double(ins_gps.h(1)));                          % Coefficient for lat rad -> meters               
-LON2M = (RE + double(ins_gps.h(1))) .* cos(ins_gps.lat(1));   % Coefficient for lon rad -> meters
+[RM,RN] = radius(ins_gps.lat(1), 'double');
+LAT2M = (RM + double(ins_gps.h(1)));                          % Coefficient for lat rad -> meters               
+LON2M = (RN + double(ins_gps.h(1))) .* cos(ins_gps.lat(1));   % Coefficient for lon rad -> meters
 
 % INS/GPS attitude RMSE
 RMSE_roll  = rmse (ins_gps.roll ,   ins_gps_r.roll)  .* R2D;
 RMSE_pitch = rmse (ins_gps.pitch,   ins_gps_r.pitch) .* R2D;
-% Only compare those estimates that have a diff. < pi with respect to ref
-idx = find ( abs(ins_gps.yaw - ins_gps_r.yaw) < pi );
-RMSE_yaw   = rmse (ins_gps.yaw(idx),ins_gps_r.yaw(idx)).* R2D;
 
+% Avoid difference greater than 170 deg when comparing yaw angles.
+idx = find( abs(ins_gps.yaw - ins_gps_r.yaw) < (170 * D2R) ); 
+RMSE_yaw   = rmse (ins_gps.yaw(idx),ins_gps_r.yaw(idx) ).* R2D;
+ 
 % INS/GPS velocity RMSE
-RMSE_vn     = rmse (ins_gps.vel(:,1),  ins_gps_r.vel(:,1));
-RMSE_ve     = rmse (ins_gps.vel(:,2),  ins_gps_r.vel(:,2));
-RMSE_vd     = rmse (ins_gps.vel(:,3),  ins_gps_r.vel(:,3));
+if (isfield(ins_gps_r, 'vel'))
+    RMSE_vn     = rmse (ins_gps.vel(:,1),  ins_gps_r.vel(:,1));
+    RMSE_ve     = rmse (ins_gps.vel(:,2),  ins_gps_r.vel(:,2));
+    RMSE_vd     = rmse (ins_gps.vel(:,3),  ins_gps_r.vel(:,3));
+end
 
 % INS/GPS position RMSE
 RMSE_lat    = rmse (ins_gps.lat, ins_gps_r.lat) .* LAT2M;
 RMSE_lon    = rmse (ins_gps.lon, ins_gps_r.lon) .* LON2M;
-RMSE_h      = rmse (ins_gps.h,         ins_gps_r.h);
+RMSE_h      = rmse (ins_gps.h,   ins_gps_r.h);
 
-[RN,RE] = radius(gps.lat(1), 'double');
-LAT2M = (RN + double(gps.h(1)));                        % Coefficient for lat rad -> meters
-LON2M = (RE + double(gps.h(1))) .* cos(gps.lat(1));     % Coefficient for lon rad -> meters
+[RM,RN] = radius(gps.lat(1), 'double');
+LAT2M = (RM + double(gps.h(1)));                        % Coefficient for lat rad -> meters
+LON2M = (RN + double(gps.h(1))) .* cos(gps.lat(1));     % Coefficient for lon rad -> meters
 
-% GPS RMSE
+% GPS position RMSE
 RMSE_lat_g  = rmse (gps.lat, gps_r.lat) .* LAT2M;
 RMSE_lon_g  = rmse (gps.lon, gps_r.lon) .* LON2M;
 RMSE_h_g    = rmse (gps.h, gps_r.h);
-RMSE_vn_g   = rmse (gps.vel(:,1),   gps_r.vel(:,1));
-RMSE_ve_g   = rmse (gps.vel(:,2),   gps_r.vel(:,2));
-RMSE_vd_g   = rmse (gps.vel(:,3),   gps_r.vel(:,3));
+
+% GPS velocity RMSE
+if (isfield(gps_r, 'vel'))
+    RMSE_vn_g   = rmse (gps.vel(:,1),   gps_r.vel(:,1));
+    RMSE_ve_g   = rmse (gps.vel(:,2),   gps_r.vel(:,2));
+    RMSE_vd_g   = rmse (gps.vel(:,3),   gps_r.vel(:,3));
+end
 
 % Print RMSE
 fprintf( '\n>> RMSE for %s\n', string);
@@ -67,9 +75,11 @@ fprintf( ' Roll,  %s = %.4e deg\n', string, RMSE_roll);
 fprintf( ' Pitch, %s = %.4e deg\n', string, RMSE_pitch);
 fprintf( ' Yaw,   %s = %.4e deg\n\n', string, RMSE_yaw);
 
-fprintf( ' Vel. N, %s = %.4e m/s, GPS = %.4e m/s\n', string, RMSE_vn, RMSE_vn_g);
-fprintf( ' Vel. E, %s = %.4e m/s, GPS = %.4e m/s\n', string, RMSE_ve, RMSE_ve_g);
-fprintf( ' Vel. D, %s = %.4e m/s, GPS = %.4e m/s\n\n', string, RMSE_vd, RMSE_vd_g);
+if (isfield(ins_gps_r, 'vel') & isfield(gps_r, 'vel'))
+    fprintf( ' Vel. N, %s = %.4e m/s, GPS = %.4e m/s\n', string, RMSE_vn, RMSE_vn_g);
+    fprintf( ' Vel. E, %s = %.4e m/s, GPS = %.4e m/s\n', string, RMSE_ve, RMSE_ve_g);
+    fprintf( ' Vel. D, %s = %.4e m/s, GPS = %.4e m/s\n\n', string, RMSE_vd, RMSE_vd_g);
+end
 
 fprintf( ' Latitude,  %s = %.4e m, GPS = %.4e m\n', string, RMSE_lat, RMSE_lat_g);
 fprintf( ' Longitude, %s = %.4e m, GPS = %.4e m\n', string, RMSE_lon, RMSE_lon_g);
