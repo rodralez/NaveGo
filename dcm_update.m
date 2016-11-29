@@ -1,9 +1,9 @@
 function DCMbn_n = dcm_update(DCMbn, euler)
-% dcm_update: updates DCM body-to-nav.
+% dcm_update: updates  body-to-nav DCM.
 %
 % INPUT:
-%   DCMbn,      3x3 DCM body-to-nav.
-%   euler,      3x1 Euler angles.
+%   DCMbn,	3x3 body-to-nav DCM.
+%   euler,	3x1 Euler angles (rad).
 %
 % OUTPUT:
 %   DCMbn_n,    3x3 updated DCM body-to-nav.

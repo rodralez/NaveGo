@@ -2,10 +2,10 @@ function euler = qua2euler(qin)
 % qua2euler: transforms quaternion to Euler angles.
 %
 % INPUT:
-%   qin,        4x1 quaternion.
+%   qin,    4x1 quaternion.
 %
 % OUTPUT:
-%   euler,      3x1 updated Euler angles.
+%   euler,  3x1 updated Euler angles (rad).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %

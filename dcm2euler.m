@@ -1,11 +1,11 @@
 function euler = dcm2euler(DCMbn)
-% dcm2euler: converts from DCM to Euler angles.
+% dcm2euler: converts from body-to-nav DCM to Euler angles.
 %
 % INPUT:
-%   DCMbn,	3x3 DCM body-to-nav.
+%   DCMbn,	3x3 body-to-nav DCM.
 %
 % OUTPUT:
-%   euler,	3x1 updated Euler angles.
+%   euler,	3x1 updated Euler angles (rad).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %

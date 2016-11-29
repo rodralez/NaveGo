@@ -2,9 +2,9 @@ function qua_n = qua_update(qua, w_bn, dt)
 % qua_update: updates quaternions.
 %
 % INPUT:
-%   qua,        4x1 quaternion.
-%   w_bn,       3x1 incremental turn rates in body-frame.
-%   dt,         1x1 INS time period.
+%   qua,	4x1 quaternion.
+%   w_bn,	3x1 incremental turn rates in body-frame (rad/s).
+%   dt,     1x1 INS time period (s).
 %
 % OUTPUT:
 %   qua_n,      4x1 updated quaternion.
