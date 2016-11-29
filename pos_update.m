@@ -34,20 +34,6 @@ function pos = pos_update(pos, vel, dt)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
-persistent vn_m
-persistent ve_m
-persistent vd_m
-
-if(isempty(vn_m))
-    vn_m = zeros(2,1);
-end
-if(isempty(ve_m))
-    ve_m = zeros(2,1);
-end
-if(isempty(vd_m))
-    vd_m = zeros(2,1);
-end
-
 lat = pos(1); 
 lon = pos(2); 
 h   = pos(3);
@@ -57,9 +43,7 @@ vd  = vel(3);
 
 %% Altitude
 
-vd_m(1) = vd;
-h_n  = h - trapz(vd_m) * dt;
-vd_m(2) = vd_m(1);
+h_n  = h - (vd) * dt;
 
 if h_n < 0
     h_n = 0;
@@ -74,9 +58,8 @@ else
     [RM,~] = radius(lat, 'double');
 end
 
-vn_m(1) = vn / (RM + h_n);
-lat_n = lat + trapz(vn_m) * dt;
-vn_m(2) = vn_m(1);
+vn_c = vn / (RM + h_n);
+lat_n = lat + (vn_c) * dt;
 
 %% Longitude
 
@@ -86,12 +69,11 @@ else
     [~, RN] = radius(lat_n, 'double');
 end
 
-ve_m(1) = ve / ((RN + h_n) * cos (lat_n));
-lon_n = lon + trapz(ve_m) * dt;
-ve_m(2) = ve_m(1);
+ve_c  = ve / ((RN + h_n) * cos (lat_n));
+lon_n = lon + (ve_c) * dt;
 
 %% Position update
 
-pos = [lat_n lon_n h_n]';
+pos = [lat_n lon_n h_n];
 
 end

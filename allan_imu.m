@@ -106,6 +106,10 @@ imu.gb_corr = zeros(1,3);
 imu.astd = zeros(1,3);
 imu.gstd = zeros(1,3);
 
+% Bias 
+imu.ab_fix = zeros(1,3);
+imu.gb_fix = zeros(1,3);
+
 % Preallocate output cells
 tau_m   = cell(1,6);
 allan_m = cell(1,6);
@@ -162,6 +166,7 @@ for i=1:3
     imu.ab_corr(i) = t_corr;
     
     imu.astd(i) = std(data.freq);
+    imu.ab_fix(i) = mean(data.freq); 
 end
 
 hold off
@@ -195,7 +200,8 @@ for i=1:3
     imu.gb_drift(i) = b_drift;
     imu.gb_corr(i) = t_corr;
     
-    imu.gstd(i) = std(data.freq);    
+    imu.gstd(i) = std(data.freq); 
+    imu.gb_fix(i) = mean(data.freq); 
 end
 
 hold off

@@ -34,23 +34,12 @@ function vel_n = vel_update(fn, vel, omega_ie_N, omega_en_N, g, dt)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-persistent fn_m
-
-if(isempty(fn_m))
-
-    fn_m = zeros(2,3);
-end
-
-S = skewm(vel);
+S = skewm(vel);             % Skew matrix with velocities
  
-coriolis = S * (omega_en_N + 2 * omega_ie_N);
+coriolis = S * (omega_en_N + 2 * omega_ie_N);   % Coriolis 
 
-fn = fn - coriolis - (g);
+fn_c = fn - coriolis - (g); % Corrected specific force in nav-frame
 
-fn_m(1,:) = fn';
-
-vel_n = vel + trapz(fn_m) * dt;
-
-fn_m(2,:) =  fn_m(1,:);
+vel_n = vel + fn_c' * dt;
 
 end

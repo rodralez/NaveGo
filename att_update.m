@@ -2,20 +2,20 @@ function [qua_n, DCMbn_n, euler] = att_update(w_b, DCMbn, qua, omega_ie_N, omega
 % att_update: updates attitude using quaternion or DCM.
 %
 % INPUT:
-%   w,          3x1 incremental turn rates in body-frame.
-%   DCMbn,      3x3 DCM body-to-nav.
+%   w,          3x1 incremental turn rates in body-frame (rad/s).
+%   DCMbn,      3x3 body-to-nav DCM.
 %   qua,        4x1 quaternion.
-%   omega_ie_N, 3x1 Earth rate.
-%   omega_en_N, 3x1 Transport rate.
-%   dt,         1x1 INS time period.
+%   omega_ie_N, 3x1 Earth rate (rad/s).
+%   omega_en_N, 3x1 Transport rate (rad/s).
+%   dt,         1x1 INS time period (s).
 %	att_mode,   attitude mode string.
 %      'quaternion': attitude updated in quaternion format. Default value.
 %             'dcm': attitude updated in Direct Cosine Matrix format.
 %
 % OUTPUT:
 %   qua_n,      4x1 updated quaternion.
-%   DCMbn_n,    3x3 updated DCM body-to-nav.
-%   euler,      3x1 updated Euler angles.
+%   DCMbn_n,    3x3 updated body-to-nav DCM.
+%   euler,      3x1 updated Euler angles (rad).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -53,6 +53,7 @@ w_bn = ( w_b - DCMbn' * (omega_ie_N + omega_en_N));
 
 if strcmp(att_mode, 'quaternion')
 %% Quaternion update   
+
     qua_n   = qua_update(qua, w_bn, dt);    % Update quaternions
     qua_n   = qua_n / norm(qua_n);          % Brute-force normalization
     DCMbn_n = qua2dcm(qua_n);               % Update DCM
