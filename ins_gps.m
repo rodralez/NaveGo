@@ -238,7 +238,9 @@ for j = 2:Mg
         
         % Position update
         pos = pos_update([lat_e(i-1) lon_e(i-1) double(h_e(i-1))], double(vel_e(i,:)), double(dti) );
-        lat_e(i) = pos(1); lon_e(i) = pos(2); h_e(i) = (pos(3));
+        lat_e(i) = pos(1); 
+        lon_e(i) = pos(2);
+        h_e(i)   = pos(3);
         
         % Magnetic heading update
         %  yawm_e(i) = hd_update (imu.mb(i,:), roll_e(i),  pitch_e(i), D);

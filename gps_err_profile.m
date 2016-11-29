@@ -37,10 +37,10 @@ function  gps = gps_err_profile (lat, h, gps)
 
 gps.std =  zeros(1,3);
 
-[RM,RN] = radius(lat, 'double');
+[RM, RN] = radius(lat, 'double');
 
-gps.std(1) = gps.stdm(1) / (RM+h);                  
-gps.std(2) = gps.stdm(2) / (RN+h) / cos (lat);    
+gps.std(1) = gps.stdm(1) / (RM + h);                  
+gps.std(2) = gps.stdm(2) / (RN + h) / cos (lat);    
 gps.std(3) = gps.stdm(3);
 
 end
