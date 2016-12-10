@@ -48,7 +48,7 @@ elseif (isfield(ref, 'vel'))
     
     acc_raw = (diff(ref.vel)) ./ [diff(ref.t) diff(ref.t) diff(ref.t)];
     acc_raw = [ 0 0 0; acc_raw; ];
-    acc_ned = sgolayfilt(acc_raw, 15, 299);
+    acc_ned = sgolayfilt(acc_raw, 10, 45);
     acc_b = acc_nav2body(acc_ned, ref.DCMnb); 
 else
 

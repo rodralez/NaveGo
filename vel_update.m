@@ -40,6 +40,6 @@ coriolis = S * (omega_en_N + 2 * omega_ie_N);   % Coriolis
 
 fn_c = fn - coriolis - (g); % Corrected specific force in nav-frame
 
-vel_n = vel + fn_c' * dt;
+vel_n = (vel + fn_c' * dt);
 
 end

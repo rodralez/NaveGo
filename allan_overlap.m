@@ -203,8 +203,16 @@ sm=[]; sme=[];
 % Screen for outliers using 5x Median Absolute Deviation (MAD) criteria
 MAD = median(abs(medianfreq)/0.6745);
 if verbose >= 1 && any(abs(medianfreq) > 5*MAD)
-    fprintf(1, 'allan_overlap: NOTE: There appear to be outliers in the frequency data. See plot.\n');
+    
+    odl = (abs(medianfreq) > 5*MAD);
+    outliers = data.freq(odl);
+    fprintf(1, 'allan_overlap: OUTLIERS: There appear to be %d outliers in the frequency data.\n', length(outliers));       
+  
+%     idl = (abs(medianfreq) < 5*MAD);
+%     data.freq = data.freq(idl);
+    
 end
+
 
 %%%%
 % There are four cases, freq or phase data, using timestamps or rate:
@@ -379,11 +387,10 @@ elseif isfield(data,'time')
         k=k+1;
         fa=[];
 
-        if verbose >= 2, fprintf(1,'%d ',i); end
+%         if verbose >= 2, fprintf(1,'%d ',i); end
         
         freq = dfreq; time = dtime;
-       
-        
+               
         % compute overlapping samples (y_k) for this tau
         %for j = 1:i
         for j = 1:m(k) % (v2.1)
@@ -518,9 +525,9 @@ if verbose >= 2 % show analysis results
 
         % in R14SP3, there is a bug that screws up the error bars on a semilog plot.
         %  When this is fixed, uncomment below to use normal errorbars
-        %errorbar(tau,sm,sme,'.-b'); set(gca,'XScale','log');
+        errorbar(tau,sm,sme,'.-b'); set(gca,'XScale','log');
         % this is a hack to approximate the error bars
-        hold on; plot([tau; tau],[sm+sme; sm-sme],'-k','LineWidth',max(plotlinewidth-1,2));
+%         hold on; plot([tau; tau],[sm+sme; sm-sme],'-k','LineWidth',max(plotlinewidth-1,2));
 
         grid on;
         title(['Overlapping Allan Deviation: ' name],'FontSize',FontSize+2,'FontName',FontName);
