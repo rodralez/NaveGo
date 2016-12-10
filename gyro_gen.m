@@ -40,7 +40,7 @@ if (isfield(ref, 'wb'))
 else
     gyro_raw = gyro_gen_delta(ref.DCMnb, diff(ref.t));
     gyro_raw = [gyro_raw; 0 0 0;];
-    gyro_b  = sgolayfilt(gyro_raw, 15, 299);
+    gyro_b  = sgolayfilt(gyro_raw, 10, 45);
 end
 
 % omega_en_n and omega_ie_n
