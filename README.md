@@ -63,11 +63,6 @@ matlabrc
 fprintf('\nStarting simulation ... \n')
 ```
 
-###  Global variables
-
-```matlab
-global D2R
-global R2D
 ```
 ###  Code execution parameters
 
@@ -82,17 +77,15 @@ IMU2_DATA = 'ON';   % Simulate ADIS16488 IMU data
 IMU1_INS  = 'ON';   % Execute INS/GPS integration for ADIS16405 IMU
 IMU2_INS  = 'ON';   % Execute INS/GPS integration for ADIS16488 IMU
 
-RMSE      = 'ON';   % Show on consolte RMSE results.
 PLOT      = 'ON';   % Plot results.
 
-% If a particular parameter is commented above, set its value to 'OFF'.
+% If a particular parameter is commented above, it is set by default to 'OFF'.
 
 if (~exist('GPS_DATA','var')),  GPS_DATA  = 'OFF'; end
 if (~exist('IMU1_DATA','var')), IMU1_DATA = 'OFF'; end
 if (~exist('IMU2_DATA','var')), IMU2_DATA = 'OFF'; end
 if (~exist('IMU1_INS','var')),  IMU1_INS = 'OFF'; end
 if (~exist('IMU2_INS','var')),  IMU2_INS = 'OFF'; end
-if (~exist('RMSE','var')),      RMSE = 'OFF'; end
 if (~exist('PLOT','var')),      PLOT = 'OFF'; end
 
 ```
@@ -124,20 +117,18 @@ load ref.mat
 % ref.mat contains the reference data structure from which inertial 
 % sensors and GPS wil be simulated. It must contain the following fields:
 
-%         t: time vector (seconds).
-%       lat: latitude vector (radians).
-%       lon: longitude vector (radians).
-%         h: altitude vector (meters).
-%       vel: NED velocities vectors, [north east down] (meter/s).
-%      roll: roll angle vector (radians).
-%     pitch: pitch angle vector (radians).
-%       yaw: yaw angle vector (radians).
-%        kn: number of elements of time vector.
-%     DCMnb: Direct Cosine Matrix nav-to-body, with 'kn' rows and 9
-%     columns. Each row contains the elements of one matrix ordered by
-%     columns as [a11 a21 a31 a12 a22 a32 a13 a23 a33]. Use reshape()
-%     built-in MATLAB function to get the original 3x3 matrix
-%     (reshape(DCMnb(row,:),3,3)).
+%         t: Nx1 time vector (seconds).
+%       lat: Nx1 latitude (radians).
+%       lon: Nx1 longitude (radians).
+%         h: Nx1 altitude (m).
+%       vel: Nx3 NED velocities (m/s).
+%      roll: Nx1 roll angles (radians).
+%     pitch: Nx1 pitch angles (radians).
+%       yaw: Nx1 yaw angle vector (radians).
+%        kn: 1x1 number of elements of time vector.
+%     DCMnb: Nx9 Direct Cosine Matrix nav-to-body. Each row contains 
+%            the elements of one matrix ordered by columns as 
+%            [a11 a21 a31 a12 a22 a32 a13 a23 a33].
 %      freq: sampling frequency (Hz).
 
 ```
@@ -163,8 +154,8 @@ load ref.mat
 %     gpsd : 1x3 gyros dynamic biases PSD (rad/s/root-Hz).
 %     apsd : 1x3 accrs dynamic biases PSD (m/s^2/root-Hz);
 %      freq: 1x1 sampling frequency (Hz).
-% ini_align: 1x3 initial attitude at ti(1).
-% ini_align_err: 1x3 initial attitude errors at ti(1).
+% ini_align: 1x3 initial attitude at t(1).
+% ini_align_err: 1x3 initial attitude errors at t(1).
 
 % ref dataset will be used to simulate IMU sensors.
 
@@ -193,6 +184,8 @@ imu1.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude alig
 
 ```matlab
 
+% ref dataset will be used to simulate IMU sensors.
+
 ADIS16488.arw      = 0.3  .* ones(1,3);     % Angle random walks [X Y Z] (deg/root-hour)
 ADIS16488.vrw      = 0.029.* ones(1,3);     % Velocity random walks [X Y Z] (m/s/root-hour)
 ADIS16488.gb_fix   = 0.2  .* ones(1,3);     % Gyro static biases [X Y Z] (deg/s)
@@ -210,7 +203,7 @@ dt = mean(diff(ADIS16488.t));                    % IMU mean period
 imu2 = imu_err_profile(ADIS16488, dt);      % Transform IMU manufacturer error units to SI units.
 
 imu2.ini_align_err = [1 1 5] .* D2R;                     % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)  
-imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude align at t(1) (radians).
+imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude align at t(1) (radians)..
 
 ```
 
@@ -234,7 +227,6 @@ gps.stdm = [5, 5, 10];                 % GPS positions standard deviations [lat 
 gps.stdv = 0.1 * KT2MS .* ones(1,3);   % GPS velocities standard deviations [Vn Ve Vd] (meters/s)
 gps.larm = zeros(3,1);                 % GPS lever arm [X Y Z] (meters)
 gps.freq = 5;                          % GPS operation frequency (Hz)
-
 
 ```
 
