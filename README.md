@@ -12,7 +12,7 @@ Main features of NaveGo are:
 
 * Simulation of a loosely-coupled integrated navigation system (INS/GPS).
 
-* Implementation of the Allan variance procedure in order to characterize the typical errors of an IMU. 
+* Implementation of the Allan variance procedure in order to characterize typical errors of an IMU. 
 
 * Simulation of IMU sensors (in a very early stage).
 
