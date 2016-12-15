@@ -16,6 +16,10 @@ Main features of NaveGo are:
 
 * Simulation of IMU sensors (in a very early stage).
 
+## How to cite this work
+
+Rodrigo Gonzalez (2016). NaveGo: an open-source MATLAB toolbox for simulating integrated navigation systems and performing Allan variance analysis. http://doi.org/10.5281/zenodo.165125. URL: https://github.com/rodralez/NaveGo/.
+
 ## Contributions
 
 We are looking for contributors for NaveGo! Until now, NaveGo is a one-man project. We hope the navigation community compromise and contribute with this open-source tool.
