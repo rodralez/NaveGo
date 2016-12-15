@@ -61,7 +61,6 @@ clear
 matlabrc
 
 fprintf('\nStarting simulation ... \n')
-```
 
 ```
 ###  Code execution parameters
