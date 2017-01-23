@@ -1,5 +1,5 @@
 function [RM,RN] = radius(lat, precision)
-% radius: calculates meridian and normal radiuses.
+% radius: calculates meridian and normal radii of curvature.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -24,13 +24,17 @@ function [RM,RN] = radius(lat, precision)
 % Inertial Navigation Technology (2nd Ed.). Institution
 % of Engineering and Technology, USA. Eq. 2.6 and 2.7.
 %
+% 			Groves, P. (2008). Principles of GNSS, Inertial, and
+% Multisensor Integrated Navigation Systems. Artech House, UK.
+% Eq. 2.65 and 2.66.
+%
 %  			R. Gonzalez, J. Giribet, and H. Patiño. An approach to
 % benchmarking of loosely coupled low-cost navigation systems,
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 11.
 %
-% Version: 002
-% Date:    2016/11/21
+% Version: 003
+% Date:    2017/01/19
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -52,7 +56,11 @@ else
     den = 1 - e2.*(sin(lat)).^2;
 end
 
+% Meridian radius of curvature: radius of curvature for north-south motion.
 RM = a * (1-e2) ./ (den).^(3/2);
+
+% Normal radius of curvature: radius of curvature for east-west motion. 
+% AKA transverse radius.
 RN = a ./ sqrt(den);
 
 end
