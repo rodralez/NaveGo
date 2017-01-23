@@ -18,11 +18,11 @@ Main features of NaveGo are:
 
 ## How to cite this work
 
-Rodrigo Gonzalez (2016). NaveGo: an open-source MATLAB toolbox for simulating integrated navigation systems and performing Allan variance analysis. http://doi.org/10.5281/zenodo.165125. URL: https://github.com/rodralez/NaveGo/.
+Rodrigo Gonzalez (2016). NaveGo: an open-source MATLAB/GNU Octave toolbox for simulating integrated navigation systems and performing inertial sensors profiling analysis. http://doi.org/10.5281/zenodo.165125. URL: https://github.com/rodralez/NaveGo/.
 
 ## Contributions
 
-We are looking for contributors for NaveGo! Until now, NaveGo is a one-man project. We hope the navigation community compromise and contribute with this open-source tool.
+We are looking for contributors for NaveGo! Since integrated navigation is a topic used in several fields (Geomatics, Geology, Mobile Mapping, Autonomous Driving) we hope other communities than the navigation community compromise and contribute with this open-source project.
 
 You can contribute in many ways: 
 
@@ -35,7 +35,7 @@ If you are interested, please feel free to contact Dr. Rodrigo Gonzalez at rodra
 
 ## Documentation
 
-The underlying mathematical model of NaveGo is based on two articles that are recommended for reading: 
+The underlying mathematical model of NaveGo is based on two articles which are recommended for reading: 
 
 * R. Gonzalez, J.I. Giribet, and H.D. Patiño. NaveGo: a simulation framework for low-cost integrated navigation systems, Journal of Control Engineering and Applied Informatics, vol. 17, issue 2, pp. 110-120, 2015. [Link](http://ceai.srait.ro/index.php?journal=ceai&page=article&op=view&path%5B%5D=2478).
 
