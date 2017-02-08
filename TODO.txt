@@ -1,0 +1,21 @@
+1) Depurar simulación de sensores.
+
+2) Cambiar algunos nombres de funciones.
+	ins por ins_gps
+	
+3) Cuando una funcion imprime por consola debe identificarse.
+
+4) GUARDAR los quaterniones.	
+
+5) Filtro complementario. No dio buenos resultados.
+
+6) Probar KF en el INS solo para estima de biases. No dio buenos resultados.
+
+7) Verificar los datos de la AV con PSD.
+
+8) Generar reportes de salida.
+
+9) Aceptar archivos en formato RINEX, a traves de RTKLIB.
+
+10) Probar otros modelos de gravedad más sofisticados.geoide EGM96.
+
