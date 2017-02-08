@@ -60,7 +60,7 @@ How long will the project take? When can you begin work? How many hours are you 
 
 ## Experience
 
-What is your experience using and developing MATLAB/Octave applications? What about other open source programs? Have you worked in conditions like these before (remote team work, timezone difference, deadlines)? Are you comfortable communicating technical development in English? What is your familiarity with the programming language in question (MATLAB/Octave, Python, Django, NODE.JS).
+What is your experience using and developing MATLAB/Octave applications? What about other open source programs? Have you worked in conditions like these before (remote team work, timezone difference, deadlines)? Are you comfortable communicating technical development in English? What is your familiarity with the programming language or technology in question (MATLAB/Octave, Python, Django, NODE.JS, GIS, integrated navigation).
 
 ## Tip
 
