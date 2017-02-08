@@ -2,27 +2,27 @@
 
 [![Releases](https://img.shields.io/badge/release-v0.8.0--alpha-green.svg?style=plastic)](https://github.com/rodralez/NaveGo/releases) [![DOI](https://zenodo.org/badge/12745155.svg)](https://zenodo.org/badge/latestdoi/12745155)
 
-NaveGo: an open-source MATLAB/GNU Octave toolbox for simulating integrated navigation systems and performing inertial sensors profiling analysis.
+NaveGo: an open-source MATLAB/GNU Octave toolbox for processing integrated navigation systems and performing inertial sensors profiling analysis.
 
 ## Features
 
 Main features of NaveGo are:
 
-* Simulation of an inertial navigation system (INS).
+* Processing of an inertial navigation system (INS).
 
-* Simulation of a loosely-coupled integrated navigation system (INS/GPS).
+* Processing of a loosely-coupled integrated navigation system (INS/GPS).
 
-* Implementation of the Allan variance procedure in order to characterize typical errors of an IMU. 
+* Implementation of the Allan variance procedure to characterize inertial sensors' typical errors.
 
-* Simulation of IMU sensors (in a very early stage).
+* Simulation of inertial sensors (in a very early stage).
 
 ## How to cite this work
 
-Rodrigo Gonzalez (2016). NaveGo: an open-source MATLAB/GNU Octave toolbox for simulating integrated navigation systems and performing inertial sensors profiling analysis. http://doi.org/10.5281/zenodo.165125. URL: https://github.com/rodralez/NaveGo/.
+Rodrigo Gonzalez, Carlos Catania, and Paolo Dabove (2016). NaveGo: an open-source MATLAB/GNU Octave toolbox for processing integrated navigation systems and performing inertial sensors profiling analysis. http://doi.org/10.5281/zenodo.165125. URL: https://github.com/rodralez/NaveGo/.
 
 ## Contributions
 
-We are looking for contributors for NaveGo! Since integrated navigation is a topic used in several fields (Geomatics, Geology, Mobile Mapping, Autonomous Driving) we hope other communities than the navigation community compromise and contribute with this open-source project.
+We are looking for contributors for NaveGo! Since integrated navigation is a topic used in several fields (Geomatics, Geology, Mobile Mapping, Autonomous Driving, even Veterinary) we hope other communities than the navigation community compromise and contribute with this open-source project.
 
 You can contribute in many ways: 
 
@@ -33,7 +33,7 @@ You can contribute in many ways:
 
 If you are interested, please feel free to contact Dr. Rodrigo Gonzalez at rodralez [at] frm [dot] utn [dot] edu [dot] ar.
 
-## Documentation
+## Publications
 
 The underlying mathematical model of NaveGo is based on two articles which are recommended for reading: 
 
@@ -41,9 +41,24 @@ The underlying mathematical model of NaveGo is based on two articles which are r
 
 * R. Gonzalez, J.I. Giribet, and H.D. Patiño. An approach to benchmarking of loosely coupled low-cost navigation systems. Mathematical and Computer Modelling of Dynamical Systems, vol. 21, issue 3, pp. 272-287, 2015. [Link](http://www.tandfonline.com/doi/abs/10.1080/13873954.2014.952642).
 
+## Acknowledgments
+
+We would like to thank to many people that have contribute to make NaveGo a better tool:
+
+* Dr. Juan Ignacio Giribet (Universidad Nacional de Buenos Aires, Argentina) for this continuous support on theory aspects of INS/GPS systems.
+
+* Dr. Charles K. Toth (The Ohio State University, USA), Dr. Allison Kealy, and M.Sc. Azmir Hasnur-Rabiain (both from The University of Melbourne, Australia) for generously sharing IMU and GPS datasets, and in particular, for Azmir's unselfish help.
+
+* Prof. Zhu, Dr. Yang, and Mr. Bo Sun, all from the Laboratory of Precision Measuring Technology and Instruments, Tianjin University, Tianjin, China, for contributing with IMU static measurements to test Allan variance routines.
+
+* Dr. Paolo Dabove and Dr. Marco Piras (both from DIATI, Politecnico di Torino, Italy) for helping to debug NaveGo and suggesting new features.
+
+
+# Examples
+
 ## Allan variance working example
 
-Just execute the file `navego_allan_example.m`. It process 2-hours static measurements from an Sensonor STIM300 IMU.
+Just execute the file `navego_allan_example.m`. It process 2-hours of static measurements from an Sensonor STIM300 IMU.
 
 ## INS/GPS working example
 
@@ -458,16 +473,3 @@ http://www.analog.com/media/en/technical-documentation/data-sheets/ADIS16488.pdf
 
 * Garmin International, Inc. GPS 18x TECHNICAL SPECIFICATIONS. Revision D. October 2011. 
 http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
-
-
-## Acknowledgments
-
-We would like to thank to many people that have contribute to make NaveGo a better tool:
-
-* Dr. Juan Ignacio Giribet (Universidad Nacional de Buenos Aires, Argentina) for this continuous support on theory aspects of INS/GPS systems.
-
-* Dr. Charles K. Toth (The Ohio State University, USA), Dr. Allison Kealy, and M.Sc. Azmir Hasnur-Rabiain (both from The University of Melbourne, Australia) for generously sharing IMU and GPS datasets, and in particular, for Azmir's unselfish help.
-
-* Prof. Zhu, Dr. Yang, and Mr. Bo Sun, all from the Laboratory of Precision Measuring Technology and Instruments, Tianjin University, Tianjin, China, for contributing with IMU static measurements to test NaveGo Allan variance routines.
-
-* Dr. Paolo Dabove and Dr. Marco Piras (both from DIATI, Politecnico di Torino, Italy) for helping to debug NaveGo and suggesting new features.
