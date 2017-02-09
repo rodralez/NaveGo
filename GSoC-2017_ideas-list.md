@@ -4,9 +4,16 @@
 
 NaveGo: an open-source MATLAB/GNU Octave toolbox for processing integrated navigation systems and performing inertial sensors profiling analysis.
 
-NaveGo is an open-source framework for processing inertial navigation systems' (INS) and GPS' sensors that is freely available online. It is developed under MATLAB/GNU Octave due to this programming language has become a *de facto* standard for simulation and mathematical computing. NaveGo has been verified by processing real-world data from a real trajectory and contrasting results with a commercial, closed-source software package. Difference between both solutions have shown to be negligible. 
+NaveGo is an open-source framework for processing integrated navigation systems and performing inertial sensors profiling analysis that is freely available online. It is developed under MATLAB/GNU Octave due to this programming language has become a *de facto* standard for simulation and mathematical computing. NaveGo has been verified by processing real-world data from a real trajectory and contrasting results with a commercial, closed-source software package. Difference between both solutions have shown to be negligible. 
 
-Actually, NaveGo is supported by three academic research groups: GridTics at the National University of Technology (Argentina), ITIC at the National University of Cuyo (Argentina), and DIATI at the Politecnico di Torino (Italy). 
+Main features of NaveGo are:
+
+* Processing of an inertial navigation system (INS).
+* Processing of a loosely-coupled integrated navigation system (INS/GPS).
+* Implementation of the Allan variance procedure to characterize inertial sensors' typical errors.
+* Simulation of inertial sensors (in a very early stage).
+
+NaveGo is supported at the moment by three academic research groups: GridTics at the National University of Technology (Argentina), ITIC at the National University of Cuyo (Argentina), and DIATI at the Politecnico di Torino (Italy). 
 
 
 ## Proposal Guidelines
@@ -45,7 +52,7 @@ It is mandatory that students write and submit a proposal. We have added the [ap
 
 * **Expected results:** A good damn library!
 
-* **Prequisites:** GNU Octave/MATLAB, GIS.
+* **Prequisites:** GNU Octave/MATLAB, GPS, GNSS, GIS.
 
 * **Mentor:** Paolo Dabove.
 
@@ -53,7 +60,7 @@ It is mandatory that students write and submit a proposal. We have added the [ap
 
 ### Project 4: DEVELOPMENT OF A LIBRARY FOR INS ALIGNMENT AND ZERO VELOCITY UPDATES
 
-* **Brief Explanation:** The basic idea is to implement the alignment methods proposed in (Groves, 2008), chapters 5 and 13, for improving the calibration of an INS attitude solution and inertial sensor errors between the initialization of the INS and the use of its navigation solution.
+* **Brief Explanation:** The basic idea is to implement the alignment methods proposed in (Groves, 2008), chapters 5 and 13, for improving the calibration of an inertial navigation system (INS) attitude solution and inertial sensor errors between the initialization of the INS and the use of its navigation solution.
 
 * **Expected results:** One function in GNU Octave/MATLAB language should be develop for each alignment method. The library should be tested with real data that will be previously provided.
 
