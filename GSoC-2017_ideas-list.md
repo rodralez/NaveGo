@@ -39,26 +39,9 @@ It is mandatory that students write and submit a proposal. We have added the [ap
 
 --------
 
-This chapter describes a number of fine alignment methods for improving the
-calibration of an INS attitude solution and inertial sensor errors between the
-initialization of the INS and the use of its navigation solution. It follows on from
-the discussion of INS initialization and alignment in Section 5.5 and exploits
-synergies with INS/GNSS integration, described in Chapter 12.
+### **Project:** IMPLEMENTATION OF FUNCTIONS FOR INS ALIGNMENT AND ZERO VELOCITY UPDATES
 
-Section 13.1 describes transfer alignment, in which measurements from a nearby
-reference navigation system are used to initialize, align, and calibrate an INS over
-a few seconds or minutes while in motion. Section 13.2 describes quasi-stationary
-alignment without heading initialization. Section 13.3 describes quasi-stationary
-fine alignment where the heading is known and the related zero velocity update
-(ZVU or ZUPT), which may be applied wherever an INS is known to be stationary.
-
-
-
-### **Project:** IMPLEMENTATION OF FUNCTIONS FOR INS ALIGNMENT AND ZERO VELOCITY
-Updates
-
-
-* **Brief Explanation:** The basic idea is to implement the alignment methods proposed in (Groves, 2008) chapters 5 and 13, for improving the calibration of an INS attitude solution and inertial sensor errors between the initialization of the INS and the use of its navigation solution.
+* **Brief Explanation:** The basic idea is to implement the alignment methods proposed in (Groves, 2008), chapters 5 and 13, for improving the calibration of an INS attitude solution and inertial sensor errors between the initialization of the INS and the use of its navigation solution.
 
 * **Expected results:** For each alignment method, one function in GNU Octave/MATLAB language should be develop. Each function must be tested with real data that will be previously provided.
 
