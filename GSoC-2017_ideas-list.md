@@ -35,7 +35,7 @@ It is mandatory that students write and submit a proposal. We have added the [ap
 
 * **Prequisites:** GNU Octave/MATLAB, profiling techniques, C/C++.
 
-* **Mentor:**  Paolo Dabove.
+* **Mentor:**  Marcos Piras.
 
 --------
 
@@ -47,7 +47,7 @@ It is mandatory that students write and submit a proposal. We have added the [ap
 
 * **Prequisites:** GNU Octave/MATLAB, GIS.
 
-* **Mentor:**  Marcos Piras.
+* **Mentor:** Paolo Dabove.
 
 --------
 
