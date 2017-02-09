@@ -15,6 +15,8 @@ Send your application starting March 20, 2017. Before you apply, review the foll
 
 Many students show interest, but we will likely only be able to pick a few proposals. We need to believe that you will be successful and accomplish your goal. Convince us!
 
+
+
 # Personal Details Brief
 
 ## Mandatory
@@ -22,8 +24,8 @@ Many students show interest, but we will likely only be able to pick a few propo
 * **Name:** *Your Name Here*
 * **Email:** *name@domain.com*
 * **Country & timezone:** *e.g. Germany, GMT+1*
-* **School Name & Study:** *The name of your university and field of study.*
-* **Previous experience in open source development:** *The name of the project and assigned task*
+* **School Name & Study:** *The name of your university and field of study*
+* **Previous experience in open source development, if any:** *The name of the project and assigned task, e.g., beagleboard, development of input/output interface*
 
 ##  Optional
 
@@ -40,17 +42,17 @@ Give us the [elevator pitch]. You have 30 seconds to tell us what you are going 
 
 ## Project Details
 
-### Specs & Scope:
+### Specs & Scope
 
 1. Provide a brief breakdown of the features that this project will add (see the example specs in the [Ideas List]). Feel free to include some stretch goals, as long as they are clearly identified as such.
     
 2. Go into some detail on the scope of each listed feature. Which features do you expect will require the most and least amount of work?
 
-### Anticipated challenges:
+### Anticipated challenges
 
 Identify challenges or risks to the success of the project, such as the project being incomplete by the end of the GSoC term. How do you intend to detect these risks early on? How do you plan to mitigate the challenges?
 
-### Groundwork:
+### Groundwork
 
 What have you done so far with this idea? Include any work or research on this project you have already started. Has something similar been tried before, and how was it different from your approach? Summarize what you have discussed with other developers so far and where you will be going from there.
 
