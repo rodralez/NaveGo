@@ -1,44 +1,73 @@
 # Google Summer of Code Ideas 2107
 
-
-# Guidelines
+## Introduction
 
 NaveGo: an open-source MATLAB/GNU Octave toolbox for processing integrated navigation systems and performing inertial sensors profiling analysis.
 
-NaveGo is an open-source framework for processing INS/GPS sensors that is freely available online. It is developed under MATLAB/GNU Octave due to this programming language has become a *de facto* standard for simulation and mathematical computing. NaveGo has been verified by processing real-world data from a real trajectory and contrasting results with a commercial, closed-source software package. Difference between both solutions have shown to be negligible. 
+NaveGo is an open-source framework for processing inertial navigation systems' (INS) and GPS' sensors that is freely available online. It is developed under MATLAB/GNU Octave due to this programming language has become a *de facto* standard for simulation and mathematical computing. NaveGo has been verified by processing real-world data from a real trajectory and contrasting results with a commercial, closed-source software package. Difference between both solutions have shown to be negligible. 
 
 Actually, NaveGo is supported by three academic research groups: GridTics at the National University of Technology (Argentina), ITIC at the National University of Cuyo (Argentina), and DIATI at the Politecnico di Torino (Italy). 
 
 
-# Proposal Guidelines
+## Proposal Guidelines
 
 It is mandatory that students write and submit a proposal. We have added the [applying to GSoC page] to help guide our students on what we would like to see in those proposals. We welcome original ideas in addition to what is listed here. You can suggest something that you consider interesting for NaveGo.
 
-# NaveGo Project Ideas
+## NaveGo Project Ideas
 
-## **Project:** GRAPHICAL INTERFACE (GUI)
+### **Project:** GRAPHICAL INTERFACE (GUI)
 
 * **Brief Explanation:** Develop a GUI for simplifying the usual tasks required for integrated navigation on NaveGo .
 
 * **Expected results:** A web based graphical interface for easily representing the workflow usually used in integrated navigation systems. These tasks should graphically be represented as blocks with different levels of connections, in a similar way as [Rapidminer] does. This GUI must deal with 1) data import processing from different types of sensors, 2) selecting initialization parameters (initial PVA, Kalman filter, etc.), 3) generating outputs files and plotting trajectories, 4) profiling sensor, and 5) statistical validation of data. All previous tasks already exist in NaveGo but should be refactored following a full web services architecture for facilitating future reusability. 
 
-* **Prequisites:** Node.js, Python, NoSQL databases
+* **Prequisites:** Node.js, Python, NoSQL databases.
 
 * **Mentor:**  Carlos Catania.
 
 --------
 
-## **Project:** OPTIMIZE NAVEGO TO RUN ON OCTAVE
+### **Project:** OPTIMIZATION OF NAVEGO TO RUN ON OCTAVE
 
 * **Brief Explanation:** Even though NaveGo actually can be executed on Octave, several functions should be reimplemented following the optimal strategy for  improve Octave memory and time complexity. 
 
 * **Expected results:** The long term goal consists of achieving a performance close to MATLAB. However, since this could be unaffordable during the GSOC program, the central idea is to profile all the NaveGo code and concentrate in most consuming methods. Such methods should be reimplemented using a more efficient vectorize version or reimplementing a C/C++ version if necessary.
 
-* **Prequisites:** Octave and MATLAB, Profiling techniques, C/C++,
+* **Prequisites:** GNU Octave/MATLAB, profiling techniques, C/C++.
+
+* **Mentor:**  Paolo Dabove.
+
+--------
+
+This chapter describes a number of fine alignment methods for improving the
+calibration of an INS attitude solution and inertial sensor errors between the
+initialization of the INS and the use of its navigation solution. It follows on from
+the discussion of INS initialization and alignment in Section 5.5 and exploits
+synergies with INS/GNSS integration, described in Chapter 12.
+
+Section 13.1 describes transfer alignment, in which measurements from a nearby
+reference navigation system are used to initialize, align, and calibrate an INS over
+a few seconds or minutes while in motion. Section 13.2 describes quasi-stationary
+alignment without heading initialization. Section 13.3 describes quasi-stationary
+fine alignment where the heading is known and the related zero velocity update
+(ZVU or ZUPT), which may be applied wherever an INS is known to be stationary.
+
+
+
+### **Project:** IMPLEMENTATION OF FUNCTIONS FOR INS ALIGNMENT AND ZERO VELOCITY
+Updates
+
+
+* **Brief Explanation:** The basic idea is to implement the alignment methods proposed in (Groves, 2008) chapters 5 and 13, for improving the calibration of an INS attitude solution and inertial sensor errors between the initialization of the INS and the use of its navigation solution.
+
+* **Expected results:** For each alignment method, one function in GNU Octave/MATLAB language should be develop. Each function must be tested with real data that will be previously provided.
+
+* **Prequisites:** GNU Octave/MATLAB, NaveGo, basic inertial navigation concepts.
 
 * **Mentor:**  Rodrigo Gonzalez.
 
---------
+
+(Groves, 2008) Paul D. Groves. Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems. ISBN-13: 978-1-58053-255-6. Artech House. London, 2008.
 
 [applying to GSoC page]:https://github.com/rodralez/NaveGo/blob/master/GSoC-2017_how-to-apply.md "Applying to GSoC"
 
