@@ -22,7 +22,7 @@ It is mandatory that students write and submit a proposal. We have added the [ap
 
 ## NaveGo Project Ideas
 
-### Project 1: DEVELOPMENT OF A GRAPHICAL INTERFACE (GUI)
+### Project 1: DEVELOPMENT OF A GRAPHICAL INTERFACE (GUI).
 
 * **Brief Explanation:** Develop a GUI for simplifying the usual tasks required for integrated navigation on NaveGo .
 
@@ -32,9 +32,23 @@ It is mandatory that students write and submit a proposal. We have added the [ap
 
 * **Mentor:**  Carlos Catania.
 
+
 --------
 
-### Project 2: OPTIMIZATION TO RUN ON OCTAVE
+### Project 2: DEVELOPMENT OF A LIBRARY FOR INPUT/OUTPUT IMPROVEMENT.
+
+* **Brief Explanation:** To be able to read files in GPS standard formats (NMEA, RINEX, GPX, KML) and to create outputs files formatted to be upload for most popular GIS programs (Google Maps, QGIS, ArcGIS). The library may be based on existing software as RTKLib, but should be executed on GNU Octave/MATLAB.
+
+* **Expected results:** a working library for GNU Octave/MATLAB. 
+
+* **Prequisites:** GNU Octave/MATLAB, GPS, GNSS, GIS.
+
+* **Mentor:** Paolo Dabove.
+
+
+--------
+
+### Project 3: OPTIMIZATION TO RUN ON OCTAVE.
 
 * **Brief Explanation:** Even though NaveGo actually can be executed on Octave, several functions should be reimplemented following the optimal strategy for  improve Octave memory and time complexity. 
 
@@ -46,19 +60,7 @@ It is mandatory that students write and submit a proposal. We have added the [ap
 
 --------
 
-### Project 3: DEVELOPMENT OF A LIBRARY FOR INPUT/OUTPUT IMPROVEMENT
-
-* **Brief Explanation:** To be able to read files in GPS standard formats (NMEA 0183, RINEX, GPX, KML) and to provide outputs files formatted for most popular GIS programs as Google Maps, QGIS, and the like.
-
-* **Expected results:** A good damn library!
-
-* **Prequisites:** GNU Octave/MATLAB, GPS, GNSS, GIS.
-
-* **Mentor:** Paolo Dabove.
-
---------
-
-### Project 4: DEVELOPMENT OF A LIBRARY FOR INS ALIGNMENT AND ZERO VELOCITY UPDATES
+### Project 4: DEVELOPMENT OF A LIBRARY FOR INS ALIGNMENT AND ZERO VELOCITY UPDATES.
 
 * **Brief Explanation:** The basic idea is to implement the alignment methods proposed in (Groves, 2008), chapters 5 and 13, for improving the calibration of an inertial navigation system (INS) attitude solution and inertial sensor errors between the initialization of the INS and the use of its navigation solution.
 
