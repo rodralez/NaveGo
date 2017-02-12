@@ -24,7 +24,7 @@ It is mandatory that students write and submit a proposal. We have added the [ap
 
 ### Project 1: DEVELOPMENT OF A GRAPHICAL INTERFACE (GUI).
 
-* **Brief Explanation:** Develop a GUI for simplifying the usual tasks required for integrated navigation on NaveGo .
+* **Brief Explanation:** Development of a drag-and-drop GUI for simplifying the usual tasks required for integrated navigation on NaveGo .
 
 * **Expected results:** A web based graphical interface for easily representing the workflow usually used in integrated navigation systems. These tasks should graphically be represented as blocks with different levels of connections, in a similar way as [Rapidminer] does. This GUI must deal with 1) data import processing from different types of sensors, 2) selecting initialization parameters (initial PVA, Kalman filter, etc.), 3) generating outputs files and plotting trajectories, 4) profiling sensor, and 5) statistical validation of data. All previous tasks already exist in NaveGo but should be refactored following a full web services architecture for facilitating future reusability. 
 
@@ -35,11 +35,11 @@ It is mandatory that students write and submit a proposal. We have added the [ap
 
 --------
 
-### Project 2: DEVELOPMENT OF A LIBRARY FOR INPUT/OUTPUT IMPROVEMENT.
+### Project 2: DEVELOPMENT OF A LIBRARY FOR IMPORT/EXPORT IMPROVEMENT.
 
-* **Brief Explanation:** To be able to read files in GPS standard formats (NMEA, RINEX, GPX, KML) and to create outputs files formatted to be upload for most popular GIS programs (Google Maps, QGIS, ArcGIS). The library may be based on existing software as RTKLib, but should be executed on GNU Octave/MATLAB.
+* **Brief Explanation:** To be able to import files in GPS standard formats (NMEA, RINEX, GPX, KML) and to export files for most popular GIS programs (QGIS,  Google Maps, ArcGIS).
 
-* **Expected results:** a working library for GNU Octave/MATLAB. 
+* **Expected results:** One function in GNU Octave/MATLAB language should be develop for each import/export format. Functions may be based on existing software as RTKLib. No GUI required. A User Guide for this library should be written.
 
 * **Prequisites:** GNU Octave/MATLAB, GPS, GNSS, GIS.
 
@@ -62,9 +62,9 @@ It is mandatory that students write and submit a proposal. We have added the [ap
 
 ### Project 4: DEVELOPMENT OF A LIBRARY FOR INS ALIGNMENT AND ZERO VELOCITY UPDATES.
 
-* **Brief Explanation:** The basic idea is to implement the alignment methods proposed in (Groves, 2008), chapters 5 and 13, for improving the calibration of an inertial navigation system (INS) attitude solution and inertial sensor errors between the initialization of the INS and the use of its navigation solution.
+* **Brief Explanation:** To implement the alignment methods proposed in (Groves, 2008), chapters 5 and 13, for improving the calibration of an inertial navigation system (INS) attitude solution and inertial sensor errors between the initialization of the INS and the use of its navigation solution.
 
-* **Expected results:** One function in GNU Octave/MATLAB language should be develop for each alignment method. The library should be tested with real data that will be previously provided.
+* **Expected results:** One function in GNU Octave/MATLAB language should be develop for each alignment method. The library should be tested with real data that will be previously provided. A User Guide for this library should be written.
 
 * **Prequisites:** GNU Octave/MATLAB, NaveGo, basic inertial navigation concepts.
 
