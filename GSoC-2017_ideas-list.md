@@ -11,7 +11,7 @@ Main features of NaveGo are:
 * Processing of an inertial navigation system (INS).
 * Processing of a loosely-coupled integrated navigation system (INS/GPS).
 * Implementation of the Allan variance procedure to characterize inertial sensors' typical errors.
-* Simulation of inertial sensors (in a very early stage).
+* Simulation of inertial sensors and GPS (in a very early stage).
 
 NaveGo is supported at the moment by three academic research groups: GridTics at the National University of Technology (Argentina), ITIC at the National University of Cuyo (Argentina), and DIATI at the Politecnico di Torino (Italy). 
 

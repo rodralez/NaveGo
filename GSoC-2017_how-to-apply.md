@@ -16,7 +16,6 @@ Send your application starting March 20, 2017. Before you apply, review the foll
 Many students show interest, but we will likely only be able to pick a few proposals. We need to believe that you will be successful and accomplish your goal. Convince us!
 
 
-
 # Personal Details Brief
 
 ## Mandatory
