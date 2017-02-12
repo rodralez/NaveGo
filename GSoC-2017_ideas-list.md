@@ -39,16 +39,15 @@ It is mandatory that students write and submit a proposal. We have added the [ap
 
 * **Brief Explanation:** To be able to import files in GPS standard formats and to export files for most popular GIS programs.
 
-* **Expected results:** One function in GNU Octave/MATLAB language should be develop for each import/export format. Among supported import formats are NMEA, RINEX, GPX, KML. NaveGo outputs should be export to GIS programs as QGIS, Google Maps, ArcGIS. More import/export formats may arise during project discussion with the student. Functions may be based on existing software as RTKLib. A User Guide for this library should be written.
+* **Expected results:** One function in GNU Octave/MATLAB language should be develop for each import/export format. Among supported import formats should be NMEA, RINEX, GPX, KML. NaveGo results should be exported to GIS programs as QGIS, Google Maps, ArcGIS. More import/export formats may arise during project discussion with the student. A User Guide for this library should be written.
 
 * **Prequisites:** GNU Octave/MATLAB, GPS, GNSS, GIS.
 
 * **Mentor:** Paolo Dabove.
 
-
 --------
 
-### Project 3: OPTIMIZATION TO RUN ON OCTAVE.
+### Project 3: NAVEGO EXECUTION OPTIMIZATION FOR GNU OCTAVE.
 
 * **Brief Explanation:** Even though NaveGo actually can be executed on Octave, several functions should be reimplemented following the optimal strategy for  improve Octave memory and time complexity. 
 
