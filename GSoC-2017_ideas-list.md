@@ -36,9 +36,9 @@ It is mandatory that students write and submit a proposal. We have added the [ap
 
 ### Project 2: DEVELOPMENT OF A LIBRARY FOR IMPORT/EXPORT IMPROVEMENT.
 
-* **Brief Explanation:** To be able to import files in GNSS standard formats and to export files for most popular GIS programs.
+* **Brief Explanation:** Capability to import files in GNSS standard formats and to export files for most popular GIS programs.
 
-* **Expected results:** One GNU Octave function should be develop for each import/export format. Among supported import formats should be NMEA, RINEX, GPX, KML. NaveGo results should be exported to GIS programs as QGIS, Google Maps, ArcGIS. More import/export formats may arise during project discussion with the student. A User Guide for this library should be written.
+* **Expected results:** One GNU Octave function must be developed for each import/export format. Among GNSS standard formats to import are NMEA, RINEX, GPX, KML. NaveGo results should be exported to most popular GIS programs as QGIS, Google Maps, ArcGIS. More import/export formats may arise during project discussion with the student. A User Guide for this library should be written.
 
 * **Prequisites:** GNU Octave/MATLAB, GNSS, GPS, GIS.
 
@@ -61,7 +61,7 @@ It is mandatory that students write and submit a proposal. We have added the [ap
 
 * **Brief Explanation:** Implementation of the alignment methods proposed in (Groves, 2008), chapters 5 and 13.
 
-* **Expected results:** Alignment methods for improving the calibration of an inertial navigation system (INS) attitude solution and inertial sensor errors between the initialization of the INS and the use of its navigation solution. One GNU Octave function should be develop for each alignment method. The library should be tested with real data that will be previously provided. A User Guide for this library should be written.
+* **Expected results:** Alignment methods for improving the calibration of an inertial navigation system (INS) attitude solution and inertial sensor errors between the initialization of the INS and the use of its navigation solution. One GNU Octave function must be developed for each alignment method. The library should be tested with real data that will be previously provided. A User Guide for this library should be written.
 
 * **Prequisites:** GNU Octave/MATLAB, NaveGo, basic inertial navigation concepts.
 
