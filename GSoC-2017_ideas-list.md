@@ -38,7 +38,7 @@ It is mandatory that students write and submit a proposal. We have added the [ap
 
 * **Brief Explanation:** Capability to import files in GNSS standard formats and to export files for most popular GIS programs.
 
-* **Expected results:** One GNU Octave function must be developed for each import/export format. Among GNSS standard formats to import are RINEX, RTCM, NMEA. NaveGo results should be exported to most popular GIS programs in SHP format (Shapefile) and in NMEA and KML formats. A few more import/export formats may arise during project discussion with the student. A User Guide for this library should be written.
+* **Expected results:** One GNU Octave function must be developed for each import/export format. Among GNSS standard formats to import are RINEX, RTCM, UBLOX, NMEA. NaveGo results should be exported to most popular GIS programs in SHP format (Shapefile) and in NMEA and KML formats. A few more import/export formats may arise during project discussion with the student. A User Guide for this library should be written.
 
 * **Prequisites:** GNU Octave/MATLAB, GNSS, GPS, GIS.
 
