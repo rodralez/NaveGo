@@ -9,14 +9,14 @@ function [imu] = allan_imu (imu)
 %
 %     fb, Nx3 matrix, accelerations [X Y Z] (m/s^2).
 %     wb, Nx3 matrix, turn rates [X Y Z] (rad/s).
-%     t,  Nx1, time vector in seconds.
+%     t,  Nx1, time vector (s).
 %
 % OUTPUT
 % - imu. Input data structure is added with the following new fields:
 %
 %     arw, 1x3 vector, angle random walk (rad/root-s). Value is taken 
 %       straightfoward from the plot at t = 1 s.
-%       Note: Units of rad/s from the plot have to be transformed to 
+%       Note: units of rad/s from the plot have to be transformed to 
 %       rad/root-s. This is done by multiplying (rad/s * root-s/root-s) = 
 %       (rad/s * root-s/1) = rad/root-s, since root-s = 1 for tau = 1, time 
 %       at which random walk is evaluated.
@@ -24,7 +24,7 @@ function [imu] = allan_imu (imu)
 %
 %     vrw, 1x3 vector, velocity random walk (m/s/root-s). Value is taken 
 %       straightfoward from the plot at t = 1 s.
-%       Note: Units of m/s^2 from the plot have to be transformed to 
+%       Note: units of m/s^2 from the plot have to be transformed to 
 %       m/s/root-s. This is done by multiplying (m/s^2 * root-s/root-s) = 
 %       (m/s^2 * root-s/1) = m/s/root-s, since root-s = 1 for tau = 1, time 
 %       at which random walk is evaluated.

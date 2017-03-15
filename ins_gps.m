@@ -245,6 +245,57 @@ for j = 2:Mg
         % Magnetic heading update
         %  yawm_e(i) = hd_update (imu.mb(i,:), roll_e(i),  pitch_e(i), D);
         
+        
+        [RM,RN] = radius(lat_e(i), precision);
+        Tpr = diag([(RM + h_e(i)), (RN + h_e(i)) * cos(lat_e(i)), -1]);  % radians-to-meters
+        
+        % Innovations
+        zp = Tpr * ([lat_e(i); lon_e(i); h_e(i);] ) ;
+        
+%         zv = (vel_e(i,:) - gps.vel(j,:))';    
+    
+        z = 0.1;
+        
+        S.R = 0.1;
+        
+        % Update matrix H
+        S.H = zeros (1, 21);
+        
+        % Vector to update matrix F
+        upd = [vel_e(i,:) lat_e(i) h_e(i) fn'];
+        
+        % Update matrices F and G
+        [S.F, S.G] = F_update(upd, DCMbn_n, imu);
+        
+        % Execute the extended Kalman filter
+        [xu, S, xp] = kalman(x, z, S, dti);
+        x(10:21) = xp(10:21);
+        
+        % Quaternion corrections
+        % Crassidis. Eq. 7.34 and A.174a.
+        antm = [0 qua_n(3) -qua_n(2); -qua_n(3) 0 qua_n(1); qua_n(2) -qua_n(1) 0];
+        qua = qua_n + 0.5 .* [qua_n(4)*eye(3) + antm; -1.*[qua_n(1) qua_n(2) qua_n(3)]] * xu(1:3);
+        qua = qua / norm(qua);       % Brute-force normalization
+        
+        % DCM correction
+        DCMbn = qua2dcm(qua);
+        %     E = skewm(xu(1:3));
+        %     DCMbn = (eye(3) + E) * DCMbn_n;
+        
+        % Attitude corrections
+        euler = qua2euler(qua);
+        roll_e(i) = euler(1);
+        pitch_e(i)= euler(2);
+        yaw_e(i)  = euler(3);
+        %     roll_e(i)  = roll_e(i)  - xu(1);
+        %     pitch_e(i) = pitch_e(i) - xu(2);
+        %     yaw_e(i)   = yaw_e(i)   - xu(3);
+        
+        % Biases corrections
+        gb_fix   = xu(10:12);
+        ab_fix   = xu(13:15);
+        gb_drift = xu(16:18);
+        ab_drift = xu(19:21);
    
     end
     
@@ -266,20 +317,48 @@ for j = 2:Mg
     % GPS period
     dtg = tg(j) - tg(j-1);
     
-    % Vector to update matrix F
-    upd = [vel_e(i,:) lat_e(i) h_e(i) fn'];
-    
-    % Update matrices F and G
-    [S.F, S.G] = F_update(upd, DCMbn_n, imu);
-    
-%     Trp = diag([ 1/(RM + h_e(i)), 1/((RN + h_e(i)) * cos(lat_e(i))), -1]);  % meters-to-radians
-    % Update matrix H
-    S.H = [ Z I Z   Z Z Z Z;
+%     if (gps.nsat(j) > 1)
+        
+        % Vector to update matrix F
+        upd = [vel_e(i,:) lat_e(i) h_e(i) fn'];
+        
+        % Update matrices F and G
+        [S.F, S.G] = F_update(upd, DCMbn_n, imu);
+        
+        %     Trp = diag([ 1/(RM + h_e(i)), 1/((RN + h_e(i)) * cos(lat_e(i))), -1]);  % meters-to-radians
+        
+        S.R = diag([gps.stdv, gps.stdm].^2);
+        
+        % Update matrix H
+        S.H = [ Z I Z   Z Z Z Z;
             Z Z Tpr Z Z Z Z; ];
-    
-    % Execute the extended Kalman filter
-    [xu, S, xp] = kalman(x, z, S, dtg);
-    x(10:21) = xp(10:21);
+        
+        % Execute the extended Kalman filter
+        [xu, S, xp] = kalman(x, z, S, dtg);
+        x(10:21) = xp(10:21);
+%     else
+%         
+%    % Innovations
+%         zp = Tpr * ([lat_e(i); lon_e(i); h_e(i);] - [lat_e(i-1); lon_e(i-1); h_e(i-1);]) ...
+%         - (DCMbn_n * gps.larm);
+%     
+%         z = zp;
+%         
+%         S.H = [Z Z Tpr Z Z Z Z; ];
+%         S.R = diag([gps.stdm].^2);
+%         
+%       % Vector to update matrix F
+%         upd = [vel_e(i,:) lat_e(i) h_e(i) fn'];
+%         
+%         % Update matrices F and G
+%         [S.F, S.G] = F_update(upd, DCMbn_n, imu);
+%         
+%         % Execute the extended Kalman filter
+%         [xu, S, xp] = kalman(x, z, S, dtg);
+%         x(10:21) = xp(10:21);
+%         
+%         z = [0 0 0 zp']';
+%     end
     
     % Execute UD filter
     %         [xu, Up, dp] = ud_filtering(x, z, S.F, S.H, S.G, S.Q, S.R, Up, dp, dtg)ud_filter;

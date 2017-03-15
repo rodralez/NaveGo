@@ -29,8 +29,8 @@
 %       of Precision Measuring Technology and Instruments, Tianjin University, 
 %       Tianjin, China.
 %
-% Version: 001
-% Date:    2016/11/07
+% Version: 002
+% Date:    2017/03/15
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -48,7 +48,7 @@ load stim300
 
 %% ALLAN VARIANCE FOR STIM300 IMU
 
-[stim300, tau1_m, allan1_m] = allan_imu (stim300);
+[stim300] = allan_imu (stim300);
 
 stim300_arw = stim300.arw
 stim300_vrw = stim300.vrw
