@@ -147,10 +147,10 @@ ADIS16405.ab_corr  = 100 .* ones(1,3);     % Acc correlation times [X Y Z] (seco
 ADIS16405.freq     = ref.freq;             % IMU operation frequency [X Y Z] (Hz)
 % ADIS16405.m_psd     = 0.066 .* ones(1,3);  % Magnetometer noise density [X Y Z] (mgauss/root-Hz)
 
-ADIS16405.t = ref.t;                             % IMU time vector
-dt = mean(diff(ADIS16405.t));                    % IMU mean period
+ADIS16405.t = ref.t;                       % IMU time vector
+dt = mean(diff(ADIS16405.t));              % IMU mean period
 
-imu1 = imu_err_profile(ADIS16405, dt);      % Transform IMU manufacturer error units to SI units.
+imu1 = imu_err_profile(ADIS16405, dt);     % Transform IMU manufacturer error units to SI units.
 
 imu1.ini_align_err = [1 1 5] .* D2R;                     % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)  
 imu1.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude align at t(1) (radians).
@@ -170,8 +170,8 @@ ADIS16488.ab_corr  = 100  .* ones(1,3);     % Acc correlation times [X Y Z] (sec
 ADIS16488.freq     = ref.freq;              % IMU operation frequency [X Y Z] (Hz)
 % ADIS16488.m_psd = 0.054 .* ones(1,3);       % Magnetometer noise density [X Y Z] (mgauss/root-Hz)
 
-ADIS16488.t = ref.t;                             % IMU time vector
-dt = mean(diff(ADIS16488.t));                    % IMU mean period
+ADIS16488.t = ref.t;                        % IMU time vector
+dt = mean(diff(ADIS16488.t));               % IMU mean period
 
 imu2 = imu_err_profile(ADIS16488, dt);      % Transform IMU manufacturer error units to SI units.
 
@@ -226,12 +226,12 @@ if strcmp(IMU1_DATA, 'ON')      % If simulation of IMU1 data is required ...
     
     fprintf('NaveGo: generating IMU1 ACCR data... \n')
     
-    fb = acc_gen (ref, imu1); % Generate acc in the body frame
+    fb = acc_gen (ref, imu1);   % Generate acc in the body frame
     imu1.fb = fb;
     
     fprintf('NaveGo: generating IMU1 GYRO data... \n')
     
-    wb = gyro_gen (ref, imu1);% Generate gyro in the body frame
+    wb = gyro_gen (ref, imu1);  % Generate gyro in the body frame
     imu1.wb = wb;
     
     save imu1.mat imu1
@@ -252,12 +252,12 @@ if strcmp(IMU2_DATA, 'ON')      % If simulation of IMU2 data is required ...
     
     fprintf('NaveGo: generating IMU2 ACCR data... \n')
     
-    fb = acc_gen (ref, imu2); % Generate acc in the body frame
+    fb = acc_gen (ref, imu2);   % Generate acc in the body frame
     imu2.fb = fb;
     
     fprintf('NaveGo: generating IMU2 GYRO data... \n')
     
-    wb = gyro_gen (ref, imu2);% Generate gyro in the body frame
+    wb = gyro_gen (ref, imu2);  % Generate gyro in the body frame
     imu2.wb = wb;
     
     save imu2.mat imu2

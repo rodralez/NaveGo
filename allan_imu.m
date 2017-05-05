@@ -1,4 +1,4 @@
-function [imu] = allan_imu (imu)
+function [imu] = allan_imu (imu, verbose)
 % allan_imu: performs Allan variance analysis of inertial measurements
 % coming from an IMU in order to characterize several IMU errors.
 %
@@ -10,6 +10,8 @@ function [imu] = allan_imu (imu)
 %     fb, Nx3 matrix, accelerations [X Y Z] (m/s^2).
 %     wb, Nx3 matrix, turn rates [X Y Z] (rad/s).
 %     t,  Nx1, time vector (s).
+%
+%  - verbose. Verbose level for allan_overlap function.
 %
 % OUTPUT
 % - imu. Input data structure is added with the following new fields:
@@ -102,15 +104,15 @@ function [imu] = allan_imu (imu)
 %
 % -------------------------------------------------------------------------
 %
-% Version: 003
-% Date:    2016/12/01
+% Version: 004
+% Date:    2017/03/15
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 %
 % -------------------------------------------------------------------------
 
 % Verbose for allan_overlap
-verbose = 2;
+if (nargin < 2), verbose = 2; end
 
 if (isfield(imu, 'fb_tau') )
    
