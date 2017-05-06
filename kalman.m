@@ -2,7 +2,7 @@ function  [xp, S] = kalman(xp, z, S, dt)
 % kalman: Kalman filter algorithm for NaveGo INS/GPS system.
 %
 % INPUT:
-%  xp, 21x1 a posteriori state vector.
+%  xp, 21x1 a posteriori state vector (old).
 %   z, 6x1 innovations vector.
 %  dt, time period. 
 %   S, data structure with at least the following fields:
@@ -14,7 +14,7 @@ function  [xp, S] = kalman(xp, z, S, dt)
 %       G, 21x12 control-input matrix.      
 %
 % OUTPUT:
-%   xp, 21x1 a posteriori state vector.
+%   xp, 21x1 a posteriori state vector (new).
 %    S, the following fields are updated:
 %       A,  21x21 state transition matrix.
 %       K,  21x6  Kalman gain matrix.
@@ -42,10 +42,13 @@ function  [xp, S] = kalman(xp, z, S, dt)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference:
-%			  R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+%			R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
 % simulation framework for low-cost integrated navigation systems,
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015. Alg. 1.
+%
+%           Dan Simon. Optimal State Estimation. John Wiley & Sons. 2006.
+% Chapter 5.  
 %
 % Version: 003
 % Date:    2017/05/05
@@ -59,7 +62,7 @@ S.A =  expm(S.F * dt);          % Exact expression
 % S.A = I + (S.F * dt);         % Approximated expression
 S.Qd = (S.G * S.Q * S.G') .* dt;
 
-% Step 1, predict xp and P
+% Step 1, update the a priori covariance matrix Pi
 S.Pi = (S.A * S.Pp * S.A') + S.Qd;
 S.Pi =  0.5 .* (S.Pi + S.Pi');
 
@@ -67,11 +70,11 @@ S.Pi =  0.5 .* (S.Pi + S.Pi');
 S.C = (S.R + S.H * S.Pi * S.H');
 S.K = (S.Pi * S.H') / (S.C) ;
 
-% Step 3, update vector state
+% Step 3, update the a posteriori state xp
 xi = S.A * xp;
 xp = xi + S.K * (z - S.H * xi);
 
-% Step 4, update covariance matrix
+% Step 4, update the a posteriori covariance matrix Pp
 J = (I - S.K * S.H);
 S.Pp = J * S.Pi * J' + S.K * S.R * S.K';    % Joseph stabilized version     
 % S.Pp = (I - S.K * S.H) * S.Pi ;           % Alternative implementation
