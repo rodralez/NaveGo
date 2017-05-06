@@ -178,13 +178,13 @@ qua = euler2qua([roll_e(1) pitch_e(1) yaw_e(1)]);
 % Kalman filter matrices
 S.R = diag([gps.stdv, gps.stdm].^2);
 S.Q = (diag([imu.arw, imu.vrw, imu.gpsd, imu.apsd].^2));
-S.Pp = diag([imu.ini_align_err, gps.stdv, gps.std, imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift].^2);
+S.Pp = diag([imu.ini_align_err, gps.stdv, gps.std, imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift].^2) / 1000;
 
 % UD filter matrices
 % [Up, Dp] = myUD(S.P);
 % dp = diag(Dp);
 
-% Initialize matrices for INS performance analysis
+% Initialize matrices for INS/GPS performance analysis
 Pp_d(1,:) = diag(S.Pp)';
 B(1,:)  = [gb_fix', ab_fix', gb_drift', ab_drift'];
 
@@ -209,8 +209,8 @@ for j = 2:Mg
         dti = ti(i) - ti(i-1);
         
         % Correct inertial sensors
-        wb_corrected = (imu.wb(i,:)' + gb_drift + gb_fix);
-        fb_corrected = (imu.fb(i,:)' + ab_drift + ab_fix);
+        wb_corrected = (imu.wb(i,:)' + gb_fix + gb_drift );
+        fb_corrected = (imu.fb(i,:)' + ab_fix + ab_drift );
         
         % Attitude update
         omega_ie_N = earthrate(lat_e(i-1), precision);
@@ -259,8 +259,7 @@ for j = 2:Mg
     %% KALMAN FILTER
     
     % GPS period
-    dtg = tg(j) - tg(j-1);
-    
+    dtg = tg(j) - tg(j-1);    
     
     % Vector to update matrix F
     upd = [vel_e(i,:) lat_e(i) h_e(i) fn'];
@@ -292,13 +291,13 @@ for j = 2:Mg
     %     DCMbn = (eye(3) + E) * DCMbn_n;
     
     % Attitude corrections
-    %     euler = qua2euler(qua);
-    %     roll_e(i) = euler(1);
-    %     pitch_e(i)= euler(2);
-    %     yaw_e(i)  = euler(3);
-    roll_e(i)  = roll_e(i)  - xp(1);
-    pitch_e(i) = pitch_e(i) - xp(2);
-    yaw_e(i)   = yaw_e(i)   - xp(3);
+    euler = qua2euler(qua);
+    roll_e(i) = euler(1);
+    pitch_e(i)= euler(2);
+    yaw_e(i)  = euler(3);
+    %     roll_e(i)  = roll_e(i)  - xp(1);
+    %     pitch_e(i) = pitch_e(i) - xp(2);
+    %     yaw_e(i)   = yaw_e(i)   - xp(3);
     
     % Velocity corrections
     vel_e (i,1) = vel_e (i,1) - xp(4);
@@ -317,11 +316,11 @@ for j = 2:Mg
     ab_drift = xp(19:21);
     
     % Matrices for later INS/GPS performance analysis
-    X(j,:)   = xp';
+    X(j,:)    = xp';
     Pp_d(j,:) = diag(S.Pp)';
-    A_d(j,:) = diag(S.A)';
-    Inn(j,:) = z';
-    B(j,:)   = [gb_fix', ab_fix', gb_drift', ab_drift'];
+    A_d(j,:)  = diag(S.A)';
+    Inn(j,:)  = z';
+    B(j,:)    = [gb_fix', ab_fix', gb_drift', ab_drift'];
     
 end
 

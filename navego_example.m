@@ -152,7 +152,7 @@ dt = mean(diff(ADIS16405.t));              % IMU mean period
 
 imu1 = imu_err_profile(ADIS16405, dt);     % Transform IMU manufacturer error units to SI units.
 
-imu1.ini_align_err = [1 1 5] .* D2R;                     % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)  
+imu1.ini_align_err = [3 3 10] .* D2R;                     % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)  
 imu1.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude align at t(1) (radians).
 
 %% ADIS16488 IMU error profile
@@ -293,11 +293,11 @@ if strcmp(IMU1_INS, 'ON')
         
         fgx  = find(gps.t < imu1.t(end), 1, 'last' );
         
-        gps.t   = gps.t  (1:fgx, :);
-        gps.lat = gps.lat(1:fgx, :);
-        gps.lon = gps.lon(1:fgx, :);
-        gps.h   = gps.h  (1:fgx, :);
-        gps.vel = gps.vel(1:fgx, :);
+        gps1.t   = gps.t  (1:fgx, :);
+        gps1.lat = gps.lat(1:fgx, :);
+        gps1.lon = gps.lon(1:fgx, :);
+        gps1.h   = gps.h  (1:fgx, :);
+        gps1.vel = gps.vel(1:fgx, :);
     end
     
     % Execute INS/GPS integration
@@ -337,11 +337,11 @@ if strcmp(IMU2_INS, 'ON')
         
         fgx  = find(gps.t < imu2.t(end), 1, 'last' );
         
-        gps.t   = gps.t  (1:fgx, :);
-        gps.lat = gps.lat(1:fgx, :);
-        gps.lon = gps.lon(1:fgx, :);
-        gps.h   = gps.h  (1:fgx, :);
-        gps.vel = gps.vel(1:fgx, :);
+        gps2.t   = gps.t  (1:fgx, :);
+        gps2.lat = gps.lat(1:fgx, :);
+        gps2.lon = gps.lon(1:fgx, :);
+        gps2.h   = gps.h  (1:fgx, :);
+        gps2.vel = gps.vel(1:fgx, :);       
     end
     
     % Execute INS/GPS integration

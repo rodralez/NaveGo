@@ -6,12 +6,12 @@ function  [xp, S] = kalman(xp, z, S, dt)
 %   z, 6x1 innovations vector.
 %  dt, time period. 
 %   S, data structure with at least the following fields:
-%       F, 21x21 state transition matrix.
-%       H,  6x21 observation matrix.
-%       Q, 12x12 process noise covariance.
-%       R,  6x6  observation noise covariance.
+%       F,  21x21 state transition matrix.
+%       H,   6x21 observation matrix.
+%       Q,  12x12 process noise covariance.
+%       R,   6x6  observation noise covariance.
 %       Pp, 21x21 a posteriori error covariance.
-%       G, 21x12 control-input matrix.      
+%       G,  21x12 control-input matrix.      
 %
 % OUTPUT:
 %   xp, 21x1 a posteriori state vector (new).
@@ -47,8 +47,8 @@ function  [xp, S] = kalman(xp, z, S, dt)
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015. Alg. 1.
 %
-%           Dan Simon. Optimal State Estimation. John Wiley & Sons. 2006.
-% Chapter 5.  
+%           Dan Simon. Optimal State Estimation. Chapter 5. John Wiley 
+% & Sons. 2006.   
 %
 % Version: 003
 % Date:    2017/05/05
