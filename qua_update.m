@@ -1,9 +1,9 @@
-function qua_n = qua_update(qua, w_bn, dt)
+function qua_n = qua_update(qua, wb_n, dt)
 % qua_update: updates quaternions.
 %
 % INPUT:
 %   qua,	4x1 quaternion.
-%   w_bn,	3x1 incremental turn rates in body-frame (rad/s).
+%   wb_n,	3x1 incremental turn rates in body-frame (rad/s).
 %   dt,     1x1 INS time period (s).
 %
 % OUTPUT:
@@ -42,7 +42,7 @@ function qua_n = qua_update(qua, w_bn, dt)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-wnorm = norm(w_bn);
+wnorm = norm(wb_n);
 
 if wnorm == 0,
     
@@ -52,9 +52,9 @@ else
     co=cos(0.5*wnorm*dt);
     si=sin(0.5*wnorm*dt);
     
-    n1 = w_bn(1)/wnorm;
-    n2 = w_bn(2)/wnorm;
-    n3 = w_bn(3)/wnorm;
+    n1 = wb_n(1)/wnorm;
+    n2 = wb_n(2)/wnorm;
+    n3 = wb_n(3)/wnorm;
     
     qw1 = n1*si;
     qw2 = n2*si;

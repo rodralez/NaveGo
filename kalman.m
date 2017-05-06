@@ -58,7 +58,7 @@ function  [xp, S] = kalman(xp, z, S, dt)
 I = eye(max(size(S.F)));
 
 % Discretization of continous-time system
-S.A =  expm(S.F * dt);          % Exact expression
+S.A =  expm(S.F * dt);          % "Exact" expression
 % S.A = I + (S.F * dt);         % Approximated expression
 S.Qd = (S.G * S.Q * S.G') .* dt;
 

@@ -259,7 +259,7 @@ for j = 2:Mg
     %% KALMAN FILTER
     
     % GPS period
-    dtg = tg(j) - tg(j-1);    
+    dtg = tg(j) - tg(j-1);
     
     % Vector to update matrix F
     upd = [vel_e(i,:) lat_e(i) h_e(i) fn'];
@@ -291,13 +291,13 @@ for j = 2:Mg
     %     DCMbn = (eye(3) + E) * DCMbn_n;
     
     % Attitude corrections
-    euler = qua2euler(qua);
-    roll_e(i) = euler(1);
-    pitch_e(i)= euler(2);
-    yaw_e(i)  = euler(3);
-    %     roll_e(i)  = roll_e(i)  - xp(1);
-    %     pitch_e(i) = pitch_e(i) - xp(2);
-    %     yaw_e(i)   = yaw_e(i)   - xp(3);
+    %     euler = qua2euler(qua);
+    %     roll_e(i) = euler(1);
+    %     pitch_e(i)= euler(2);
+    %     yaw_e(i)  = euler(3);
+    roll_e(i)  = roll_e(i)  - xp(1);
+    pitch_e(i) = pitch_e(i) - xp(2);
+    yaw_e(i)   = yaw_e(i)   - xp(3);
     
     % Velocity corrections
     vel_e (i,1) = vel_e (i,1) - xp(4);
