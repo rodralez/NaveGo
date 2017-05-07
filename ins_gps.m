@@ -178,7 +178,7 @@ qua = euler2qua([roll_e(1) pitch_e(1) yaw_e(1)]);
 % Kalman filter matrices
 S.R = diag([gps.stdv, gps.stdm].^2);
 S.Q = (diag([imu.arw, imu.vrw, imu.gpsd, imu.apsd].^2));
-S.Pp = diag([imu.ini_align_err, gps.stdv, gps.std, imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift].^2) / 1000;
+S.Pp = diag([imu.ini_align_err, gps.stdv, gps.std, imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift].^2);
 
 % UD filter matrices
 % [Up, Dp] = myUD(S.P);
