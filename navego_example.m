@@ -40,8 +40,8 @@
 % Revision D. October 2011. 
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 % 
-% Version: 008
-% Date:    2016/11/17
+% Version: 009
+% Date:    2017/05/09
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -382,7 +382,7 @@ print_rmse (imu2_e, gps, ref_2, ref_g, 'INS/GPS IMU2');
 
 if (strcmp(PLOT,'ON'))
     
-    sig3_rr = abs(imu1_e.Pp(:, 1:22:end).^(0.5)) .* 3;
+    sig3_rr = abs(imu1_e.Pp(:, 1:22:end).^(0.5)) .* 3; % Only take diagonal elements from Pp
     
     % TRAJECTORY
     figure;
