@@ -346,7 +346,7 @@ if strcmp(IMU2_INS, 'ON')
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    [imu2_e] = ins_gps(imu2, gps, 'quaternion', 'double');
+    [imu2_e] = ins_gps(imu2, gps, 'dcm', 'single');
     % ---------------------------------------------------------------------
     
     save imu2_e.mat imu2_e
@@ -382,7 +382,7 @@ print_rmse (imu2_e, gps, ref_2, ref_g, 'INS/GPS IMU2');
 
 if (strcmp(PLOT,'ON'))
     
-    sig3_rr = abs(imu1_e.P_d.^(0.5)).*3;
+    sig3_rr = abs(imu1_e.Pp(:, 1:22:end).^(0.5)) .* 3;
     
     % TRAJECTORY
     figure;

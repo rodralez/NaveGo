@@ -421,7 +421,7 @@ if strcmp(IMU2_INS, 'ON')
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    [imu2_e] = ins_gps(imu2, gps, 'quaternion', 'double');
+    [imu2_e] = ins_gps(imu2, gps, 'dcm', 'single');
     % ---------------------------------------------------------------------
     
     save imu2_e.mat imu2_e
