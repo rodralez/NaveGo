@@ -53,10 +53,11 @@ function [ins_gps_e] = ins_gps(imu, gps, att_mode, precision)
 %       lat: Ix1 latitude (radians).
 %       lon: Ix1 longitude (radians).
 %         h: Ix1 altitude (m).
-%         P: Mx441 P matrix elements.
+%        Pp: Mx441 Kalman filter a posteriori covariance matrices.
+%         A: Mx441 Kalman filter transition-state matrices.
 %         B: Mx12 Kalman filter biases compensations.
 %       Inn: Mx6  Kalman filter innovations.
-%         X: Mx21 Kalman filter states evolution.
+%         X: Mx21 Kalman filter states.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
