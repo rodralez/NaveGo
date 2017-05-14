@@ -24,7 +24,7 @@ function rmserr = rmse (estimate, true)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
-if( any(isnan(estimate)) || any(isnan(true)))
+if( any(isnan(estimate)) | any(isnan(true)))
     error('rmse: input vector with one NaN value at least');
 end
 

@@ -46,6 +46,7 @@ function [ins_gps_e] = ins_gps(imu, gps, att_mode, precision)
 % OUTPUT:
 %   ins_gps_e, INS/GPS estimates data structure.
 %         t: Ix1 time vector (seconds).
+%        tk: Mx1 time when Kalman filter is executed
 %      roll: Ix1 roll (radians).
 %     pitch: Ix1 pitch (radians).
 %       yaw: Ix1 yaw (radians).
@@ -54,10 +55,12 @@ function [ins_gps_e] = ins_gps(imu, gps, att_mode, precision)
 %       lon: Ix1 longitude (radians).
 %         h: Ix1 altitude (m).
 %        Pp: Mx441 Kalman filter a posteriori covariance matrices.
+%        Pi: Mx441 Kalman filter a priori covariance matrices.
 %         A: Mx441 Kalman filter transition-state matrices.
 %         B: Mx12 Kalman filter biases compensations.
-%       Inn: Mx6  Kalman filter innovations.
-%         X: Mx21 Kalman filter states.
+%        In: Mx6  Kalman filter innovations.
+%        Xi: Mx21 Kalman filter a priori states.
+%        Xp: Mx21 Kalman filter a posteriori states.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -83,8 +86,8 @@ function [ins_gps_e] = ins_gps(imu, gps, att_mode, precision)
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015. Alg. 2.
 %
-% Version: 002
-% Date:    2017/05/09
+% Version: 003
+% Date:    2017/05/10
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -105,19 +108,21 @@ if strcmp(precision, 'single')  % single precision
     yaw_e   = single(zeros (Mi, 1));
     vel_e   = single(zeros (Mi, 3));
     h_e     = single(zeros (Mi, 1));
-    x       = single([ zeros(1,9), imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift ]');  % Kalman filter error vector state
     
     % Constant matrices
     I = single(eye(3));
     Z = single(zeros(3));
     
     % Kalman matrices for later analysis
-    Inn = single(zeros(Mg, 6));       % Kalman filter innovations
-    Pp  = single(zeros(Mg, 441));     % Elements from a posteriori covariance matrix, P
-    A   = single(zeros(Mg, 441));     % Elements from transition-state matrix
-    X   = single(zeros(Mg, 21));      % Evolution of Kalman filter states
-    B   = single(zeros(Mg, 12));      % Biases compensantions after Kalman filter correction
-    
+    In = single(zeros(Mg, 6));       % Kalman filter innovations
+    Pi = single(zeros(Mg, 441));     % Elements from a priori covariance matrix, Pi
+    Pp = single(zeros(Mg, 441));     % Elements from a posteriori covariance matrix, Pp
+    A  = single(zeros(Mg, 441));     % Elements from transition-state matrix, A
+    Xi = single(zeros(Mg, 21));      % Evolution of Kalman filter a priori states, xi
+    Xp = single(zeros(Mg, 21));      % Evolution of Kalman filter a posteriori states, xp
+    B  = single(zeros(Mg, 12));      % Biases compensantions after Kalman filter correction
+    x  = single([ zeros(1,9), imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift ]');  % Kalman filter error vector state
+        
     % Initialize biases variables
     gb_drift = single(imu.gb_drift');
     ab_drift = single(imu.ab_drift');
@@ -143,19 +148,21 @@ else % double precision
     yaw_e   = zeros (Mi, 1);
     vel_e   = zeros (Mi, 3);
     h_e     = zeros (Mi, 1);
-    x       = [ zeros(1,9), imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift ]';  % Kalman filter error vector state
     
     % Constant matrices
     I = eye(3);
     Z = zeros(3);
     
     % Kalman matrices for later analysis
-    Inn = zeros(Mg, 6);          % Kalman filter innovations
-    Pp  = zeros(Mg, 441);        % Elements from a posteriori covariance matrix, P
-    A   = zeros(Mg, 441);        % Elements from transition-state matrix
-    X   = zeros(Mg, 21);         % Evolution of Kalman filter states
-    B   = zeros(Mg, 12);         % Biases compensantions after Kalman filter correction
-    
+    In = zeros(Mg, 6);         % Kalman filter innovations
+    Pi = zeros(Mg, 441);       % Elements from a priori covariance matrices, Pi
+    Pp = zeros(Mg, 441);       % Elements from a posteriori covariance matrices, Pp
+    A  = zeros(Mg, 441);       % Elements from transition-state matrices, A
+    Xi = zeros(Mg, 21);        % Evolution of Kalman filter a priori states, xi
+    Xp = zeros(Mg, 21);        % Evolution of Kalman filter a posteriori states, xp
+    B  = zeros(Mg, 12);        % Biases compensantions after Kalman filter correction
+    x  = [ zeros(1,9), imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift ]';  % Kalman filter error vector state
+        
     % Initialize biases variables
     gb_drift = imu.gb_drift';
     ab_drift = imu.ab_drift';
@@ -277,20 +284,20 @@ for j = 2:Mg
         Z Z Tpr Z Z Z Z;];
     
     % Execute the extended Kalman filter
-    [xp, S] = kalman(x, z, S, dtg);
-    x(10:21) = xp(10:21);
+    S = kalman(x, z, S, dtg);
+    x(10:21) = S.xp(10:21);
     
     %% INS/GPS CORRECTIONS
     
     % Quaternion corrections
     % Crassidis. Eq. 7.34 and A.174a.
     antm = [0 qua_n(3) -qua_n(2); -qua_n(3) 0 qua_n(1); qua_n(2) -qua_n(1) 0];
-    qua = qua_n + 0.5 .* [qua_n(4)*eye(3) + antm; -1.*[qua_n(1) qua_n(2) qua_n(3)]] * xp(1:3);
+    qua = qua_n + 0.5 .* [qua_n(4)*eye(3) + antm; -1.*[qua_n(1) qua_n(2) qua_n(3)]] * S.xp(1:3);
     qua = qua / norm(qua);       % Brute-force normalization
     
     % DCM correction
     DCMbn = qua2dcm(qua);
-    %     E = skewm(xp(1:3));
+    %     E = skewm(S.xp(1:3));
     %     DCMbn = (eye(3) + E) * DCMbn_n;
     
     % Attitude corrections
@@ -298,32 +305,34 @@ for j = 2:Mg
     %     roll_e(i) = euler(1);
     %     pitch_e(i)= euler(2);
     %     yaw_e(i)  = euler(3);
-    roll_e(i)  = roll_e(i)  - xp(1);
-    pitch_e(i) = pitch_e(i) - xp(2);
-    yaw_e(i)   = yaw_e(i)   - xp(3);
+    roll_e(i)  = roll_e(i)  - S.xp(1);
+    pitch_e(i) = pitch_e(i) - S.xp(2);
+    yaw_e(i)   = yaw_e(i)   - S.xp(3);
     
     % Velocity corrections
-    vel_e (i,1) = vel_e (i,1) - xp(4);
-    vel_e (i,2) = vel_e (i,2) - xp(5);
-    vel_e (i,3) = vel_e (i,3) - xp(6);
+    vel_e (i,1) = vel_e (i,1) - S.xp(4);
+    vel_e (i,2) = vel_e (i,2) - S.xp(5);
+    vel_e (i,3) = vel_e (i,3) - S.xp(6);
     
     % Position corrections
-    lat_e(i) = lat_e(i) - double(xp(7));
-    lon_e(i) = lon_e(i) - double(xp(8));
-    h_e(i)   = h_e(i)   - xp(9);
+    lat_e(i) = lat_e(i) - double(S.xp(7));
+    lon_e(i) = lon_e(i) - double(S.xp(8));
+    h_e(i)   = h_e(i)   - S.xp(9);
     
     % Biases corrections
-    gb_fix   = xp(10:12);
-    ab_fix   = xp(13:15);
-    gb_drift = xp(16:18);
-    ab_drift = xp(19:21);
+    gb_fix   = S.xp(10:12);
+    ab_fix   = S.xp(13:15);
+    gb_drift = S.xp(16:18);
+    ab_drift = S.xp(19:21);
     
     % Matrices for later INS/GPS performance analysis
-    X(j,:)   = xp';
-    Pp(j,:)  = reshape(S.Pp, 1, 441);
-    A(j,:)   = reshape(S.A, 1, 441);
-    Inn(j,:) = z';
-    B(j,:)   = [gb_fix', ab_fix', gb_drift', ab_drift'];
+    Xi(j,:) = S.xi';
+    Xp(j,:) = S.xp';
+    Pi(j,:) = reshape(S.Pi, 1, 441);
+    Pp(j,:) = reshape(S.Pp, 1, 441);
+    A(j,:)  = reshape(S.A, 1, 441);
+    In(j,:) = z';
+    B(j,:)  = [gb_fix', ab_fix', gb_drift', ab_drift'];
     
 end
 
@@ -331,6 +340,7 @@ end
 %% Estimates from INS/GPS integration
 
 ins_gps_e.t     = ti(1:i, :);       % IMU time
+ins_gps_e.tk    = tg;       % Time when Kalman filter is executed
 ins_gps_e.roll  = roll_e(1:i, :);   % Roll
 ins_gps_e.pitch = pitch_e(1:i, :);  % Pitch
 ins_gps_e.yaw   = yaw_e(1:i, :);    % Yaw
@@ -338,11 +348,13 @@ ins_gps_e.vel   = vel_e(1:i, :);    % NED velocities
 ins_gps_e.lat   = lat_e(1:i, :);    % Latitude
 ins_gps_e.lon   = lon_e(1:i, :);    % Longitude
 ins_gps_e.h     = h_e(1:i, :);      % Altitude
-ins_gps_e.Pp    = Pp;               % Pp matrices
-ins_gps_e.A     = A;                % A matrices
-ins_gps_e.B     = B;                % Kalman filter biases compensations
-ins_gps_e.Inn   = Inn;              % Kalman filter innovations
-ins_gps_e.X     = X;                % Kalman filter states evolution
+ins_gps_e.Pi    = Pi;       % Pi matrices
+ins_gps_e.Pp    = Pp;       % Pp matrices
+ins_gps_e.A     = A;        % A matrices
+ins_gps_e.B     = B;        % Kalman filter biases compensations
+ins_gps_e.In    = In;       % Kalman filter innovations
+ins_gps_e.Xi    = Xi;       % Kalman filter a priori states
+ins_gps_e.Xp    = Xp;       % Kalman filter a posteriori states
 
 fprintf('\n');
 
