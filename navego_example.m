@@ -40,8 +40,8 @@
 % Revision D. October 2011. 
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 % 
-% Version: 009
-% Date:    2017/05/09
+% Version: 010
+% Date:    2017/05/15
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -75,7 +75,7 @@ if (~exist('IMU1_DATA','var')), IMU1_DATA = 'OFF'; end
 if (~exist('IMU2_DATA','var')), IMU2_DATA = 'OFF'; end
 if (~exist('IMU1_INS','var')),  IMU1_INS = 'OFF'; end
 if (~exist('IMU2_INS','var')),  IMU2_INS = 'OFF'; end
-if (~exist('PLOT','var')),      PLOT = 'OFF'; end
+if (~exist('PLOT','var')),      PLOT     = 'OFF'; end
 
 %% CONVERSION CONSTANTS
 
@@ -134,8 +134,6 @@ load ref.mat
 % ini_align: 1x3 initial attitude at t(1).
 % ini_align_err: 1x3 initial attitude errors at t(1).
 
-% ref dataset will be used to simulate IMU sensors.
-
 ADIS16405.arw      = 2   .* ones(1,3);     % Angle random walks [X Y Z] (deg/root-hour)
 ADIS16405.vrw      = 0.2 .* ones(1,3);     % Velocity random walks [X Y Z] (m/s/root-hour)
 ADIS16405.gb_fix   = 3   .* ones(1,3);     % Gyro static biases [X Y Z] (deg/s)
@@ -147,6 +145,7 @@ ADIS16405.ab_corr  = 100 .* ones(1,3);     % Acc correlation times [X Y Z] (seco
 ADIS16405.freq     = ref.freq;             % IMU operation frequency [X Y Z] (Hz)
 % ADIS16405.m_psd     = 0.066 .* ones(1,3);  % Magnetometer noise density [X Y Z] (mgauss/root-Hz)
 
+% ref dataset will be used to simulate IMU sensors.
 ADIS16405.t = ref.t;                       % IMU time vector
 dt = mean(diff(ADIS16405.t));              % IMU mean period
 
@@ -156,8 +155,6 @@ imu1.ini_align_err = [3 3 10] .* D2R;                     % Initial attitude ali
 imu1.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude align at t(1) (radians).
 
 %% ADIS16488 IMU error profile
-
-% ref dataset will be used to simulate IMU sensors.
 
 ADIS16488.arw      = 0.3  .* ones(1,3);     % Angle random walks [X Y Z] (deg/root-hour)
 ADIS16488.vrw      = 0.029.* ones(1,3);     % Velocity random walks [X Y Z] (m/s/root-hour)
@@ -170,6 +167,7 @@ ADIS16488.ab_corr  = 100  .* ones(1,3);     % Acc correlation times [X Y Z] (sec
 ADIS16488.freq     = ref.freq;              % IMU operation frequency [X Y Z] (Hz)
 % ADIS16488.m_psd = 0.054 .* ones(1,3);       % Magnetometer noise density [X Y Z] (mgauss/root-Hz)
 
+% ref dataset will be used to simulate IMU sensors.
 ADIS16488.t = ref.t;                        % IMU time vector
 dt = mean(diff(ADIS16488.t));               % IMU mean period
 
@@ -358,25 +356,28 @@ else
     load imu2_e.mat
 end
 
-%% Interpolate reference dataset 
+%% Interpolate INS/GPS dataset 
 
-ref_1 = navego_interpolation (imu1_e, ref);
-ref_2 = navego_interpolation (imu2_e, ref);
-ref_g = navego_interpolation (gps, ref);
+% INS/GPS estimates and GPS data are interpolated according to the
+% reference dataset.
+
+[imu1_ref, ref_1] = navego_interpolation (imu1_e, ref);
+[imu2_ref, ref_2] = navego_interpolation (imu2_e, ref);
+[gps_ref, ref_g] = navego_interpolation (gps, ref);
 
 %% Print navigation time
 
 to = (ref.t(end) - ref.t(1));
 
-fprintf('\nNaveGo: navigation time of %4.2f minutes or %4.2f seconds. \n', (to/60), to)
+fprintf('\nNaveGo: navigation time is %.2f minutes or %.2f seconds. \n', (to/60), to)
 
 %% Print RMSE from IMU1
 
-print_rmse (imu1_e, gps, ref_1, ref_g, 'INS/GPS IMU1');
+print_rmse (imu1_ref, gps_ref, ref_1, ref_g, 'INS/GPS IMU1');
 
 %% Print RMSE from IMU2
 
-print_rmse (imu2_e, gps, ref_2, ref_g, 'INS/GPS IMU2');
+print_rmse (imu2_ref, gps_ref, ref_2, ref_g, 'INS/GPS IMU2');
 
 %% PLOT
 
@@ -399,21 +400,21 @@ if (strcmp(PLOT,'ON'))
     % ATTITUDE
     figure;
     subplot(311)
-    plot(ref_1.t, R2D.*ref_1.roll, '--k', imu1_e.t, R2D.*imu1_e.roll,'-b', imu2_e.t, R2D.*imu2_e.roll,'-r');
+    plot(ref.t, R2D.*ref.roll, '--k', imu1_e.t, R2D.*imu1_e.roll,'-b', imu2_e.t, R2D.*imu2_e.roll,'-r');
     ylabel('[deg]')
     xlabel('Time [s]')
     legend('REF', 'IMU1', 'IMU2');
     title('ROLL');
     
     subplot(312)
-    plot(ref_1.t, R2D.*ref_1.pitch, '--k', imu1_e.t, R2D.*imu1_e.pitch,'-b', imu2_e.t, R2D.*imu2_e.pitch,'-r');
+    plot(ref.t, R2D.*ref.pitch, '--k', imu1_e.t, R2D.*imu1_e.pitch,'-b', imu2_e.t, R2D.*imu2_e.pitch,'-r');
     ylabel('[deg]')
     xlabel('Time [s]')
     legend('REF', 'IMU1', 'IMU2');
     title('PITCH');
     
     subplot(313)
-    plot(ref_1.t, R2D.* ref_1.yaw, '--k', imu1_e.t, R2D.*imu1_e.yaw,'-b', imu2_e.t, R2D.*imu2_e.yaw,'-r');
+    plot(ref.t, R2D.* ref.yaw, '--k', imu1_e.t, R2D.*imu1_e.yaw,'-b', imu2_e.t, R2D.*imu2_e.yaw,'-r');
     ylabel('[deg]')
     xlabel('Time [s]')
     legend('REF', 'IMU1', 'IMU2');
@@ -422,7 +423,7 @@ if (strcmp(PLOT,'ON'))
     % ATTITUDE ERRORS
     figure;
     subplot(311)
-    plot(imu1_e.t, (imu1_e.roll-ref_1.roll).*R2D, '-b', imu2_e.t, (imu2_e.roll-ref_2.roll).*R2D, '-r');
+    plot(imu1_e.t, (imu1_ref.roll-ref_1.roll).*R2D, '-b', imu2_e.t, (imu2_e.roll-ref_2.roll).*R2D, '-r');
     hold on
     plot (gps.t, R2D.*sig3_rr(:,1), '--k', gps.t, -R2D.*sig3_rr(:,1), '--k' )
     ylabel('[deg]')
@@ -431,7 +432,7 @@ if (strcmp(PLOT,'ON'))
     title('ROLL ERROR');
     
     subplot(312)
-    plot(imu1_e.t, (imu1_e.pitch-ref_1.pitch).*R2D, '-b', imu2_e.t, (imu2_e.pitch-ref_2.pitch).*R2D, '-r');
+    plot(imu1_e.t, (imu1_ref.pitch-ref_1.pitch).*R2D, '-b', imu2_e.t, (imu2_e.pitch-ref_2.pitch).*R2D, '-r');
     hold on
     plot (gps.t, R2D.*sig3_rr(:,2), '--k', gps.t, -R2D.*sig3_rr(:,2), '--k' )
     ylabel('[deg]')
@@ -440,7 +441,7 @@ if (strcmp(PLOT,'ON'))
     title('PITCH ERROR');
     
     subplot(313)
-    plot(imu1_e.t, (imu1_e.yaw-ref_1.yaw).*R2D, '-b', imu2_e.t, (imu2_e.yaw-ref_2.yaw).*R2D, '-r');
+    plot(imu1_e.t, (imu1_ref.yaw-ref_1.yaw).*R2D, '-b', imu2_e.t, (imu2_e.yaw-ref_2.yaw).*R2D, '-r');
     hold on
     plot (gps.t, R2D.*sig3_rr(:,3), '--k', gps.t, -R2D.*sig3_rr(:,3), '--k' )
     ylabel('[deg]')
@@ -474,9 +475,9 @@ if (strcmp(PLOT,'ON'))
     % VELOCITIES ERRORS
     figure;
     subplot(311)
-    plot(gps.t, (gps.vel(:,1)-ref_g.vel(:,1)), '-c');
+    plot(gps_ref.t, (gps_ref.vel(:,1) - ref_g.vel(:,1)), '-c');
     hold on
-    plot(imu1_e.t, (imu1_e.vel(:,1)-ref_1.vel(:,1)), '-b', imu2_e.t, (imu2_e.vel(:,1)-ref_2.vel(:,1)), '-r');
+    plot(imu1_ref.t, (imu1_ref.vel(:,1) - ref_1.vel(:,1)), '-b', imu2_ref.t, (imu2_ref.vel(:,1) - ref_2.vel(:,1)), '-r');
     hold on
     plot (gps.t, sig3_rr(:,4), '--k', gps.t, -sig3_rr(:,4), '--k' )
     xlabel('Time [s]')
@@ -485,9 +486,9 @@ if (strcmp(PLOT,'ON'))
     title('VELOCITY NORTH ERROR');
     
     subplot(312)
-    plot(gps.t, (gps.vel(:,2)-ref_g.vel(:,2)), '-c');
+    plot(gps_ref.t, (gps_ref.vel(:,2) - ref_g.vel(:,2)), '-c');
     hold on
-    plot(imu1_e.t, (imu1_e.vel(:,2)-ref_1.vel(:,2)), '-b', imu2_e.t, (imu2_e.vel(:,2)-ref_2.vel(:,2)), '-r');
+    plot(imu1_ref.t, (imu1_ref.vel(:,2) - ref_1.vel(:,2)), '-b', imu2_ref.t, (imu2_ref.vel(:,2) - imu2_ref.vel(:,2)), '-r');
     hold on
     plot (gps.t, sig3_rr(:,5), '--k', gps.t, -sig3_rr(:,5), '--k' )
     xlabel('Time [s]')
@@ -496,9 +497,9 @@ if (strcmp(PLOT,'ON'))
     title('VELOCITY EAST ERROR');
     
     subplot(313)
-    plot(gps.t, (gps.vel(:,3)-ref_g.vel(:,3)), '-c');
+    plot(gps_ref.t, (gps_ref.vel(:,3) - ref_g.vel(:,3)), '-c');
     hold on
-    plot(imu1_e.t, (imu1_e.vel(:,3)-ref_1.vel(:,3)), '-b', imu2_e.t, (imu2_e.vel(:,3)-ref_2.vel(:,3)), '-r');
+    plot(imu1_ref.t, (imu1_ref.vel(:,3) - imu1_ref.vel(:,3)), '-b', imu2_ref.t, (imu2_ref.vel(:,3) - imu2_ref.vel(:,3)), '-r');
     hold on
     plot (gps.t, sig3_rr(:,6), '--k', gps.t, -sig3_rr(:,6), '--k' )
     xlabel('Time [s]')
@@ -533,47 +534,51 @@ if (strcmp(PLOT,'ON'))
     % fh = @radicurv;
     % [RNs,REs] = arrayfun(fh, lat_rs);
     
-    [RN,RE]  = radius(imu1_e.lat, 'double');
-    LAT2M = RN + imu1_e.h;
-    LON2M = (RE + imu1_e.h).*cos(imu1_e.lat);
+    [RN,RE]  = radius(imu1_ref.lat, 'double');
+    LAT2M = RN + imu1_ref.h;
+    LON2M = (RE + imu1_ref.h).*cos(imu1_ref.lat);
     
     [RN,RE]  = radius(gps.lat, 'double');
-    lat2m_g = RN + gps.h;
-    lon2m_g = (RE + gps.h).*cos(gps.lat);
+    LAT2M_G = RN + gps.h;
+    LON2M_G = (RE + gps.h).*cos(gps.lat);
+    
+    [RN,RE]  = radius(gps_ref.lat, 'double');
+    LAT2M_GR = RN + gps_ref.h;
+    LON2M_GR = (RE + gps_ref.h).*cos(gps_ref.lat);
     
     figure;
     subplot(311)
-    plot(gps.t, lat2m_g.*(gps.lat - ref_g.lat), '-c')
+    plot(gps_ref.t,  LAT2M_GR.*(gps_ref.lat - ref_g.lat), '-c')
     hold on
-    plot(imu1_e.t, LAT2M.*(imu1_e.lat - ref_1.lat), '-b')
+    plot(imu1_ref.t, LAT2M.*(imu1_ref.lat - ref_1.lat), '-b')
     hold on
-    plot(imu2_e.t, LAT2M.*(imu2_e.lat - ref_2.lat), '-r')
+    plot(imu2_ref.t, LAT2M.*(imu2_ref.lat - ref_2.lat), '-r')
     hold on
-    plot (gps.t, lat2m_g.*sig3_rr(:,7), '--k', gps.t, -lat2m_g.*sig3_rr(:,7), '--k' )
+    plot (gps.t, LAT2M_G.*sig3_rr(:,7), '--k', gps.t, -LAT2M_G.*sig3_rr(:,7), '--k' )
     xlabel('Time [s]')
     ylabel('[m]')
     legend('GPS', 'IMU1', 'IMU2', '3\sigma');
     title('LATITUDE ERROR');
     
     subplot(312)
-    plot(gps.t, lon2m_g.*(gps.lon - ref_g.lon), '-c')
+    plot(gps_ref.t, LON2M_GR.*(gps_ref.lon - gps_ref.lon), '-c')
     hold on
-    plot(imu1_e.t, LON2M.*(imu1_e.lon - ref_1.lon), '-b')
+    plot(imu1_ref.t, LON2M.*(imu1_ref.lon - ref_1.lon), '-b')
     hold on
-    plot(imu2_e.t, LON2M.*(imu2_e.lon - ref_2.lon), '-r')
+    plot(imu2_ref.t, LON2M.*(imu2_ref.lon - ref_2.lon), '-r')
     hold on
-    plot(gps.t, lon2m_g.*sig3_rr(:,8), '--k', gps.t, -lon2m_g.*sig3_rr(:,8), '--k' )
+    plot(gps.t, LON2M_G.*sig3_rr(:,8), '--k', gps.t, -LON2M_G.*sig3_rr(:,8), '--k' )
     xlabel('Time [s]')
     ylabel('[m]')
     legend('GPS', 'IMU1', 'IMU2', '3\sigma');
     title('LONGITUDE ERROR');
     
     subplot(313)
-    plot(gps.t, (gps.h - ref_g.h), '-c')
+    plot(gps_ref.t, (gps_ref.h - gps_ref.h), '-c')
     hold on
-    plot(imu1_e.t, (imu1_e.h - ref_1.h), '-b')
+    plot(imu1_ref.t, (imu1_ref.h - ref_1.h), '-b')
     hold on
-    plot(imu2_e.t, (imu2_e.h - ref_2.h), '-r')
+    plot(imu2_ref.t, (imu2_ref.h - ref_2.h), '-r')
     hold on
     plot(gps.t, sig3_rr(:,9), '--k', gps.t, -sig3_rr(:,9), '--k' )
     xlabel('Time [s]')
