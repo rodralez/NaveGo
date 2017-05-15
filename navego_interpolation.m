@@ -1,5 +1,5 @@
-function [ref_i, data] = navego_interpolation (data, ref)
-% navego_interpolation: interpolates data using INS/GPS time vector
+function [ref_i, ref] = navego_interpolation (data, ref)
+% navego_interpolation: interpolates data using reference time vector
 % or GPS time vector.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -20,62 +20,71 @@ function [ref_i, data] = navego_interpolation (data, ref)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% Version: 001
-% Date:    2016/11/17
+% Version: 002
+% Date:    2017/05/15
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-method = 'linear';
+D = max(size(data.t));
+R = max(size(ref.t));
+
+if (D > R)
+    
+    method = 'nearest';
+else
+    
+    method = 'linear';
+end
 
 % Adjust data structure before interpolating
-if (data.t(1) < ref.t(1))
+if (ref.t(1) < data.t(1))
     
-    fprintf('navego_interpolation: adjusting first element of data ... \n')
+    fprintf('navego_interpolation: adjusting first element of ref ... \n')
     
-    idx  = find(data.t >= ref.t(1), 1, 'first' );
+    idx  = find(ref.t >= data.t(1), 1, 'first' );
     if(isempty(idx))
         error('navego_interpolation: idx empty index.')
     end
     
-    data.t   = data.t(idx:end);
-    data.lat = data.lat(idx:end);
-    data.lon = data.lon(idx:end);
-    data.h   = data.h(idx:end);
+    ref.t   = ref.t(idx:end);
+    ref.lat = ref.lat(idx:end);
+    ref.lon = ref.lon(idx:end);
+    ref.h   = ref.h(idx:end);
     
-    if (isfield(data, 'vel'))
-        data.vel = data.vel(idx:end, :);
+    if (isfield(ref, 'vel'))
+        ref.vel = ref.vel(idx:end, :);
     end
     
-    if (isfield(data, 'roll'))
-        data.roll = data.roll(idx:end);
-        data.pitch = data.pitch(idx:end);
-        data.yaw   = data.yaw(idx:end);
+    if (isfield(ref, 'roll'))
+        ref.roll = ref.roll(idx:end);
+        ref.pitch = ref.pitch(idx:end);
+        ref.yaw   = ref.yaw(idx:end);
     end
 end
 
-if (data.t(end) > ref.t(end))
+if (ref.t(end) > data.t(end))
     
-    fprintf('navego_interpolation: adjusting last element of data... \n')
+    fprintf('navego_interpolation: adjusting last element of ref... \n')
     
     idx  = 1;
-    fdx  = find(data.t <= ref.t(end), 1, 'last' );
+    fdx  = find(ref.t <= data.t(end), 1, 'last' );
     if(isempty(fdx))
         error('navego_interpolation: fdx empty index.')
     end
     
-    data.t   = data.t(idx:fdx);
-    data.lat = data.lat(idx:fdx);
-    data.lon = data.lon(idx:fdx);
-    data.h   = data.h(idx:fdx);
+    ref.t   = ref.t(idx:fdx);
+    ref.lat = ref.lat(idx:fdx);
+    ref.lon = ref.lon(idx:fdx);
+    ref.h   = ref.h(idx:fdx);
     
-    if (isfield( data, 'vel'))
-        data.vel = data.vel(idx:fdx, :);
+    if (isfield( ref, 'vel'))
+        ref.vel = ref.vel(idx:fdx, :);
     end
     
-    if (isfield(data, 'roll'))
-        data.roll = data.roll(idx:fdx);
-        data.pitch = data.pitch(idx:fdx);
-        data.yaw   = data.yaw(idx:fdx);
+    if (isfield(ref, 'roll'))
+        ref.roll = ref.roll(idx:fdx);
+        ref.pitch = ref.pitch(idx:fdx);
+        ref.yaw   = ref.yaw(idx:fdx);
     end
 end
 
@@ -84,23 +93,17 @@ if (isfield(data, 'roll') & isfield(ref, 'roll'))  % If data is from INS/GPS sol
     
     fprintf('navego_interpolation: %s method to interpolate INS/GPS solution\n', method)
     
-    ref_i.t     = data.t;
-    ref_i.roll  = interp1(ref.t, ref.roll,  data.t, method);
-    ref_i.pitch = interp1(ref.t, ref.pitch, data.t, method);
-    ref_i.yaw   = interp1(ref.t, ref.yaw,   data.t, method);
-    ref_i.lat   = interp1(ref.t, ref.lat,   data.t, method);
-    ref_i.lon   = interp1(ref.t, ref.lon,   data.t, method);
-    ref_i.h     = interp1(ref.t, ref.h,     data.t, method);
+    ref_i.t     = ref.t; 
+    ref_i.roll  = interp1(data.t, data.roll,  ref.t, method);
+    ref_i.pitch = interp1(data.t, data.pitch, ref.t, method);
+    ref_i.yaw   = interp1(data.t, data.yaw,   ref.t, method);
+    ref_i.vel   = interp1(data.t, data.vel,   ref.t, method);
+    ref_i.lat   = interp1(data.t, data.lat,   ref.t, method);
+    ref_i.lon   = interp1(data.t, data.lon,   ref.t, method);
+    ref_i.h     = interp1(data.t, data.h,     ref.t, method);
     
-    if (isfield( ref, 'vel') & isfield( data, 'vel'))
-        ref_i.vel   = interp1(ref.t, ref.vel,   data.t, method);
-        
-        flag = any(isnan(ref_i.t)) | any(isnan(ref_i.roll)) | any(isnan(ref_i.pitch)) | any(isnan(ref_i.yaw)) |  ...
-            any(isnan(ref_i.lat)) | any(isnan(ref_i.lon)) | any(isnan(ref_i.h)) | any(isnan(ref_i.vel));
-    else
-        flag = any(isnan(ref_i.t)) | any(isnan(ref_i.roll)) | any(isnan(ref_i.pitch)) | any(isnan(ref_i.yaw)) |  ...
-            any(isnan(ref_i.lat)) | any(isnan(ref_i.lon)) | any(isnan(ref_i.h));
-    end
+    flag = any(isnan(ref_i.t)) | any(isnan(ref_i.roll)) | any(isnan(ref_i.pitch)) | any(isnan(ref_i.yaw)) |  ...
+           any(isnan(ref_i.lat)) | any(isnan(ref_i.lon)) | any(isnan(ref_i.h)) | any(isnan(ref_i.vel));    
     
     % Test interpolated dataset
     if(flag)
@@ -108,17 +111,18 @@ if (isfield(data, 'roll') & isfield(ref, 'roll'))  % If data is from INS/GPS sol
         error('navego_interpolation: NaN value in INS/GPS interpolated solution')
     end
     
-else                        % If dataset is from GPS-only solution...
+else  % If dataset is from GPS-only solution...
     
     fprintf('navego_interpolation: %s method to interpolate GPS solution\n', method)
     
-    ref_i.t   = data.t;
-    ref_i.lat = interp1(ref.t, ref.lat, data.t, method);
-    ref_i.lon = interp1(ref.t, ref.lon, data.t, method);
-    ref_i.h   = interp1(ref.t, ref.h,   data.t, method);
+    ref_i.t   = ref.t;
+    ref_i.lat = interp1(data.t, data.lat, ref.t, method);
+    ref_i.lon = interp1(data.t, data.lon, ref.t, method);
+    ref_i.h   = interp1(data.t, data.h,   ref.t, method);
     
     if (isfield(ref, 'vel') & isfield( data, 'vel'))
-        ref_i.vel   = interp1(ref.t, ref.vel,   data.t, method);
+        
+        ref_i.vel = interp1(data.t, data.vel,   ref.t, method);
         
         flag = any(isnan(ref_i.t)) | any(isnan(ref_i.lat)) | any(isnan(ref_i.lon)) | ...
             any(isnan(ref_i.h)) | any(isnan(ref_i.vel));

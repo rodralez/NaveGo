@@ -340,7 +340,7 @@ end
 %% Estimates from INS/GPS integration
 
 ins_gps_e.t     = ti(1:i, :);       % IMU time
-ins_gps_e.tk    = tg;       % Time when Kalman filter is executed
+ins_gps_e.tk    = tg;               % Time when Kalman filter is executed
 ins_gps_e.roll  = roll_e(1:i, :);   % Roll
 ins_gps_e.pitch = pitch_e(1:i, :);  % Pitch
 ins_gps_e.yaw   = yaw_e(1:i, :);    % Yaw
