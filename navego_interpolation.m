@@ -1,6 +1,5 @@
 function [ref_i, ref] = navego_interpolation (data, ref)
-% navego_interpolation: interpolates data using reference time vector
-% or GPS time vector.
+% navego_interpolation: interpolates data using reference time vector.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -36,7 +35,7 @@ else
     method = 'linear';
 end
 
-% Adjust data structure before interpolating
+%% Adjust reference structure before interpolating
 if (ref.t(1) < data.t(1))
     
     fprintf('navego_interpolation: adjusting first element of ref ... \n')
@@ -46,19 +45,19 @@ if (ref.t(1) < data.t(1))
         error('navego_interpolation: idx empty index.')
     end
     
-    ref.t   = ref.t(idx:end);
+    ref.t   = ref.t  (idx:end);
     ref.lat = ref.lat(idx:end);
     ref.lon = ref.lon(idx:end);
-    ref.h   = ref.h(idx:end);
+    ref.h   = ref.h(  idx:end);
     
     if (isfield(ref, 'vel'))
         ref.vel = ref.vel(idx:end, :);
     end
     
     if (isfield(ref, 'roll'))
-        ref.roll = ref.roll(idx:end);
+        ref.roll  = ref.roll (idx:end);
         ref.pitch = ref.pitch(idx:end);
-        ref.yaw   = ref.yaw(idx:end);
+        ref.yaw   = ref.yaw  (idx:end);
     end
 end
 
@@ -72,23 +71,24 @@ if (ref.t(end) > data.t(end))
         error('navego_interpolation: fdx empty index.')
     end
     
-    ref.t   = ref.t(idx:fdx);
+    ref.t   = ref.t  (idx:fdx);
     ref.lat = ref.lat(idx:fdx);
     ref.lon = ref.lon(idx:fdx);
-    ref.h   = ref.h(idx:fdx);
+    ref.h   = ref.h  (idx:fdx);
     
     if (isfield( ref, 'vel'))
         ref.vel = ref.vel(idx:fdx, :);
     end
     
     if (isfield(ref, 'roll'))
-        ref.roll = ref.roll(idx:fdx);
+        ref.roll  = ref.roll (idx:fdx);
         ref.pitch = ref.pitch(idx:fdx);
-        ref.yaw   = ref.yaw(idx:fdx);
+        ref.yaw   = ref.yaw  (idx:fdx);
     end
 end
 
-% Interpolate
+%% Interpolate
+
 if (isfield(data, 'roll') & isfield(ref, 'roll'))  % If data is from INS/GPS solution...
     
     fprintf('navego_interpolation: %s method to interpolate INS/GPS solution\n', method)
@@ -113,7 +113,7 @@ if (isfield(data, 'roll') & isfield(ref, 'roll'))  % If data is from INS/GPS sol
     
 else  % If dataset is from GPS-only solution...
     
-    fprintf('navego_interpolation: %s method to interpolate GPS solution\n', method)
+    fprintf('navego_interpolation: %s method to interpolate GPS-only solution\n', method)
     
     ref_i.t   = ref.t;
     ref_i.lat = interp1(data.t, data.lat, ref.t, method);
@@ -133,7 +133,7 @@ else  % If dataset is from GPS-only solution...
     % Test interpolated dataset
     if(flag)
         
-        error('navego_interpolation: NaN value in GPS interpolated solution')
+        error('navego_interpolation: NaN value in GPS-only interpolated solution')
     end
 end
 
