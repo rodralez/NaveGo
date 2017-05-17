@@ -287,6 +287,7 @@ if strcmp(IMU1_INS, 'ON')
     end
     
     % Guarantee that imu1.t(end-1) < gps.t(end) < imu1.t(end)
+    gps1 = gps;
     if (imu1.t(end) <= gps.t(end)),
         
         fgx  = find(gps.t < imu1.t(end), 1, 'last' );
@@ -300,7 +301,7 @@ if strcmp(IMU1_INS, 'ON')
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    [imu1_e] = ins_gps(imu1, gps, 'quaternion', 'double');
+    [imu1_e] = ins_gps(imu1, gps1, 'quaternion', 'double');
     % ---------------------------------------------------------------------
     
     save imu1_e.mat imu1_e
@@ -331,6 +332,7 @@ if strcmp(IMU2_INS, 'ON')
     end
     
     % Guarantee that imu2.t(end-1) < gps.t(end) < imu2.t(end)
+    gps2 = gps;
     if (imu2.t(end) <= gps.t(end)),
         
         fgx  = find(gps.t < imu2.t(end), 1, 'last' );
@@ -344,7 +346,7 @@ if strcmp(IMU2_INS, 'ON')
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    [imu2_e] = ins_gps(imu2, gps, 'dcm', 'single');
+    [imu2_e] = ins_gps(imu2, gps2, 'dcm', 'single');
     % ---------------------------------------------------------------------
     
     save imu2_e.mat imu2_e

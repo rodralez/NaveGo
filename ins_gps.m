@@ -1,6 +1,7 @@
 function [ins_gps_e] = ins_gps(imu, gps, att_mode, precision)
-% ins: loosely-coupled integrated navigation system. It integrates IMU and GPS
-% measurements by using an Extended Kalman filter.
+% ins_gps: loosely-coupled integrated navigation system. 
+%
+% ins_gps integrates IMU and GPS measurements by using an Extended Kalman filter.
 %
 % INPUT:
 %   imu, IMU data structure.
