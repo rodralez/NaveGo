@@ -20,8 +20,8 @@ function print_rmse (ins_gps, gps, ins_gps_r, gps_r, string)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% Version: 003
-% Date:    2016/11/17
+% Version: 004
+% Date:    2017/05/18
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -41,7 +41,7 @@ idx = find( abs(ins_gps.yaw - ins_gps_r.yaw) < (170 * D2R) );
 RMSE_yaw = rmse (ins_gps.yaw(idx),ins_gps_r.yaw(idx) ) .* R2D;
 
 % INS/GPS velocity RMSE
-if (isfield(ins_gps_r, 'vel'))
+if (isfield(ins_gps, 'vel') & isfield( ins_gps_r, 'vel'))
     RMSE_vn = rmse (ins_gps.vel(:,1),  ins_gps_r.vel(:,1));
     RMSE_ve = rmse (ins_gps.vel(:,2),  ins_gps_r.vel(:,2));
     RMSE_vd = rmse (ins_gps.vel(:,3),  ins_gps_r.vel(:,3));
@@ -62,7 +62,7 @@ RMSE_lon_g = rmse (gps.lon, gps_r.lon) .* LON2M;
 RMSE_h_g   = rmse (gps.h, gps_r.h);
 
 % GPS velocity RMSE
-if (isfield(gps_r, 'vel'))
+if (isfield(gps, 'vel') & isfield( gps_r, 'vel'))
     RMSE_vn_g = rmse (gps.vel(:,1), gps_r.vel(:,1));
     RMSE_ve_g = rmse (gps.vel(:,2), gps_r.vel(:,2));
     RMSE_vd_g = rmse (gps.vel(:,3), gps_r.vel(:,3));
@@ -75,7 +75,7 @@ fprintf(' Roll,  %s = %.4e deg \n',   string, RMSE_roll);
 fprintf(' Pitch, %s = %.4e deg \n',   string, RMSE_pitch);
 fprintf(' Yaw,   %s = %.4e deg \n\n', string, RMSE_yaw);
 
-if (isfield(ins_gps_r, 'vel') & isfield(gps_r, 'vel'))
+if (isfield(ins_gps, 'vel') & isfield( ins_gps_r, 'vel') & isfield(gps, 'vel') & isfield( gps_r, 'vel'))
     fprintf(' Vel. N, %s = %.4e m/s, GPS = %.4e m/s \n',   string, RMSE_vn, RMSE_vn_g);
     fprintf(' Vel. E, %s = %.4e m/s, GPS = %.4e m/s \n',   string, RMSE_ve, RMSE_ve_g);
     fprintf(' Vel. D, %s = %.4e m/s, GPS = %.4e m/s \n\n', string, RMSE_vd, RMSE_vd_g);

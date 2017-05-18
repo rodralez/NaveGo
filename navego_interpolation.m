@@ -19,8 +19,8 @@ function [ref_i, ref] = navego_interpolation (data, ref)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% Version: 002
-% Date:    2017/05/15
+% Version: 003
+% Date:    2017/05/18
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -93,17 +93,24 @@ if (isfield(data, 'roll') & isfield(ref, 'roll'))  % If data is from INS/GPS sol
     
     fprintf('navego_interpolation: %s method to interpolate INS/GPS solution\n', method)
     
-    ref_i.t     = ref.t; 
+    ref_i.t     = ref.t;
     ref_i.roll  = interp1(data.t, data.roll,  ref.t, method);
     ref_i.pitch = interp1(data.t, data.pitch, ref.t, method);
     ref_i.yaw   = interp1(data.t, data.yaw,   ref.t, method);
-    ref_i.vel   = interp1(data.t, data.vel,   ref.t, method);
     ref_i.lat   = interp1(data.t, data.lat,   ref.t, method);
     ref_i.lon   = interp1(data.t, data.lon,   ref.t, method);
     ref_i.h     = interp1(data.t, data.h,     ref.t, method);
     
+    if (isfield(ref, 'vel') & isfield( data, 'vel'))
+        
+        ref_i.vel = interp1(data.t, data.vel,   ref.t, method);
+        flag_vel = any(isnan(ref_i.vel));        
+    else
+        flag_vel = logical(zeros(1,3));
+    end
+    
     flag = any(isnan(ref_i.t)) | any(isnan(ref_i.roll)) | any(isnan(ref_i.pitch)) | any(isnan(ref_i.yaw)) |  ...
-           any(isnan(ref_i.lat)) | any(isnan(ref_i.lon)) | any(isnan(ref_i.h)) | any(isnan(ref_i.vel));    
+        any(isnan(ref_i.lat)) | any(isnan(ref_i.lon)) | any(isnan(ref_i.h)) | flag_vel;
     
     % Test interpolated dataset
     if(flag)
@@ -122,13 +129,14 @@ else  % If dataset is from GPS-only solution...
     
     if (isfield(ref, 'vel') & isfield( data, 'vel'))
         
-        ref_i.vel = interp1(data.t, data.vel,   ref.t, method);
-        
-        flag = any(isnan(ref_i.t)) | any(isnan(ref_i.lat)) | any(isnan(ref_i.lon)) | ...
-            any(isnan(ref_i.h)) | any(isnan(ref_i.vel));
+        ref_i.vel = interp1(data.t, data.vel,   ref.t, method);        
+        flag_vel = any(isnan(ref_i.vel));        
     else
-        flag = any(isnan(ref_i.t)) | any(isnan(ref_i.lat)) | any(isnan(ref_i.lon)) | any(isnan(ref_i.h));
+        flag_vel = logical(zeros(1,3));
     end
+    
+    flag = any(isnan(ref_i.t)) | any(isnan(ref_i.lat)) | any(isnan(ref_i.lon)) | ...
+        any(isnan(ref_i.h)) | flag_vel;
     
     % Test interpolated dataset
     if(flag)
