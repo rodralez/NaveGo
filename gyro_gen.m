@@ -37,13 +37,13 @@ function wb_sim = gyro_gen (ref, imu)
 %           Aggarwal, P. et al. MEMS-Based Integrated Navigation. Artech
 % House. 2010.
 %
-% Version: 003
-% Date:    2017/03/31
+% Version: 004
+% Date:    2017/07/28
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-M = [ref.kn, 3];
-N = ref.kn;
+N = max(size(ref.t));
+M = [N, 3];
 
 %% SIMULATE GYRO
 
@@ -73,48 +73,33 @@ end
 
 %% SIMULATE NOISES
 
+% -------------------------------------------------------------------------
 % Simulate static bias
-a = -imu.gb_fix;
-b =  imu.gb_fix;
-gb_fix = (b' - a') .* rand(3,1) + a';
-o = ones(N,1);
-g_sbias = [gb_fix(1).* o   gb_fix(2).* o   gb_fix(3).* o];
+[g_sbias] = noise_sbias (imu.gb_fix, N);
 
+% -------------------------------------------------------------------------
 % Simulate white noise
 wn = randn(M);
-g_wn = [imu.gstd(1).* wn(:,1)  imu.gstd(2).* wn(:,2)  imu.gstd(3).* wn(:,3)];
+g_wn = zeros(M);
 
-% Simulate bias instability/dynamic bias
-dt = 1/imu.freq;
+for i=1:3
 
-% If correlation time is provided...
-if (~isinf(imu.gb_corr))
-    
-    % Simulate a Gauss-Markov process 
-    % Aggarwal, Eq. 3.33, page 57.
-    g_dbias = zeros(M);    
-    
-    for i=1:3
-        
-        beta  = dt / imu.gb_corr(i) ;
-        sigma = imu.gb_drift(i);
-        a1 = exp(-beta);
-        a2 = sigma * sqrt(1 - exp(-2*beta) );
-        
-        b_noise = randn(N-1,1);
-        for j=2:N
-            g_dbias(j, i) = a1 * g_dbias(j-1, i) + a2 .* b_noise(j-1);
-        end
-    end
-    
-% If not...
-else
-    sigma = imu.gb_drift;
-    bn = randn(M);
-    g_dbias = [sigma(1).*bn(:,1) sigma(2).*bn(:,2) sigma(3).*bn(:,3)];
-    
+    g_wn(:, i) = imu.gstd(i).* wn(:,i);
 end
 
-wb_sim = gyro_b + g_err_b + g_wn + g_sbias + g_dbias;
+% -------------------------------------------------------------------------
+% Simulate dynamic bias (bias instability) as a First-order Gauss-Markov model
+
+dt = 1/imu.freq; 
+[g_dbias] = noise_dbias (imu.gb_corr, imu.gb_drift, dt, M);
+
+% -------------------------------------------------------------------------
+% Simulate rate random walk
+
+[g_rrw] = noise_rrw (imu.arrw, dt, M);
+
+% -------------------------------------------------------------------------
+
+wb_sim = gyro_b + g_err_b + g_wn + g_sbias + g_dbias + g_rrw;
 
 end

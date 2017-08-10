@@ -36,13 +36,13 @@ function [fb_sim] = acc_gen (ref, imu)
 %           Aggarwal, P. et al. MEMS-Based Integrated Navigation. Artech
 % House. 2010.
 %
-% Version: 003
-% Date:    2017/03/31
+% Version: 004
+% Date:    2017/07/27
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-M = [ref.kn, 3];
-N = ref.kn;
+N = max(size(ref.t));
+M = [N, 3];
 
 %% SIMULATE ACC
 
@@ -56,7 +56,8 @@ elseif (isfield(ref, 'vel'))
     
     acc_raw = (diff(ref.vel)) ./ [diff(ref.t) diff(ref.t) diff(ref.t)];
     acc_raw = [ 0 0 0; acc_raw; ];
-    acc_ned = sgolayfilt(acc_raw, 10, 45);
+    % Noise introduced by differentation should be smoothed.
+    acc_ned = sgolayfilt(acc_raw, 10, 45);  
     acc_b = acc_nav2body(acc_ned, ref.DCMnb);
     
 % If not, obtain acceleration from position
@@ -86,48 +87,44 @@ end
 
 %% SIMULATE NOISES
 
+% -------------------------------------------------------------------------
 % Simulate static bias
-a = -imu.ab_fix;
-b =  imu.ab_fix;
-ab_fix = (b' - a') .* rand(3,1) + a';
-o = ones(N,1);
-a_sbias = [ab_fix(1).* o   ab_fix(2).* o   ab_fix(3).* o];
+[a_sbias] = noise_sbias (imu.ab_fix, N);
 
+% -------------------------------------------------------------------------
 % Simulate white noise
 wn = randn(M);
-a_wn = [imu.astd(1).* wn(:,1)  imu.astd(2).* wn(:,2)  imu.astd(3).* wn(:,3)];
+a_wn = zeros(M);
 
-% Simulate bias instability/dynamic bias
-dt = 1/imu.freq;
+for i=1:3
 
-% If correlation time is provided...
-if (~isinf(imu.ab_corr))
-    
-    % Simulate a Gauss-Markov process
-    % Aggarwal, Eq. 3.33, page 57.
-    a_dbias = zeros(M);    
-    
-    for i=1:3
-        
-        beta  = dt / imu.ab_corr(i) ;
-        sigma = imu.ab_drift(i);
-        a1 = exp(-beta);
-        a2 = sigma * sqrt(1 - exp(-2*beta) );
-        
-        b_noise = randn(N-1,1);
-        for j=2:N
-            a_dbias(j, i) = a1 * a_dbias(j-1, i) + a2 .* b_noise(j-1);
-        end
-    end
-    
-% If not...
-else
-    sigma = imu.ab_drift;
-    bn = randn(M);
-    a_dbias = [sigma(1).*bn(:,1) sigma(2).*bn(:,2) sigma(3).*bn(:,3)];
-    
+    a_wn(:, i) = imu.astd(i).* wn(:,i);
 end
 
-fb_sim = acc_b - cor_b + grav_b + a_wn + a_sbias + a_dbias;
+% -------------------------------------------------------------------------
+% Simulate dynamic bias (bias instability) as a First-order Gauss-Markov model
+
+dt = 1/imu.freq; 
+[a_dbias] = noise_dbias (imu.ab_corr, imu.ab_drift, dt, M);
+
+% -------------------------------------------------------------------------
+% Simulate rate random walk
+
+[a_rrw] = noise_rrw (imu.vrrw, dt, M);
+
+% sigma_aK = ustrain.fb_allan(idx) ; %.* sqrt(3/TAU)
+
+% for i=1:3
+%     
+%     b_noise = randn(N-1,1);
+%     
+%     for j=2:N
+%         arrw (j, i) = arrw(j-1, i) + imu.arrw(i) * dt .* b_noise(j-1);
+%     end
+% end
+
+% -------------------------------------------------------------------------
+
+fb_sim = acc_b - cor_b + grav_b + a_wn + a_sbias + a_dbias + a_rrw;
 
 end

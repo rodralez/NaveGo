@@ -50,7 +50,7 @@ close all
 clear
 matlabrc
 
-versionstr = 'NaveGo, release v0.8.0-alpha';
+versionstr = 'NaveGo, release v1.0';
 
 fprintf('\n%s.\n', versionstr)
 fprintf('\nNaveGo: starting simulation ... \n')
@@ -59,9 +59,9 @@ fprintf('\nNaveGo: starting simulation ... \n')
 
 % Comment any of the following parameters in order to NOT execute a particular portion of code
 
-% GPS_DATA  = 'ON';   % Simulate GPS data
-% IMU1_DATA = 'ON';   % Simulate ADIS16405 IMU data
-% IMU2_DATA = 'ON';   % Simulate ADIS16488 IMU data
+GPS_DATA  = 'ON';   % Simulate GPS data
+IMU1_DATA = 'ON';   % Simulate ADIS16405 IMU data
+IMU2_DATA = 'ON';   % Simulate ADIS16488 IMU data
 
 IMU1_INS  = 'ON';   % Execute INS/GPS integration for ADIS16405 IMU
 IMU2_INS  = 'ON';   % Execute INS/GPS integration for ADIS16488 IMU
@@ -119,7 +119,9 @@ load ref.mat
 %        fb: Ix3 accelerations vector in body frame XYZ (m/s^2).
 %        wb: Ix3 turn rates vector in body frame XYZ (radians/s).
 %       arw: 1x3 angle random walks (rad/s/root-Hz).
-%       vrw: 1x3 angle velocity walks (m/s^2/root-Hz).
+%      arrw: 1x3 angle rate random walks (rad/s^2/root-Hz).
+%       vrw: 1x3 velocity random walks (m/s^2/root-Hz).
+%      vrrw: 1x3 velocity rate random walks (m/s^3/root-Hz).
 %      gstd: 1x3 gyros standard deviations (radians/s).
 %      astd: 1x3 accrs standard deviations (m/s^2).
 %    gb_fix: 1x3 gyros static biases or turn-on biases (radians/s).
@@ -135,7 +137,9 @@ load ref.mat
 % ini_align_err: 1x3 initial attitude errors at t(1).
 
 ADIS16405.arw      = 2   .* ones(1,3);     % Angle random walks [X Y Z] (deg/root-hour)
+ADIS16405.arrw     = zeros(1,3);           % Angle rate random walks [X Y Z] (deg/root-hour/s)
 ADIS16405.vrw      = 0.2 .* ones(1,3);     % Velocity random walks [X Y Z] (m/s/root-hour)
+ADIS16405.vrrw     = zeros(1,3);           % Velocity rate random walks [X Y Z] (deg/root-hour/s)
 ADIS16405.gb_fix   = 3   .* ones(1,3);     % Gyro static biases [X Y Z] (deg/s)
 ADIS16405.ab_fix   = 50  .* ones(1,3);     % Acc static biases [X Y Z] (mg)
 ADIS16405.gb_drift = 0.007 .* ones(1,3);   % Gyro dynamic biases [X Y Z] (deg/s)
@@ -157,7 +161,9 @@ imu1.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude alig
 %% ADIS16488 IMU error profile
 
 ADIS16488.arw      = 0.3  .* ones(1,3);     % Angle random walks [X Y Z] (deg/root-hour)
+ADIS16488.arrw     = zeros(1,3);            % Angle rate random walks [X Y Z] (deg/root-hour/s)
 ADIS16488.vrw      = 0.029.* ones(1,3);     % Velocity random walks [X Y Z] (m/s/root-hour)
+ADIS16488.vrrw     = zeros(1,3);            % Velocity rate random walks [X Y Z] (deg/root-hour/s)
 ADIS16488.gb_fix   = 0.2  .* ones(1,3);     % Gyro static biases [X Y Z] (deg/s)
 ADIS16488.ab_fix   = 16   .* ones(1,3);     % Acc static biases [X Y Z] (mg)
 ADIS16488.gb_drift = 6.5/3600  .* ones(1,3);% Gyro dynamic biases [X Y Z] (deg/s)
