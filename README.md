@@ -2,9 +2,9 @@
 
 [![Releases](https://img.shields.io/badge/release-v0.8.0--alpha-green.svg?style=plastic)](https://github.com/rodralez/NaveGo/releases) [![DOI](https://zenodo.org/badge/12745155.svg)](https://zenodo.org/badge/latestdoi/12745155)
 
-NaveGo: an open-source MATLAB/GNU Octave toolbox for processing integrated navigation systems and performing inertial sensors profiling analysis.
+NaveGo: an open-source MATLAB/GNU-Octave toolbox for processing integrated navigation systems and performing inertial sensors profiling analysis.
 
-NaveGo is an open-source framework for processing INS/GPS sensors that is freely available online. It is developed under MATLAB/GNU Octave due to this programming language has become a *de facto* standard for simulation and mathematical computing. NaveGo has been verified by processing real-world data from a real trajectory and contrasting results with a commercial, closed-source software package. Difference between both solutions have shown to be negligible. 
+NaveGo is an open-source framework for processing INS/GPS sensors that is freely available online. It is developed under MATLAB/GNU-Octave due to this programming language has become a *de facto* standard for simulation and mathematical computing. NaveGo has been verified by processing real-world data from a real trajectory and contrasting results with a commercial, closed-source software package. Difference between both solutions have shown to be negligible. For more information read (Gonzalez et al., 2017).
 
 NaveGo is supported at the moment by three academic research groups: GridTics at the National University of Technology (Argentina), ITIC at the National University of Cuyo (Argentina), and DIATI at the Politecnico di Torino (Italy). 
 
@@ -22,7 +22,7 @@ Main features of NaveGo are:
 
 ## How to cite this work
 
-Rodrigo Gonzalez, Carlos Catania, and Paolo Dabove (2016). NaveGo: an open-source MATLAB/GNU Octave toolbox for processing integrated navigation systems and performing inertial sensors profiling analysis. http://doi.org/10.5281/zenodo.165125. URL: https://github.com/rodralez/NaveGo/.
+Rodrigo Gonzalez, Carlos Catania, and Paolo Dabove (2017). NaveGo: an open-source MATLAB/GNU-Octave toolbox for processing integrated navigation systems and performing inertial sensors profiling analysis. http://doi.org/10.5281/zenodo.165125. URL: https://github.com/rodralez/NaveGo/.
 
 ## Contributions
 
@@ -37,18 +37,30 @@ You can contribute in many ways:
 
 If you are interested, please feel free to contact Dr. Rodrigo Gonzalez at rodralez [at] frm [dot] utn [dot] edu [dot] ar.
 
-
 ## Publications
 
 The underlying mathematical model of NaveGo is based on two articles which are recommended for reading: 
 
-* R. Gonzalez, J.I. Giribet, and H.D. Patiño. NaveGo: a simulation framework for low-cost integrated navigation systems, Journal of Control Engineering and Applied Informatics, vol. 17, issue 2, pp. 110-120, 2015. [Link](http://ceai.srait.ro/index.php?journal=ceai&page=article&op=view&path%5B%5D=2478).
+* (Gonzalez et al., 2015) R. Gonzalez, J.I. Giribet, and H.D. Patiño. NaveGo: a simulation framework for low-cost integrated navigation systems, Journal of Control Engineering and Applied Informatics, vol. 17, issue 2, pp. 110-120, 2015. [Link](http://ceai.srait.ro/index.php?journal=ceai&page=article&op=view&path%5B%5D=2478).
 
-* R. Gonzalez, J.I. Giribet, and H.D. Patiño. An approach to benchmarking of loosely coupled low-cost navigation systems. Mathematical and Computer Modelling of Dynamical Systems, vol. 21, issue 3, pp. 272-287, 2015. [Link](http://www.tandfonline.com/doi/abs/10.1080/13873954.2014.952642).
+* (Gonzalez et al., 2015a) R. Gonzalez, J.I. Giribet, and H.D. Patiño. An approach to benchmarking of loosely coupled low-cost navigation systems. Mathematical and Computer Modelling of Dynamical Systems, vol. 21, issue 3, pp. 272-287, 2015. [Link](http://www.tandfonline.com/doi/abs/10.1080/13873954.2014.952642).
 
-Other publication:
+Other publications:
 
-* R. Gonzalez, C.A. Catania, P. Dabove, J.C. Taffernaberry, and M. Piras. Model validation of an open-source framework for post-processing INS/GNSS systems. III International Conference on Geographical Information Systems Theory, Applications and Management (GISTAM 2017). Porto, Portugal. April 2017.
+* (Gonzalez et al., 2017a) R. Gonzalez, E.M. Martinez, and P. Dabove. Assessment of Discrete Stochastic Models of MEMS Inertial Sensors by Using the Allan Variance. In the III International Conference on Sensors and Electronics Instrumentation Advances (SEIA' 2017), 20-22 September 2017, Moscow, Russia.
+
+* (Gonzalez et al., 2017) R. Gonzalez, C.A. Catania, P. Dabove, J.C. Taffernaberry, and M. Piras. Model validation of an open-source framework for post-processing INS/GNSS systems. III International Conference on Geographical Information Systems Theory, Applications and Management (GISTAM 2017). Porto, Portugal. April 2017.
+
+
+## Roadmap
+
+Future features of NaveGo will be:
+
+* RTS smoother.
+
+* Zero Velocity Update (ZUPT).
+
+* Tightly-coupled INS/GPS. 
 
 
 ## Acknowledgments
@@ -63,7 +75,6 @@ We would like to thank to many people that have contribute to make NaveGo a bett
 
 * Dr. Paolo Dabove and Dr. Marco Piras (both from DIATI, Politecnico di Torino, Italy) for helping to debug NaveGo and suggesting new features.
 
-
 # Examples
 
 ## Allan variance example
@@ -72,7 +83,7 @@ Just execute the file `navego_allan_example.m`. It process 2-hours of static mea
 
 ## INS/GPS example
 
-The file `navego_example.m` tries to demonstrate the use of NaveGo. It compares the performances of two simulated IMUs, ADIS16405 IMU and ADIS16488 IMU, both integrated with a simulated GPS.
+The file `navego_example.m` tries to demonstrate how NaveGo works. It compares the performances of two simulated IMUs, ADIS16405 IMU and ADIS16488 IMU, both integrated with a simulated GPS.
 
 Next, a description of this file.
 
@@ -85,7 +96,7 @@ close all
 clear
 matlabrc
 
-fprintf('\nStarting simulation ... \n')
+fprintf('\nNaveGo: starting simulation ... \n')
 
 ```
 ###  Code execution parameters
@@ -110,7 +121,7 @@ if (~exist('IMU1_DATA','var')), IMU1_DATA = 'OFF'; end
 if (~exist('IMU2_DATA','var')), IMU2_DATA = 'OFF'; end
 if (~exist('IMU1_INS','var')),  IMU1_INS = 'OFF'; end
 if (~exist('IMU2_INS','var')),  IMU2_INS = 'OFF'; end
-if (~exist('PLOT','var')),      PLOT = 'OFF'; end
+if (~exist('PLOT','var')),      PLOT     = 'OFF'; end
 
 ```
 
@@ -134,7 +145,7 @@ MS2KMH = 3.6;       % m/s to km/h
 
 ```matlab
 
-fprintf('Loading reference dataset from a trajectory generator... \n')
+fprintf('NaveGo: loading reference dataset from a trajectory generator... \n')
 
 load ref.mat
 
@@ -155,6 +166,7 @@ load ref.mat
 %            [a11 a21 a31 a12 a22 a32 a13 a23 a33].
 %      freq: sampling frequency (Hz).
 
+
 ```
 
 ### ADIS16405 IMU error profile
@@ -166,7 +178,9 @@ load ref.mat
 %        fb: Ix3 accelerations vector in body frame XYZ (m/s^2).
 %        wb: Ix3 turn rates vector in body frame XYZ (radians/s).
 %       arw: 1x3 angle random walks (rad/s/root-Hz).
-%       vrw: 1x3 angle velocity walks (m/s^2/root-Hz).
+%      arrw: 1x3 angle rate random walks (rad/s^2/root-Hz).
+%       vrw: 1x3 velocity random walks (m/s^2/root-Hz).
+%      vrrw: 1x3 velocity rate random walks (m/s^3/root-Hz).
 %      gstd: 1x3 gyros standard deviations (radians/s).
 %      astd: 1x3 accrs standard deviations (m/s^2).
 %    gb_fix: 1x3 gyros static biases or turn-on biases (radians/s).
@@ -181,10 +195,10 @@ load ref.mat
 % ini_align: 1x3 initial attitude at t(1).
 % ini_align_err: 1x3 initial attitude errors at t(1).
 
-% ref dataset will be used to simulate IMU sensors.
-
 ADIS16405.arw      = 2   .* ones(1,3);     % Angle random walks [X Y Z] (deg/root-hour)
+ADIS16405.arrw     = zeros(1,3);           % Angle rate random walks [X Y Z] (deg/root-hour/s)
 ADIS16405.vrw      = 0.2 .* ones(1,3);     % Velocity random walks [X Y Z] (m/s/root-hour)
+ADIS16405.vrrw     = zeros(1,3);           % Velocity rate random walks [X Y Z] (deg/root-hour/s)
 ADIS16405.gb_fix   = 3   .* ones(1,3);     % Gyro static biases [X Y Z] (deg/s)
 ADIS16405.ab_fix   = 50  .* ones(1,3);     % Acc static biases [X Y Z] (mg)
 ADIS16405.gb_drift = 0.007 .* ones(1,3);   % Gyro dynamic biases [X Y Z] (deg/s)
@@ -194,13 +208,14 @@ ADIS16405.ab_corr  = 100 .* ones(1,3);     % Acc correlation times [X Y Z] (seco
 ADIS16405.freq     = ref.freq;             % IMU operation frequency [X Y Z] (Hz)
 % ADIS16405.m_psd     = 0.066 .* ones(1,3);  % Magnetometer noise density [X Y Z] (mgauss/root-Hz)
 
-ADIS16405.t = ref.t;                             % IMU time vector
-dt = mean(diff(ADIS16405.t));                    % IMU mean period
+% ref dataset will be used to simulate IMU sensors.
+ADIS16405.t = ref.t;                       % IMU time vector
+dt = mean(diff(ADIS16405.t));              % IMU mean period
 
-imu1 = imu_err_profile(ADIS16405, dt);      % Transform IMU manufacturer error units to SI units.
+imu1 = imu_si_errors(ADIS16405, dt);       % Transform IMU manufacturer error units to SI units.
 
-imu1.ini_align_err = [3 3 10] .* D2R;                     % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)  
-imu1.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude align at t(1) (radians).
+imu1.ini_align_err = [3 3 10] .* D2R;                   % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)  
+imu1.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)]; % Initial attitude align at t(1) (radians).
 
 ```
 
@@ -208,10 +223,10 @@ imu1.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude alig
 
 ```matlab
 
-% ref dataset will be used to simulate IMU sensors.
-
 ADIS16488.arw      = 0.3  .* ones(1,3);     % Angle random walks [X Y Z] (deg/root-hour)
+ADIS16488.arrw     = zeros(1,3);            % Angle rate random walks [X Y Z] (deg/root-hour/s)
 ADIS16488.vrw      = 0.029.* ones(1,3);     % Velocity random walks [X Y Z] (m/s/root-hour)
+ADIS16488.vrrw     = zeros(1,3);            % Velocity rate random walks [X Y Z] (deg/root-hour/s)
 ADIS16488.gb_fix   = 0.2  .* ones(1,3);     % Gyro static biases [X Y Z] (deg/s)
 ADIS16488.ab_fix   = 16   .* ones(1,3);     % Acc static biases [X Y Z] (mg)
 ADIS16488.gb_drift = 6.5/3600  .* ones(1,3);% Gyro dynamic biases [X Y Z] (deg/s)
@@ -221,14 +236,14 @@ ADIS16488.ab_corr  = 100  .* ones(1,3);     % Acc correlation times [X Y Z] (sec
 ADIS16488.freq     = ref.freq;              % IMU operation frequency [X Y Z] (Hz)
 % ADIS16488.m_psd = 0.054 .* ones(1,3);       % Magnetometer noise density [X Y Z] (mgauss/root-Hz)
 
-ADIS16488.t = ref.t;                             % IMU time vector
-dt = mean(diff(ADIS16488.t));                    % IMU mean period
+% ref dataset will be used to simulate IMU sensors.
+ADIS16488.t = ref.t;                        % IMU time vector
+dt = mean(diff(ADIS16488.t));               % IMU mean period
 
-imu2 = imu_err_profile(ADIS16488, dt);      % Transform IMU manufacturer error units to SI units.
+imu2 = imu_si_errors(ADIS16488, dt);        % Transform IMU manufacturer error units to SI units.
 
 imu2.ini_align_err = [1 1 5] .* D2R;                     % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)  
-imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude align at t(1) (radians)..
-
+imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude align at t(1) (radians).
 ```
 
 ### Garmin 5-18 Hz GPS error profile
@@ -289,12 +304,12 @@ if strcmp(IMU1_DATA, 'ON')      % If simulation of IMU1 data is required ...
     
     fprintf('NaveGo: generating IMU1 ACCR data... \n')
     
-    fb = acc_gen (ref, imu1); % Generate acc in the body frame
+    fb = acc_gen (ref, imu1);   % Generate acc in the body frame
     imu1.fb = fb;
     
     fprintf('NaveGo: generating IMU1 GYRO data... \n')
     
-    wb = gyro_gen (ref, imu1);% Generate gyro in the body frame
+    wb = gyro_gen (ref, imu1);  % Generate gyro in the body frame
     imu1.wb = wb;
     
     save imu1.mat imu1
@@ -319,12 +334,12 @@ if strcmp(IMU2_DATA, 'ON')      % If simulation of IMU2 data is required ...
     
     fprintf('NaveGo: generating IMU2 ACCR data... \n')
     
-    fb = acc_gen (ref, imu2); % Generate acc in the body frame
+    fb = acc_gen (ref, imu2);   % Generate acc in the body frame
     imu2.fb = fb;
     
     fprintf('NaveGo: generating IMU2 GYRO data... \n')
     
-    wb = gyro_gen (ref, imu2);% Generate gyro in the body frame
+    wb = gyro_gen (ref, imu2);  % Generate gyro in the body frame
     imu2.wb = wb;
     
     save imu2.mat imu2
@@ -360,20 +375,21 @@ if strcmp(IMU1_INS, 'ON')
     end
     
     % Guarantee that imu1.t(end-1) < gps.t(end) < imu1.t(end)
+    gps1 = gps;
     if (imu1.t(end) <= gps.t(end)),
         
         fgx  = find(gps.t < imu1.t(end), 1, 'last' );
         
-        gps.t   = gps.t  (1:fgx, :);
-        gps.lat = gps.lat(1:fgx, :);
-        gps.lon = gps.lon(1:fgx, :);
-        gps.h   = gps.h  (1:fgx, :);
-        gps.vel = gps.vel(1:fgx, :);
+        gps1.t   = gps.t  (1:fgx, :);
+        gps1.lat = gps.lat(1:fgx, :);
+        gps1.lon = gps.lon(1:fgx, :);
+        gps1.h   = gps.h  (1:fgx, :);
+        gps1.vel = gps.vel(1:fgx, :);
     end
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    [imu1_e] = ins_gps(imu1, gps, 'quaternion', 'double');
+    [imu1_e] = ins_gps(imu1, gps1, 'quaternion', 'double');
     % ---------------------------------------------------------------------
     
     save imu1_e.mat imu1_e
@@ -408,20 +424,21 @@ if strcmp(IMU2_INS, 'ON')
     end
     
     % Guarantee that imu2.t(end-1) < gps.t(end) < imu2.t(end)
+    gps2 = gps;
     if (imu2.t(end) <= gps.t(end)),
         
         fgx  = find(gps.t < imu2.t(end), 1, 'last' );
         
-        gps.t   = gps.t  (1:fgx, :);
-        gps.lat = gps.lat(1:fgx, :);
-        gps.lon = gps.lon(1:fgx, :);
-        gps.h   = gps.h  (1:fgx, :);
-        gps.vel = gps.vel(1:fgx, :);
+        gps2.t   = gps.t  (1:fgx, :);
+        gps2.lat = gps.lat(1:fgx, :);
+        gps2.lon = gps.lon(1:fgx, :);
+        gps2.h   = gps.h  (1:fgx, :);
+        gps2.vel = gps.vel(1:fgx, :);       
     end
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    [imu2_e] = ins_gps(imu2, gps, 'dcm', 'single');
+    [imu2_e] = ins_gps(imu2, gps2, 'dcm', 'single');
     % ---------------------------------------------------------------------
     
     save imu2_e.mat imu2_e
@@ -439,9 +456,12 @@ end
 
 ```matlab
 
-ref_1 = navego_interpolation (imu1_e, ref);
-ref_2 = navego_interpolation (imu2_e, ref);
-ref_g = navego_interpolation (gps, ref);
+% INS/GPS estimates and GPS data are interpolated according to the
+% reference dataset.
+
+[imu1_ref, ref_1] = navego_interpolation (imu1_e, ref);
+[imu2_ref, ref_2] = navego_interpolation (imu2_e, ref);
+[gps_ref, ref_g]  = navego_interpolation (gps, ref);
 
 ```
 
@@ -451,7 +471,7 @@ ref_g = navego_interpolation (gps, ref);
 
 to = (ref.t(end) - ref.t(1));
 
-fprintf('\nNaveGo: navigation time of %4.2f minutes or %4.2f seconds. \n', (to/60), to)
+fprintf('\nNaveGo: navigation time is %.2f minutes or %.2f seconds. \n', (to/60), to)
 
 ```
 
@@ -459,7 +479,7 @@ fprintf('\nNaveGo: navigation time of %4.2f minutes or %4.2f seconds. \n', (to/6
 
 ```matlab
 
-print_rmse (imu1_e, gps, ref_1, ref_g, 'INS/GPS IMU1');
+print_rmse (imu1_ref, gps_ref, ref_1, ref_g, 'INS/GPS IMU1');
 
 ```
 
@@ -467,7 +487,7 @@ print_rmse (imu1_e, gps, ref_1, ref_g, 'INS/GPS IMU1');
 
 ```matlab
 
-print_rmse (imu2_e, gps, ref_2, ref_g, 'INS/GPS IMU2');
+print_rmse (imu2_ref, gps_ref, ref_2, ref_g, 'INS/GPS IMU2');
 
 ```
 

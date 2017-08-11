@@ -153,7 +153,7 @@ ADIS16405.freq     = ref.freq;             % IMU operation frequency [X Y Z] (Hz
 ADIS16405.t = ref.t;                       % IMU time vector
 dt = mean(diff(ADIS16405.t));              % IMU mean period
 
-imu1 = imu_si_errors(ADIS16405, dt);        % Transform IMU manufacturer error units to SI units.
+imu1 = imu_si_errors(ADIS16405, dt);       % Transform IMU manufacturer error units to SI units.
 
 imu1.ini_align_err = [3 3 10] .* D2R;                   % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)  
 imu1.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)]; % Initial attitude align at t(1) (radians).
