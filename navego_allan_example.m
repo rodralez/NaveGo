@@ -67,26 +67,24 @@ load stim300
 %     gpsd : 1x3 gyros dynamic biases PSD (rad/s/root-Hz).
 %     apsd : 1x3 accrs dynamic biases PSD (m/s^2/root-Hz);
 %      freq: 1x1 sampling frequency (Hz).
-% ini_align: 1x3 initial attitude at t(1).
-% ini_align_err: 1x3 initial attitude errors at t(1).
 
 to = (stim300.t(end) - stim300.t(1));
-fprintf('\nNaveGo: dataset duration is %.2f hours or %.2f minutes or %.2f seconds. \n\n', (to/60/60), (to/60), to)
+fprintf('NaveGo: dataset duration is %.2f hours or %.2f minutes or %.2f seconds. \n\n', (to/60/60), (to/60), to)
 
-[stim300] = allan_imu (stim300);
-
-stim300_arw = stim300.arw
-stim300_vrw = stim300.vrw
-
-stim300_ab_drift = stim300.ab_drift
-stim300_gb_drift = stim300.gb_drift
-
-stim300_ab_corr = stim300.ab_corr
-stim300_gb_corr = stim300.gb_corr
+% [stim300] = allan_imu (stim300);
+% 
+% stim300_arw = stim300.arw
+% stim300_vrw = stim300.vrw
+% 
+% stim300_ab_drift = stim300.ab_drift
+% stim300_gb_drift = stim300.gb_drift
+% 
+% stim300_ab_corr = stim300.ab_corr
+% stim300_gb_corr = stim300.gb_corr
 
 %% ALLAN VARIANCE FOR SIMULATED IMU
 
-fprintf('\nNaveGo: Allan variance analysis from simulated Microstrain 3DM-GX3-35 IMU... \n')
+fprintf('NaveGo: Allan variance analysis from simulated Microstrain 3DM-GX3-35 IMU... \n')
 
 %% REF DATASET
 
@@ -98,7 +96,7 @@ ref.freq = 100;
 
 ref.t = ((0:N-1)/ref.freq)';   % Simulated time vector is about 5.3275 hours
 to = (ref.t(end) - ref.t(1));
-fprintf('\nNaveGo: dataset duration is %.2f hours or %.2f minutes or %.2f seconds. \n', (to/60/60), (to/60), to)
+fprintf('NaveGo: dataset duration is %.2f hours or %.2f minutes or %.2f seconds. \n', (to/60/60), (to/60), to)
 
 ref.lat = zeros(N,1);
 ref.vel = zeros(M); 
@@ -118,6 +116,26 @@ ref.DCMnb(:,9) = ones(N,1);
 
 %% Microstrain 3DM-GX3-35 IMU
 
+% IMU data structure:
+%         t: Ix1 time vector (seconds).
+%        fb: Ix3 accelerations vector in body frame XYZ (m/s^2).
+%        wb: Ix3 turn rates vector in body frame XYZ (radians/s).
+%       arw: 1x3 angle random walks (rad/s/root-Hz).
+%      arrw: 1x3 angle rate random walks (rad/s^2/root-Hz).
+%       vrw: 1x3 velocity random walks (m/s^2/root-Hz).
+%      vrrw: 1x3 velocity rate random walks (m/s^3/root-Hz).
+%      gstd: 1x3 gyros standard deviations (radians/s).
+%      astd: 1x3 accrs standard deviations (m/s^2).
+%    gb_fix: 1x3 gyros static biases or turn-on biases (radians/s).
+%    ab_fix: 1x3 accrs static biases or turn-on biases (m/s^2).
+%  gb_drift: 1x3 gyros dynamic biases or bias instabilities (radians/s).
+%  ab_drift: 1x3 accrs dynamic biases or bias instabilities (m/s^2).
+%   gb_corr: 1x3 gyros correlation times (seconds).
+%   ab_corr: 1x3 accrs correlation times (seconds).
+%     gpsd : 1x3 gyros dynamic biases PSD (rad/s/root-Hz).
+%     apsd : 1x3 accrs dynamic biases PSD (m/s^2/root-Hz);
+%      freq: 1x1 sampling frequency (Hz).
+
 ustrain.astd = [0.00643187932253599  0.00661386698561032  0.00673225201283004];
 ustrain.gstd = [0.00272391738310747  0.00248849782611228  0.00272332577563485];
 
@@ -127,8 +145,10 @@ ustrain.gb_fix = [4.00424136983284e-14 4.98197419961447e-15 -6.5696457219509e-15
 ustrain.ab_corr = [40 20 1000];
 ustrain.gb_corr = [500 700 200];
    
-ustrain.vrrw = [0.00031522133759985 0.000519606636158211 0.000396688807571295];      
-ustrain.arrw = [8.21484738626e-05 4.54275740041735e-05 0.000103299115514897]; 
+% ustrain.vrrw = [0.00031522133759985 0.000519606636158211 0.000396688807571295];      
+% ustrain.arrw = [8.21484738626e-05 4.54275740041735e-05 0.000103299115514897]; 
+ustrain.vrrw = zeros(1,3);      
+ustrain.arrw = zeros(1,3); 
 
 ustrain.ab_drift = [0.000252894096875598 0.000349683866037958 0.000323068534025731];
 ustrain.gb_drift = [7.6339404800228e-05 4.50248175403541e-05 8.75796277840371e-05];

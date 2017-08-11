@@ -41,7 +41,7 @@
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 % 
 % Version: 010
-% Date:    2017/05/15
+% Date:    2017/08/11
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -153,10 +153,10 @@ ADIS16405.freq     = ref.freq;             % IMU operation frequency [X Y Z] (Hz
 ADIS16405.t = ref.t;                       % IMU time vector
 dt = mean(diff(ADIS16405.t));              % IMU mean period
 
-imu1 = imu_err_profile(ADIS16405, dt);     % Transform IMU manufacturer error units to SI units.
+imu1 = imu_si_errors(ADIS16405, dt);        % Transform IMU manufacturer error units to SI units.
 
-imu1.ini_align_err = [3 3 10] .* D2R;                     % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)  
-imu1.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude align at t(1) (radians).
+imu1.ini_align_err = [3 3 10] .* D2R;                   % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)  
+imu1.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)]; % Initial attitude align at t(1) (radians).
 
 %% ADIS16488 IMU error profile
 
@@ -177,7 +177,7 @@ ADIS16488.freq     = ref.freq;              % IMU operation frequency [X Y Z] (H
 ADIS16488.t = ref.t;                        % IMU time vector
 dt = mean(diff(ADIS16488.t));               % IMU mean period
 
-imu2 = imu_err_profile(ADIS16488, dt);      % Transform IMU manufacturer error units to SI units.
+imu2 = imu_si_errors(ADIS16488, dt);        % Transform IMU manufacturer error units to SI units.
 
 imu2.ini_align_err = [1 1 5] .* D2R;                     % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)  
 imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude align at t(1) (radians).
