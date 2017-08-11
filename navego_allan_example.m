@@ -71,16 +71,16 @@ load stim300
 to = (stim300.t(end) - stim300.t(1));
 fprintf('NaveGo: dataset duration is %.2f hours or %.2f minutes or %.2f seconds. \n\n', (to/60/60), (to/60), to)
 
-% [stim300] = allan_imu (stim300);
-% 
-% stim300_arw = stim300.arw
-% stim300_vrw = stim300.vrw
-% 
-% stim300_ab_drift = stim300.ab_drift
-% stim300_gb_drift = stim300.gb_drift
-% 
-% stim300_ab_corr = stim300.ab_corr
-% stim300_gb_corr = stim300.gb_corr
+[stim300] = allan_imu (stim300);
+
+stim300_arw = stim300.arw
+stim300_vrw = stim300.vrw
+
+stim300_ab_drift = stim300.ab_drift
+stim300_gb_drift = stim300.gb_drift
+
+stim300_ab_corr = stim300.ab_corr
+stim300_gb_corr = stim300.gb_corr
 
 %% ALLAN VARIANCE FOR SIMULATED IMU
 
@@ -145,10 +145,8 @@ ustrain.gb_fix = [4.00424136983284e-14 4.98197419961447e-15 -6.5696457219509e-15
 ustrain.ab_corr = [40 20 1000];
 ustrain.gb_corr = [500 700 200];
    
-% ustrain.vrrw = [0.00031522133759985 0.000519606636158211 0.000396688807571295];      
-% ustrain.arrw = [8.21484738626e-05 4.54275740041735e-05 0.000103299115514897]; 
-ustrain.vrrw = zeros(1,3);      
-ustrain.arrw = zeros(1,3); 
+ustrain.vrrw = [0.00031522133759985 0.000519606636158211 0.000396688807571295];      
+ustrain.arrw = [8.21484738626e-05 4.54275740041735e-05 0.000103299115514897]; 
 
 ustrain.ab_drift = [0.000252894096875598 0.000349683866037958 0.000323068534025731];
 ustrain.gb_drift = [7.6339404800228e-05 4.50248175403541e-05 8.75796277840371e-05];

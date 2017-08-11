@@ -1,5 +1,5 @@
 function [dbias_n] = noise_dbias (b_corr, b_drift, dt, M)
-% noise_dbias: generates a dynamic bias perturbation between.
+% noise_dbias: generates a dynamic bias perturbation.
 %
 % INPUT:
 %		b_corr: 1x3, correlation times.

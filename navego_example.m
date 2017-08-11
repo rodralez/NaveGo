@@ -371,7 +371,7 @@ end
 
 [imu1_ref, ref_1] = navego_interpolation (imu1_e, ref);
 [imu2_ref, ref_2] = navego_interpolation (imu2_e, ref);
-[gps_ref, ref_g] = navego_interpolation (gps, ref);
+[gps_ref, ref_g]  = navego_interpolation (gps, ref);
 
 %% Print navigation time
 

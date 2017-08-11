@@ -26,7 +26,7 @@ Rodrigo Gonzalez, Carlos Catania, and Paolo Dabove (2017). NaveGo: an open-sourc
 
 ## Contributions
 
-We are looking for contributors for NaveGo! Since integrated navigation is a topic used in several fields (Geomatics, Geology, Mobile Mapping, Autonomous Driving, even Veterinary) we hope other communities than the navigation community compromise and contribute with this open-source project.
+We are looking for contributors for NaveGo! Since integrated navigation is a topic used in several fields as Geomatics, Geology, Mobile Mapping, Autonomous Driving, even Veterinary, we hope other communities than the navigation community compromise and contribute with this open-source project.
 
 You can contribute in many ways: 
 
