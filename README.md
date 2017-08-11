@@ -18,7 +18,7 @@ Main features of NaveGo are:
 
 * Implementation of the Allan variance procedure to characterize inertial sensors' typical errors.
 
-* Simulation of inertial sensors and GPS (in a very early stage).
+* Simulation of inertial sensors and GPS.
 
 ## How to cite this work
 
