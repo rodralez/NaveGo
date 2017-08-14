@@ -1,4 +1,4 @@
-function  [F, G] = F_update(upd, DCMbn, imu)
+function  [F, G] = F_update(upd, DCMbn, imu, dt)
 % F_update: updates Kalman filter transition matrix F.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -37,8 +37,8 @@ function  [F, G] = F_update(upd, DCMbn, imu)
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 22.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2017/08/14
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -167,8 +167,8 @@ else
     Fgg = diag(-1./imu.gb_corr);
 end
 
-F= [Fee  Fev  Fep   (DCMbn)  Z       (DCMbn)   Z;
-    Fve  Fvv  Fvp   Z       (-DCMbn)   Z       (-DCMbn);
+F= [Fee  Fev  Fep   (DCMbn)*dt  Z       (DCMbn)   Z;
+    Fve  Fvv  Fvp   Z       (-DCMbn)*dt   Z       (-DCMbn);
     Fpe  Fpv  Fpp   Z        Z             Z    Z;
     Z    Z    Z     Z        Z             Z    Z;
     Z    Z    Z     Z        Z             Z    Z;

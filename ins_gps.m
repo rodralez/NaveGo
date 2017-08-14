@@ -278,11 +278,11 @@ for j = 2:Mg
     upd = [vel_e(i,:) lat_e(i) h_e(i) fn'];
     
     % Update matrices F and G
-    [S.F, S.G] = F_update(upd, DCMbn_n, imu);
+    [S.F, S.G] = F_update(upd, DCMbn_n, imu, dtg);
     
     % Update matrix H
     S.H = [ Z I Z   Z Z Z Z;
-        Z Z Tpr Z Z Z Z;];
+            Z Z Tpr Z Z Z Z;];
     
     % Execute the extended Kalman filter
     S = kalman(x, z, S, dtg);
