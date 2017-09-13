@@ -35,6 +35,10 @@ function DCMbn = qua2dcm(qua)
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 14.
 %
+%			Crassidis, J.L. and Junkins, J.L. (2011). Optimal Esti-
+% mation of Dynamic Systems, 2nd Ed. Chapman and Hall/CRC, USA.
+% Eq. 7.39, p. 458.
+%
 % Version: 002
 % Date:    2016/11/26
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>

@@ -5,7 +5,7 @@ function euler = dcm2euler(DCMbn)
 %   DCMbn,	3x3 body-to-nav DCM.
 %
 % OUTPUT:
-%   euler,	3x1 updated Euler angles (rad).
+%   euler,	3x1 Euler angles (rad).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -40,9 +40,9 @@ function euler = dcm2euler(DCMbn)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-phi   = atan( DCMbn(3,2) ./ DCMbn(3,3) ); 
-theta = asin(-DCMbn(3,1) ); 
-psi   = atan2( DCMbn(2,1), DCMbn(1,1) ); 
+phi   = atan( DCMbn(3,2) ./ DCMbn(3,3) );   % roll
+theta = asin(-DCMbn(3,1) );                 % pitch
+psi   = atan2( DCMbn(2,1), DCMbn(1,1) );    % yaw
 
 euler = [phi theta psi];
 

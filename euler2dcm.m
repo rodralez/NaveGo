@@ -1,5 +1,11 @@
 function DCMnb = euler2dcm(euler)
 % euler2dcm: converts from Euler angles to DCM nav-to-body.
+% 
+% INPUT:
+%   euler,	3x1 Euler angles (rad).
+%
+% OUTPUT:
+%   DCMnb,  3x3 nav-to-body DCM.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
@@ -34,9 +40,11 @@ function DCMnb = euler2dcm(euler)
   C1 = [cos(psi)  sin(psi) 0; ...
         -sin(psi) cos(psi) 0; ...
          0     0   1];
+     
   C2 = [cos(theta)  0  -sin(theta); ...
           0   1     0 ; ...
         sin(theta)  0   cos(theta)];
+    
   C3 = [1   0    0;   ...
         0  cos(phi) sin(phi); ...
         0 -sin(phi) cos(phi)];  

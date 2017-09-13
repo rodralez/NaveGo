@@ -1,11 +1,11 @@
 function qua = euler2qua(euler)
-% euler2qua: converts from Euler angles to quaternions.
+% euler2qua: converts from Euler angles to quaternion.
 % 
 % INPUT:
 %   euler,	3x1 Euler angles (rad).
 %
 % OUTPUT:
-%   qua,    4x1 updated quaternion.
+%   qua,    4x1 quaternion.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -26,6 +26,10 @@ function qua = euler2qua(euler)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference:
+%
+%			Crassidis, J.L. and Junkins, J.L. (2011). Optimal Esti-
+% mation of Dynamic Systems, 2nd Ed. Chapman and Hall/CRC, USA.
+% Eq. 7.39, p. 458.
 %
 % Version: 003
 % Date:    2016/11/26

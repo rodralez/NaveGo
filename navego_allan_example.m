@@ -176,4 +176,3 @@ ustrain_allan_gb_drift = ustrain_allan.gb_drift
 
 ustrain_allan_ab_corr = ustrain_allan.ab_corr
 ustrain_allan_gb_corr = ustrain_allan.gb_corr
-
