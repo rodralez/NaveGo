@@ -38,7 +38,7 @@ function euler = qua2euler(qin)
 
 % Quaternion format used as in qq' quaternion equations.
 
-[n,m] = size(qin);
+[~,m] = size(qin);
 
 % If input is not a Nx4 matrix...
 if(m ~= 4)

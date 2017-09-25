@@ -2,7 +2,7 @@ function [qua_n, DCMbn_n, euler] = att_update(wb, DCMbn, qua, omega_ie_N, omega_
 % att_update: updates attitude using quaternion or DCM.
 %
 % INPUT:
-%   wb,         3x1 incremental turn rates in body-frame (rad/s).
+%   wb,         3x1 incremental turn-rates in body-frame (rad/s).
 %   DCMbn,      3x3 body-to-nav DCM.
 %   qua,        4x1 quaternion.
 %   omega_ie_N, 3x1 Earth rate (rad/s).
@@ -54,7 +54,7 @@ wb_n = ( wb - DCMbn' * (omega_ie_N + omega_en_N));
 if strcmp(att_mode, 'quaternion')
 %% Quaternion update   
 
-    qua_n   = qua_update(qua, wb_n, dt);    % Update quaternions
+    qua_n   = qua_update(qua, wb_n, dt);    % Update quaternion
     qua_n   = qua_n / norm(qua_n);          % Brute-force normalization
     DCMbn_n = qua2dcm(qua_n);               % Update DCM
     euler   = qua2euler(qua_n);             % Update Euler angles
@@ -65,7 +65,7 @@ elseif strcmp(att_mode, 'dcm')
     euler_i = wb_n * dt;                    % Incremental Euler angles 
     DCMbn_n = dcm_update(DCMbn, euler_i);   % Update DCM
     euler   = dcm2euler(DCMbn_n);           % Update Euler angles
-    qua_n   = euler2qua(euler);             % Update quaternions
+    qua_n   = euler2qua(euler);             % Update quaternion
     qua_n   = qua_n / norm(qua_n);          % Brute-force normalization
     
 else
