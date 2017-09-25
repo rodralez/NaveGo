@@ -431,7 +431,7 @@ if (strcmp(PLOT,'ON'))
     % ATTITUDE ERRORS
     figure;
     subplot(311)
-    plot(imu1_e.t, (imu1_ref.roll-ref_1.roll).*R2D, '-b', imu2_e.t, (imu2_e.roll-ref_2.roll).*R2D, '-r');
+    plot(imu1_e.t, (imu1_ref.roll - ref_1.roll).*R2D, '-b', imu2_e.t, (imu2_e.roll - ref_2.roll).*R2D, '-r');
     hold on
     plot (gps.t, R2D.*sig3_rr(:,1), '--k', gps.t, -R2D.*sig3_rr(:,1), '--k' )
     ylabel('[deg]')
@@ -440,7 +440,7 @@ if (strcmp(PLOT,'ON'))
     title('ROLL ERROR');
     
     subplot(312)
-    plot(imu1_e.t, (imu1_ref.pitch-ref_1.pitch).*R2D, '-b', imu2_e.t, (imu2_e.pitch-ref_2.pitch).*R2D, '-r');
+    plot(imu1_e.t, (imu1_ref.pitch - ref_1.pitch).*R2D, '-b', imu2_e.t, (imu2_e.pitch - ref_2.pitch).*R2D, '-r');
     hold on
     plot (gps.t, R2D.*sig3_rr(:,2), '--k', gps.t, -R2D.*sig3_rr(:,2), '--k' )
     ylabel('[deg]')
@@ -449,7 +449,7 @@ if (strcmp(PLOT,'ON'))
     title('PITCH ERROR');
     
     subplot(313)
-    plot(imu1_e.t, (imu1_ref.yaw-ref_1.yaw).*R2D, '-b', imu2_e.t, (imu2_e.yaw-ref_2.yaw).*R2D, '-r');
+    plot(imu1_e.t, (imu1_ref.yaw - ref_1.yaw).*R2D, '-b', imu2_e.t, (imu2_e.yaw - ref_2.yaw).*R2D, '-r');
     hold on
     plot (gps.t, R2D.*sig3_rr(:,3), '--k', gps.t, -R2D.*sig3_rr(:,3), '--k' )
     ylabel('[deg]')
@@ -486,7 +486,6 @@ if (strcmp(PLOT,'ON'))
     plot(gps_ref.t, (gps_ref.vel(:,1) - ref_g.vel(:,1)), '-c');
     hold on
     plot(imu1_ref.t, (imu1_ref.vel(:,1) - ref_1.vel(:,1)), '-b', imu2_ref.t, (imu2_ref.vel(:,1) - ref_2.vel(:,1)), '-r');
-    hold on
     plot (gps.t, sig3_rr(:,4), '--k', gps.t, -sig3_rr(:,4), '--k' )
     xlabel('Time [s]')
     ylabel('[m/s]')
@@ -496,8 +495,7 @@ if (strcmp(PLOT,'ON'))
     subplot(312)
     plot(gps_ref.t, (gps_ref.vel(:,2) - ref_g.vel(:,2)), '-c');
     hold on
-    plot(imu1_ref.t, (imu1_ref.vel(:,2) - ref_1.vel(:,2)), '-b', imu2_ref.t, (imu2_ref.vel(:,2) - imu2_ref.vel(:,2)), '-r');
-    hold on
+    plot(imu1_ref.t, (imu1_ref.vel(:,2) - ref_1.vel(:,2)), '-b', imu2_ref.t, (imu2_ref.vel(:,2) - ref_2.vel(:,2)), '-r');
     plot (gps.t, sig3_rr(:,5), '--k', gps.t, -sig3_rr(:,5), '--k' )
     xlabel('Time [s]')
     ylabel('[m/s]')
@@ -507,8 +505,7 @@ if (strcmp(PLOT,'ON'))
     subplot(313)
     plot(gps_ref.t, (gps_ref.vel(:,3) - ref_g.vel(:,3)), '-c');
     hold on
-    plot(imu1_ref.t, (imu1_ref.vel(:,3) - imu1_ref.vel(:,3)), '-b', imu2_ref.t, (imu2_ref.vel(:,3) - imu2_ref.vel(:,3)), '-r');
-    hold on
+    plot(imu1_ref.t, (imu1_ref.vel(:,3) - ref_1.vel(:,3)), '-b', imu2_ref.t, (imu2_ref.vel(:,3) - ref_2.vel(:,3)), '-r');
     plot (gps.t, sig3_rr(:,6), '--k', gps.t, -sig3_rr(:,6), '--k' )
     xlabel('Time [s]')
     ylabel('[m/s]')
@@ -559,9 +556,7 @@ if (strcmp(PLOT,'ON'))
     plot(gps_ref.t,  LAT2M_GR.*(gps_ref.lat - ref_g.lat), '-c')
     hold on
     plot(imu1_ref.t, LAT2M.*(imu1_ref.lat - ref_1.lat), '-b')
-    hold on
     plot(imu2_ref.t, LAT2M.*(imu2_ref.lat - ref_2.lat), '-r')
-    hold on
     plot (gps.t, LAT2M_G.*sig3_rr(:,7), '--k', gps.t, -LAT2M_G.*sig3_rr(:,7), '--k' )
     xlabel('Time [s]')
     ylabel('[m]')
@@ -569,12 +564,10 @@ if (strcmp(PLOT,'ON'))
     title('LATITUDE ERROR');
     
     subplot(312)
-    plot(gps_ref.t, LON2M_GR.*(gps_ref.lon - gps_ref.lon), '-c')
+    plot(gps_ref.t, LON2M_GR.*(gps_ref.lon - ref_g.lon), '-c')
     hold on
     plot(imu1_ref.t, LON2M.*(imu1_ref.lon - ref_1.lon), '-b')
-    hold on
     plot(imu2_ref.t, LON2M.*(imu2_ref.lon - ref_2.lon), '-r')
-    hold on
     plot(gps.t, LON2M_G.*sig3_rr(:,8), '--k', gps.t, -LON2M_G.*sig3_rr(:,8), '--k' )
     xlabel('Time [s]')
     ylabel('[m]')
@@ -582,12 +575,10 @@ if (strcmp(PLOT,'ON'))
     title('LONGITUDE ERROR');
     
     subplot(313)
-    plot(gps_ref.t, (gps_ref.h - gps_ref.h), '-c')
+    plot(gps_ref.t, (gps_ref.h - ref_g.h), '-c')
     hold on
     plot(imu1_ref.t, (imu1_ref.h - ref_1.h), '-b')
-    hold on
     plot(imu2_ref.t, (imu2_ref.h - ref_2.h), '-r')
-    hold on
     plot(gps.t, sig3_rr(:,9), '--k', gps.t, -sig3_rr(:,9), '--k' )
     xlabel('Time [s]')
     ylabel('[m]')
