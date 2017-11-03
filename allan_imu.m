@@ -1,6 +1,6 @@
 function [imu] = allan_imu (imu, verbose)
-% allan_imu: performs Allan variance analysis of inertial measurements
-% coming from an IMU in order to characterize several IMU errors.
+% allan_imu: performs Allan variance analysis on inertial measurements
+% coming from an IMU in order to characterize several types of IMU errors.
 %
 % -------------------------------------------------------------------------
 %
@@ -11,7 +11,7 @@ function [imu] = allan_imu (imu, verbose)
 %     wb, Nx3 matrix, turn rates [X Y Z] (rad/s).
 %     t,  Nx1, time vector (s).
 %
-%  - verbose. Verbose level for allan_overlap function.
+% - verbose. Verbose level for allan_overlap function.
 %
 % OUTPUT
 % - imu. Input data structure is added with the following new fields:
@@ -41,9 +41,25 @@ function [imu] = allan_imu (imu, verbose)
 %
 %     ab_corr, 1x3 vector, accs correlation times (s).
 %
-%     g_std, 1x3 vector, gyros standard deviation (rad/s).
+%     gb_std, 1x3 vector, gyros standard deviation (rad/s).
 %
-%     a_std, 1x3 vector, accs standard deviation (m/s^2).
+%     ab_std, 1x3 vector, accs standard deviation (m/s^2).
+%
+%     gb_max, 1x3 vector, gyros maximum value (rad/s).
+%
+%     ab_max, 1x3 vector, accs maximum value (m/s^2).
+%
+%     gb_min, 1x3 vector, gyros minimum value (rad/s).
+%
+%     ab_min, 1x3 vector, accs maximum value (m/s^2).
+%
+%     gb_mean, 1x3 vector, gyros mean value (rad/s).
+%
+%     ab_meam, 1x3 vector, accs mean value (m/s^2).
+%
+%     gb_median, 1x3 vector, gyros median value (rad/s).
+%
+%     ab_median, 1x3 vector, accs median value (m/s^2).
 %
 %     fb_tau, Mx3 with time vector from AV for accelerometers [X Y Z],
 %     respectively.
@@ -104,8 +120,8 @@ function [imu] = allan_imu (imu, verbose)
 %
 % -------------------------------------------------------------------------
 %
-% Version: 004
-% Date:    2017/03/15
+% Version: 005
+% Date:    2017/11/01
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 %
@@ -121,7 +137,7 @@ fields = {'fb_tau','fb_allan','fb_error','wb_tau','wb_allan','wb_error'};
     imu = rmfield(imu, fields);
 end
 
-%% PREALLOCATE
+%% PREALLOCATION
 
 % Random walk
 imu.arw = zeros(1,3);
@@ -136,12 +152,23 @@ imu.ab_corr = zeros(1,3);
 imu.gb_corr = zeros(1,3);
 
 % Standard deviation
-imu.astd = zeros(1,3);
-imu.gstd = zeros(1,3);
 
-% Bias 
+% Static bias 
 imu.ab_fix = zeros(1,3);
 imu.gb_fix = zeros(1,3);
+
+% Statistics
+imu.ab_std    = zeros(1,3);
+imu.ab_max    = zeros(1,3);
+imu.ab_min    = zeros(1,3);
+imu.ab_mean   = zeros(1,3);
+imu.ab_median = zeros(1,3);    
+
+imu.gb_std    = zeros(1,3);
+imu.gb_max    = zeros(1,3);
+imu.gb_min    = zeros(1,3);
+imu.gb_mean   = zeros(1,3);
+imu.gb_median = zeros(1,3);   
 
 %% TIME VECTOR FOR ALLAN VARIANCE
 
@@ -153,8 +180,8 @@ data.rate = round(1/dt);
 %   For rate-based data, ADEV is computed only for tau values greater than the
 %   minimum time between samples and less than the half of total time.
 T = (imu.t(end) - imu.t(1)) ;
-exp_min = floor( log10(dt) );
-exp_max = ceil( log10( T ) /2 );
+exp_min = floor( log10( dt ) );
+exp_max = floor( log10( T /2 ) );
 
 TAU = 10.^(exp_min:exp_max);
 
@@ -172,17 +199,17 @@ tau_v = tau_v(idl);
 
 plot_line = [ '-ob'; '-og'; '-or' ];
 
-fprintf('allan_imu: processing %.3d hours of data \n', T/60/60)
+fprintf('allan_imu: length of time is %02.3d hours or %.2f minutes or %.2f seconds. \n\n', (T/60/60), (T/60), T)
 
 %% ACCELEROMETERS
 
 for i=1:3
     
-    fprintf('allan_imu: Allan variance for FB %d \n', i)   
+    fprintf('\nallan_imu: Allan variance for FB %d \n', i)   
     
     data.freq = imu.fb(:,i);
     
-    [allan_o, ~, error, tau] = allan_overlap(data, tau_v ,'allan_overlap', verbose);
+    [allan_o, s, error, tau] = allan_overlap(data, tau_v ,'allan_overlap', verbose);
     
     imu.fb_tau  (:,i) = tau';
     imu.fb_allan(:,i) = allan_o';
@@ -193,10 +220,14 @@ for i=1:3
     
     [b_drift, t_corr] = allan_get_bdrift (tau, allan_o);
     imu.ab_drift(i) = b_drift;
-    imu.ab_corr(i) = t_corr;
+    imu.ab_corr(i)  = t_corr;
     
-    imu.astd(i) = std(data.freq);
-    imu.ab_fix(i) = mean(data.freq); 
+    imu.ab_std(i)    = s.std;
+    imu.ab_fix(i)    = s.mean; 
+    imu.ab_mean(i)   = s.mean;    
+    imu.ab_max(i)    = s.max;
+    imu.ab_min(i)    = s.min;
+    imu.ab_median(i) = s.median;
 end
 
 % Plot
@@ -217,12 +248,11 @@ legend('ACC X','ACC Y', 'ACC Z' )
 
 for i=1:3
     
-    fprintf('allan_imu: Allan variance for WB %d \n', i)
+    fprintf('\nallan_imu: Allan variance for WB %d \n', i)
     
     data.freq = imu.wb(:,i);
     
-    % AV Method 1. BEST METHOD
-    [allan_o, ~, error, tau] = allan_overlap(data, tau_v ,'allan_overlap', verbose);
+    [allan_o, s, error, tau] = allan_overlap(data, tau_v ,'allan_overlap', verbose);
     
     imu.wb_tau  (:,i) = tau;
     imu.wb_allan(:,i) = allan_o;
@@ -235,8 +265,15 @@ for i=1:3
     imu.gb_drift(i) = b_drift;
     imu.gb_corr(i) = t_corr;
     
-    imu.gstd(i) = std(data.freq); 
     imu.gb_fix(i) = mean(data.freq); 
+    
+    imu.gb_std(i)    = s.std;
+    imu.gb_fix(i)    = s.mean; 
+    imu.gb_mean(i)   = s.mean;     
+    imu.gb_max(i)    = s.max;
+    imu.gb_min(i)    = s.min;
+    imu.gb_fix(i)    = s.mean;
+    imu.gb_median(i) = s.median;    
 end
 
 % Plot

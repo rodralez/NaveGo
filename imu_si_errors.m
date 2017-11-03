@@ -1,6 +1,13 @@
 function imu_si = imu_si_errors(imu, dt)
 % imu_err_profile: converts IMU error manufacturer units to SI units.
 %
+% INPUT:
+%		imu: data structure with IMU error profile in manufacturer units.
+%		dt:  IMU sample time.
+%
+% OUTPUT:
+%		imu_si: data structure with IMU error profile in SI units.
+%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
 %   This file is part of NaveGo, an open-source MATLAB toolbox for 
@@ -25,8 +32,8 @@ function imu_si = imu_si_errors(imu, dt)
 % Journal of Control Engineering and Applied Informatics, vol. 17, 
 % issue 2, pp. 110-120, 2015. Eq. 9, 14, and 30.
 %
-% Version: 004
-% Date:    2017/08/11
+% Version: 005
+% Date:    2017/11/01
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
@@ -40,9 +47,9 @@ imu_si = imu;
 imu_si.arw = (imu.arw ./ 60) .* D2R;   % deg/root-hour -> rad/s/root-Hz
 imu_si.vrw = (imu.vrw ./ 60);          % m/s/root-hour -> m/s^2/root-Hz
 
-% Standard deviations
-imu_si.astd   = imu_si.vrw ./ sqrt(dt); % m/s^2/root-Hz  ->  m/s^2
-imu_si.gstd   = imu_si.arw ./ sqrt(dt); % rad/s/root-Hz  ->  rad/s
+% Standard deviation
+imu_si.ab_std   = imu_si.vrw ./ sqrt(dt); % m/s^2/root-Hz  ->  m/s^2
+imu_si.gb_std   = imu_si.arw ./ sqrt(dt); % rad/s/root-Hz  ->  rad/s
 
 % Static bias
 imu_si.ab_fix = imu.ab_fix .* 0.001 * G2MSS;    % mg -> m/s^2
@@ -54,15 +61,15 @@ imu_si.gb_drift = imu.gb_drift .* D2R;             % deg/s -> rad/s;
 
 % Dynamic bias PSD
 if (isinf(imu.gb_corr))
-    imu_si.gpsd = imu_si.gb_drift;  % rad/s (approximation)
+    imu_si.gb_psd = imu_si.gb_drift;  % rad/s (approximation)
 else
-    imu_si.gpsd = imu_si.gb_drift .* sqrt(imu.gb_corr);  % rad/s/root-Hz; 
+    imu_si.gb_psd = imu_si.gb_drift .* sqrt(imu.gb_corr);  % rad/s/root-Hz; 
 end
 
 if (isinf(imu.ab_corr))
-    imu_si.apsd = imu_si.ab_drift;  % m/s^2 (approximation)
+    imu_si.ab_psd = imu_si.ab_drift;  % m/s^2 (approximation)
 else
-    imu_si.apsd = imu_si.ab_drift .* sqrt(imu.ab_corr);  % m/s^2/root-Hz
+    imu_si.ab_psd = imu_si.ab_drift .* sqrt(imu.ab_corr);  % m/s^2/root-Hz
 end
 
 % Correlation time

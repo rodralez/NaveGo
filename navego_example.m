@@ -45,6 +45,8 @@
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
+% NOTE FOR IMU DATA
+
 clc
 close all
 clear
@@ -106,7 +108,7 @@ load ref.mat
 %      roll: Nx1 roll angles (radians).
 %     pitch: Nx1 pitch angles (radians).
 %       yaw: Nx1 yaw angle vector (radians).
-%        kn: 1x1 number of elements of time vector.
+%        kn: 1x1 number of elements of ref time vector.
 %     DCMnb: Nx9 Direct Cosine Matrix nav-to-body. Each row contains 
 %            the elements of one matrix ordered by columns as 
 %            [a11 a21 a31 a12 a22 a32 a13 a23 a33].
@@ -133,8 +135,8 @@ load ref.mat
 %     gpsd : 1x3 gyros dynamic biases PSD (rad/s/root-Hz).
 %     apsd : 1x3 accrs dynamic biases PSD (m/s^2/root-Hz);
 %      freq: 1x1 sampling frequency (Hz).
-% ini_align: 1x3 initial attitude at t(1).
-% ini_align_err: 1x3 initial attitude errors at t(1).
+% ini_align: 1x3 initial attitude at t(1), [roll pitch yaw] (rad).
+% ini_align_err: 1x3 initial attitude errors at t(1), [roll pitch yaw] (rad).
 
 ADIS16405.arw      = 2   .* ones(1,3);     % Angle random walks [X Y Z] (deg/root-hour)
 ADIS16405.arrw     = zeros(1,3);           % Angle rate random walks [X Y Z] (deg/root-hour/s)
@@ -190,9 +192,9 @@ imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude alig
 %       lon: Mx1 longitude (radians).
 %         h: Mx1 altitude (m).
 %       vel: Mx3 NED velocities (m/s).
-%       std: 1x3 position standard deviations (rad, rad, m).
-%      stdm: 1x3 position standard deviations (m, m, m).
-%      stdv: 1x3 velocity standard deviations (m/s).
+%       std: 1x3 position standard deviations, [lat lon h] (rad, rad, m).
+%      stdm: 1x3 position standard deviations, [lat lon h] (m, m, m).
+%      stdv: 1x3 velocity standard deviations, [Vn Ve Vd] (m/s).
 %      larm: 3x1 lever arm (x-right, y-fwd, z-down) (m).
 %      freq: 1x1 sampling frequency (Hz).
 
@@ -228,12 +230,12 @@ rng('shuffle')                  % Reset pseudo-random seed
 
 if strcmp(IMU1_DATA, 'ON')      % If simulation of IMU1 data is required ...
     
-    fprintf('NaveGo: generating IMU1 ACCR data... \n')
+    fprintf('NaveGo: simulating IMU1 ACCR data... \n')
     
     fb = acc_gen (ref, imu1);   % Generate acc in the body frame
     imu1.fb = fb;
     
-    fprintf('NaveGo: generating IMU1 GYRO data... \n')
+    fprintf('NaveGo: simulating IMU1 GYRO data... \n')
     
     wb = gyro_gen (ref, imu1);  % Generate gyro in the body frame
     imu1.wb = wb;
@@ -254,12 +256,12 @@ rng('shuffle')					% Reset pseudo-random seed
 
 if strcmp(IMU2_DATA, 'ON')      % If simulation of IMU2 data is required ...
     
-    fprintf('NaveGo: generating IMU2 ACCR data... \n')
+    fprintf('NaveGo: simulating IMU2 ACCR data... \n')
     
     fb = acc_gen (ref, imu2);   % Generate acc in the body frame
     imu2.fb = fb;
     
-    fprintf('NaveGo: generating IMU2 GYRO data... \n')
+    fprintf('NaveGo: simulating IMU2 GYRO data... \n')
     
     wb = gyro_gen (ref, imu2);  % Generate gyro in the body frame
     imu2.wb = wb;
@@ -294,6 +296,7 @@ if strcmp(IMU1_INS, 'ON')
     
     % Guarantee that imu1.t(end-1) < gps.t(end) < imu1.t(end)
     gps1 = gps;
+    
     if (imu1.t(end) <= gps.t(end)),
         
         fgx  = find(gps.t < imu1.t(end), 1, 'last' );
@@ -339,6 +342,7 @@ if strcmp(IMU2_INS, 'ON')
     
     % Guarantee that imu2.t(end-1) < gps.t(end) < imu2.t(end)
     gps2 = gps;
+    
     if (imu2.t(end) <= gps.t(end)),
         
         fgx  = find(gps.t < imu2.t(end), 1, 'last' );
@@ -535,10 +539,7 @@ if (strcmp(PLOT,'ON'))
     legend('REF', 'GPS', 'IMU1', 'IMU2');
     title('ALTITUDE');
     
-    % POSITION ERRORS
-    % fh = @radicurv;
-    % [RNs,REs] = arrayfun(fh, lat_rs);
-    
+    % POSITION ERRORS    
     [RN,RE]  = radius(imu1_ref.lat, 'double');
     LAT2M = RN + imu1_ref.h;
     LON2M = (RE + imu1_ref.h).*cos(imu1_ref.lat);
