@@ -41,7 +41,7 @@ function euler = dcm2euler(DCMbn)
 % URL:     https://github.com/rodralez/navego
 
 phi   = atan( DCMbn(3,2) ./ DCMbn(3,3) );   % roll
-theta = asin(-DCMbn(3,1) );                 % pitch
+theta = asin( -DCMbn(3,1) );                % pitch
 psi   = atan2( DCMbn(2,1), DCMbn(1,1) );    % yaw
 
 euler = [phi theta psi];

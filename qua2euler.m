@@ -36,7 +36,7 @@ function euler = qua2euler(qin)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-% Quaternion format used as in qq' quaternion equations.
+% Quaternion format used as in Crassidis' quaternion equations.
 
 [~,m] = size(qin);
 

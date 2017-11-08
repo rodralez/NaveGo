@@ -44,7 +44,7 @@ if magn == 0,
     A = eye(3);
 else
     % A(k), Eq. 11.10, p. 312.
-    A = eye(3) + (sin(magn)/magn)*S + ((1-cos(magn))/(magn^2))*S*S;
+    A = eye(3) + (sin(magn)/magn) * S + ((1-cos(magn))/(magn^2)) * S * S;
 end
 
 % Eq. 11.4, p. 311.

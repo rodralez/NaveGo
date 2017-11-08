@@ -1,4 +1,4 @@
-function vel = vel_gen(lat, lon, h, dt)
+function vel_ned = vel_gen(lat, lon, h, t)
 % vel_gen: generates NED velocities from llh position
 %
 % INPUT:
@@ -42,46 +42,48 @@ function vel = vel_gen(lat, lon, h, dt)
 idl = h < 0;
 
 if any(idl)
-    error('vel_gen: negative altitude.')
+    warning('vel_gen: negative altitude.')
 end
 
 % h_n  = h - (vd) * dt;
 
-h_diff = diff(h);
-vd = -h_diff * dt;
+vd = - diff_central(t, h);
 
 %% North Velocity 
 
 if (isa(h,'single'))
-    [RM,~] = radius(lat(2:end), 'single');
+    [RM,~] = radius(lat(2:end-1), 'single');
 else
-    [RM,~] = radius(lat(2:end), 'double');
+    [RM,~] = radius(lat(2:end-1), 'double');
 end
 
 % lat_n = lat + (vn_c) * dt;
 % vn_c = vn / (RM + h_n);
 
-lat_diff = diff(lat);
-vn_c = lat_diff * dt;
-vn = vn_c .* (RM + h(2:end));
+% vn_c = diff(lat) ./ diff(t);
+
+vn_c = diff_central(t, lat);
+vn = vn_c .* (RM + h(2:end-1));
 
 %% East Velocity 
 
 if (isa(h,'single'))
-    [~, RN] = radius(lat(2:end), 'single');
+    [~, RN] = radius(lat(2:end-1), 'single');
 else
-    [~, RN] = radius(lat(2:end), 'double');
+    [~, RN] = radius(lat(2:end-1), 'double');
 end
 
 % lon_n = lon + (ve_c) * dt;
 % ve_c  = ve / ((RN + h_n) * cos (lat_n));
 
-lon_diff = diff(lon);
-ve_c = lon_diff * dt;
-ve   = ve_c .* ((RN + h(2:end)) .* cos (lat(2:end)));
+ve_c = diff_central(t, lon);
+ve   = ve_c .* (RN + h(2:end-1)) .* cos (lat(2:end-1));
 
 %% NED Velocity
   
 vel = [vn ve vd];
+
+vel_ned = sgolayfilt(vel, 5, 15);
+
 
 end

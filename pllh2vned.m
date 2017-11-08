@@ -1,6 +1,13 @@
 function [vel_ned, acc_ned] = pllh2vned (ref)
-% pllh2vned: generates NED accelerations and NED velocity from 
+% pllh2vned: generates NED accelerations and velocities from 
 % navigation position.
+%
+% INPUT:
+%		ref: data structure with true trajectory.
+%
+% OUTPUT:
+%		vel_ned: Nx3 matrix with [Vn Ve Vd] velocities in the NED frame.
+%		acc_ned: Nx3 matrix with [An Ae Ad] accelerations in the NED frame.
 %
 %   Copyright (C) 2014, Rodrigo González, all rights reserved. 
 %     

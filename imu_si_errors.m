@@ -1,8 +1,19 @@
 function imu_si = imu_si_errors(imu, dt)
-% imu_err_profile: converts IMU error manufacturer units to SI units.
+% imu_err_profile: converts IMU errors manufacturer units to SI units.
 %
 % INPUT:
-%		imu: data structure with IMU error profile in manufacturer units.
+%		imu, data structure with IMU error profile in manufacturer units.
+%         imu.arw:      angle random walks [X Y Z] (deg/root-hour)
+%         imu.arrw:     angle rate random walks [X Y Z] (deg/root-hour/s)
+%         imu.vrw:      velocity random walks [X Y Z] (m/s/root-hour)
+%		  imu.vrrw:     velocity rate random walks [X Y Z] (deg/root-hour/s)
+%         imu.gb_fix:   gyro static biases [X Y Z] (deg/s)
+%         imu.ab_fix:   acc static biases [X Y Z] (mg)
+%         imu.gb_drift: gyro dynamic biases [X Y Z] (deg/s)
+%         imu.ab_drift: acc dynamic biases [X Y Z] (mg)
+%         imu.gb_corr:  gyro correlation times [X Y Z] (seconds)
+%         imu.ab_corr:  acc correlation times [X Y Z] (seconds)
+%         imu.m_psd:    magnetometer noise density [X Y Z] (mgauss/root-Hz)
 %		dt:  IMU sample time.
 %
 % OUTPUT:
