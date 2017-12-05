@@ -16,9 +16,11 @@ Main features of NaveGo are:
 
 * Processing of a loosely-coupled integrated navigation system (INS/GPS).
 
-* Implementation of the Allan variance procedure to characterize inertial sensors' typical errors.
-
 * Simulation of inertial sensors and GPS.
+
+* Zero Velocity Update (ZUPT) detection algorithm (in an early stage).
+
+* Implementation of the Allan variance procedure to characterize inertial sensors' typical errors.
 
 ## How to cite this work
 
@@ -26,7 +28,7 @@ Rodrigo Gonzalez, Carlos Catania, and Paolo Dabove (2017). NaveGo: an open-sourc
 
 ## Contributions
 
-We are looking for contributors for NaveGo! Since integrated navigation is a topic used in several fields as Geomatics, Geology, Mobile Mapping, Autonomous Driving, even Veterinary, we hope other communities than the navigation community compromise and contribute with this open-source project.
+We are looking for contributors for NaveGo! Since integrated navigation is a topic used in several fields as Geomatics, Geology, Mobile Mapping, Autonomous Driving, even Veterinary (yes, Veterinary!), we hope other communities than the navigation community compromise and contribute with this open-source project.
 
 You can contribute in many ways: 
 
@@ -57,8 +59,6 @@ Other publications:
 Future features of NaveGo will be:
 
 * RTS smoother.
-
-* Zero Velocity Update (ZUPT).
 
 * Tightly-coupled INS/GPS. 
 

@@ -13,7 +13,7 @@
 %   it under the terms of the GNU Lesser General Public License (LGPL)
 %   version 3 as published by the Free Software Foundation.
 %
-%   This program is distributed in the hope that it will be useful,
+%   This program is distributed in the hope that it will be useful,gps.stdm
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
 %   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 %   GNU Lesser General Public License for more details.
@@ -45,7 +45,7 @@
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-% NOTE FOR IMU DATA: inertial sensor must be aligned to body frame as X-fwd, Y-right, and Z-down.
+% NOTE: NaveGo supposes that IMU is aligned with respect to body-frame as X-forward, Y-right, and Z-down.
 
 clc
 close all
@@ -356,7 +356,7 @@ if strcmp(IMU2_INS, 'ON')
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    [imu2_e] = ins_gps(imu2, gps2, 'dcm', 'single');
+    [imu2_e] = ins_gps(imu2, gps2, 'quaternion', 'single');
     % ---------------------------------------------------------------------
     
     save imu2_e.mat imu2_e

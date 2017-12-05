@@ -1,4 +1,4 @@
-function omega_ie_N = earthrate(lat, precision)
+function omega_ie_n = earthrate(lat, precision)
 % earthrate: turn rate of the Earth in the navigation frame.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
@@ -33,8 +33,8 @@ if nargin < 2, precision = 'double'; end
 
 if strcmp(precision, 'single')
     
-    omega_ie_N = single((7.2921155e-5) .* [ single(cos(lat));  single(0) ; single(-sin(lat)) ]); 
+    omega_ie_n = single((7.2921155e-5) .* [ single(cos(lat));  single(0) ; single(-sin(lat)) ]); 
 else
     
-    omega_ie_N = (7.2921155e-5) .* [ (cos(lat));  0 ; -sin(lat) ]; 
+    omega_ie_n = (7.2921155e-5) .* [ (cos(lat));  0 ; -sin(lat) ]; 
 end

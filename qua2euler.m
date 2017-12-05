@@ -2,10 +2,10 @@ function euler = qua2euler(qin)
 % qua2euler: transforms quaternion to Euler angles.
 %
 % INPUT:
-%   qin,    4x1 or Nx4 quaternion.
+%   qin,    4x1 quaternion.
 %
 % OUTPUT:
-%   euler,  3x1 Euler angles (rad).
+%   euler,  3x1 Euler angles (radians).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -27,43 +27,21 @@ function euler = qua2euler(qin)
 %
 % Reference:
 %
-%			Crassidis, J.L. and Junkins, J.L. (2011). Optimal Esti-
-% mation of Dynamic Systems, 2nd Ed. Chapman and Hall/CRC, USA.
-% Eq. 7.39, p. 458.
+%			Dr. Paolo Zoccarato's comments at
+%   https://github.com/rodralez/NaveGo/pull/9
 %
-% Version: 004
-% Date:    2017/09/13
+% Version: 005
+% Date:    2017/12/05
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-% Quaternion format used as in Crassidis' quaternion equations.
+% Quaternion format as used in Crassidis' book quaternion equations.
 
-[~,m] = size(qin);
+DCMbn = qua2dcm(qin);
 
-% If input is not a Nx4 matrix...
-if(m ~= 4)
-    qin = qin';
-end
-
-qua = zeros(size(qin));
-
-qua(:,1) = qin(:,4);
-qua(:,2) = qin(:,1);
-qua(:,3) = qin(:,2);
-qua(:,4) = qin(:,3);
-
-% ZYX rotation sequence
-c1 = 2.*(qua(:,2).*qua(:,3) + qua(:,1).*qua(:,4));
-c2 = qua(:,1).^2 + qua(:,2).^2 - qua(:,3).^2 - qua(:,4).^2;
-
-c3 = 2.*(qua(:,2).*qua(:,4) - qua(:,1).*qua(:,3));
-
-c4 = -2.*(qua(:,3).*qua(:,4) + qua(:,1).*qua(:,2));
-c5 = qua(:,1).^2 - qua(:,2).^2 - qua(:,3).^2 + qua(:,4).^2;
-
-psi = atan2( c1, c2 );  % yaw
-theta = asin( c3 );     % pitch
-phi = atan2( c4, c5 );  % roll
+phi = atan2( DCMbn(3,2), DCMbn(3,3) );  % roll
+theta = asin( -DCMbn(3,1) );            % pitch
+psi = atan2( DCMbn(2,1), DCMbn(1,1) );  % yaw
 
 euler = [phi theta psi];
 
