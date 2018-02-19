@@ -288,7 +288,7 @@ for j = 2:Mg
                 lon_e(i) = mean (lon_e(i-idz:i , :));
                 h_e(i)   = mean (h_e(i-idz:i , :));
                 
-                disp('zupt')    % For debugging purposes
+%                 disp('zupt')    % For debugging purposes
                 
                 zupt = true;
             else

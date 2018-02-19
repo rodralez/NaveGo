@@ -14,7 +14,7 @@ function euler = qua2euler(qin)
 %
 %   NaveGo is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU Lesser General Public License (LGPL)
-%   version 3 as published by the Free Software Foundation.
+%   version 3 as published by the Free Software Foundation.000000000
 %
 %   This program is distributed in the hope that it will be useful,
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -39,9 +39,9 @@ function euler = qua2euler(qin)
 
 DCMbn = qua2dcm(qin);
 
-phi = atan2( DCMbn(3,2), DCMbn(3,3) );  % roll
-theta = asin( -DCMbn(3,1) );            % pitch
-psi = atan2( DCMbn(2,1), DCMbn(1,1) );  % yaw
+phi   = atan2( DCMbn(3,2), DCMbn(3,3) );    % roll
+theta = asin (-DCMbn(3,1) );                % pitch
+psi   = atan2( DCMbn(2,1), DCMbn(1,1) );    % yaw
 
 euler = [phi theta psi];
 
