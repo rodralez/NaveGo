@@ -276,6 +276,13 @@ else
     load imu2.mat
 end
 
+
+%% Print navigation time
+
+to = (ref.t(end) - ref.t(1));
+
+fprintf('\nNaveGo: navigation time is %.2f minutes or %.2f seconds. \n', (to/60), to)
+
 %% INS/GPS integration using IMU1
 
 if strcmp(IMU1_INS, 'ON')
@@ -376,12 +383,6 @@ end
 [imu1_ref, ref_1] = navego_interpolation (imu1_e, ref);
 [imu2_ref, ref_2] = navego_interpolation (imu2_e, ref);
 [gps_ref, ref_g]  = navego_interpolation (gps, ref);
-
-%% Print navigation time
-
-to = (ref.t(end) - ref.t(1));
-
-fprintf('\nNaveGo: navigation time is %.2f minutes or %.2f seconds. \n', (to/60), to)
 
 %% Print RMSE from IMU1
 

@@ -26,9 +26,9 @@ Main features of NaveGo are:
 
 We gently ask everyone using NaveGo to add two cites to his/her papers:
 
-* (Gonzalez et al., 2017) R. Gonzalez, C.A. Catania, P. Dabove, J.C. Taffernaberry, and M. Piras. Model validation of an open-source framework for post-processing INS/GNSS systems. III International Conference on Geographical Information Systems Theory, Applications and Management (GISTAM 2017). Porto, Portugal. April 2017.
+* (Gonzalez et al., 2017) R. Gonzalez, C.A. Catania, P. Dabove, J.C. Taffernaberry, and M. Piras. Model validation of an open-source framework for post-processing INS/GNSS systems. III International Conference on Geographical Information Systems Theory, Applications and Management (GISTAM 2017). Porto, Portugal. April 2017. [Download](http://www.scitepress.org/Papers/2017/63139/index.html).
 
-* (Gonzalez et al., 2015) R. Gonzalez, J.I. Giribet, and H.D. Patiño. NaveGo: a simulation framework for low-cost integrated navigation systems, Journal of Control Engineering and Applied Informatics, vol. 17, issue 2, pp. 110-120, 2015. [Link](http://ceai.srait.ro/index.php?journal=ceai&page=article&op=view&path%5B%5D=2478).
+* (Gonzalez et al., 2015) R. Gonzalez, J.I. Giribet, and H.D. Patiño. NaveGo: a simulation framework for low-cost integrated navigation systems, Journal of Control Engineering and Applied Informatics, vol. 17, issue 2, pp. 110-120, 2015. [Download](http://ceai.srait.ro/index.php?journal=ceai&page=article&op=view&path%5B%5D=2478).
 
 An URL to NaveGo should be provided with the following cite:
 
@@ -362,6 +362,16 @@ end
 
 ```
 
+### Print navigation time
+
+```matlab
+
+to = (ref.t(end) - ref.t(1));
+
+fprintf('\nNaveGo: navigation time is %.2f minutes or %.2f seconds. \n', (to/60), to)
+
+```
+
 ### INS/GPS integration using IMU1
 
 ```matlab
@@ -470,16 +480,6 @@ end
 [imu1_ref, ref_1] = navego_interpolation (imu1_e, ref);
 [imu2_ref, ref_2] = navego_interpolation (imu2_e, ref);
 [gps_ref, ref_g]  = navego_interpolation (gps, ref);
-
-```
-
-### Print navigation time
-
-```matlab
-
-to = (ref.t(end) - ref.t(1));
-
-fprintf('\nNaveGo: navigation time is %.2f minutes or %.2f seconds. \n', (to/60), to)
 
 ```
 
