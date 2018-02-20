@@ -1,5 +1,5 @@
 function rw = allan_get_rw (tau, allan, dt)
-% allan_get_rw: finds random walk parameter from Allan variance.
+% allan_get_rw: gets random walk values from Allan variance.
 %
 % INPUT
 % - tau, Nx1 Allan variance time vector in seconds.
@@ -7,7 +7,7 @@ function rw = allan_get_rw (tau, allan, dt)
 % - dt, period of time from the signal under analysis.
 % 
 % OUTPUT
-% - rw, random walk parameter.
+% - rw, random walk values.
 %
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -38,15 +38,16 @@ function rw = allan_get_rw (tau, allan, dt)
 
 fprintf('allan_get_rw: Random angle parameter is valid ONLY if Allan variance curve presents a -0.5 slope.\n')
 
-idx = find ( tau == 1);	 % Index for tau = 1 s
-if ( ~isempty(idx) )	 % if there is a precise value for tau = 1 s...
+idx = find ( tau == 1 );    % Index for tau = 1 s
+
+if ( ~isempty(idx) )        % if there is a precise value for tau = 1 s...
         
     rw =  (allan(idx));
-    return
-else					% if not...
+
+else                        % if not...
         
     % Upsample values between 0.5 < tau < 1.5
-    idx = find ( tau >= 0.5 & tau <= 1.5);
+    idx = find ( tau >= 0.5 & tau <= 1.5 );
     if ( isempty(idx) )
         error('allan_get_rw: ERROR, idx is empty')
     end

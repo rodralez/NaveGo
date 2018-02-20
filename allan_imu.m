@@ -234,8 +234,8 @@ end
 figure;
 
 for i=1:3
-    loglog(imu.fb_tau(:,i), imu.fb_allan(:,i), plot_line(i,:));
     
+    loglog(imu.fb_tau(:,i), imu.fb_allan(:,i), plot_line(i,:));    
     hold on
 end
 
@@ -280,6 +280,7 @@ end
 figure;
 
 for i=1:3
+    
     loglog(imu.wb_tau(:,i), imu.wb_allan(:,i), plot_line(i,:));
     hold on
 end
