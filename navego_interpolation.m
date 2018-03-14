@@ -35,7 +35,8 @@ else
     method = 'linear';
 end
 
-%% Adjust reference structure before interpolating
+%% Adjust reference data structure before interpolating
+
 if (ref.t(1) < data.t(1))
     
     fprintf('navego_interpolation: adjusting first element of ref ... \n')
@@ -104,7 +105,7 @@ if (isfield(data, 'roll') & isfield(ref, 'roll'))  % If data is from INS/GPS sol
     if (isfield(ref, 'vel') & isfield( data, 'vel'))
         
         ref_i.vel = interp1(data.t, data.vel,   ref.t, method);
-        flag_vel = any(isnan(ref_i.vel));        
+        flag_vel  = any(isnan(ref_i.vel));        
     else
         flag_vel = logical(zeros(1,3));
     end

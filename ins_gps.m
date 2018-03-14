@@ -33,7 +33,7 @@ function [ins_gps_e] = ins_gps(imu, gps, att_mode, precision)
 %       std: 1x3 position standard deviations (rad, rad, m).
 %      stdm: 1x3 position standard deviations (m, m, m).
 %      stdv: 1x3 velocity standard deviations (m/s).
-%      larm: 3x1 lever arm (x-right, y-fwd, z-down) (m).
+%      larm: 3x1 lever arm from IMU to GNSS antenna (x-fwd, y-right, z-down) (m).
 %      freq: 1x1 sampling frequency (Hz).
 %
 %	att_mode, attitude mode string.
@@ -97,7 +97,7 @@ if nargin < 4, precision = 'double'; end
 
 %% ZUPT detection algorithm
 ZUPT_THRELHOLD = 0.5;   % m/s
-ZUPT_WINDOW = 2;        % seconds
+ZUPT_WINDOW = 4;        % seconds
 zupt = false;
         
 %%
@@ -305,7 +305,7 @@ for j = 2:Mg
     
     % Innovations
     zp = Tpr * ([lat_e(i); lon_e(i); h_e(i);] - [gps.lat(j); gps.lon(j); gps.h(j);]) ...
-        - (DCMbn_n * gps.larm);
+        + (DCMbn_n * gps.larm);
     
     zv = (vel_e(i,:) - gps.vel(j,:))';
     

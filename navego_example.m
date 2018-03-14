@@ -195,12 +195,12 @@ imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude alig
 %       std: 1x3 position standard deviations, [lat lon h] (rad, rad, m).
 %      stdm: 1x3 position standard deviations, [lat lon h] (m, m, m).
 %      stdv: 1x3 velocity standard deviations, [Vn Ve Vd] (m/s).
-%      larm: 3x1 lever arm (x-right, y-fwd, z-down) (m).
+%      larm: 3x1 lever arm from IMU to GNSS antenna (x-fwd, y-right, z-down) (m).
 %      freq: 1x1 sampling frequency (Hz).
 
 gps.stdm = [5, 5, 10];                 % GPS positions standard deviations [lat lon h] (meters)
 gps.stdv = 0.1 * KT2MS .* ones(1,3);   % GPS velocities standard deviations [Vn Ve Vd] (meters/s)
-gps.larm = zeros(3,1);                 % GPS lever arm from IMU to GPS, X-fwd, Y-right, Z-down (meters)
+gps.larm = zeros(3,1);                 % GPS lever arm from IMU to GNSS antenna (x-fwd, y-right, z-down) (m).
 gps.freq = 5;                          % GPS operation frequency (Hz)
 
 %% SIMULATE GPS
