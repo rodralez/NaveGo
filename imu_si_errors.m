@@ -43,8 +43,8 @@ function imu_si = imu_si_errors(imu, dt)
 % Journal of Control Engineering and Applied Informatics, vol. 17, 
 % issue 2, pp. 110-120, 2015. Eq. 9, 14, and 30.
 %
-% Version: 005
-% Date:    2017/11/01
+% Version: 006
+% Date:    2018/03/26
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
@@ -59,8 +59,8 @@ imu_si.arw = (imu.arw ./ 60) .* D2R;   % deg/root-hour -> rad/s/root-Hz
 imu_si.vrw = (imu.vrw ./ 60);          % m/s/root-hour -> m/s^2/root-Hz
 
 % Standard deviation
-imu_si.ab_std   = imu_si.vrw ./ sqrt(dt); % m/s^2/root-Hz  ->  m/s^2
-imu_si.gb_std   = imu_si.arw ./ sqrt(dt); % rad/s/root-Hz  ->  rad/s
+imu_si.a_std   = imu_si.vrw ./ sqrt(dt); % m/s^2/root-Hz  ->  m/s^2
+imu_si.g_std   = imu_si.arw ./ sqrt(dt); % rad/s/root-Hz  ->  rad/s
 
 % Static bias
 imu_si.ab_fix = imu.ab_fix .* 0.001 * G2MSS;    % mg -> m/s^2

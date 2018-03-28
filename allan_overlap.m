@@ -93,6 +93,12 @@ function [retval, s, errorb, tau] = allan_overlap(data,tau,name,verbose)
 %
 % I welcome your comments and feedback!
 %
+% This file has been modified for NaveGo toolbox.
+% Version: 001
+% Date:    2018/03/26
+% Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
+% URL:     https://github.com/rodralez/navego
+%
 % MH Mar2014
 % v2.24 fix bug related to generating freq data from phase with timestamps
 %       (thanks to S. David-Grignot for finding the bug)
@@ -101,9 +107,6 @@ function [retval, s, errorb, tau] = allan_overlap(data,tau,name,verbose)
 %       plotting bugfix
 % v2.20 update to match allan.m (dsplot.m, columns)
 %       discard tau values with timestamp irregularities
-
-versionstr = 'allan_overlap v2.24';
-
 %
 % MH MAR2010
 % v2.1  bugfixes for irregular sample rates
@@ -124,6 +127,7 @@ versionstr = 'allan_overlap v2.24';
 
 %#ok<*AGROW>
 
+versionstr = 'allan_overlap v2.24';
 
 % defaults
 if nargin < 4, verbose = 2; end
@@ -210,9 +214,11 @@ if verbose >= 1 && any(abs(medianfreq) > 5*MAD)
   
 %     idl = (abs(medianfreq) < 5*MAD);
 %     data.freq = data.freq(idl);
+    s.outliers = length(outliers);
     
+else 
+    s.outliers = 0;
 end
-
 
 %%%%
 % There are four cases, freq or phase data, using timestamps or rate:

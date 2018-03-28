@@ -124,8 +124,8 @@ load ref.mat
 %      arrw: 1x3 angle rate random walks (rad/s^2/root-Hz).
 %       vrw: 1x3 velocity random walks (m/s^2/root-Hz).
 %      vrrw: 1x3 velocity rate random walks (m/s^3/root-Hz).
-%    gb_std: 1x3 gyros standard deviations (radians/s).
-%    ab_std: 1x3 accrs standard deviations (m/s^2).
+%    g_std: 1x3 gyros standard deviations (radians/s).
+%    a_std: 1x3 accrs standard deviations (m/s^2).
 %    gb_fix: 1x3 gyros static biases or turn-on biases (radians/s).
 %    ab_fix: 1x3 accrs static biases or turn-on biases (m/s^2).
 %  gb_drift: 1x3 gyros dynamic biases or bias instabilities (radians/s).

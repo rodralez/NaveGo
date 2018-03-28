@@ -36,8 +36,8 @@ function [fb_sim] = acc_gen (ref, imu)
 %           Aggarwal, P. et al. MEMS-Based Integrated Navigation. Artech
 % House. 2010.
 %
-% Version: 004
-% Date:    2017/07/27
+% Version: 005
+% Date:    2018/03/26
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -98,7 +98,7 @@ a_wn = zeros(M);
 
 for i=1:3
 
-    a_wn(:, i) = imu.ab_std(i).* wn(:,i);
+    a_wn(:, i) = imu.a_std(i).* wn(:,i);
 end
 
 % -------------------------------------------------------------------------
