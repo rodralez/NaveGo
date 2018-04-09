@@ -43,8 +43,8 @@ R2D = (180/pi);     % radians to degrees
 RMSE_roll  = rmse (ins_gps.roll ,   ins_gps_r.roll)  .* R2D;
 RMSE_pitch = rmse (ins_gps.pitch,   ins_gps_r.pitch) .* R2D;
 
-% Avoid difference greater than 175 deg when comparing yaw angles.
-idx = ( abs(ins_gps.yaw - ins_gps_r.yaw) < (175 * D2R) );
+% Avoid difference greater than 150 deg when comparing yaw angles.
+idx = ( abs(ins_gps.yaw - ins_gps_r.yaw) < (150 * D2R) );
 RMSE_yaw = rmse (ins_gps.yaw(idx),ins_gps_r.yaw(idx) ) .* R2D;
 
 %% INS/GPS velocity RMSE

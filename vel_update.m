@@ -1,4 +1,4 @@
-function vel_n = vel_update(fn, vel, omega_ie_N, omega_en_N, g, dt)
+function vel_n = vel_update(fn, vel, omega_ie_n, omega_en_n, g, dt)
 % vel_update: updates velocity in the NED frame.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -36,10 +36,10 @@ function vel_n = vel_update(fn, vel, omega_ie_N, omega_en_N, g, dt)
 
 S = skewm(vel);             % Skew matrix with velocities
  
-coriolis = S * (omega_en_N + 2 * omega_ie_N);   % Coriolis 
+coriolis = S * (omega_en_n + 2 * omega_ie_n);   % Coriolis 
 
-fn_c = fn - coriolis - (g); % Corrected specific force in nav-frame
+fn_c = fn - coriolis - g; % Corrected specific force in nav-frame
 
-vel_n = (vel + fn_c' * dt);
+vel_n = vel + (fn_c' * dt);
 
 end
