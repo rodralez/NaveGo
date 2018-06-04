@@ -24,7 +24,7 @@ Main features of NaveGo are:
 
 ## Please, cite our work
 
-We gently ask everyone using NaveGo in his/her research to add the following two cites to his/her future papers:
+If you are using NaveGo in your research, we gently ask you to add the following two cites to your future papers:
 
 * (Gonzalez et al., 2017) R. Gonzalez, C.A. Catania, P. Dabove, J.C. Taffernaberry, and M. Piras. Model validation of an open-source framework for post-processing INS/GNSS systems. III International Conference on Geographical Information Systems Theory, Applications and Management (GISTAM 2017). Porto, Portugal. April 2017. [Download](http://www.scitepress.org/Papers/2017/63139/index.html).
 

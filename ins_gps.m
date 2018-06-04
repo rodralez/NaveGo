@@ -87,6 +87,10 @@ function [ins_gps_e] = ins_gps(imu, gps, att_mode, precision)
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015. Alg. 2.
 %
+%   ZUPT algothim based on Paul Groves, Principles of GNSS, Inertial, and 
+% Multisensor Integrated Navigation Systems. CHAPTER 13, INS Alignment
+% and Zero Velocity Updates.
+%
 % Version: 003
 % Date:    2017/05/10
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
@@ -286,7 +290,7 @@ for j = 2:Mg
                 lon_e(i) = mean (lon_e(i-idz:i , :));
                 h_e(i)   = mean (h_e(i-idz:i , :));
                 
-%                 disp('zupt')    % For debugging purposes
+                disp('zupt')    % For debugging purposes
                 
                 zupt = true;
             else
@@ -332,7 +336,7 @@ for j = 2:Mg
     
     % Execute the extended Kalman filter
     S = kalman(x, z, S, dtg);
-    x(10:21) = S.xp(10:21);
+    x(10:21) = S.xp(10:21); % states 1:9 are set to zero (error-state approach)
     
     %% INS/GPS CORRECTIONS
     
@@ -380,13 +384,11 @@ for j = 2:Mg
     Pi(j,:) = reshape(S.Pi, 1, 441);
     Pp(j,:) = reshape(S.Pp, 1, 441);
     A(j,:)  = reshape(S.A, 1, 441);
-     
-%     if(zupt == true)
-%         
-%         In(j,:) = [ zv; zeros(3,1);]';
-%     else
-%         In(j,:) = z';   
-%     end
+    if(zupt == true)        
+        In(j,:) = [ zv; zeros(3,1);]';
+    else
+        In(j,:) = z';   
+    end
     B(j,:)  = [gb_fix', ab_fix', gb_drift', ab_drift'];
     
     zupt = false;
