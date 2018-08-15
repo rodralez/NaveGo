@@ -104,7 +104,8 @@ if nargin < 4, precision = 'double'; end
 ZUPT_THRELHOLD = 0.5;   % m/s
 ZUPT_WINDOW = 4;        % seconds
 zupt = false;
-        
+zupt_ctr = 0;
+
 %%
 Mi = (max(size(imu.t)));
 Mg = (max(size(gps.t)));
@@ -271,7 +272,7 @@ for j = 2:Mg
         % ZUPT detection algorithm
         idz = floor( ZUPT_WINDOW / dti ); % Index to set ZUPT window time
 
-        if ( i > idz)
+        if ( i > idz )
             
             vel_m = mean (vel_e(i-idz:i , :));
             
@@ -290,7 +291,14 @@ for j = 2:Mg
                 lon_e(i) = mean (lon_e(i-idz:i , :));
                 h_e(i)   = mean (h_e(i-idz:i , :));
                 
-                disp('zupt')    % For debugging purposes
+                % For debugging purposes only
+                % Print 'z' on console
+%                 fprintf('z '); 
+%                 zupt_ctr = zupt_ctr + 1;
+%                 if (zupt_ctr >= 20) 
+%                     zupt_ctr = 0; 
+%                     fprintf('\n'); 
+%                 end
                 
                 zupt = true;
             else

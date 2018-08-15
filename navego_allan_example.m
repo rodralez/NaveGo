@@ -49,6 +49,7 @@ load stim300
 %% ALLAN VARIANCE FOR STIM300 IMU
 
 % IMU data structure:
+% IMU data structure:
 %         t: Ix1 time vector (seconds).
 %        fb: Ix3 accelerations vector in body frame XYZ (m/s^2).
 %        wb: Ix3 turn rates vector in body frame XYZ (radians/s).
@@ -56,31 +57,31 @@ load stim300
 %      arrw: 1x3 angle rate random walks (rad/s^2/root-Hz).
 %       vrw: 1x3 velocity random walks (m/s^2/root-Hz).
 %      vrrw: 1x3 velocity rate random walks (m/s^3/root-Hz).
-%      gstd: 1x3 gyros standard deviations (radians/s).
-%      astd: 1x3 accrs standard deviations (m/s^2).
+%    g_std: 1x3 gyros standard deviations (radians/s).
+%    a_std: 1x3 accrs standard deviations (m/s^2).
 %    gb_fix: 1x3 gyros static biases or turn-on biases (radians/s).
 %    ab_fix: 1x3 accrs static biases or turn-on biases (m/s^2).
 %  gb_drift: 1x3 gyros dynamic biases or bias instabilities (radians/s).
 %  ab_drift: 1x3 accrs dynamic biases or bias instabilities (m/s^2).
 %   gb_corr: 1x3 gyros correlation times (seconds).
 %   ab_corr: 1x3 accrs correlation times (seconds).
-%     gpsd : 1x3 gyros dynamic biases PSD (rad/s/root-Hz).
-%     apsd : 1x3 accrs dynamic biases PSD (m/s^2/root-Hz);
+%    gb_psd: 1x3 gyros dynamic biases PSD (rad/s/root-Hz).
+%    ab_psd: 1x3 accrs dynamic biases PSD (m/s^2/root-Hz);
 %      freq: 1x1 sampling frequency (Hz).
 
 to = (stim300.t(end) - stim300.t(1));
-fprintf('NaveGo: dataset duration is %.2f hours or %.2f minutes or %.2f seconds. \n\n', (to/60/60), (to/60), to)
+fprintf('NaveGo: dataset time span is %.2f hours or %.2f minutes or %.2f seconds. \n\n', (to/60/60), (to/60), to)
 
-[stim300] = allan_imu (stim300);
+[stim300_allan] = allan_imu (stim300);
 
-stim300_arw = stim300.arw
-stim300_vrw = stim300.vrw
+stim300_arw = stim300_allan.arw
+stim300_vrw = stim300_allan.vrw
 
-stim300_ab_drift = stim300.ab_drift
-stim300_gb_drift = stim300.gb_drift
+stim300_ab_drift = stim300_allan.ab_drift
+stim300_gb_drift = stim300_allan.gb_drift
 
-stim300_ab_corr = stim300.ab_corr
-stim300_gb_corr = stim300.gb_corr
+stim300_ab_corr = stim300_allan.ab_corr
+stim300_gb_corr = stim300_allan.gb_corr
 
 %% ALLAN VARIANCE FOR SIMULATED IMU
 
@@ -96,7 +97,7 @@ ref.freq = 100;
 
 ref.t = ((0:N-1)/ref.freq)';   % Simulated time vector is about 5.3275 hours
 to = (ref.t(end) - ref.t(1));
-fprintf('NaveGo: dataset duration is %.2f hours or %.2f minutes or %.2f seconds. \n', (to/60/60), (to/60), to)
+fprintf('NaveGo: dataset time span is %.2f hours or %.2f minutes or %.2f seconds. \n', (to/60/60), (to/60), to)
 
 ref.lat = zeros(N,1);
 ref.vel = zeros(M); 
@@ -124,20 +125,20 @@ ref.DCMnb(:,9) = ones(N,1);
 %      arrw: 1x3 angle rate random walks (rad/s^2/root-Hz).
 %       vrw: 1x3 velocity random walks (m/s^2/root-Hz).
 %      vrrw: 1x3 velocity rate random walks (m/s^3/root-Hz).
-%      gstd: 1x3 gyros standard deviations (radians/s).
-%      astd: 1x3 accrs standard deviations (m/s^2).
+%    g_std: 1x3 gyros standard deviations (radians/s).
+%    a_std: 1x3 accrs standard deviations (m/s^2).
 %    gb_fix: 1x3 gyros static biases or turn-on biases (radians/s).
 %    ab_fix: 1x3 accrs static biases or turn-on biases (m/s^2).
 %  gb_drift: 1x3 gyros dynamic biases or bias instabilities (radians/s).
 %  ab_drift: 1x3 accrs dynamic biases or bias instabilities (m/s^2).
 %   gb_corr: 1x3 gyros correlation times (seconds).
 %   ab_corr: 1x3 accrs correlation times (seconds).
-%     gpsd : 1x3 gyros dynamic biases PSD (rad/s/root-Hz).
-%     apsd : 1x3 accrs dynamic biases PSD (m/s^2/root-Hz);
+%    gb_psd: 1x3 gyros dynamic biases PSD (rad/s/root-Hz).
+%    ab_psd: 1x3 accrs dynamic biases PSD (m/s^2/root-Hz);
 %      freq: 1x1 sampling frequency (Hz).
 
-ustrain.astd = [0.00643187932253599  0.00661386698561032  0.00673225201283004];
-ustrain.gstd = [0.00272391738310747  0.00248849782611228  0.00272332577563485];
+ustrain.a_std = [0.00643187932253599  0.00661386698561032  0.00673225201283004];
+ustrain.g_std = [0.00272391738310747  0.00248849782611228  0.00272332577563485];
 
 ustrain.ab_fix = [1.73301445792617e-13 -7.93732502701179e-13 -1.84847751355576e-13];
 ustrain.gb_fix = [4.00424136983284e-14 4.98197419961447e-15 -6.5696457219509e-15];
