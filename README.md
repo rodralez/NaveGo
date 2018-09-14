@@ -72,6 +72,7 @@ Future features of NaveGo will be:
 
 * Adaptive Kalman filter.
 
+
 ## Acknowledgments
 
 We would like to thank to many people that have contribute to make NaveGo a better tool:
@@ -84,14 +85,14 @@ We would like to thank to many people that have contribute to make NaveGo a bett
 
 * Dr. Paolo Dabove and Dr. Marco Piras (both from DIATI, Politecnico di Torino, Italy) for helping to debug NaveGo and suggesting new features.
 
-# Examples
 
+# Examples
 
 The example folder contains several types of examples.
 
 ## Allan variance example
 
-Just execute the file `navego_allan_example.m`. Firstly, it process 2-hours of static measurements from an Sensonor STIM300 IMU. Then, it process about 5 of synthetic inertial data.
+Just execute the file `navego_allan_example.m`. Firstly, it process 2-hours of static measurements from an Sensonor STIM300 IMU. Then, it process about 5 hours of synthetic inertial data.
 
 ## INS/GPS integration example using synthetic (simulated) data
 
