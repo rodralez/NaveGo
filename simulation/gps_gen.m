@@ -1,6 +1,14 @@
 function [gps, gps_r] = gps_gen(ref, gps)
 % gps_gen: generates GPS position and GPS velocity in the n-frame from reference data.
 %
+%   INPUT:
+%       ref, reference data structure.
+%       gps, GPS data structure.
+%
+%   OUTPUT:
+%       gps, GPS data structure with noise measurements.
+%       gps_r, GPS data structure with true measurements.
+%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
 %   This file is part of NaveGo, an open-source MATLAB toolbox for 
@@ -25,8 +33,8 @@ function [gps, gps_r] = gps_gen(ref, gps)
 % Journal of Control Engineering and Applied Informatics}, vol. 17, 
 % issue 2, pp. 110-120, 2015. Sec. 2.3.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2018/09/14
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
@@ -34,7 +42,7 @@ function [gps, gps_r] = gps_gen(ref, gps)
 
 if n>m, m=n; end
 
-% Downsampling GPS estimates from 1/dt Hz to freq Hz.
+% Downsampling GPS estimates from ref freq. to gps freq.
 dt   = mean(diff(ref.t));
 freq = 1/dt;
 dspl = round(freq / gps.freq);
