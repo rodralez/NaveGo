@@ -86,13 +86,14 @@ We would like to thank to many people that have contribute to make NaveGo a bett
 
 # Examples
 
-## Allan variance example
-
-Just execute the file `navego_allan_example.m`. It process 2-hours of static measurements from an Sensonor STIM300 IMU.
-
-## INS/GPS example
 
 The example folder contains several types of examples.
+
+## Allan variance example
+
+Just execute the file `navego_allan_example.m`. Firstly, it process 2-hours of static measurements from an Sensonor STIM300 IMU. Then, it process about 5 of synthetic inertial data.
+
+## INS/GPS example
 
 The file `navego_example.m` tries to demonstrate how NaveGo works. It compares the performances of two simulated IMUs, ADIS16405 IMU and ADIS16488 IMU, both integrated with a simulated GPS.
 
