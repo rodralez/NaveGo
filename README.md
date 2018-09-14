@@ -88,7 +88,7 @@ We would like to thank to many people that have contribute to make NaveGo a bett
 
 # Examples
 
-The example folder contains several types of examples.
+The `example` folder contains several types of examples.
 
 ## Allan variance example
 

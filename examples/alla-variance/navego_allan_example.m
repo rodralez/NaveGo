@@ -85,9 +85,9 @@ stim300_gb_drift = stim300_allan.gb_drift
 stim300_ab_corr = stim300_allan.ab_corr
 stim300_gb_corr = stim300_allan.gb_corr
 
-%% ALLAN VARIANCE FOR SIMULATED IMU
+%% ALLAN VARIANCE FOR SYNTHETIC IMU DATA
 
-fprintf('NaveGo: Allan variance analysis from simulated Microstrain 3DM-GX3-35 IMU... \n')
+fprintf('NaveGo: Allan variance analysis for synthetic data based on Microstrain 3DM-GX3-35 IMU... \n')
 
 %% SYNTHETIC STATIC DATA
 
