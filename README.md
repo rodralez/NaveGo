@@ -66,10 +66,11 @@ Other publications related to the development of NaveGo:
 
 Future features of NaveGo will be:
 
-* RTS smoother.
-
 * Tightly-coupled INS/GPS. 
 
+* RTS smoother.
+
+* Adaptive Kalman filter.
 
 ## Acknowledgments
 
@@ -90,6 +91,8 @@ We would like to thank to many people that have contribute to make NaveGo a bett
 Just execute the file `navego_allan_example.m`. It process 2-hours of static measurements from an Sensonor STIM300 IMU.
 
 ## INS/GPS example
+
+The example folder contains several types of examples.
 
 The file `navego_example.m` tries to demonstrate how NaveGo works. It compares the performances of two simulated IMUs, ADIS16405 IMU and ADIS16488 IMU, both integrated with a simulated GPS.
 
@@ -113,9 +116,9 @@ fprintf('\nNaveGo: starting simulation ... \n')
 
 % Comment any of the following parameters in order to NOT execute a particular portion of code
 
-GPS_DATA  = 'ON';   % Simulate GPS data
-IMU1_DATA = 'ON';   % Simulate ADIS16405 IMU data
-IMU2_DATA = 'ON';   % Simulate ADIS16488 IMU data
+GPS_DATA  = 'ON';   % Generate synthetic GPS data
+IMU1_DATA = 'ON';   % Generate synthetic ADIS16405 IMU data
+IMU2_DATA = 'ON';   % Generate synthetic ADIS16488 IMU data
 
 IMU1_INS  = 'ON';   % Execute INS/GPS integration for ADIS16405 IMU
 IMU2_INS  = 'ON';   % Execute INS/GPS integration for ADIS16488 IMU
@@ -127,9 +130,9 @@ PLOT      = 'ON';   % Plot results.
 if (~exist('GPS_DATA','var')),  GPS_DATA  = 'OFF'; end
 if (~exist('IMU1_DATA','var')), IMU1_DATA = 'OFF'; end
 if (~exist('IMU2_DATA','var')), IMU2_DATA = 'OFF'; end
-if (~exist('IMU1_INS','var')),  IMU1_INS = 'OFF'; end
-if (~exist('IMU2_INS','var')),  IMU2_INS = 'OFF'; end
-if (~exist('PLOT','var')),      PLOT     = 'OFF'; end
+if (~exist('IMU1_INS','var')),  IMU1_INS  = 'OFF'; end
+if (~exist('IMU2_INS','var')),  IMU2_INS  = 'OFF'; end
+if (~exist('PLOT','var')),      PLOT      = 'OFF'; end
 
 ```
 
@@ -168,9 +171,9 @@ load ref.mat
 %      roll: Nx1 roll angles (radians).
 %     pitch: Nx1 pitch angles (radians).
 %       yaw: Nx1 yaw angle vector (radians).
-%        kn: 1x1 number of elements of time vector.
+%        kn: 1x1 number of elements of ref time vector.
 %     DCMnb: Nx9 Direct Cosine Matrix nav-to-body. Each row contains 
-%            the elements of one matrix ordered by columns as 
+%            the elements of one DCM matrix ordered by columns as 
 %            [a11 a21 a31 a12 a22 a32 a13 a23 a33].
 %      freq: sampling frequency (Hz).
 
@@ -189,19 +192,19 @@ load ref.mat
 %      arrw: 1x3 angle rate random walks (rad/s^2/root-Hz).
 %       vrw: 1x3 velocity random walks (m/s^2/root-Hz).
 %      vrrw: 1x3 velocity rate random walks (m/s^3/root-Hz).
-%      gstd: 1x3 gyros standard deviations (radians/s).
-%      astd: 1x3 accrs standard deviations (m/s^2).
+%    g_std: 1x3 gyros standard deviations (radians/s).
+%    a_std: 1x3 accrs standard deviations (m/s^2).
 %    gb_fix: 1x3 gyros static biases or turn-on biases (radians/s).
 %    ab_fix: 1x3 accrs static biases or turn-on biases (m/s^2).
 %  gb_drift: 1x3 gyros dynamic biases or bias instabilities (radians/s).
 %  ab_drift: 1x3 accrs dynamic biases or bias instabilities (m/s^2).
 %   gb_corr: 1x3 gyros correlation times (seconds).
 %   ab_corr: 1x3 accrs correlation times (seconds).
-%     gpsd : 1x3 gyros dynamic biases PSD (rad/s/root-Hz).
-%     apsd : 1x3 accrs dynamic biases PSD (m/s^2/root-Hz);
+%    gb_psd: 1x3 gyros dynamic biases PSD (rad/s/root-Hz).
+%    ab_psd: 1x3 accrs dynamic biases PSD (m/s^2/root-Hz);
 %      freq: 1x1 sampling frequency (Hz).
-% ini_align: 1x3 initial attitude at t(1).
-% ini_align_err: 1x3 initial attitude errors at t(1).
+% ini_align: 1x3 initial attitude at t(1), [roll pitch yaw] (rad).
+% ini_align_err: 1x3 initial attitude errors at t(1), [roll pitch yaw] (rad).
 
 ADIS16405.arw      = 2   .* ones(1,3);     % Angle random walks [X Y Z] (deg/root-hour)
 ADIS16405.arrw     = zeros(1,3);           % Angle rate random walks [X Y Z] (deg/root-hour/s)
@@ -252,6 +255,7 @@ imu2 = imu_si_errors(ADIS16488, dt);        % Transform IMU manufacturer error u
 
 imu2.ini_align_err = [1 1 5] .* D2R;                     % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)  
 imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude align at t(1) (radians).
+
 ```
 
 ### Garmin 5-18 Hz GPS error profile
@@ -264,20 +268,20 @@ imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude alig
 %       lon: Mx1 longitude (radians).
 %         h: Mx1 altitude (m).
 %       vel: Mx3 NED velocities (m/s).
-%       std: 1x3 position standard deviations (rad, rad, m).
-%      stdm: 1x3 position standard deviations (m, m, m).
-%      stdv: 1x3 velocity standard deviations (m/s).
-%      larm: 3x1 lever arm (x-right, y-fwd, z-down) (m).
+%       std: 1x3 position standard deviations, [lat lon h] (rad, rad, m).
+%      stdm: 1x3 position standard deviations, [lat lon h] (m, m, m).
+%      stdv: 1x3 velocity standard deviations, [Vn Ve Vd] (m/s).
+%      larm: 3x1 lever arm from IMU to GNSS antenna (x-fwd, y-right, z-down) (m).
 %      freq: 1x1 sampling frequency (Hz).
 
 gps.stdm = [5, 5, 10];                 % GPS positions standard deviations [lat lon h] (meters)
 gps.stdv = 0.1 * KT2MS .* ones(1,3);   % GPS velocities standard deviations [Vn Ve Vd] (meters/s)
-gps.larm = zeros(3,1);                 % GPS lever arm [X Y Z] (meters)
+gps.larm = zeros(3,1);                 % GPS lever arm from IMU to GNSS antenna (x-fwd, y-right, z-down) (m).
 gps.freq = 5;                          % GPS operation frequency (Hz)
 
 ```
 
-### Simulate GPS
+### Generate GPS synthetic data
 
 ```matlab
 
@@ -285,7 +289,7 @@ rng('shuffle')                  % Reset pseudo-random seed
 
 if strcmp(GPS_DATA, 'ON')       % If simulation of GPS data is required ...
     
-    fprintf('NaveGo: simulating GPS data... \n')
+    fprintf('NaveGo: generating GPS synthetic data... \n')
     
     gps = gps_err_profile(ref.lat(1), ref.h(1), gps); % Transform GPS manufacturer error units to SI units.
     
@@ -302,7 +306,7 @@ end
 
 ```
 
-### Simulate IMU1
+### Generate IMU1 synthetic data 
 
 ```matlab
 
@@ -310,12 +314,12 @@ rng('shuffle')                  % Reset pseudo-random seed
 
 if strcmp(IMU1_DATA, 'ON')      % If simulation of IMU1 data is required ...
     
-    fprintf('NaveGo: generating IMU1 ACCR data... \n')
+    fprintf('NaveGo: generating IMU1 ACCR synthetic data... \n')
     
     fb = acc_gen (ref, imu1);   % Generate acc in the body frame
     imu1.fb = fb;
     
-    fprintf('NaveGo: generating IMU1 GYRO data... \n')
+    fprintf('NaveGo: generating IMU1 GYRO synthetic data... \n')
     
     wb = gyro_gen (ref, imu1);  % Generate gyro in the body frame
     imu1.wb = wb;
@@ -332,7 +336,7 @@ end
 
 ```
 
-### Simulate IMU2
+### Generate IMU2 synthetic data
 
 ```matlab
 
@@ -340,12 +344,12 @@ rng('shuffle')					% Reset pseudo-random seed
 
 if strcmp(IMU2_DATA, 'ON')      % If simulation of IMU2 data is required ...
     
-    fprintf('NaveGo: generating IMU2 ACCR data... \n')
+    fprintf('NaveGo: generating IMU2 ACCR synthetic data... \n')
     
     fb = acc_gen (ref, imu2);   % Generate acc in the body frame
     imu2.fb = fb;
     
-    fprintf('NaveGo: generating IMU2 GYRO data... \n')
+    fprintf('NaveGo: generating IMU2 GYRO synthetic data... \n')
     
     wb = gyro_gen (ref, imu2);  % Generate gyro in the body frame
     imu2.wb = wb;
@@ -383,7 +387,7 @@ if strcmp(IMU1_INS, 'ON')
     % Sincronize GPS data with IMU data.
     
     % Guarantee that gps.t(1) < imu1.t(1) < gps.t(2)
-    if (imu1.t(1) < gps.t(1)),
+    if (imu1.t(1) < gps.t(1))
         
         igx  = find(imu1.t > gps.t(1), 1, 'first' );
         
@@ -394,6 +398,7 @@ if strcmp(IMU1_INS, 'ON')
     
     % Guarantee that imu1.t(end-1) < gps.t(end) < imu1.t(end)
     gps1 = gps;
+    
     if (imu1.t(end) <= gps.t(end)),
         
         fgx  = find(gps.t < imu1.t(end), 1, 'last' );
@@ -443,6 +448,7 @@ if strcmp(IMU2_INS, 'ON')
     
     % Guarantee that imu2.t(end-1) < gps.t(end) < imu2.t(end)
     gps2 = gps;
+    
     if (imu2.t(end) <= gps.t(end)),
         
         fgx  = find(gps.t < imu2.t(end), 1, 'last' );
@@ -456,7 +462,7 @@ if strcmp(IMU2_INS, 'ON')
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    [imu2_e] = ins_gps(imu2, gps2, 'dcm', 'single');
+    [imu2_e] = ins_gps(imu2, gps2, 'quaternion', 'single');
     % ---------------------------------------------------------------------
     
     save imu2_e.mat imu2_e
@@ -483,7 +489,7 @@ end
 
 ```
 
-### Print RMSE from IMU1
+### Print on console RMSE from IMU1
 
 ```matlab
 
@@ -491,7 +497,7 @@ print_rmse (imu1_ref, gps_ref, ref_1, ref_g, 'INS/GPS IMU1');
 
 ```
 
-### Print RMSE from IMU2
+### Print on console RMSE from IMU2
 
 ```matlab
 
