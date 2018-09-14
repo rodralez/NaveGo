@@ -1,5 +1,11 @@
 function S = skewm(v)
-% skewm: forms skew-symmetric matrix from a 3-elements vector.
+% skewm: forms a skew-symmetric matrix from a 3-elements vector.
+%
+%   INPUT:
+%   v, vector.
+%
+%	OUTPUT:
+%	S, 3x3 matrix.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -23,8 +29,8 @@ function S = skewm(v)
 % 			Farrell, J. (2008). Aided Navigation: GPS With High Rate
 % Sensors. McGraw-Hill Professional, USA. Eq. B.15, p. 463.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2018/09/14
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 

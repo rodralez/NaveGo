@@ -91,8 +91,8 @@ function [ins_gps_e] = ins_gps(imu, gps, att_mode, precision)
 % Multisensor Integrated Navigation Systems. CHAPTER 13, INS Alignment
 % and Zero Velocity Updates.
 %
-% Version: 003
-% Date:    2017/05/10
+% Version: 004
+% Date:    2018/09/14
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -266,7 +266,7 @@ for j = 2:Mg
         lon_e(i) = pos(2);
         h_e(i)   = pos(3);
         
-        % Magnetic heading update
+        % PENDING. Magnetic heading update
 %         yawm_e(i) = hd_update (imu.mb(i,:), roll_e(i),  pitch_e(i), D);
         
         % ZUPT detection algorithm
@@ -314,10 +314,13 @@ for j = 2:Mg
     Tpr = diag([(RM + h_e(i)), (RN + h_e(i)) * cos(lat_e(i)), -1]);  % radians-to-meters
     
     % Innovations
+    % Lever arm correction for position
     zp = Tpr * ([lat_e(i); lon_e(i); h_e(i);] - [gps.lat(j); gps.lon(j); gps.h(j);]) ...
         + (DCMbn * gps.larm);
     
-    zv = (vel_e(i,:) - gps.vel(j,:))';    
+    % Lever arm corrections for velocity
+    zv = (vel_e(i,:) - gps.vel(j,:) - ((omega_ie_n + omega_en_n) .* (DCMbn * gps.larm))' ...
+        + (DCMbn * skewm(wb_corrected) * gps.larm )' )';   
     
     %% KALMAN FILTER
     
