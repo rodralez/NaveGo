@@ -4,7 +4,7 @@
 
 NaveGo: an open-source MATLAB/GNU-Octave toolbox for processing integrated navigation systems and performing inertial sensors profiling analysis.
 
-NaveGo is an open-source MATLAB/GNU Octave toolbox for processing integrated navigation systems, simulating inertial sensors and GPS receptor, and performing inertial sensors analysis that is freely available online. It is developed under MATLAB/GNU-Octave due to this programming language has become a *de facto* standard for simulation and mathematical computing. NaveGo has been verified by processing real-world data from a real trajectory and contrasting results with a commercial, closed-source software package. Difference between both solutions have shown to be negligible. For more information read (Gonzalez et al., 2017).
+NaveGo is an open-source MATLAB/GNU Octave toolbox for processing integrated navigation systems, simulating inertial sensors and GPS receptor freely available online. It also performs inertial sensors analysis using the Allan variance. It is developed under MATLAB/GNU-Octave due to this programming language has become a *de facto* standard for simulation and mathematical computing. NaveGo has been verified by processing real-world data from a real trajectory and contrasting results with a commercial, closed-source software package. Difference between both solutions have shown to be negligible. For more information read (Gonzalez et al., 2017).
 
 NaveGo is supported at the moment by three academic research groups: GridTics at the National University of Technology (Argentina), Engineering School at the National University of Cuyo (Argentina), and DIATI at the Politecnico di Torino (Italy). 
 
@@ -14,13 +14,13 @@ Main features of NaveGo are:
 
 * Processing of an inertial navigation system (INS).
 
-* Processing of a loosely-coupled integrated navigation system (INS/GPS).
+* Processing of a loosely-coupled integrated navigation system (INS/GNSS).
 
-* Simulation of inertial sensors and GPS.
+* Simulation of inertial sensors and GNSS.
 
 * Zero Velocity Update (ZUPT) detection algorithm.
 
-* Implementation of the Allan variance procedure to characterize inertial sensors' typical errors.
+* Allan variance technique to characterize inertial sensors' typical errors.
 
 ## Please, cite our work
 
@@ -109,6 +109,13 @@ close all
 clear
 matlabrc
 
+addpath ../../
+addpath ../../simulation/
+addpath ../../conversions/
+
+versionstr = 'NaveGo, release v1.0';
+
+fprintf('\n%s.\n', versionstr)
 fprintf('\nNaveGo: starting simulation ... \n')
 
 ```
@@ -276,7 +283,7 @@ imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude alig
 %      larm: 3x1 lever arm from IMU to GNSS antenna (x-fwd, y-right, z-down) (m).
 %      freq: 1x1 sampling frequency (Hz).
 
-gps.stdm = [5, 5, 10];                 % GPS positions standard deviations [lat lon h] (meters)
+gps.stdm = [5 5 10];                   % GPS positions standard deviations [lat lon h] (meters)
 gps.stdv = 0.1 * KT2MS .* ones(1,3);   % GPS velocities standard deviations [Vn Ve Vd] (meters/s)
 gps.larm = zeros(3,1);                 % GPS lever arm from IMU to GNSS antenna (x-fwd, y-right, z-down) (m).
 gps.freq = 5;                          % GPS operation frequency (Hz)
@@ -295,7 +302,7 @@ if strcmp(GPS_DATA, 'ON')       % If simulation of GPS data is required ...
     
     gps = gps_err_profile(ref.lat(1), ref.h(1), gps); % Transform GPS manufacturer error units to SI units.
     
-    [gps] = gps_gen(ref, gps);  % Generate GPS dataset from reference dataset.
+    gps = gps_gen(ref, gps);  % Generate GPS dataset from reference dataset.
 
     save gps.mat gps
     
@@ -366,6 +373,7 @@ else
     load imu2.mat
 end
 
+
 ```
 
 ### Print navigation time
@@ -384,7 +392,7 @@ fprintf('\nNaveGo: navigation time is %.2f minutes or %.2f seconds. \n', (to/60)
 
 if strcmp(IMU1_INS, 'ON')
     
-    fprintf('NaveGo: INS/GPS integration for IMU1... \n')
+    fprintf('NaveGo: INS/GNSS navigation estimates for IMU1... \n')
     
     % Sincronize GPS data with IMU data.
     
@@ -401,7 +409,7 @@ if strcmp(IMU1_INS, 'ON')
     % Guarantee that imu1.t(end-1) < gps.t(end) < imu1.t(end)
     gps1 = gps;
     
-    if (imu1.t(end) <= gps.t(end)),
+    if (imu1.t(end) <= gps.t(end))
         
         fgx  = find(gps.t < imu1.t(end), 1, 'last' );
         
@@ -414,16 +422,16 @@ if strcmp(IMU1_INS, 'ON')
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    [imu1_e] = ins_gps(imu1, gps1, 'quaternion', 'double');
+    nav1_e = ins_gps(imu1, gps1, 'quaternion', 'double');
     % ---------------------------------------------------------------------
     
-    save imu1_e.mat imu1_e
+    save nav1_e.mat nav1_e
     
 else
     
     fprintf('NaveGo: loading INS/GPS integration for IMU1... \n')
     
-    load imu1_e.mat
+    load nav1_e.mat
 end
 
 ```
@@ -434,12 +442,12 @@ end
 
 if strcmp(IMU2_INS, 'ON')
     
-    fprintf('\nNaveGo: INS/GPS integration for IMU2... \n')
+    fprintf('NaveGo: INS/GNSS navigation estimates for IMU2... \n')
     
     % Sincronize GPS data and IMU data.
     
     % Guarantee that gps.t(1) < imu2.t(1) < gps.t(2)
-    if (imu2.t(1) < gps.t(1)),
+    if (imu2.t(1) < gps.t(1))
         
         igx  = find(imu2.t > gps.t(1), 1, 'first' );
         
@@ -451,7 +459,7 @@ if strcmp(IMU2_INS, 'ON')
     % Guarantee that imu2.t(end-1) < gps.t(end) < imu2.t(end)
     gps2 = gps;
     
-    if (imu2.t(end) <= gps.t(end)),
+    if (imu2.t(end) <= gps.t(end))
         
         fgx  = find(gps.t < imu2.t(end), 1, 'last' );
         
@@ -464,29 +472,29 @@ if strcmp(IMU2_INS, 'ON')
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    [imu2_e] = ins_gps(imu2, gps2, 'quaternion', 'single');
+    nav2_e = ins_gps(imu2, gps2, 'quaternion', 'single');
     % ---------------------------------------------------------------------
     
-    save imu2_e.mat imu2_e
+    save nav2_e.mat nav2_e
     
 else
     
     fprintf('NaveGo: loading INS/GPS integration for IMU2... \n')
     
-    load imu2_e.mat
+    load nav2_e.mat
 end
 
 ```
 
-### Interpolate reference dataset 
+### Interpolate INS/GPS dataset 
 
 ```matlab
 
 % INS/GPS estimates and GPS data are interpolated according to the
 % reference dataset.
 
-[imu1_ref, ref_1] = navego_interpolation (imu1_e, ref);
-[imu2_ref, ref_2] = navego_interpolation (imu2_e, ref);
+[nav1_ref, ref_1] = navego_interpolation (nav1_e, ref);
+[nav2_ref, ref_2] = navego_interpolation (nav2_e, ref);
 [gps_ref, ref_g]  = navego_interpolation (gps, ref);
 
 ```
@@ -495,7 +503,7 @@ end
 
 ```matlab
 
-print_rmse (imu1_ref, gps_ref, ref_1, ref_g, 'INS/GPS IMU1');
+print_rmse (nav1_ref, gps_ref, ref_1, ref_g, 'INS/GPS IMU1');
 
 ```
 
@@ -503,7 +511,7 @@ print_rmse (imu1_ref, gps_ref, ref_1, ref_g, 'INS/GPS IMU1');
 
 ```matlab
 
-print_rmse (imu2_ref, gps_ref, ref_2, ref_g, 'INS/GPS IMU2');
+print_rmse (nav2_ref, gps_ref, ref_2, ref_g, 'INS/GPS IMU2');
 
 ```
 
