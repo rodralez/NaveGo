@@ -7,7 +7,7 @@ function ustrain = microstrain_read(file)
 % OUTPUT
 %   ustrain, fields in data structure depends on user selection. In this 
 %   function several fields have been added but may be modified to 
-%   comply to present fields in .cvs file .Please, read the 
+%   comply to present fields in .cvs file. Please, read the 
 %   3DM-GX3 manual for more information about existing fields.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -44,8 +44,6 @@ D2R = pi/180;
 
 %% OPEN FILE
 
-% addpath(path)
-
 ustrain_f = fopen(file, 'r');
 if ustrain_f == -1
     error('microstrain_read: ERROR: %s not found', file)
@@ -58,7 +56,6 @@ fprintf('microstrain_read: %s file has %d lines. \n', file, lines);
 
 % Set pointer back to the beginning
 fseek(ustrain_f,0,'bof');
-
 
 %% DATA STRUCTURE
 
@@ -137,31 +134,6 @@ data_m2 = data_m1(idx , :);
 
 idx = data_m2(:,4) ~= 0;
 data_vld = data_m2(idx , :);
-
-% IMU
-%  4 GPS TFlags, GPS Week, GPS TOW, IMU Timestamp [x800E], 
-%  3 IMU Sync Flags [x800F], IMU Sync Seconds [x800F], IMU Sync Nanoseconds [x800F], 
-%  3 X Accel [x8004],Y Accel [x8004],Z Accel [x8004], 
-%  3 X Gyro [x8005],Y Gyro [x8005],Z Gyro [x8005],
-%  3 X Mag [x8006],Y Mag [x8006],Z Mag [x8006], 
-%  3 Delta Theta X [x8007], Delta Theta Y [x8007], Delta Theta Z [x8007], 
-%  3 Delta Vel X [x8008],Delta Vel Y [x8008],Delta Vel Z [x8008],
-%  9 M11 [x8009],M12 [x8009],M13 [x8009],M21 [x8009],M22 [x8009],M23 [x8009],M31 [x8009],M32 [x8009],M33 [x8009],
-%  4 q0 [x800A],q1 [x800A],q2 [x800A],q3 [x800A],
-%  9 C11 [x800B],C12 [x800B],C13 [x800B],C21 [x800B],C22 [x800B],C23 [x800B],C31 [x800B],C32 [x800B],C33 [x800B],
-%  3 Roll [x800C],Pitch [x800C],Yaw [x800C],
-%  3 North X [x8010], North Y [x8010], North Z [x8010], 
-%  3 Up X [x8011],Up Y [x8011],Up Z [x8011],
-%  7 Lat [x8103],Long [x8103],Height [x8103],MSL Height [x8103], Horz Acc [x8103],Vert Acc [x8103], Flags [x8103], 
-%  5 ECEF X [x8104],ECEF Y [x8104],ECEF Z [x8104], ECEF Acc [x8104], Flags [x8104], 
-%  9 Vel N [x8105], Vel E [x8105], Vel D [x8105], Speed [x8105], Gnd Speed [x8105], Heading [x8105],Speed Acc [x8105],Heading Acc [x8105], Flags [x8105],
-%  5 ECEF Vel X [x8106],ECEF Vel Y [x8106],ECEF Vel Z [x8106],ECEF Vel Acc [x8106],Flags [x8106],
-%  8 Geo DOP [x8107], Pos DOP [x8107], Hor DOP [x8107], Vert DOP [x8107], Time DOP [x8107], Northing DOP [x8107], Easting DOP [x8107], Flags [x8107],
-%  8 UTC Year [x8108],UTC Month [x8108],UTC Day [x8108],UTC Hour [x8108],UTC Minute [x8108],UTC Second [x8108],UTC Millesecond [x8108],Flags [x8108],
-%  4 Clock Bias [x810A],Clock Drift [x810A],Clock Acc,Flags [x810A],
-%  4 GPS Fix [x810B],GPS SVs Used [x810B],GPS Fix Flags [x810B],Flags [x810B],
-%  7 SVI Channel [x810C], SVI ID [x810C], SVI CNR [x810C], SVI Azimuth [x810C], SVI Elev [x810C], SVI Flags [x810C],[x810C],
-%  4 HW Sensor Stat [x810D],HW Ant Stat [x810D],HW Ant Pwr [x810D],Flags [x810D]
 
 ustrain.gps_flags           = data_vld(:, 1);
 ustrain.week                = data_vld(:, 2);
@@ -254,7 +226,7 @@ ustrain.freq = round(1/dt);
 % Header
 ustrain.header = ustrain_h;
 
-% NED coordinates, fix gravity signus
+% NED coordinates, check if gravity is negative. 
 ustrain = correct_gravity(ustrain);
 
 fclose(ustrain_f);
