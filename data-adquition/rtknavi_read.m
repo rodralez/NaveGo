@@ -7,37 +7,12 @@ function gnss = rtknavi_read (fname)
 % OUTPUT
 %   gnss_data, data structure withe following format:
 %
-%       week,   GPS week.
-%       t,      GPS time of week (TOW, s). 
-%       latitude (rad). 
-%       longitude (rad). 
-%       height (m).  
-%       Q,      quality flag (Q=1:fix,2:float,3:sbas,4:dgps,5:single,6:ppp). 
-%       ns,     number of valid satellites.
-%
-%       The estimated standard deviations of the solution assuming a priori 
-%       error model and error parameters by the positioning options. The 
-%       sdn, sde or sdu means N (north), E (east) or U (up) component of 
-%       the standard deviations in m. The absolute value of sdne, sdeu or 
-%       sdun means square root of the absolute value of NE, EU or UN 
-%       component of the estimated covariance matrix. The sign  represents 
-%       the sign of the covariance. With all of the values, user can 
-%       reconstruct the full covariance matrix. 
-%
-%       sdn (m).  
-%       sde (m).  
-%       sdu (m). 
-%       sdne (m). 
-%       sdeu (m). 
-%       sdun (m).
-%
-%       age (s), age of differential. The time difference between the 
-%       observation data epochs of therover receiver and the base station. 
-%
-%       ratio,  ratio factor. The ratio factor of ʺratio‐testʺ for standard 
-%       integer ambiguity validation strategy. The value means the ratio of 
-%       the squared sum of the residuals with the second best integer vector 
-%       to with the best integer vector. 
+%	week, GPS Week
+%	t, GPS Time Of Week (s)
+%	stat, Solution Status
+%	ecef, ECEF position (m)
+%	vel, NED velocities (m/s)
+%	acc, NED accerelations (m/s^2) 
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -66,10 +41,8 @@ function gnss = rtknavi_read (fname)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-% RTKPOS format
-% WWWW, GPST, latitude (deg), longitude (deg), height (m),  Q, ns,  sdn(m),  sde(m),  sdu(m), sdne(m), sdeu(m), sdun(m),age(s), ratio
-
 D2R = pi/180;
+
 %% OPEN FILE
 
 fid = fopen(fname, 'r');
@@ -203,11 +176,11 @@ ffx = find (tow(iix) == M, 1, 'first');
 idx = iix (1:ffx);
 
 gnss.week  = gnss_data(idx,1);      % GPS Week
-gnss.t     = gnss_data(idx,2);   % GPS Time Of Week (s)
+gnss.t     = gnss_data(idx,2);   	% GPS Time Of Week (s)
 gnss.stat  = gnss_data(idx,3);      % Solution Status
 gnss.ecef  = gnss_data(idx,4:6);    % ECEF position (m)
-gnss.vel   = gnss_data(idx,7:9);        % NED velocities (m/s)
-gnss.acc   = gnss_data(idx,10:12);      % NED accerelations (m/s)
+gnss.vel   = gnss_data(idx,7:9);    % NED velocities (m/s)
+gnss.acc   = gnss_data(idx,10:12);  % NED accerelations (m/s)
 
 dtg = median(diff(gnss.t));
 gnss.freq = 1/dtg;
