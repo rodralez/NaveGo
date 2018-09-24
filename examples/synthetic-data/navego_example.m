@@ -1,4 +1,4 @@
-% Example of use of NaveGo.
+% Example of how to use NaveGo generating synthetic (simulated) data.
 % 
 % Main goal: to compare two INS/GPS systems performances, one using a 
 % simulated ADIS16405 IMU and simulated GPS, and another using a 
@@ -52,7 +52,9 @@ close all
 clear
 matlabrc
 
+addpath ../../
 addpath ../../simulation/
+addpath ../../conversions/
 
 versionstr = 'NaveGo, release v1.0';
 
