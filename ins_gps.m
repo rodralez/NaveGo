@@ -1,4 +1,4 @@
-function [ins_gps_e] = ins_gps(imu, gps, att_mode, precision)
+function [nav_e] = ins_gps(imu, gps, att_mode, precision)
 % ins_gps: loosely-coupled integrated navigation system.
 %
 % ins_gps integrates IMU and GPS measurements by using an Extended Kalman filter.
@@ -45,7 +45,7 @@ function [ins_gps_e] = ins_gps(imu, gps, att_mode, precision)
 %      single: single float precision (32 bits).
 %
 % OUTPUT:
-%   ins_gps_e, INS/GPS estimates data structure.
+%   nav_e, INS/GPS navigation estimates data structure.
 %         t: Ix1 time vector (seconds).
 %        tk: Mx1 time when Kalman filter is executed
 %      roll: Ix1 roll (radians).
@@ -91,8 +91,8 @@ function [ins_gps_e] = ins_gps(imu, gps, att_mode, precision)
 % Multisensor Integrated Navigation Systems. CHAPTER 13, INS Alignment
 % and Zero Velocity Updates.
 %
-% Version: 004
-% Date:    2018/09/14
+% Version: 005
+% Date:    2018/09/19
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -104,7 +104,7 @@ if nargin < 4, precision = 'double'; end
 ZUPT_THRELHOLD = 0.5;   % m/s
 ZUPT_WINDOW = 4;        % seconds
 zupt = false;
-zupt_ctr = 0;
+% zupt_ctr = 0;           % For debugging purposes only
 
 %%
 Mi = (max(size(imu.t)));
@@ -409,23 +409,23 @@ end
 
 %% Estimates from INS/GPS integration
 
-ins_gps_e.t     = ti(1:i, :);       % IMU time
-ins_gps_e.tk    = tg;               % Time when Kalman filter is executed
-ins_gps_e.roll  = roll_e(1:i, :);   % Roll
-ins_gps_e.pitch = pitch_e(1:i, :);  % Pitch
-ins_gps_e.yaw   = yaw_e(1:i, :);    % Yaw
+nav_e.t     = ti(1:i, :);       % IMU time
+nav_e.tk    = tg;               % Time when Kalman filter is executed
+nav_e.roll  = roll_e(1:i, :);   % Roll
+nav_e.pitch = pitch_e(1:i, :);  % Pitch
+nav_e.yaw   = yaw_e(1:i, :);    % Yaw
 % ins_gps_e.yawm  = yawm_e(1:i, :);    % Magnetic heading
-ins_gps_e.vel   = vel_e(1:i, :);    % NED velocities
-ins_gps_e.lat   = lat_e(1:i, :);    % Latitude
-ins_gps_e.lon   = lon_e(1:i, :);    % Longitude
-ins_gps_e.h     = h_e(1:i, :);      % Altitude
-ins_gps_e.Pi    = Pi;       % Pi matrices
-ins_gps_e.Pp    = Pp;       % Pp matrices
-ins_gps_e.A     = A;        % A matrices
-ins_gps_e.B     = B;        % Kalman filter biases compensations
-ins_gps_e.In    = In;       % Kalman filter innovations
-ins_gps_e.Xi    = Xi;       % Kalman filter a priori states
-ins_gps_e.Xp    = Xp;       % Kalman filter a posteriori states
+nav_e.vel   = vel_e(1:i, :);    % NED velocities
+nav_e.lat   = lat_e(1:i, :);    % Latitude
+nav_e.lon   = lon_e(1:i, :);    % Longitude
+nav_e.h     = h_e(1:i, :);      % Altitude
+nav_e.Pi    = Pi;       % Pi matrices
+nav_e.Pp    = Pp;       % Pp matrices
+nav_e.A     = A;        % A matrices
+nav_e.B     = B;        % Kalman filter biases compensations
+nav_e.In    = In;       % Kalman filter innovations
+nav_e.Xi    = Xi;       % Kalman filter a priori states
+nav_e.Xp    = Xp;       % Kalman filter a posteriori states
 
 fprintf('\n');
 

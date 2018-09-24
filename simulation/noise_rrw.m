@@ -3,7 +3,7 @@ function [rrw_n] = noise_rrw (rrw, dt, M)
 %
 % INPUT:
 %		rrw: 1x3, level of rate random walk.
-%		dt: sample time.
+%		dt: sampling time.
 %       M: 1x2, dimension of output vector.
 %
 % OUTPUT:

@@ -41,7 +41,7 @@
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 % 
 % Version: 011
-% Date:    2017/11/08
+% Date:    2018/09/19
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -83,7 +83,7 @@ if (~exist('PLOT','var')),      PLOT      = 'OFF'; end
 
 %% CONVERSION CONSTANTS
 
-G = 9.81;           % Gravity constant, m/s^2
+G =  9.80665;       % Gravity constant, m/s^2
 G2MSS = G;          % g to m/s^2
 MSS2G = (1/G);      % m/s^2 to g
 
@@ -289,7 +289,7 @@ fprintf('\nNaveGo: navigation time is %.2f minutes or %.2f seconds. \n', (to/60)
 
 if strcmp(IMU1_INS, 'ON')
     
-    fprintf('NaveGo: INS/GPS integration for IMU1... \n')
+    fprintf('NaveGo: INS/GNSS navigation estimates for IMU1... \n')
     
     % Sincronize GPS data with IMU data.
     
@@ -306,7 +306,7 @@ if strcmp(IMU1_INS, 'ON')
     % Guarantee that imu1.t(end-1) < gps.t(end) < imu1.t(end)
     gps1 = gps;
     
-    if (imu1.t(end) <= gps.t(end)),
+    if (imu1.t(end) <= gps.t(end))
         
         fgx  = find(gps.t < imu1.t(end), 1, 'last' );
         
@@ -319,28 +319,28 @@ if strcmp(IMU1_INS, 'ON')
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    [imu1_e] = ins_gps(imu1, gps1, 'quaternion', 'double');
+    [nav1_e] = ins_gps(imu1, gps1, 'quaternion', 'double');
     % ---------------------------------------------------------------------
     
-    save imu1_e.mat imu1_e
+    save nav1_e.mat nav1_e
     
 else
     
     fprintf('NaveGo: loading INS/GPS integration for IMU1... \n')
     
-    load imu1_e.mat
+    load nav1_e.mat
 end
 
 %% INS/GPS integration using IMU2
 
 if strcmp(IMU2_INS, 'ON')
     
-    fprintf('\nNaveGo: INS/GPS integration for IMU2... \n')
+    fprintf('NaveGo: INS/GNSS navigation estimates for IMU2... \n')
     
     % Sincronize GPS data and IMU data.
     
     % Guarantee that gps.t(1) < imu2.t(1) < gps.t(2)
-    if (imu2.t(1) < gps.t(1)),
+    if (imu2.t(1) < gps.t(1))
         
         igx  = find(imu2.t > gps.t(1), 1, 'first' );
         
@@ -352,7 +352,7 @@ if strcmp(IMU2_INS, 'ON')
     % Guarantee that imu2.t(end-1) < gps.t(end) < imu2.t(end)
     gps2 = gps;
     
-    if (imu2.t(end) <= gps.t(end)),
+    if (imu2.t(end) <= gps.t(end))
         
         fgx  = find(gps.t < imu2.t(end), 1, 'last' );
         
@@ -365,16 +365,16 @@ if strcmp(IMU2_INS, 'ON')
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    [imu2_e] = ins_gps(imu2, gps2, 'quaternion', 'single');
+    [nav2_e] = ins_gps(imu2, gps2, 'quaternion', 'single');
     % ---------------------------------------------------------------------
     
-    save imu2_e.mat imu2_e
+    save nav2_e.mat nav2_e
     
 else
     
     fprintf('NaveGo: loading INS/GPS integration for IMU2... \n')
     
-    load imu2_e.mat
+    load nav2_e.mat
 end
 
 %% Interpolate INS/GPS dataset 
@@ -382,174 +382,193 @@ end
 % INS/GPS estimates and GPS data are interpolated according to the
 % reference dataset.
 
-[imu1_ref, ref_1] = navego_interpolation (imu1_e, ref);
-[imu2_ref, ref_2] = navego_interpolation (imu2_e, ref);
+[nav1_ref, ref_1] = navego_interpolation (nav1_e, ref);
+[nav2_ref, ref_2] = navego_interpolation (nav2_e, ref);
 [gps_ref, ref_g]  = navego_interpolation (gps, ref);
 
 %% Print RMSE from IMU1
 
-print_rmse (imu1_ref, gps_ref, ref_1, ref_g, 'INS/GPS IMU1');
+print_rmse (nav1_ref, gps_ref, ref_1, ref_g, 'INS/GPS IMU1');
 
 %% Print RMSE from IMU2
 
-print_rmse (imu2_ref, gps_ref, ref_2, ref_g, 'INS/GPS IMU2');
+print_rmse (nav2_ref, gps_ref, ref_2, ref_g, 'INS/GPS IMU2');
 
 %% PLOT
 
 if (strcmp(PLOT,'ON'))
     
-    sig3_rr = abs(imu1_e.Pp(:, 1:22:end).^(0.5)) .* 3; % Only take diagonal elements from Pp
+    sig3_rr = abs(nav1_e.Pp(:, 1:22:end).^(0.5)) .* 3; % Only take diagonal elements from Pp
     
     % TRAJECTORY
     figure;
-    plot3(ref.lon.*R2D, ref.lat.*R2D, ref.h)
+    plot3(ref.lon.*R2D, ref.lat.*R2D, ref.h, '--k')
     hold on
+    plot3(nav1_e.lon.*R2D, nav1_e.lat.*R2D, nav1_e.h, 'b')
+    plot3(nav2_e.lon.*R2D, nav2_e.lat.*R2D, nav2_e.h, 'r')
     plot3(ref.lon(1).*R2D, ref.lat(1).*R2D, ref.h(1), 'or', 'MarkerSize', 10, 'LineWidth', 2)
     axis tight
-    title('TRAJECTORY')
+    title('TRAJECTORIES')
     xlabel('Longitude [deg.]')
     ylabel('Latitude [deg.]')
     zlabel('Altitude [m]')
+    view(-25,35)
+    legend('TRUE', 'IMU1', 'IMU2')
     grid
     
     % ATTITUDE
     figure;
     subplot(311)
-    plot(ref.t, R2D.*ref.roll, '--k', imu1_e.t, R2D.*imu1_e.roll,'-b', imu2_e.t, R2D.*imu2_e.roll,'-r');
+    plot(ref.t, R2D.*ref.roll, '--k', nav1_e.t, R2D.*nav1_e.roll,'-b', nav2_e.t, R2D.*nav2_e.roll,'-r');
     ylabel('[deg]')
     xlabel('Time [s]')
     legend('REF', 'IMU1', 'IMU2');
     title('ROLL');
+    grid
     
     subplot(312)
-    plot(ref.t, R2D.*ref.pitch, '--k', imu1_e.t, R2D.*imu1_e.pitch,'-b', imu2_e.t, R2D.*imu2_e.pitch,'-r');
+    plot(ref.t, R2D.*ref.pitch, '--k', nav1_e.t, R2D.*nav1_e.pitch,'-b', nav2_e.t, R2D.*nav2_e.pitch,'-r');
     ylabel('[deg]')
     xlabel('Time [s]')
     legend('REF', 'IMU1', 'IMU2');
     title('PITCH');
+    grid
     
     subplot(313)
-    plot(ref.t, R2D.* ref.yaw, '--k', imu1_e.t, R2D.*imu1_e.yaw,'-b', imu2_e.t, R2D.*imu2_e.yaw,'-r');
+    plot(ref.t, R2D.* ref.yaw, '--k', nav1_e.t, R2D.*nav1_e.yaw,'-b', nav2_e.t, R2D.*nav2_e.yaw,'-r');
     ylabel('[deg]')
     xlabel('Time [s]')
     legend('REF', 'IMU1', 'IMU2');
     title('YAW');
+    grid
     
     % ATTITUDE ERRORS
     figure;
     subplot(311)
-    plot(imu1_e.t, (imu1_ref.roll - ref_1.roll).*R2D, '-b', imu2_ref.t, (imu2_ref.roll - ref_2.roll).*R2D, '-r');
+    plot(nav1_e.t, (nav1_ref.roll - ref_1.roll).*R2D, '-b', nav2_ref.t, (nav2_ref.roll - ref_2.roll).*R2D, '-r');
     hold on
     plot (gps.t, R2D.*sig3_rr(:,1), '--k', gps.t, -R2D.*sig3_rr(:,1), '--k' )
     ylabel('[deg]')
     xlabel('Time [s]')
     legend('IMU1', 'IMU2', '3\sigma');
     title('ROLL ERROR');
+    grid
     
     subplot(312)
-    plot(imu1_e.t, (imu1_ref.pitch - ref_1.pitch).*R2D, '-b', imu2_ref.t, (imu2_ref.pitch - ref_2.pitch).*R2D, '-r');
+    plot(nav1_e.t, (nav1_ref.pitch - ref_1.pitch).*R2D, '-b', nav2_ref.t, (nav2_ref.pitch - ref_2.pitch).*R2D, '-r');
     hold on
     plot (gps.t, R2D.*sig3_rr(:,2), '--k', gps.t, -R2D.*sig3_rr(:,2), '--k' )
     ylabel('[deg]')
     xlabel('Time [s]')
     legend('IMU1', 'IMU2', '3\sigma');
     title('PITCH ERROR');
+    grid
     
     subplot(313)
-    plot(imu1_e.t, (imu1_ref.yaw - ref_1.yaw).*R2D, '-b', imu2_ref.t, (imu2_ref.yaw - ref_2.yaw).*R2D, '-r');
+    plot(nav1_e.t, (nav1_ref.yaw - ref_1.yaw).*R2D, '-b', nav2_ref.t, (nav2_ref.yaw - ref_2.yaw).*R2D, '-r');
     hold on
     plot (gps.t, R2D.*sig3_rr(:,3), '--k', gps.t, -R2D.*sig3_rr(:,3), '--k' )
     ylabel('[deg]')
     xlabel('Time [s]')
     legend('IMU1', 'IMU2', '3\sigma');
     title('YAW ERROR');
+    grid
     
     % VELOCITIES
     figure;
     subplot(311)
-    plot(ref.t, ref.vel(:,1), '--k', gps.t, gps.vel(:,1),'-c', imu1_e.t, imu1_e.vel(:,1),'-b', imu2_e.t, imu2_e.vel(:,1),'-r');
+    plot(ref.t, ref.vel(:,1), '--k', gps.t, gps.vel(:,1),'-c', nav1_e.t, nav1_e.vel(:,1),'-b', nav2_e.t, nav2_e.vel(:,1),'-r');
     xlabel('Time [s]')
     ylabel('[m/s]')
     legend('REF', 'GPS', 'IMU1', 'IMU2');
     title('NORTH VELOCITY');
+    grid
     
     subplot(312)
-    plot(ref.t, ref.vel(:,2), '--k', gps.t, gps.vel(:,2),'-c', imu1_e.t, imu1_e.vel(:,2),'-b', imu2_e.t, imu2_e.vel(:,2),'-r');
+    plot(ref.t, ref.vel(:,2), '--k', gps.t, gps.vel(:,2),'-c', nav1_e.t, nav1_e.vel(:,2),'-b', nav2_e.t, nav2_e.vel(:,2),'-r');
     xlabel('Time [s]')
     ylabel('[m/s]')
     legend('REF', 'GPS', 'IMU1', 'IMU2');
     title('EAST VELOCITY');
+    grid
     
     subplot(313)
-    plot(ref.t, ref.vel(:,3), '--k', gps.t, gps.vel(:,3),'-c', imu1_e.t, imu1_e.vel(:,3),'-b', imu2_e.t, imu2_e.vel(:,3),'-r');
+    plot(ref.t, ref.vel(:,3), '--k', gps.t, gps.vel(:,3),'-c', nav1_e.t, nav1_e.vel(:,3),'-b', nav2_e.t, nav2_e.vel(:,3),'-r');
     xlabel('Time [s]')
     ylabel('[m/s]')
     legend('REF', 'GPS', 'IMU1', 'IMU2');
     title('DOWN VELOCITY');
+    grid
     
     % VELOCITIES ERRORS
     figure;
     subplot(311)
     plot(gps_ref.t, (gps_ref.vel(:,1) - ref_g.vel(:,1)), '-c');
     hold on
-    plot(imu1_ref.t, (imu1_ref.vel(:,1) - ref_1.vel(:,1)), '-b', imu2_ref.t, (imu2_ref.vel(:,1) - ref_2.vel(:,1)), '-r');
+    plot(nav1_ref.t, (nav1_ref.vel(:,1) - ref_1.vel(:,1)), '-b', nav2_ref.t, (nav2_ref.vel(:,1) - ref_2.vel(:,1)), '-r');
     plot (gps.t, sig3_rr(:,4), '--k', gps.t, -sig3_rr(:,4), '--k' )
     xlabel('Time [s]')
     ylabel('[m/s]')
     legend('GPS', 'IMU1', 'IMU2', '3\sigma');
     title('VELOCITY NORTH ERROR');
+    grid
     
     subplot(312)
     plot(gps_ref.t, (gps_ref.vel(:,2) - ref_g.vel(:,2)), '-c');
     hold on
-    plot(imu1_ref.t, (imu1_ref.vel(:,2) - ref_1.vel(:,2)), '-b', imu2_ref.t, (imu2_ref.vel(:,2) - ref_2.vel(:,2)), '-r');
+    plot(nav1_ref.t, (nav1_ref.vel(:,2) - ref_1.vel(:,2)), '-b', nav2_ref.t, (nav2_ref.vel(:,2) - ref_2.vel(:,2)), '-r');
     plot (gps.t, sig3_rr(:,5), '--k', gps.t, -sig3_rr(:,5), '--k' )
     xlabel('Time [s]')
     ylabel('[m/s]')
     legend('GPS', 'IMU1', 'IMU2', '3\sigma');
     title('VELOCITY EAST ERROR');
+    grid
     
     subplot(313)
     plot(gps_ref.t, (gps_ref.vel(:,3) - ref_g.vel(:,3)), '-c');
     hold on
-    plot(imu1_ref.t, (imu1_ref.vel(:,3) - ref_1.vel(:,3)), '-b', imu2_ref.t, (imu2_ref.vel(:,3) - ref_2.vel(:,3)), '-r');
+    plot(nav1_ref.t, (nav1_ref.vel(:,3) - ref_1.vel(:,3)), '-b', nav2_ref.t, (nav2_ref.vel(:,3) - ref_2.vel(:,3)), '-r');
     plot (gps.t, sig3_rr(:,6), '--k', gps.t, -sig3_rr(:,6), '--k' )
     xlabel('Time [s]')
     ylabel('[m/s]')
     legend('GPS', 'IMU1', 'IMU2', '3\sigma');
     title('VELOCITY DOWN ERROR');
+    grid
     
     % POSITION
     figure;
     subplot(311)
-    plot(ref.t, ref.lat .*R2D, '--k', gps.t, gps.lat.*R2D, '-c', imu1_e.t, imu1_e.lat.*R2D, '-b', imu2_e.t, imu2_e.lat.*R2D, '-r');
+    plot(ref.t, ref.lat .*R2D, '--k', gps.t, gps.lat.*R2D, '-c', nav1_e.t, nav1_e.lat.*R2D, '-b', nav2_e.t, nav2_e.lat.*R2D, '-r');
     xlabel('Time [s]')
     ylabel('[deg]')
     legend('REF', 'GPS', 'IMU1', 'IMU2');
     title('LATITUDE');
+    grid
     
     subplot(312)
-    plot(ref.t, ref.lon .*R2D, '--k', gps.t, gps.lon.*R2D, '-c', imu1_e.t, imu1_e.lon.*R2D, '-b', imu2_e.t, imu2_e.lon.*R2D, '-r');
+    plot(ref.t, ref.lon .*R2D, '--k', gps.t, gps.lon.*R2D, '-c', nav1_e.t, nav1_e.lon.*R2D, '-b', nav2_e.t, nav2_e.lon.*R2D, '-r');
     xlabel('Time [s]')
     ylabel('[deg]')
     legend('REF', 'GPS', 'IMU1', 'IMU2');
     title('LONGITUDE');
+    grid
     
     subplot(313)
-    plot(ref.t, ref.h, '--k', gps.t, gps.h, '-c', imu1_e.t, imu1_e.h, '-b', imu2_e.t, imu2_e.h, '-r');
+    plot(ref.t, ref.h, '--k', gps.t, gps.h, '-c', nav1_e.t, nav1_e.h, '-b', nav2_e.t, nav2_e.h, '-r');
     xlabel('Time [s]')
     ylabel('[m]')
     legend('REF', 'GPS', 'IMU1', 'IMU2');
     title('ALTITUDE');
+    grid
     
     % POSITION ERRORS    
-    [RN,RE]  = radius(imu1_ref.lat, 'double');
-    LAT2M_1 = RN + imu1_ref.h;
-    LON2M_1 = (RE + imu1_ref.h).*cos(imu1_ref.lat);
+    [RN,RE]  = radius(nav1_ref.lat, 'double');
+    LAT2M_1 = RN + nav1_ref.h;
+    LON2M_1 = (RE + nav1_ref.h).*cos(nav1_ref.lat);
     
-    [RN,RE]  = radius(imu2_ref.lat, 'double');
-    LAT2M_2 = RN + imu2_ref.h;
-    LON2M_2 = (RE + imu2_ref.h).*cos(imu2_ref.lat);
+    [RN,RE]  = radius(nav2_ref.lat, 'double');
+    LAT2M_2 = RN + nav2_ref.h;
+    LON2M_2 = (RE + nav2_ref.h).*cos(nav2_ref.lat);
     
     [RN,RE]  = radius(gps.lat, 'double');
     LAT2M_G = RN + gps.h;
@@ -563,33 +582,36 @@ if (strcmp(PLOT,'ON'))
     subplot(311)
     plot(gps_ref.t,  LAT2M_GR.*(gps_ref.lat - ref_g.lat), '-c')
     hold on
-    plot(imu1_ref.t, LAT2M_1.*(imu1_ref.lat - ref_1.lat), '-b')
-    plot(imu2_ref.t, LAT2M_2.*(imu2_ref.lat - ref_2.lat), '-r')
+    plot(nav1_ref.t, LAT2M_1.*(nav1_ref.lat - ref_1.lat), '-b')
+    plot(nav2_ref.t, LAT2M_2.*(nav2_ref.lat - ref_2.lat), '-r')
     plot (gps.t, LAT2M_G.*sig3_rr(:,7), '--k', gps.t, -LAT2M_G.*sig3_rr(:,7), '--k' )
     xlabel('Time [s]')
     ylabel('[m]')
     legend('GPS', 'IMU1', 'IMU2', '3\sigma');
     title('LATITUDE ERROR');
+    grid
     
     subplot(312)
     plot(gps_ref.t, LON2M_GR.*(gps_ref.lon - ref_g.lon), '-c')
     hold on
-    plot(imu1_ref.t, LON2M_1.*(imu1_ref.lon - ref_1.lon), '-b')
-    plot(imu2_ref.t, LON2M_2.*(imu2_ref.lon - ref_2.lon), '-r')
+    plot(nav1_ref.t, LON2M_1.*(nav1_ref.lon - ref_1.lon), '-b')
+    plot(nav2_ref.t, LON2M_2.*(nav2_ref.lon - ref_2.lon), '-r')
     plot(gps.t, LON2M_G.*sig3_rr(:,8), '--k', gps.t, -LON2M_G.*sig3_rr(:,8), '--k' )
     xlabel('Time [s]')
     ylabel('[m]')
     legend('GPS', 'IMU1', 'IMU2', '3\sigma');
     title('LONGITUDE ERROR');
+    grid
     
     subplot(313)
     plot(gps_ref.t, (gps_ref.h - ref_g.h), '-c')
     hold on
-    plot(imu1_ref.t, (imu1_ref.h - ref_1.h), '-b')
-    plot(imu2_ref.t, (imu2_ref.h - ref_2.h), '-r')
+    plot(nav1_ref.t, (nav1_ref.h - ref_1.h), '-b')
+    plot(nav2_ref.t, (nav2_ref.h - ref_2.h), '-r')
     plot(gps.t, sig3_rr(:,9), '--k', gps.t, -sig3_rr(:,9), '--k' )
     xlabel('Time [s]')
     ylabel('[m]')
     legend('GPS', 'IMU1', 'IMU2', '3\sigma');
-    title('ALTITUDE ERROR');    
+    title('ALTITUDE ERROR'); 
+    grid
 end

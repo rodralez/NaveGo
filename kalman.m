@@ -1,4 +1,4 @@
-function  [S] = kalman(xp, z, S, dt)
+function  S = kalman(xp, z, S, dt)
 % kalman: Kalman filter algorithm for NaveGo INS/GPS system.
 %
 % INPUT:

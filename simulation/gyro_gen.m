@@ -10,7 +10,7 @@ function wb_sim = gyro_gen (ref, imu)
 %		wb_sim: Nx3 matrix with [wx, wy, wz] simulated gryos in the
 %		body frame.
 %
-%   Copyright (C) 2014, Rodrigo González, all rights reserved.
+%   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
 %   This file is part of NaveGo, an open-source MATLAB toolbox for
 %   simulation of integrated navigation systems.
@@ -56,13 +56,14 @@ if (isfield(ref, 'wb'))
 else
     gyro_raw = gyro_gen_delta(ref.DCMnb, diff(ref.t));
     gyro_raw = [gyro_raw; 0 0 0;];
-    gyro_b  = sgolayfilt(gyro_raw, 10, 45);
+    
+    gyro_b = my_sgolayfilt(gyro_raw);
 end
 
 %% SIMULATE TRANSPORTE AND EARTH RATES
 
 g_err_b = zeros(M);
-for i = 1:N,
+for i = 1:N
     
     dcmnb = reshape(ref.DCMnb(i,:), 3, 3);
     omega_ie_n = earthrate(ref.lat(i));

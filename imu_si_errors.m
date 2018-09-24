@@ -43,13 +43,13 @@ function imu_si = imu_si_errors(imu, dt)
 % Journal of Control Engineering and Applied Informatics, vol. 17, 
 % issue 2, pp. 110-120, 2015. Eq. 9, 14, and 30.
 %
-% Version: 006
-% Date:    2018/03/26
+% Version: 007
+% Date:    2019/09/20
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
 D2R = (pi/180);     % deg to rad
-G2MSS = 9.81;       % g to m/s^2
+G   =  9.80665;     % g to m/s^2
 
 % Copy previois fields
 imu_si = imu;
@@ -63,11 +63,11 @@ imu_si.a_std   = imu_si.vrw ./ sqrt(dt); % m/s^2/root-Hz  ->  m/s^2
 imu_si.g_std   = imu_si.arw ./ sqrt(dt); % rad/s/root-Hz  ->  rad/s
 
 % Static bias
-imu_si.ab_fix = imu.ab_fix .* 0.001 * G2MSS;    % mg -> m/s^2
+imu_si.ab_fix = imu.ab_fix .* 0.001 * G;    % mg -> m/s^2
 imu_si.gb_fix = imu.gb_fix .* D2R;              % deg/s -> rad/s;
 
 % Dynamic bias
-imu_si.ab_drift = imu.ab_drift .* 0.001 .* G2MSS;  % mg -> m/s^2
+imu_si.ab_drift = imu.ab_drift .* 0.001 .* G;  % mg -> m/s^2
 imu_si.gb_drift = imu.gb_drift .* D2R;             % deg/s -> rad/s;
 
 % Dynamic bias PSD

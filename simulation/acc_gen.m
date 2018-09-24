@@ -36,8 +36,8 @@ function [fb_sim] = acc_gen (ref, imu)
 %           Aggarwal, P. et al. MEMS-Based Integrated Navigation. Artech
 % House. 2010.
 %
-% Version: 005
-% Date:    2018/03/26
+% Version: 006
+% Date:    2018/09/19
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -56,8 +56,9 @@ elseif (isfield(ref, 'vel'))
     
     acc_raw = (diff(ref.vel)) ./ [diff(ref.t) diff(ref.t) diff(ref.t)];
     acc_raw = [ 0 0 0; acc_raw; ];
+    
     % Noise introduced by differentation should be smoothed.
-    acc_ned = sgolayfilt(acc_raw, 10, 45);  
+    acc_ned = my_sgolayfilt(acc_raw);
     acc_b = acc_nav2body(acc_ned, ref.DCMnb);
     
 % If not, obtain acceleration from position

@@ -35,86 +35,30 @@ function rmse_v = print_rmse (ins_gps, gps, ins_gps_r, gps_r, string)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-D2R = (pi/180);     % degrees to radians
-R2D = (180/pi);     % radians to degrees
+rmse_v = navego_rmse (ins_gps, gps, ins_gps_r, gps_r);
 
-%% INS/GPS attitude RMSE
-
-RMSE_roll  = rmse (ins_gps.roll ,   ins_gps_r.roll)  .* R2D;
-RMSE_pitch = rmse (ins_gps.pitch,   ins_gps_r.pitch) .* R2D;
-
-% Avoid difference greater than 150 deg when comparing yaw angles.
-idx = ( abs(ins_gps.yaw - ins_gps_r.yaw) < (150 * D2R) );
-RMSE_yaw = rmse (ins_gps.yaw(idx),ins_gps_r.yaw(idx) ) .* R2D;
-
-%% INS/GPS velocity RMSE
-
-if (isfield(ins_gps, 'vel') & isfield( ins_gps_r, 'vel'))
-    RMSE_vn = rmse (ins_gps.vel(:,1),  ins_gps_r.vel(:,1));
-    RMSE_ve = rmse (ins_gps.vel(:,2),  ins_gps_r.vel(:,2));
-    RMSE_vd = rmse (ins_gps.vel(:,3),  ins_gps_r.vel(:,3));
-else
-    RMSE_vn = NaN;
-    RMSE_ve = NaN;
-    RMSE_vd = NaN;
-end
-
-%% INS/GPS position RMSE
-
-[RM,RN] = radius(ins_gps.lat(1), 'double');
-LAT2M = (RM + double(ins_gps.h(1)));                          % Coefficient for lat rad -> meters
-LON2M = (RN + double(ins_gps.h(1))) .* cos(ins_gps.lat(1));   % Coefficient for lon rad -> meters
-
-RMSE_lat = rmse (ins_gps.lat, ins_gps_r.lat) .* LAT2M;
-RMSE_lon = rmse (ins_gps.lon, ins_gps_r.lon) .* LON2M;
-RMSE_h   = rmse (ins_gps.h,   ins_gps_r.h);
-
-%% GPS velocity RMSE
-
-if (isfield(gps, 'vel') & isfield( gps_r, 'vel'))
-    RMSE_vn_g = rmse (gps.vel(:,1), gps_r.vel(:,1));
-    RMSE_ve_g = rmse (gps.vel(:,2), gps_r.vel(:,2));
-    RMSE_vd_g = rmse (gps.vel(:,3), gps_r.vel(:,3));
-else
-    RMSE_vn_g = NaN;
-    RMSE_ve_g = NaN;
-    RMSE_vd_g = NaN;
-end
-
-%% GPS position RMSE
-
-[RM,RN] = radius(gps.lat(1), 'double');
-LAT2M = (RM + double(gps.h(1)));                        % Coefficient for lat rad -> meters
-LON2M = (RN + double(gps.h(1))) .* cos(gps.lat(1));     % Coefficient for lon rad -> meters
-
-RMSE_lat_g = rmse (gps.lat, gps_r.lat) .* LAT2M;
-RMSE_lon_g = rmse (gps.lon, gps_r.lon) .* LON2M;
-RMSE_h_g   = rmse (gps.h, gps_r.h);
-
+% rmse_v = [  RMSE_roll;  RMSE_pitch; RMSE_yaw;    
+%             RMSE_vn;    RMSE_ve;    RMSE_vd;
+%             RMSE_lat;   RMSE_lon;   RMSE_h;
+%             RMSE_vn_g;  RMSE_ve_g;  RMSE_vd_g;
+%             RMSE_lat_g; RMSE_lon_g; RMSE_h_g; ];
+        
 %% Print RMSE
 
 fprintf( '\n>> RMSE for %s\n', string);
 
-fprintf(' Roll,  %s = %.4e deg \n',   string, RMSE_roll);
-fprintf(' Pitch, %s = %.4e deg \n',   string, RMSE_pitch);
-fprintf(' Yaw,   %s = %.4e deg \n\n', string, RMSE_yaw);
+fprintf(' Roll,  %s = %.4e deg \n',   string, rmse_v(1));
+fprintf(' Pitch, %s = %.4e deg \n',   string, rmse_v(2));
+fprintf(' Yaw,   %s = %.4e deg \n\n', string, rmse_v(3));
 
 if (isfield(ins_gps, 'vel') & isfield( ins_gps_r, 'vel') & isfield(gps, 'vel') & isfield( gps_r, 'vel'))
-    fprintf(' Vel. N, %s = %.4e m/s, GPS = %.4e m/s \n',   string, RMSE_vn, RMSE_vn_g);
-    fprintf(' Vel. E, %s = %.4e m/s, GPS = %.4e m/s \n',   string, RMSE_ve, RMSE_ve_g);
-    fprintf(' Vel. D, %s = %.4e m/s, GPS = %.4e m/s \n\n', string, RMSE_vd, RMSE_vd_g);
+    fprintf(' Vel. N, %s = %.4e m/s, GPS = %.4e m/s \n',   string, rmse_v(4), rmse_v(10));
+    fprintf(' Vel. E, %s = %.4e m/s, GPS = %.4e m/s \n',   string, rmse_v(5), rmse_v(11));
+    fprintf(' Vel. D, %s = %.4e m/s, GPS = %.4e m/s \n\n', string, rmse_v(6), rmse_v(12));
 end
 
-fprintf(' Latitude,  %s = %.4e m, GPS = %.4e m \n', string, RMSE_lat, RMSE_lat_g);
-fprintf(' Longitude, %s = %.4e m, GPS = %.4e m \n', string, RMSE_lon, RMSE_lon_g);
-fprintf(' Altitude,  %s = %.4e m, GPS = %.4e m \n', string, RMSE_h,   RMSE_h_g);
-
-%% Output data structure
-
-rmse_v = [  RMSE_roll;  RMSE_pitch; RMSE_yaw;    
-            RMSE_vn;    RMSE_ve;    RMSE_vd;
-            RMSE_lat;   RMSE_lon;   RMSE_h;
-            RMSE_vn_g;  RMSE_ve_g;  RMSE_vd_g;
-            RMSE_lat_g; RMSE_lon_g; RMSE_h_g; ];
+fprintf(' Latitude,  %s = %.4e m, GPS = %.4e m \n', string, rmse_v(7), rmse_v(13));
+fprintf(' Longitude, %s = %.4e m, GPS = %.4e m \n', string, rmse_v(8), rmse_v(14));
+fprintf(' Altitude,  %s = %.4e m, GPS = %.4e m \n', string, rmse_v(9), rmse_v(15));
 
 end

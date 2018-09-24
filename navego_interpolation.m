@@ -107,7 +107,7 @@ if (isfield(data, 'roll') & isfield(ref, 'roll'))  % If data is from INS/GPS sol
         ref_i.vel = interp1(data.t, data.vel,   ref.t, method);
         flag_vel  = any(isnan(ref_i.vel));        
     else
-        flag_vel = logical(zeros(1,3));
+        flag_vel = false(1,3);
     end
     
     flag = any(isnan(ref_i.t)) | any(isnan(ref_i.roll)) | any(isnan(ref_i.pitch)) | any(isnan(ref_i.yaw)) |  ...

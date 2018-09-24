@@ -29,8 +29,8 @@ function pos = pos_update(pos, vel, dt)
 % Journal of Control Engineering and Applied Informatics, vol. 17, 
 % issue 2, pp. 110-120, 2015. Eq. 18.
 %
-% Version: 003
-% Date:    2016/11/21
+% Version: 004
+% Date:    2018/09/20
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
@@ -46,7 +46,7 @@ vd  = vel(3);
 h_n  = h - (vd) * dt;
 
 if h_n < 0
-    h_n = 0;
+    h_n = h;
     warning('pos_update: altitude is negative.')
 end
 
