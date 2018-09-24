@@ -202,7 +202,7 @@ imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude alig
 %      larm: 3x1 lever arm from IMU to GNSS antenna (x-fwd, y-right, z-down) (m).
 %      freq: 1x1 sampling frequency (Hz).
 
-gps.stdm = [5, 5, 10];                 % GPS positions standard deviations [lat lon h] (meters)
+gps.stdm = [5 5 10];                   % GPS positions standard deviations [lat lon h] (meters)
 gps.stdv = 0.1 * KT2MS .* ones(1,3);   % GPS velocities standard deviations [Vn Ve Vd] (meters/s)
 gps.larm = zeros(3,1);                 % GPS lever arm from IMU to GNSS antenna (x-fwd, y-right, z-down) (m).
 gps.freq = 5;                          % GPS operation frequency (Hz)
@@ -217,7 +217,7 @@ if strcmp(GPS_DATA, 'ON')       % If simulation of GPS data is required ...
     
     gps = gps_err_profile(ref.lat(1), ref.h(1), gps); % Transform GPS manufacturer error units to SI units.
     
-    [gps] = gps_gen(ref, gps);  % Generate GPS dataset from reference dataset.
+    gps = gps_gen(ref, gps);  % Generate GPS dataset from reference dataset.
 
     save gps.mat gps
     
@@ -321,7 +321,7 @@ if strcmp(IMU1_INS, 'ON')
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    [nav1_e] = ins_gps(imu1, gps1, 'quaternion', 'double');
+    nav1_e = ins_gps(imu1, gps1, 'quaternion', 'double');
     % ---------------------------------------------------------------------
     
     save nav1_e.mat nav1_e
@@ -367,7 +367,7 @@ if strcmp(IMU2_INS, 'ON')
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    [nav2_e] = ins_gps(imu2, gps2, 'quaternion', 'single');
+    nav2_e = ins_gps(imu2, gps2, 'quaternion', 'single');
     % ---------------------------------------------------------------------
     
     save nav2_e.mat nav2_e
