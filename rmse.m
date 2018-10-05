@@ -28,6 +28,6 @@ if( any(isnan(estimate)) | any(isnan(true)))
     error('rmse: input vector with one NaN value at least');
 end
 
-rmserr =  sqrt ( mean ( ( estimate - true).^2) ) ;
+rmserr =  sqrt ( median ( ( estimate - true).^2) ) ;
 
 end

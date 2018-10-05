@@ -47,7 +47,7 @@ dt   = mean(diff(ref.t));
 freq = 1/dt;
 dspl = round(freq / gps.freq);
 
-dow = floor(m/dspl);
+% dow = floor(m/dspl);
 
 gps_r.t     = ref.t    (1:dspl:end, :);
 gps_r.lat   = ref.lat  (1:dspl:end, :);
@@ -55,7 +55,7 @@ gps_r.lon   = ref.lon  (1:dspl:end, :);
 gps_r.h     = ref.h    (1:dspl:end, :);
 gps_r.vel   = ref.vel  (1:dspl:end, :);
 
-gps_r.kn = dow;
+% gps_r.kn = dow;
 gps_r.freq = round(1/mean(diff(gps_r.t)));
 
 r1 = randn(size(gps_r.t));
