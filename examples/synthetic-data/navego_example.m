@@ -200,11 +200,17 @@ imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude alig
 %      stdv: 1x3 velocity standard deviations, [Vn Ve Vd] (m/s).
 %      larm: 3x1 lever arm from IMU to GNSS antenna (x-fwd, y-right, z-down) (m).
 %      freq: 1x1 sampling frequency (Hz).
+%   zupt_th: 1x1 ZUPT threshold (m/s).
+%  zupt_win: 1x1 ZUPT time window (seconds).
 
 gnss.stdm = [5 5 10];                   % GNSS positions standard deviations [lat lon h] (meters)
 gnss.stdv = 0.1 * KT2MS .* ones(1,3);   % GNSS velocities standard deviations [Vn Ve Vd] (meters/s)
 gnss.larm = zeros(3,1);                 % GNSS lever arm from IMU to GNSS antenna (x-fwd, y-right, z-down) (m).
 gnss.freq = 5;                          % GNSS operation frequency (Hz)
+
+% Parameters for ZUPT detection algorithm
+gnss.zupt_th = 0.5;   % ZUPT threshold (m/s).
+gnss.zupt_win = 4;    % ZUPT time window (seconds).
 
 %% GNSS SYNTHETIC DATA
 
@@ -320,7 +326,7 @@ if strcmp(IMU1_INS, 'ON')
     
     % Execute INS/GNSS integration
     % ---------------------------------------------------------------------
-    nav1_e = ins_gnss(imu1, gnss1, 'quaternion', 'double');
+    nav1_e = ins_gnss(imu1, gnss1, 'dcm');
     % ---------------------------------------------------------------------
     
     save nav1_e.mat nav1_e
@@ -366,7 +372,7 @@ if strcmp(IMU2_INS, 'ON')
     
     % Execute INS/GNSS integration
     % ---------------------------------------------------------------------
-    nav2_e = ins_gnss(imu2, gnss2, 'quaternion', 'single');
+    nav2_e = ins_gnss(imu2, gnss2, 'quaternion');
     % ---------------------------------------------------------------------
     
     save nav2_e.mat nav2_e

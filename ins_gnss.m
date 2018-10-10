@@ -1,4 +1,4 @@
-function [nav_e] = ins_gnss(imu, gps, att_mode, precision)
+function [nav_e] = ins_gnss(imu, gnss, att_mode)
 % ins_gnss: loosely-coupled integrated navigation system.
 %
 % ins_gnss integrates IMU and GNSS measurements by using an Extended Kalman filter.
@@ -18,13 +18,13 @@ function [nav_e] = ins_gnss(imu, gps, att_mode, precision)
 %  ab_drift: 1x3 accrs dynamic biases or bias instabilities (m/s^2).
 %   gb_corr: 1x3 gyros correlation times (seconds).
 %   ab_corr: 1x3 accrs correlation times (seconds).
-%     gpsd : 1x3 gyros dynamic biases PSD (rad/s/root-Hz).
-%     apsd : 1x3 accrs dynamic biases PSD (m/s^2/root-Hz);
+%    gb_psd: 1x3 gyros dynamic biases PSD (rad/s/root-Hz).
+%    ab_psd: 1x3 accrs dynamic biases PSD (m/s^2/root-Hz);
 %      freq: 1x1 sampling frequency (Hz).
 % ini_align: 1x3 initial attitude at t(1).
 % ini_align_err: 1x3 initial attitude errors at t(1).
 %
-%	gps, GNSS data structure.
+%	gnss, GNSS data structure.
 %         t: Mx1 time vector (seconds).
 %       lat: Mx1 latitude (radians).
 %       lon: Mx1 longitude (radians).
@@ -35,19 +35,17 @@ function [nav_e] = ins_gnss(imu, gps, att_mode, precision)
 %      stdv: 1x3 velocity standard deviations (m/s).
 %      larm: 3x1 lever arm from IMU to GNSS antenna (x-fwd, y-right, z-down) (m).
 %      freq: 1x1 sampling frequency (Hz).
+%   zupt_th: 1x1 ZUPT threshold (m/s).
+%  zupt_win: 1x1 ZUPT time window (seconds).
 %
 %	att_mode, attitude mode string.
 %      'quaternion': attitude updated in quaternion format. Default value.
 %             'dcm': attitude updated in Direct Cosine Matrix format.
 %
-%   precision, finite number precision string.
-%      double: double float precision (64 bits). Default value.
-%      single: single float precision (32 bits).
-%
 % OUTPUT:
 %   nav_e, INS/GNSS navigation estimates data structure.
 %         t: Ix1 time vector (seconds).
-%        tk: Mx1 time when Kalman filter is executed
+%        tk: Mx1 time vector when Kalman filter was executed (seconds).
 %      roll: Ix1 roll (radians).
 %     pitch: Ix1 pitch (radians).
 %       yaw: Ix1 yaw (radians).
@@ -81,140 +79,102 @@ function [nav_e] = ins_gnss(imu, gps, att_mode, precision)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% Reference:
+% References:
 %   R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
 % simulation framework for low-cost integrated navigation systems,
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015. Alg. 2.
 %
-%   ZUPT algothim based on Paul Groves, Principles of GNSS, Inertial, and 
+%   ZUPT algothim based on Paul Groves, Principles of GNSS, Inertial, and
 % Multisensor Integrated Navigation Systems. CHAPTER 13, INS Alignment
 % and Zero Velocity Updates.
 %
-% Version: 005
-% Date:    2018/09/19
+%   ins_gps.m, ins_gnss function is based on that previous function.
+%
+% Version: 001
+% Date:    2018/10/10
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
 if nargin < 3, att_mode  = 'quaternion'; end
-if nargin < 4, precision = 'double'; end
 
 %% ZUPT detection algorithm
 
-ZUPT_THRELHOLD = 0.5;   % m/s
-ZUPT_WINDOW = 4;        % seconds
 zupt = false;
-% zupt_ctr = 0;           % For debugging purposes only
 
-%%
+%% PREALLOCATE
+
+% Length of INS time vector
 Mi = (max(size(imu.t)));
-Mg = (max(size(gps.t)));
 
-if strcmp(precision, 'single')  % single precision
-    
-    ti = single(imu.t);
-    tg = single(gps.t);
-    
-    % Preallocate memory for estimates
-    roll_e  = single(zeros (Mi, 1));
-    pitch_e = single(zeros (Mi, 1));
-    yaw_e   = single(zeros (Mi, 1));
-    vel_e   = single(zeros (Mi, 3));
-    h_e     = single(zeros (Mi, 1));
-    
-    % Constant matrices
-    I = single(eye(3));
-    Z = single(zeros(3));
-    
-    % Kalman matrices for later analysis
-    In = single(zeros(Mg, 6));       % Kalman filter innovations
-    Pi = single(zeros(Mg, 441));     % Elements from a priori covariance matrix, Pi
-    Pp = single(zeros(Mg, 441));     % Elements from a posteriori covariance matrix, Pp
-    A  = single(zeros(Mg, 441));     % Elements from transition-state matrix, A
-    Xi = single(zeros(Mg, 21));      % Evolution of Kalman filter a priori states, xi
-    Xp = single(zeros(Mg, 21));      % Evolution of Kalman filter a posteriori states, xp
-    B  = single(zeros(Mg, 12));      % Biases compensantions after Kalman filter correction
-    S.xp  = single([ zeros(1,9), imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift ]');  % Kalman filter error vector state
-    
-    % Initialize biases variables
-    gb_drift = single(imu.gb_drift');
-    ab_drift = single(imu.ab_drift');
-    gb_fix   = single(imu.gb_fix');
-    ab_fix   = single(imu.ab_fix');    
-    
-    % Initialize estimates at tti=1
-    roll_e (1) = single(imu.ini_align(1));
-    pitch_e(1) = single(imu.ini_align(2));
-    yaw_e(1)   = single(imu.ini_align(3));
-    vel_e(1,:) = single(gps.vel(1,:));
-    h_e(1)     = single(gps.h(1));
-    
-else % double precision
-    
-    ti = (imu.t);
-    tg = (gps.t);
-    
-    % Preallocate memory for estimates
-    roll_e  = zeros (Mi, 1);
-    pitch_e = zeros (Mi, 1);
-    yaw_e   = zeros (Mi, 1);
+% Length of GNSS time vector
+Mg = (max(size(gnss.t)));
+
+% Time vectors
+ti = (imu.t);
+tg = (gnss.t);
+
+% Attitude
+roll_e  = zeros (Mi, 1);
+pitch_e = zeros (Mi, 1);
+yaw_e   = zeros (Mi, 1);
 %     yawm_e  = zeros (Mi, 1);
-    vel_e   = zeros (Mi, 3);
-    h_e     = zeros (Mi, 1);
-    
-    % Constant matrices
-    I = eye(3);
-    Z = zeros(3);
-    
-    % Kalman matrices for later analysis
-    In = zeros(Mg, 6);         % Kalman filter innovations
-    Pi = zeros(Mg, 441);       % Elements from a priori covariance matrices, Pi
-    Pp = zeros(Mg, 441);       % Elements from a posteriori covariance matrices, Pp
-    A  = zeros(Mg, 441);       % Elements from transition-state matrices, A
-    Xi = zeros(Mg, 21);        % Evolution of Kalman filter a priori states, xi
-    Xp = zeros(Mg, 21);        % Evolution of Kalman filter a posteriori states, xp
-    B  = zeros(Mg, 12);        % Biases compensantions after Kalman filter correction
-    S.xp = [ zeros(1,9), imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift ]';  % Kalman filter error vector state
-    
-    % Initialize biases variables
-    gb_drift = imu.gb_drift';
-    ab_drift = imu.ab_drift';
-    gb_fix   = imu.gb_fix';
-    ab_fix   = imu.ab_fix';
-    
-    % Initialize estimates at tti = 1
-    roll_e(1)  = imu.ini_align(1);
-    pitch_e(1) = imu.ini_align(2);
-    yaw_e(1)   = imu.ini_align(3);
+% Initialize estimates at tti = 1
+roll_e(1)  = imu.ini_align(1);
+pitch_e(1) = imu.ini_align(2);
+yaw_e(1)   = imu.ini_align(3);
 %     yawm_e(1)  = imu.ini_align(3);
-    vel_e(1,:) = gps.vel(1,:);
-    h_e(1)     = gps.h(1);
-end
-
-% Lat and lon cannot be set in single precision. They need full (double) precision.
-lat_e    = zeros (Mi,1);
-lon_e    = zeros (Mi,1);
-lat_e(1) = double(gps.lat(1));
-lon_e(1) = double(gps.lon(1));
 
 DCMnb = euler2dcm([roll_e(1); pitch_e(1); yaw_e(1);]);
 DCMbn = DCMnb';
 qua   = euler2qua([roll_e(1) pitch_e(1) yaw_e(1)]);
 
-% Initialize Kalman filter matrices
-S.R  = diag([gps.stdv, gps.stdm].^2);
-S.Q  = diag([imu.arw, imu.vrw, imu.gb_psd, imu.ab_psd].^2);
-S.Pp = diag([imu.ini_align_err, gps.stdv, gps.std, imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift].^2);
+% Velocities
+vel_e   = zeros (Mi, 3);
+vel_e(1,:) = gnss.vel(1,:);
 
-% UD filter matrices
+% Positions
+lat_e    = zeros (Mi,1);
+lon_e    = zeros (Mi,1);
+h_e      = zeros (Mi, 1);
+h_e(1)   = gnss.h(1);
+lat_e(1) = gnss.lat(1);
+lon_e(1) = gnss.lon(1);
+
+% Biases
+gb_drift = imu.gb_drift';
+ab_drift = imu.ab_drift';
+gb_fix   = imu.gb_fix';
+ab_fix   = imu.ab_fix';
+
+% Initialize Kalman filter matrices
+S.xp = [ zeros(1,9), imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift ]';  % Kalman filter error vector state
+S.R  = diag([gnss.stdv, gnss.stdm].^2);
+S.Q  = diag([imu.arw, imu.vrw, imu.gb_psd, imu.ab_psd].^2);
+S.Pp = diag([imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift].^2);
+
+% PENDING: UD filter matrices
 % [Up, Dp] = myUD(S.P);
 % dp = diag(Dp);
 
-% DEC = 0.5 * 180/pi;             % Magnetic declination (deg)
+% DEC = 0.5 * 180/pi;             % Magnetic declination (radians)
+
+% Kalman matrices for later analysis
+In = zeros(Mg, 6);         % Kalman filter innovations
+Pi = zeros(Mg, 441);       % Elements from a priori covariance matrices, Pi
+Pp = zeros(Mg, 441);       % Elements from a posteriori covariance matrices, Pp
+A  = zeros(Mg, 441);       % Elements from transition-state matrices, A
+Xi = zeros(Mg, 21);        % Evolution of Kalman filter a priori states, xi
+Xp = zeros(Mg, 21);        % Evolution of Kalman filter a posteriori states, xp
+B  = zeros(Mg, 12);        % Biases compensantions after Kalman filter correction
 
 % Initialize matrices for INS/GNSS performance analysis
 Pp(1,:) = reshape(S.Pp, 1, 441);
 B(1,:)  = [gb_fix', ab_fix', gb_drift', ab_drift'];
+
+% Constant matrices
+I = eye(3);
+Z = zeros(3);
 
 i = 1;
 
@@ -241,7 +201,7 @@ for j = 2:Mg
         fb_corrected = (imu.fb(i,:)' + ab_fix + ab_drift );
         
         % Turn-rates update
-        omega_ie_n = earthrate(lat_e(i-1), precision);
+        omega_ie_n = earthrate(lat_e(i-1));
         omega_en_n = transportrate(lat_e(i-1), vel_e(i-1,1), vel_e(i-1,2), h_e(i-1));
         
         % Attitude update
@@ -267,38 +227,29 @@ for j = 2:Mg
         h_e(i)   = pos(3);
         
         % PENDING. Magnetic heading update
-%         yawm_e(i) = hd_update (imu.mb(i,:), roll_e(i),  pitch_e(i), D);
+        %         yawm_e(i) = hd_update (imu.mb(i,:), roll_e(i),  pitch_e(i), D);
         
         % ZUPT detection algorithm
-        idz = floor( ZUPT_WINDOW / dti ); % Index to set ZUPT window time
-
+        idz = floor( gnss.zupt_win / dti ); % Index to set ZUPT window time
+        
         if ( i > idz )
             
             vel_m = mean (vel_e(i-idz:i , :));
             
-            if (abs(vel_m) <= ZUPT_THRELHOLD)                
-
-%                 Alternative attitude ZUPT correction
-%                 roll_e(i) = (roll_e(i-idz , :));
-%                 pitch_e(i)= (pitch_e(i-idz , :));
-%                 yaw_e(i)  = (yaw_e(i-idz, :));
- 
+            if (abs(vel_m) <= gnss.zupt_th)
+                
+                %                 Alternative attitude ZUPT correction
+                %                 roll_e(i) = (roll_e(i-idz , :));
+                %                 pitch_e(i)= (pitch_e(i-idz , :));
+                %                 yaw_e(i)  = (yaw_e(i-idz, :));
+                
                 roll_e(i) = mean (roll_e(i-idz:i , :));
                 pitch_e(i)= mean (pitch_e(i-idz:i , :));
                 yaw_e(i)  = mean (yaw_e(i-idz:i , :));
-                                
+                
                 lat_e(i) = mean (lat_e(i-idz:i , :));
                 lon_e(i) = mean (lon_e(i-idz:i , :));
                 h_e(i)   = mean (h_e(i-idz:i , :));
-                
-                % For debugging purposes only
-                % Print 'z' on console
-%                 fprintf('z '); 
-%                 zupt_ctr = zupt_ctr + 1;
-%                 if (zupt_ctr >= 20) 
-%                     zupt_ctr = 0; 
-%                     fprintf('\n'); 
-%                 end
                 
                 zupt = true;
             else
@@ -310,17 +261,17 @@ for j = 2:Mg
     
     %% INNOVATIONS
     
-    [RM,RN] = radius(lat_e(i), precision);
+    [RM,RN] = radius(lat_e(i));
     Tpr = diag([(RM + h_e(i)), (RN + h_e(i)) * cos(lat_e(i)), -1]);  % radians-to-meters
     
     % Innovations
     % Lever arm correction for position
-    zp = Tpr * ([lat_e(i); lon_e(i); h_e(i);] - [gps.lat(j); gps.lon(j); gps.h(j);]) ...
-        + (DCMbn * gps.larm);
+    zp = Tpr * ([lat_e(i); lon_e(i); h_e(i);] - [gnss.lat(j); gnss.lon(j); gnss.h(j);]) ...
+        + (DCMbn * gnss.larm);
     
     % Lever arm corrections for velocity
-    zv = (vel_e(i,:) - gps.vel(j,:) - ((omega_ie_n + omega_en_n) .* (DCMbn * gps.larm))' ...
-        + (DCMbn * skewm(wb_corrected) * gps.larm )' )';   
+    zv = (vel_e(i,:) - gnss.vel(j,:) - ((omega_ie_n + omega_en_n) .* (DCMbn * gnss.larm))' ...
+        + (DCMbn * skewm(wb_corrected) * gnss.larm )' )';
     
     %% KALMAN FILTER
     
@@ -336,19 +287,19 @@ for j = 2:Mg
     % Update matrix H
     if(zupt == false)
         S.H = [ Z I Z   Z Z Z Z;
-                Z Z Tpr Z Z Z Z;];
-        S.R = diag([gps.stdv gps.stdm]).^2;        
+            Z Z Tpr Z Z Z Z;];
+        S.R = diag([gnss.stdv gnss.stdm]).^2;
         S.z = [ zv' zp' ]';
-    else                
+    else
         S.H = [Z I Z Z Z Z Z; ];
-        S.R = diag([gps.stdv]).^2;
+        S.R = diag([gnss.stdv]).^2;
         S.z = zv;
     end
     
     % Execute the extended Kalman filter
     S.xp(1:9) = zeros(9,1);     % states 1:9 are forced to zero (error-state approach)
     S = kalman(S, dtg);
-        
+    
     %% INS/GNSS CORRECTIONS
     
     % Quaternion corrections
@@ -396,10 +347,10 @@ for j = 2:Mg
     Pi(j,:) = reshape(S.Pi, 1, 441);
     Pp(j,:) = reshape(S.Pp, 1, 441);
     A(j,:)  = reshape(S.A, 1, 441);
-    if(zupt == true)        
+    if(zupt == true)
         In(j,:) = [ zv; zeros(3,1);]';
     else
-        In(j,:) = S.z';   
+        In(j,:) = S.z';
     end
     B(j,:)  = [gb_fix', ab_fix', gb_drift', ab_drift'];
     
@@ -411,11 +362,11 @@ end
 %% Estimates from INS/GNSS integration
 
 nav_e.t     = ti(1:i, :);       % IMU time
-nav_e.tk    = tg;               % Time when Kalman filter is executed
+nav_e.tk    = tg;               % Time vector when Kalman filter was executed
 nav_e.roll  = roll_e(1:i, :);   % Roll
 nav_e.pitch = pitch_e(1:i, :);  % Pitch
 nav_e.yaw   = yaw_e(1:i, :);    % Yaw
-% ins_gps_e.yawm  = yawm_e(1:i, :);    % Magnetic heading
+% nav_e.yawm  = yawm_e(1:i, :);    % Magnetic heading
 nav_e.vel   = vel_e(1:i, :);    % NED velocities
 nav_e.lat   = lat_e(1:i, :);    % Latitude
 nav_e.lon   = lon_e(1:i, :);    % Longitude
