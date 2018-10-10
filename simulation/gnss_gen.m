@@ -1,13 +1,13 @@
-function [gps, gps_r] = gps_gen(ref, gps)
+function [gnss, gnss_r] = gnss_gen(ref, gnss)
 % gps_gen: generates GPS position and GPS velocity in the n-frame from reference data.
 %
 %   INPUT:
 %       ref, reference data structure.
-%       gps, GPS data structure.
+%       gnss, GNSS data structure.
 %
 %   OUTPUT:
-%       gps, GPS data structure with noise measurements.
-%       gps_r, GPS data structure with true measurements.
+%       gnss, GPS data structure with noise measurements.
+%       gnss_r, GPS data structure with true measurements.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
@@ -33,8 +33,8 @@ function [gps, gps_r] = gps_gen(ref, gps)
 % Journal of Control Engineering and Applied Informatics}, vol. 17, 
 % issue 2, pp. 110-120, 2015. Sec. 2.3.
 %
-% Version: 002
-% Date:    2018/09/14
+% Version: 001
+% Date:    2018/10/10
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
@@ -42,34 +42,33 @@ function [gps, gps_r] = gps_gen(ref, gps)
 
 if n>m, m=n; end
 
-% Downsampling GPS estimates from ref freq. to gps freq.
+% Downsampling GNSS estimates from ref.freq. to gnss.freq.
 dt   = mean(diff(ref.t));
 freq = 1/dt;
-dspl = round(freq / gps.freq);
+dspl = round(freq / gnss.freq);
 
 % dow = floor(m/dspl);
 
-gps_r.t     = ref.t    (1:dspl:end, :);
-gps_r.lat   = ref.lat  (1:dspl:end, :);
-gps_r.lon   = ref.lon  (1:dspl:end, :);
-gps_r.h     = ref.h    (1:dspl:end, :);
-gps_r.vel   = ref.vel  (1:dspl:end, :);
+gnss_r.t     = ref.t    (1:dspl:end, :);
+gnss_r.lat   = ref.lat  (1:dspl:end, :);
+gnss_r.lon   = ref.lon  (1:dspl:end, :);
+gnss_r.h     = ref.h    (1:dspl:end, :);
+gnss_r.vel   = ref.vel  (1:dspl:end, :);
 
-% gps_r.kn = dow;
-gps_r.freq = round(1/mean(diff(gps_r.t)));
+gnss_r.freq = round(1/mean(diff(gnss_r.t)));
 
-r1 = randn(size(gps_r.t));
-r2 = randn(size(gps_r.t));
-r3 = randn(size(gps_r.t));
-r4 = randn(size(gps_r.t));
-r5 = randn(size(gps_r.t));
-r6 = randn(size(gps_r.t));
+r1 = randn(size(gnss_r.t));
+r2 = randn(size(gnss_r.t));
+r3 = randn(size(gnss_r.t));
+r4 = randn(size(gnss_r.t));
+r5 = randn(size(gnss_r.t));
+r6 = randn(size(gnss_r.t));
 
-gps.t   = gps_r.t;
-gps.lat = gps_r.lat + gps.std(1) .* r1;
-gps.lon = gps_r.lon + gps.std(2) .* r2;
-gps.h   = gps_r.h   + gps.std(3) .* r3;
-gps.vel = gps_r.vel + [gps.stdv(1).*r4  gps.stdv(2).*r5  gps.stdv(3).*r6];
+gnss.t   = gnss_r.t;
+gnss.lat = gnss_r.lat + gnss.std(1) .* r1;
+gnss.lon = gnss_r.lon + gnss.std(2) .* r2;
+gnss.h   = gnss_r.h   + gnss.std(3) .* r3;
+gnss.vel = gnss_r.vel + [gnss.stdv(1).*r4  gnss.stdv(2).*r5  gnss.stdv(3).*r6];
 
 end
 

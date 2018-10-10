@@ -1,8 +1,8 @@
 % Example of how to use NaveGo generating synthetic (simulated) data.
 % 
-% Main goal: to compare two INS/GPS systems performances, one using a 
-% simulated ADIS16405 IMU and simulated GPS, and another using a 
-% simulated ADIS16488 IMU and the same simulated GPS.
+% Main goal: to compare two INS/GNSS systems performances, one using a 
+% simulated ADIS16405 IMU and simulated GNSS, and another using a 
+% simulated ADIS16488 IMU and the same simulated GNSS.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -13,7 +13,7 @@
 %   it under the terms of the GNU Lesser General Public License (LGPL)
 %   version 3 as published by the Free Software Foundation.
 %
-%   This program is distributed in the hope that it will be useful,gps.stdm
+%   This program is distributed in the hope that it will be useful,
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
 %   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 %   GNU Lesser General Public License for more details.
@@ -65,18 +65,18 @@ fprintf('\nNaveGo: starting simulation ... \n')
 
 % Comment any of the following parameters in order to NOT execute a particular portion of code
 
-GPS_DATA  = 'ON';   % Generate synthetic GPS data
+GNSS_DATA  = 'ON';   % Generate synthetic GNSS data
 IMU1_DATA = 'ON';   % Generate synthetic ADIS16405 IMU data
 IMU2_DATA = 'ON';   % Generate synthetic ADIS16488 IMU data
 
-IMU1_INS  = 'ON';   % Execute INS/GPS integration for ADIS16405 IMU
-IMU2_INS  = 'ON';   % Execute INS/GPS integration for ADIS16488 IMU
+IMU1_INS  = 'ON';   % Execute INS/GNSS integration for ADIS16405 IMU
+IMU2_INS  = 'ON';   % Execute INS/GNSS integration for ADIS16488 IMU
 
 PLOT      = 'ON';   % Plot results.
 
 % If a particular parameter is commented above, it is set by default to 'OFF'.
 
-if (~exist('GPS_DATA','var')),  GPS_DATA  = 'OFF'; end
+if (~exist('GNSS_DATA','var')),  GNSS_DATA  = 'OFF'; end
 if (~exist('IMU1_DATA','var')), IMU1_DATA = 'OFF'; end
 if (~exist('IMU2_DATA','var')), IMU2_DATA = 'OFF'; end
 if (~exist('IMU1_INS','var')),  IMU1_INS  = 'OFF'; end
@@ -102,7 +102,7 @@ fprintf('NaveGo: loading reference dataset from a trajectory generator... \n')
 load ref.mat
 
 % ref.mat contains the reference data structure from which inertial 
-% sensors and GPS wil be simulated. It must contain the following fields:
+% sensors and GNSS wil be simulated. It must contain the following fields:
 
 %         t: Nx1 time vector (seconds).
 %       lat: Nx1 latitude (radians).
@@ -112,7 +112,6 @@ load ref.mat
 %      roll: Nx1 roll angles (radians).
 %     pitch: Nx1 pitch angles (radians).
 %       yaw: Nx1 yaw angle vector (radians).
-%        kn: 1x1 number of elements of ref time vector.
 %     DCMnb: Nx9 Direct Cosine Matrix nav-to-body. Each row contains 
 %            the elements of one DCM matrix ordered by columns as 
 %            [a11 a21 a31 a12 a22 a32 a13 a23 a33].
@@ -190,7 +189,7 @@ imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude alig
 
 %% Garmin 5-18 Hz GPS error profile
 
-% GPS data structure:
+% GNSS data structure:
 %         t: Mx1 time vector (seconds).
 %       lat: Mx1 latitude (radians).
 %       lon: Mx1 longitude (radians).
@@ -202,30 +201,30 @@ imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude alig
 %      larm: 3x1 lever arm from IMU to GNSS antenna (x-fwd, y-right, z-down) (m).
 %      freq: 1x1 sampling frequency (Hz).
 
-gps.stdm = [5 5 10];                   % GPS positions standard deviations [lat lon h] (meters)
-gps.stdv = 0.1 * KT2MS .* ones(1,3);   % GPS velocities standard deviations [Vn Ve Vd] (meters/s)
-gps.larm = zeros(3,1);                 % GPS lever arm from IMU to GNSS antenna (x-fwd, y-right, z-down) (m).
-gps.freq = 5;                          % GPS operation frequency (Hz)
+gnss.stdm = [5 5 10];                   % GNSS positions standard deviations [lat lon h] (meters)
+gnss.stdv = 0.1 * KT2MS .* ones(1,3);   % GNSS velocities standard deviations [Vn Ve Vd] (meters/s)
+gnss.larm = zeros(3,1);                 % GNSS lever arm from IMU to GNSS antenna (x-fwd, y-right, z-down) (m).
+gnss.freq = 5;                          % GNSS operation frequency (Hz)
 
-%% GPS SYNTHETIC DATA
+%% GNSS SYNTHETIC DATA
 
 rng('shuffle')                  % Reset pseudo-random seed
 
-if strcmp(GPS_DATA, 'ON')       % If simulation of GPS data is required ...
+if strcmp(GNSS_DATA, 'ON')       % If simulation of GNSS data is required ...
     
-    fprintf('NaveGo: generating GPS synthetic data... \n')
+    fprintf('NaveGo: generating GNSS synthetic data... \n')
     
-    gps = gps_err_profile(ref.lat(1), ref.h(1), gps); % Transform GPS manufacturer error units to SI units.
+    gnss = gnss_err_profile(ref.lat(1), ref.h(1), gnss); % Transform GNSS manufacturer error units to SI units.
     
-    gps = gps_gen(ref, gps);  % Generate GPS dataset from reference dataset.
+    gnss = gnss_gen(ref, gnss);  % Generate GNSS dataset from reference dataset.
 
-    save gps.mat gps
+    save gnss.mat gnss
     
 else
     
-    fprintf('NaveGo: loading GPS data... \n') 
+    fprintf('NaveGo: loading GNSS data... \n') 
     
-    load gps.mat
+    load gnss.mat
 end
 
 %% IMU1 SYNTHETIC DATA
@@ -287,114 +286,114 @@ to = (ref.t(end) - ref.t(1));
 
 fprintf('\nNaveGo: navigation time is %.2f minutes or %.2f seconds. \n', (to/60), to)
 
-%% INS/GPS integration using IMU1
+%% INS/GNSS integration using IMU1
 
 if strcmp(IMU1_INS, 'ON')
     
     fprintf('NaveGo: INS/GNSS navigation estimates for IMU1... \n')
     
-    % Sincronize GPS data with IMU data.
+    % Sincronize GNSS data with IMU data.
     
-    % Guarantee that gps.t(1) < imu1.t(1) < gps.t(2)
-    if (imu1.t(1) < gps.t(1))
+    % Guarantee that gnss.t(1) < imu1.t(1) < gnss.t(2)
+    if (imu1.t(1) < gnss.t(1))
         
-        igx  = find(imu1.t > gps.t(1), 1, 'first' );
+        igx  = find(imu1.t > gnss.t(1), 1, 'first' );
         
         imu1.t  = imu1.t  (igx:end, :);
         imu1.fb = imu1.fb (igx:end, :);
         imu1.wb = imu1.wb (igx:end, :);        
     end
     
-    % Guarantee that imu1.t(end-1) < gps.t(end) < imu1.t(end)
-    gps1 = gps;
+    % Guarantee that imu1.t(end-1) < gnss.t(end) < imu1.t(end)
+    gnss1 = gnss;
     
-    if (imu1.t(end) <= gps.t(end))
+    if (imu1.t(end) <= gnss.t(end))
         
-        fgx  = find(gps.t < imu1.t(end), 1, 'last' );
+        fgx  = find(gnss.t < imu1.t(end), 1, 'last' );
         
-        gps1.t   = gps.t  (1:fgx, :);
-        gps1.lat = gps.lat(1:fgx, :);
-        gps1.lon = gps.lon(1:fgx, :);
-        gps1.h   = gps.h  (1:fgx, :);
-        gps1.vel = gps.vel(1:fgx, :);
+        gnss1.t   = gnss.t  (1:fgx, :);
+        gnss1.lat = gnss.lat(1:fgx, :);
+        gnss1.lon = gnss.lon(1:fgx, :);
+        gnss1.h   = gnss.h  (1:fgx, :);
+        gnss1.vel = gnss.vel(1:fgx, :);
     end
     
-    % Execute INS/GPS integration
+    % Execute INS/GNSS integration
     % ---------------------------------------------------------------------
-    nav1_e = ins_gps(imu1, gps1, 'quaternion', 'double');
+    nav1_e = ins_gnss(imu1, gnss1, 'quaternion', 'double');
     % ---------------------------------------------------------------------
     
     save nav1_e.mat nav1_e
     
 else
     
-    fprintf('NaveGo: loading INS/GPS integration for IMU1... \n')
+    fprintf('NaveGo: loading INS/GNSS integration for IMU1... \n')
     
     load nav1_e.mat
 end
 
-%% INS/GPS integration using IMU2
+%% INS/GNSS integration using IMU2
 
 if strcmp(IMU2_INS, 'ON')
     
     fprintf('NaveGo: INS/GNSS navigation estimates for IMU2... \n')
     
-    % Sincronize GPS data and IMU data.
+    % Sincronize GNSS data and IMU data.
     
-    % Guarantee that gps.t(1) < imu2.t(1) < gps.t(2)
-    if (imu2.t(1) < gps.t(1))
+    % Guarantee that gnss.t(1) < imu2.t(1) < gnss.t(2)
+    if (imu2.t(1) < gnss.t(1))
         
-        igx  = find(imu2.t > gps.t(1), 1, 'first' );
+        igx  = find(imu2.t > gnss.t(1), 1, 'first' );
         
         imu2.t  = imu2.t  (igx:end, :);
         imu2.fb = imu2.fb (igx:end, :);
         imu2.wb = imu2.wb (igx:end, :);        
     end
     
-    % Guarantee that imu2.t(end-1) < gps.t(end) < imu2.t(end)
-    gps2 = gps;
+    % Guarantee that imu2.t(end-1) < gnss.t(end) < imu2.t(end)
+    gnss2 = gnss;
     
-    if (imu2.t(end) <= gps.t(end))
+    if (imu2.t(end) <= gnss.t(end))
         
-        fgx  = find(gps.t < imu2.t(end), 1, 'last' );
+        fgx  = find(gnss.t < imu2.t(end), 1, 'last' );
         
-        gps2.t   = gps.t  (1:fgx, :);
-        gps2.lat = gps.lat(1:fgx, :);
-        gps2.lon = gps.lon(1:fgx, :);
-        gps2.h   = gps.h  (1:fgx, :);
-        gps2.vel = gps.vel(1:fgx, :);       
+        gnss2.t   = gnss.t  (1:fgx, :);
+        gnss2.lat = gnss.lat(1:fgx, :);
+        gnss2.lon = gnss.lon(1:fgx, :);
+        gnss2.h   = gnss.h  (1:fgx, :);
+        gnss2.vel = gnss.vel(1:fgx, :);       
     end
     
-    % Execute INS/GPS integration
+    % Execute INS/GNSS integration
     % ---------------------------------------------------------------------
-    nav2_e = ins_gps(imu2, gps2, 'quaternion', 'single');
+    nav2_e = ins_gnss(imu2, gnss2, 'quaternion', 'single');
     % ---------------------------------------------------------------------
     
     save nav2_e.mat nav2_e
     
 else
     
-    fprintf('NaveGo: loading INS/GPS integration for IMU2... \n')
+    fprintf('NaveGo: loading INS/GNSS integration for IMU2... \n')
     
     load nav2_e.mat
 end
 
-%% Interpolate INS/GPS dataset 
+%% Interpolate INS/GNSS dataset 
 
-% INS/GPS estimates and GPS data are interpolated according to the
+% INS/GNSS estimates and GNSS data are interpolated according to the
 % reference dataset.
 
 [nav1_ref, ref_1] = navego_interpolation (nav1_e, ref);
 [nav2_ref, ref_2] = navego_interpolation (nav2_e, ref);
-[gps_ref, ref_g]  = navego_interpolation (gps, ref);
+[gnss_ref, ref_g]  = navego_interpolation (gnss, ref);
 
 %% Print RMSE from IMU1
 
-print_rmse (nav1_ref, gps_ref, ref_1, ref_g, 'INS/GPS IMU1');
+print_rmse (nav1_ref, gnss_ref, ref_1, ref_g, 'INS/GNSS IMU1');
 
 %% Print RMSE from IMU2
 
-print_rmse (nav2_ref, gps_ref, ref_2, ref_g, 'INS/GPS IMU2');
+print_rmse (nav2_ref, gnss_ref, ref_2, ref_g, 'INS/GNSS IMU2');
 
 %% PLOT
 
@@ -449,7 +448,7 @@ if (strcmp(PLOT,'ON'))
     subplot(311)
     plot(nav1_e.t, (nav1_ref.roll - ref_1.roll).*R2D, '-b', nav2_ref.t, (nav2_ref.roll - ref_2.roll).*R2D, '-r');
     hold on
-    plot (gps.t, R2D.*sig3_rr(:,1), '--k', gps.t, -R2D.*sig3_rr(:,1), '--k' )
+    plot (gnss.t, R2D.*sig3_rr(:,1), '--k', gnss.t, -R2D.*sig3_rr(:,1), '--k' )
     ylabel('[deg]')
     xlabel('Time [s]')
     legend('IMU1', 'IMU2', '3\sigma');
@@ -459,7 +458,7 @@ if (strcmp(PLOT,'ON'))
     subplot(312)
     plot(nav1_e.t, (nav1_ref.pitch - ref_1.pitch).*R2D, '-b', nav2_ref.t, (nav2_ref.pitch - ref_2.pitch).*R2D, '-r');
     hold on
-    plot (gps.t, R2D.*sig3_rr(:,2), '--k', gps.t, -R2D.*sig3_rr(:,2), '--k' )
+    plot (gnss.t, R2D.*sig3_rr(:,2), '--k', gnss.t, -R2D.*sig3_rr(:,2), '--k' )
     ylabel('[deg]')
     xlabel('Time [s]')
     legend('IMU1', 'IMU2', '3\sigma');
@@ -469,7 +468,7 @@ if (strcmp(PLOT,'ON'))
     subplot(313)
     plot(nav1_e.t, (nav1_ref.yaw - ref_1.yaw).*R2D, '-b', nav2_ref.t, (nav2_ref.yaw - ref_2.yaw).*R2D, '-r');
     hold on
-    plot (gps.t, R2D.*sig3_rr(:,3), '--k', gps.t, -R2D.*sig3_rr(:,3), '--k' )
+    plot (gnss.t, R2D.*sig3_rr(:,3), '--k', gnss.t, -R2D.*sig3_rr(:,3), '--k' )
     ylabel('[deg]')
     xlabel('Time [s]')
     legend('IMU1', 'IMU2', '3\sigma');
@@ -479,87 +478,87 @@ if (strcmp(PLOT,'ON'))
     % VELOCITIES
     figure;
     subplot(311)
-    plot(ref.t, ref.vel(:,1), '--k', gps.t, gps.vel(:,1),'-c', nav1_e.t, nav1_e.vel(:,1),'-b', nav2_e.t, nav2_e.vel(:,1),'-r');
+    plot(ref.t, ref.vel(:,1), '--k', gnss.t, gnss.vel(:,1),'-c', nav1_e.t, nav1_e.vel(:,1),'-b', nav2_e.t, nav2_e.vel(:,1),'-r');
     xlabel('Time [s]')
     ylabel('[m/s]')
-    legend('REF', 'GPS', 'IMU1', 'IMU2');
+    legend('REF', 'GNSS', 'IMU1', 'IMU2');
     title('NORTH VELOCITY');
     grid
     
     subplot(312)
-    plot(ref.t, ref.vel(:,2), '--k', gps.t, gps.vel(:,2),'-c', nav1_e.t, nav1_e.vel(:,2),'-b', nav2_e.t, nav2_e.vel(:,2),'-r');
+    plot(ref.t, ref.vel(:,2), '--k', gnss.t, gnss.vel(:,2),'-c', nav1_e.t, nav1_e.vel(:,2),'-b', nav2_e.t, nav2_e.vel(:,2),'-r');
     xlabel('Time [s]')
     ylabel('[m/s]')
-    legend('REF', 'GPS', 'IMU1', 'IMU2');
+    legend('REF', 'GNSS', 'IMU1', 'IMU2');
     title('EAST VELOCITY');
     grid
     
     subplot(313)
-    plot(ref.t, ref.vel(:,3), '--k', gps.t, gps.vel(:,3),'-c', nav1_e.t, nav1_e.vel(:,3),'-b', nav2_e.t, nav2_e.vel(:,3),'-r');
+    plot(ref.t, ref.vel(:,3), '--k', gnss.t, gnss.vel(:,3),'-c', nav1_e.t, nav1_e.vel(:,3),'-b', nav2_e.t, nav2_e.vel(:,3),'-r');
     xlabel('Time [s]')
     ylabel('[m/s]')
-    legend('REF', 'GPS', 'IMU1', 'IMU2');
+    legend('REF', 'GNSS', 'IMU1', 'IMU2');
     title('DOWN VELOCITY');
     grid
     
     % VELOCITIES ERRORS
     figure;
     subplot(311)
-    plot(gps_ref.t, (gps_ref.vel(:,1) - ref_g.vel(:,1)), '-c');
+    plot(gnss_ref.t, (gnss_ref.vel(:,1) - ref_g.vel(:,1)), '-c');
     hold on
     plot(nav1_ref.t, (nav1_ref.vel(:,1) - ref_1.vel(:,1)), '-b', nav2_ref.t, (nav2_ref.vel(:,1) - ref_2.vel(:,1)), '-r');
-    plot (gps.t, sig3_rr(:,4), '--k', gps.t, -sig3_rr(:,4), '--k' )
+    plot (gnss.t, sig3_rr(:,4), '--k', gnss.t, -sig3_rr(:,4), '--k' )
     xlabel('Time [s]')
     ylabel('[m/s]')
-    legend('GPS', 'IMU1', 'IMU2', '3\sigma');
+    legend('GNSS', 'IMU1', 'IMU2', '3\sigma');
     title('VELOCITY NORTH ERROR');
     grid
     
     subplot(312)
-    plot(gps_ref.t, (gps_ref.vel(:,2) - ref_g.vel(:,2)), '-c');
+    plot(gnss_ref.t, (gnss_ref.vel(:,2) - ref_g.vel(:,2)), '-c');
     hold on
     plot(nav1_ref.t, (nav1_ref.vel(:,2) - ref_1.vel(:,2)), '-b', nav2_ref.t, (nav2_ref.vel(:,2) - ref_2.vel(:,2)), '-r');
-    plot (gps.t, sig3_rr(:,5), '--k', gps.t, -sig3_rr(:,5), '--k' )
+    plot (gnss.t, sig3_rr(:,5), '--k', gnss.t, -sig3_rr(:,5), '--k' )
     xlabel('Time [s]')
     ylabel('[m/s]')
-    legend('GPS', 'IMU1', 'IMU2', '3\sigma');
+    legend('GNSS', 'IMU1', 'IMU2', '3\sigma');
     title('VELOCITY EAST ERROR');
     grid
     
     subplot(313)
-    plot(gps_ref.t, (gps_ref.vel(:,3) - ref_g.vel(:,3)), '-c');
+    plot(gnss_ref.t, (gnss_ref.vel(:,3) - ref_g.vel(:,3)), '-c');
     hold on
     plot(nav1_ref.t, (nav1_ref.vel(:,3) - ref_1.vel(:,3)), '-b', nav2_ref.t, (nav2_ref.vel(:,3) - ref_2.vel(:,3)), '-r');
-    plot (gps.t, sig3_rr(:,6), '--k', gps.t, -sig3_rr(:,6), '--k' )
+    plot (gnss.t, sig3_rr(:,6), '--k', gnss.t, -sig3_rr(:,6), '--k' )
     xlabel('Time [s]')
     ylabel('[m/s]')
-    legend('GPS', 'IMU1', 'IMU2', '3\sigma');
+    legend('GNSS', 'IMU1', 'IMU2', '3\sigma');
     title('VELOCITY DOWN ERROR');
     grid
     
     % POSITION
     figure;
     subplot(311)
-    plot(ref.t, ref.lat .*R2D, '--k', gps.t, gps.lat.*R2D, '-c', nav1_e.t, nav1_e.lat.*R2D, '-b', nav2_e.t, nav2_e.lat.*R2D, '-r');
+    plot(ref.t, ref.lat .*R2D, '--k', gnss.t, gnss.lat.*R2D, '-c', nav1_e.t, nav1_e.lat.*R2D, '-b', nav2_e.t, nav2_e.lat.*R2D, '-r');
     xlabel('Time [s]')
     ylabel('[deg]')
-    legend('REF', 'GPS', 'IMU1', 'IMU2');
+    legend('REF', 'GNSS', 'IMU1', 'IMU2');
     title('LATITUDE');
     grid
     
     subplot(312)
-    plot(ref.t, ref.lon .*R2D, '--k', gps.t, gps.lon.*R2D, '-c', nav1_e.t, nav1_e.lon.*R2D, '-b', nav2_e.t, nav2_e.lon.*R2D, '-r');
+    plot(ref.t, ref.lon .*R2D, '--k', gnss.t, gnss.lon.*R2D, '-c', nav1_e.t, nav1_e.lon.*R2D, '-b', nav2_e.t, nav2_e.lon.*R2D, '-r');
     xlabel('Time [s]')
     ylabel('[deg]')
-    legend('REF', 'GPS', 'IMU1', 'IMU2');
+    legend('REF', 'GNSS', 'IMU1', 'IMU2');
     title('LONGITUDE');
     grid
     
     subplot(313)
-    plot(ref.t, ref.h, '--k', gps.t, gps.h, '-c', nav1_e.t, nav1_e.h, '-b', nav2_e.t, nav2_e.h, '-r');
+    plot(ref.t, ref.h, '--k', gnss.t, gnss.h, '-c', nav1_e.t, nav1_e.h, '-b', nav2_e.t, nav2_e.h, '-r');
     xlabel('Time [s]')
     ylabel('[m]')
-    legend('REF', 'GPS', 'IMU1', 'IMU2');
+    legend('REF', 'GNSS', 'IMU1', 'IMU2');
     title('ALTITUDE');
     grid
     
@@ -572,48 +571,48 @@ if (strcmp(PLOT,'ON'))
     LAT2M_2 = RN + nav2_ref.h;
     LON2M_2 = (RE + nav2_ref.h).*cos(nav2_ref.lat);
     
-    [RN,RE]  = radius(gps.lat, 'double');
-    LAT2M_G = RN + gps.h;
-    LON2M_G = (RE + gps.h).*cos(gps.lat);
+    [RN,RE]  = radius(gnss.lat, 'double');
+    LAT2M_G = RN + gnss.h;
+    LON2M_G = (RE + gnss.h).*cos(gnss.lat);
     
-    [RN,RE]  = radius(gps_ref.lat, 'double');
-    LAT2M_GR = RN + gps_ref.h;
-    LON2M_GR = (RE + gps_ref.h).*cos(gps_ref.lat);
+    [RN,RE]  = radius(gnss_ref.lat, 'double');
+    LAT2M_GR = RN + gnss_ref.h;
+    LON2M_GR = (RE + gnss_ref.h).*cos(gnss_ref.lat);
     
     figure;
     subplot(311)
-    plot(gps_ref.t,  LAT2M_GR.*(gps_ref.lat - ref_g.lat), '-c')
+    plot(gnss_ref.t,  LAT2M_GR.*(gnss_ref.lat - ref_g.lat), '-c')
     hold on
     plot(nav1_ref.t, LAT2M_1.*(nav1_ref.lat - ref_1.lat), '-b')
     plot(nav2_ref.t, LAT2M_2.*(nav2_ref.lat - ref_2.lat), '-r')
-    plot (gps.t, LAT2M_G.*sig3_rr(:,7), '--k', gps.t, -LAT2M_G.*sig3_rr(:,7), '--k' )
+    plot (gnss.t, LAT2M_G.*sig3_rr(:,7), '--k', gnss.t, -LAT2M_G.*sig3_rr(:,7), '--k' )
     xlabel('Time [s]')
     ylabel('[m]')
-    legend('GPS', 'IMU1', 'IMU2', '3\sigma');
+    legend('GNSS', 'IMU1', 'IMU2', '3\sigma');
     title('LATITUDE ERROR');
     grid
     
     subplot(312)
-    plot(gps_ref.t, LON2M_GR.*(gps_ref.lon - ref_g.lon), '-c')
+    plot(gnss_ref.t, LON2M_GR.*(gnss_ref.lon - ref_g.lon), '-c')
     hold on
     plot(nav1_ref.t, LON2M_1.*(nav1_ref.lon - ref_1.lon), '-b')
     plot(nav2_ref.t, LON2M_2.*(nav2_ref.lon - ref_2.lon), '-r')
-    plot(gps.t, LON2M_G.*sig3_rr(:,8), '--k', gps.t, -LON2M_G.*sig3_rr(:,8), '--k' )
+    plot(gnss.t, LON2M_G.*sig3_rr(:,8), '--k', gnss.t, -LON2M_G.*sig3_rr(:,8), '--k' )
     xlabel('Time [s]')
     ylabel('[m]')
-    legend('GPS', 'IMU1', 'IMU2', '3\sigma');
+    legend('GNSS', 'IMU1', 'IMU2', '3\sigma');
     title('LONGITUDE ERROR');
     grid
     
     subplot(313)
-    plot(gps_ref.t, (gps_ref.h - ref_g.h), '-c')
+    plot(gnss_ref.t, (gnss_ref.h - ref_g.h), '-c')
     hold on
     plot(nav1_ref.t, (nav1_ref.h - ref_1.h), '-b')
     plot(nav2_ref.t, (nav2_ref.h - ref_2.h), '-r')
-    plot(gps.t, sig3_rr(:,9), '--k', gps.t, -sig3_rr(:,9), '--k' )
+    plot(gnss.t, sig3_rr(:,9), '--k', gnss.t, -sig3_rr(:,9), '--k' )
     xlabel('Time [s]')
     ylabel('[m]')
-    legend('GPS', 'IMU1', 'IMU2', '3\sigma');
+    legend('GNSS', 'IMU1', 'IMU2', '3\sigma');
     title('ALTITUDE ERROR'); 
     grid
 end

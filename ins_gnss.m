@@ -1,7 +1,7 @@
-function [nav_e] = ins_gps(imu, gps, att_mode, precision)
-% ins_gps: loosely-coupled integrated navigation system.
+function [nav_e] = ins_gnss(imu, gps, att_mode, precision)
+% ins_gnss: loosely-coupled integrated navigation system.
 %
-% ins_gps integrates IMU and GPS measurements by using an Extended Kalman filter.
+% ins_gnss integrates IMU and GNSS measurements by using an Extended Kalman filter.
 %
 % INPUT:
 %   imu, IMU data structure.
@@ -24,7 +24,7 @@ function [nav_e] = ins_gps(imu, gps, att_mode, precision)
 % ini_align: 1x3 initial attitude at t(1).
 % ini_align_err: 1x3 initial attitude errors at t(1).
 %
-%	gps, GPS data structure.
+%	gps, GNSS data structure.
 %         t: Mx1 time vector (seconds).
 %       lat: Mx1 latitude (radians).
 %       lon: Mx1 longitude (radians).
@@ -45,7 +45,7 @@ function [nav_e] = ins_gps(imu, gps, att_mode, precision)
 %      single: single float precision (32 bits).
 %
 % OUTPUT:
-%   nav_e, INS/GPS navigation estimates data structure.
+%   nav_e, INS/GNSS navigation estimates data structure.
 %         t: Ix1 time vector (seconds).
 %        tk: Mx1 time when Kalman filter is executed
 %      roll: Ix1 roll (radians).
@@ -134,7 +134,7 @@ if strcmp(precision, 'single')  % single precision
     Xi = single(zeros(Mg, 21));      % Evolution of Kalman filter a priori states, xi
     Xp = single(zeros(Mg, 21));      % Evolution of Kalman filter a posteriori states, xp
     B  = single(zeros(Mg, 12));      % Biases compensantions after Kalman filter correction
-    x  = single([ zeros(1,9), imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift ]');  % Kalman filter error vector state
+    S.xp  = single([ zeros(1,9), imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift ]');  % Kalman filter error vector state
     
     % Initialize biases variables
     gb_drift = single(imu.gb_drift');
@@ -174,7 +174,7 @@ else % double precision
     Xi = zeros(Mg, 21);        % Evolution of Kalman filter a priori states, xi
     Xp = zeros(Mg, 21);        % Evolution of Kalman filter a posteriori states, xp
     B  = zeros(Mg, 12);        % Biases compensantions after Kalman filter correction
-    x  = [ zeros(1,9), imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift ]';  % Kalman filter error vector state
+    S.xp = [ zeros(1,9), imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift ]';  % Kalman filter error vector state
     
     % Initialize biases variables
     gb_drift = imu.gb_drift';
@@ -212,13 +212,13 @@ S.Pp = diag([imu.ini_align_err, gps.stdv, gps.std, imu.gb_fix, imu.ab_fix, imu.g
 
 % DEC = 0.5 * 180/pi;             % Magnetic declination (deg)
 
-% Initialize matrices for INS/GPS performance analysis
+% Initialize matrices for INS/GNSS performance analysis
 Pp(1,:) = reshape(S.Pp, 1, 441);
 B(1,:)  = [gb_fix', ab_fix', gb_drift', ab_drift'];
 
 i = 1;
 
-% GPS clock is the master clock
+% GNSS clock is the master clock
 for j = 2:Mg
     
     while (ti(i) < tg(j))
@@ -324,32 +324,32 @@ for j = 2:Mg
     
     %% KALMAN FILTER
     
-    % GPS period
+    % GNSS period
     dtg = tg(j) - tg(j-1);
     
     % Vector to update matrix F
     upd = [vel_e(i,:) lat_e(i) h_e(i) fn'];
     
     % Update matrices F and G
-    [S.F, S.G] = F_update(upd, DCMbn, imu, dtg);
+    [S.F, S.G] = F_update(upd, DCMbn, imu);
     
     % Update matrix H
     if(zupt == false)
         S.H = [ Z I Z   Z Z Z Z;
                 Z Z Tpr Z Z Z Z;];
         S.R = diag([gps.stdv gps.stdm]).^2;        
-        z = [ zv' zp' ]';
+        S.z = [ zv' zp' ]';
     else                
         S.H = [Z I Z Z Z Z Z; ];
         S.R = diag([gps.stdv]).^2;
-        z = zv;
+        S.z = zv;
     end
     
     % Execute the extended Kalman filter
-    S = kalman(x, z, S, dtg);
-    x(10:21) = S.xp(10:21); % states 1:9 are set to zero (error-state approach)
-    
-    %% INS/GPS CORRECTIONS
+    S.xp(1:9) = zeros(9,1);     % states 1:9 are forced to zero (error-state approach)
+    S = kalman(S, dtg);
+        
+    %% INS/GNSS CORRECTIONS
     
     % Quaternion corrections
     % Crassidis. Eq. 7.34 and A.174a.
@@ -359,14 +359,15 @@ for j = 2:Mg
     
     % DCM correction
     DCMbn = qua2dcm(qua);
-    %     E = skewm(S.xp(1:3));
-    %     DCMbn = (eye(3) + E) * DCMbn_n;
     
-    % Attitude corrections
+    % Another possible attitude correction
     %     euler = qua2euler(qua);
     %     roll_e(i) = euler(1);
     %     pitch_e(i)= euler(2);
     %     yaw_e(i)  = euler(3);
+    %
+    %     E = skewm(S.xp(1:3));
+    %     DCMbn = (eye(3) + E) * DCMbn_n;
     
     % Attitude corrections
     roll_e(i)  = roll_e(i)  - S.xp(1);
@@ -389,7 +390,7 @@ for j = 2:Mg
     gb_drift = S.xp(16:18);
     ab_drift = S.xp(19:21);
     
-    % Matrices for later INS/GPS performance analysis
+    % Matrices for later INS/GNSS performance analysis
     Xi(j,:) = S.xi';
     Xp(j,:) = S.xp';
     Pi(j,:) = reshape(S.Pi, 1, 441);
@@ -398,7 +399,7 @@ for j = 2:Mg
     if(zupt == true)        
         In(j,:) = [ zv; zeros(3,1);]';
     else
-        In(j,:) = z';   
+        In(j,:) = S.z';   
     end
     B(j,:)  = [gb_fix', ab_fix', gb_drift', ab_drift'];
     
@@ -407,7 +408,7 @@ for j = 2:Mg
 end
 
 
-%% Estimates from INS/GPS integration
+%% Estimates from INS/GNSS integration
 
 nav_e.t     = ti(1:i, :);       % IMU time
 nav_e.tk    = tg;               % Time when Kalman filter is executed

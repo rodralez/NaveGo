@@ -1,17 +1,17 @@
-function  S = kalman(xp, z, S, dt)
-% kalman: Kalman filter algorithm for NaveGo INS/GPS system.
+function  S = kalman(S, dt)
+% kalman: Kalman filter algorithm.
 %
 % INPUT:
-%  xp, 21x1 a posteriori state vector (old).
-%   z, 6x1 innovations vector.
-%  dt, time period. 
 %   S, data structure with at least the following fields:
-%       F,  21x21 state transition matrix.
-%       H,   6x21 observation matrix.
-%       Q,  12x12 process noise covariance.
-%       R,   6x6  observation noise covariance.
+%       xp, 21x1 a posteriori state vector (old).
+%       z, 6x1 innovations vector.
+%       F, 21x21 state transition matrix.
+%       H, 6x21 observation matrix.
+%       Q, 12x12 process noise covariance.
+%       R, 6x6  observation noise covariance.
 %       Pp, 21x21 a posteriori error covariance.
-%       G,  21x12 control-input matrix.      
+%       G, 21x12 control-input matrix.      
+%   dt, time period. 
 %
 % OUTPUT:
 %    S, the following fields are updated:
@@ -51,13 +51,12 @@ function  S = kalman(xp, z, S, dt)
 %           Dan Simon. Optimal State Estimation. Chapter 5. John Wiley 
 % & Sons. 2006.   
 %
-% Version: 004
-% Date:    2017/05/10
+% Version: 005
+% Date:    2018/10/10
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
 I = eye(max(size(S.F)));
-S.xp = xp;
 
 % Discretization of continous-time system
 S.A =  expm(S.F * dt);          % "Exact" expression
@@ -74,7 +73,7 @@ S.K = (S.Pi * S.H') / (S.C) ;
 
 % Step 3, update the a posteriori state xp
 S.xi = S.A * S.xp;
-S.xp = S.xi + S.K * (z - S.H * S.xi);
+S.xp = S.xi + S.K * (S.z - S.H * S.xi);
 
 % Step 4, update the a posteriori covariance matrix Pp
 J = (I - S.K * S.H);

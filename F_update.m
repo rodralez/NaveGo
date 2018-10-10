@@ -1,5 +1,14 @@
-function  [F, G] = F_update(upd, DCMbn, imu, dt)
-% F_update: updates Kalman filter transition matrix F.
+function  [F, G] = F_update(upd, DCMbn, imu)
+% F_update: updates F and G matrices before the execution of Kalman filter.
+%
+% INPUT:
+%   upd, 1x8 vector with data fron the INS.
+%   DCMbn, DCM body-to-nav.
+%   imu, IMU data structure.
+%
+% OUTPUT:
+%   F,  21x21 state transition matrix.
+%   G,  21x12 control-input matrix.   
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -22,7 +31,7 @@ function  [F, G] = F_update(upd, DCMbn, imu, dt)
 % References:
 %			Titterton, D.H. and Weston, J.L. (2004). Strapdown
 % Inertial Navigation Technology (2nd Ed.). Institution
-% of Engineering and Technology, USA. Eq 12.18, p. 345.
+% of Engineering and Technology, USA. Eq. 12.18, p. 345.
 %
 % 			Farrell, J. (2008). Aided Navigation: GPS With High Rate
 % Sensors. McGraw-Hill Professional, USA. Eq. 11.108, p. 407.
@@ -37,8 +46,8 @@ function  [F, G] = F_update(upd, DCMbn, imu, dt)
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 22.
 %
-% Version: 002
-% Date:    2017/09/04
+% Version: 003
+% Date:    2018/10/08
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 

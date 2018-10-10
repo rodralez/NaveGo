@@ -1,4 +1,4 @@
-function  gps = gps_err_profile (lat, h, gps)
+function  gnss = gnss_err_profile (lat, h, gnss)
 % gps_err_profile: converts GPS standard deviation from meters to radians.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
@@ -35,12 +35,12 @@ function  gps = gps_err_profile (lat, h, gps)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
-gps.std =  zeros(1,3);
+gnss.std =  zeros(1,3);
 
 [RM, RN] = radius(lat, 'double');
 
-gps.std(1) = gps.stdm(1) / (RM + h);                  
-gps.std(2) = gps.stdm(2) / (RN + h) / cos (lat);    
-gps.std(3) = gps.stdm(3);
+gnss.std(1) = gnss.stdm(1) / (RM + h);                  
+gnss.std(2) = gnss.stdm(2) / (RN + h) / cos (lat);    
+gnss.std(3) = gnss.stdm(3);
 
 end
