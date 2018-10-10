@@ -125,18 +125,18 @@ fprintf('\nNaveGo: starting simulation ... \n')
 
 % Comment any of the following parameters in order to NOT execute a particular portion of code
 
-GPS_DATA  = 'ON';   % Generate synthetic GPS data
+GNSS_DATA = 'ON';   % Generate synthetic GNSS data
 IMU1_DATA = 'ON';   % Generate synthetic ADIS16405 IMU data
 IMU2_DATA = 'ON';   % Generate synthetic ADIS16488 IMU data
 
-IMU1_INS  = 'ON';   % Execute INS/GPS integration for ADIS16405 IMU
-IMU2_INS  = 'ON';   % Execute INS/GPS integration for ADIS16488 IMU
+IMU1_INS  = 'ON';   % Execute INS/GNSS integration for ADIS16405 IMU
+IMU2_INS  = 'ON';   % Execute INS/GNSS integration for ADIS16488 IMU
 
 PLOT      = 'ON';   % Plot results.
 
 % If a particular parameter is commented above, it is set by default to 'OFF'.
 
-if (~exist('GPS_DATA','var')),  GPS_DATA  = 'OFF'; end
+if (~exist('GNSS_DATA','var')),  GNSS_DATA  = 'OFF'; end
 if (~exist('IMU1_DATA','var')), IMU1_DATA = 'OFF'; end
 if (~exist('IMU2_DATA','var')), IMU2_DATA = 'OFF'; end
 if (~exist('IMU1_INS','var')),  IMU1_INS  = 'OFF'; end
@@ -149,7 +149,7 @@ if (~exist('PLOT','var')),      PLOT      = 'OFF'; end
 
 ```matlab
 
-G = 9.81;           % Gravity constant, m/s^2
+G =  9.80665;       % Gravity constant, m/s^2
 G2MSS = G;          % g to m/s^2
 MSS2G = (1/G);      % m/s^2 to g
 
@@ -170,7 +170,7 @@ fprintf('NaveGo: loading reference dataset from a trajectory generator... \n')
 load ref.mat
 
 % ref.mat contains the reference data structure from which inertial 
-% sensors and GPS wil be simulated. It must contain the following fields:
+% sensors and GNSS wil be simulated. It must contain the following fields:
 
 %         t: Nx1 time vector (seconds).
 %       lat: Nx1 latitude (radians).
@@ -180,7 +180,6 @@ load ref.mat
 %      roll: Nx1 roll angles (radians).
 %     pitch: Nx1 pitch angles (radians).
 %       yaw: Nx1 yaw angle vector (radians).
-%        kn: 1x1 number of elements of ref time vector.
 %     DCMnb: Nx9 Direct Cosine Matrix nav-to-body. Each row contains 
 %            the elements of one DCM matrix ordered by columns as 
 %            [a11 a21 a31 a12 a22 a32 a13 a23 a33].
@@ -271,7 +270,7 @@ imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude alig
 
 ```matlab
 
-% GPS data structure:
+% GNSS data structure:
 %         t: Mx1 time vector (seconds).
 %       lat: Mx1 latitude (radians).
 %       lon: Mx1 longitude (radians).
@@ -282,35 +281,41 @@ imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude alig
 %      stdv: 1x3 velocity standard deviations, [Vn Ve Vd] (m/s).
 %      larm: 3x1 lever arm from IMU to GNSS antenna (x-fwd, y-right, z-down) (m).
 %      freq: 1x1 sampling frequency (Hz).
+%   zupt_th: 1x1 ZUPT threshold (m/s).
+%  zupt_win: 1x1 ZUPT time window (seconds).
 
-gps.stdm = [5 5 10];                   % GPS positions standard deviations [lat lon h] (meters)
-gps.stdv = 0.1 * KT2MS .* ones(1,3);   % GPS velocities standard deviations [Vn Ve Vd] (meters/s)
-gps.larm = zeros(3,1);                 % GPS lever arm from IMU to GNSS antenna (x-fwd, y-right, z-down) (m).
-gps.freq = 5;                          % GPS operation frequency (Hz)
+gnss.stdm = [5 5 10];                   % GNSS positions standard deviations [lat lon h] (meters)
+gnss.stdv = 0.1 * KT2MS .* ones(1,3);   % GNSS velocities standard deviations [Vn Ve Vd] (meters/s)
+gnss.larm = zeros(3,1);                 % GNSS lever arm from IMU to GNSS antenna (x-fwd, y-right, z-down) (m).
+gnss.freq = 5;                          % GNSS operation frequency (Hz)
+
+% Parameters for ZUPT detection algorithm
+gnss.zupt_th = 0.5;   % ZUPT threshold (m/s).
+gnss.zupt_win = 4;    % ZUPT time window (seconds).
 
 ```
 
-### Generate GPS synthetic data
+### Generate GNSS synthetic data
 
 ```matlab
 
 rng('shuffle')                  % Reset pseudo-random seed
 
-if strcmp(GPS_DATA, 'ON')       % If simulation of GPS data is required ...
+if strcmp(GNSS_DATA, 'ON')       % If simulation of GNSS data is required ...
     
-    fprintf('NaveGo: generating GPS synthetic data... \n')
+    fprintf('NaveGo: generating GNSS synthetic data... \n')
     
-    gps = gps_err_profile(ref.lat(1), ref.h(1), gps); % Transform GPS manufacturer error units to SI units.
+    gnss = gnss_err_profile(ref.lat(1), ref.h(1), gnss); % Transform GNSS manufacturer error units to SI units.
     
-    gps = gps_gen(ref, gps);  % Generate GPS dataset from reference dataset.
+    gnss = gnss_gen(ref, gnss);  % Generate GNSS dataset from reference dataset.
 
-    save gps.mat gps
+    save gnss.mat gnss
     
 else
     
-    fprintf('NaveGo: loading GPS data... \n') 
+    fprintf('NaveGo: loading GNSS data... \n') 
     
-    load gps.mat
+    load gnss.mat
 end
 
 ```
@@ -373,7 +378,6 @@ else
     load imu2.mat
 end
 
-
 ```
 
 ### Print navigation time
@@ -394,42 +398,42 @@ if strcmp(IMU1_INS, 'ON')
     
     fprintf('NaveGo: INS/GNSS navigation estimates for IMU1... \n')
     
-    % Sincronize GPS data with IMU data.
+    % Sincronize GNSS data with IMU data.
     
-    % Guarantee that gps.t(1) < imu1.t(1) < gps.t(2)
-    if (imu1.t(1) < gps.t(1))
+    % Guarantee that gnss.t(1) < imu1.t(1) < gnss.t(2)
+    if (imu1.t(1) < gnss.t(1))
         
-        igx  = find(imu1.t > gps.t(1), 1, 'first' );
+        igx  = find(imu1.t > gnss.t(1), 1, 'first' );
         
         imu1.t  = imu1.t  (igx:end, :);
         imu1.fb = imu1.fb (igx:end, :);
         imu1.wb = imu1.wb (igx:end, :);        
     end
     
-    % Guarantee that imu1.t(end-1) < gps.t(end) < imu1.t(end)
-    gps1 = gps;
+    % Guarantee that imu1.t(end-1) < gnss.t(end) < imu1.t(end)
+    gnss1 = gnss;
     
-    if (imu1.t(end) <= gps.t(end))
+    if (imu1.t(end) <= gnss.t(end))
         
-        fgx  = find(gps.t < imu1.t(end), 1, 'last' );
+        fgx  = find(gnss.t < imu1.t(end), 1, 'last' );
         
-        gps1.t   = gps.t  (1:fgx, :);
-        gps1.lat = gps.lat(1:fgx, :);
-        gps1.lon = gps.lon(1:fgx, :);
-        gps1.h   = gps.h  (1:fgx, :);
-        gps1.vel = gps.vel(1:fgx, :);
+        gnss1.t   = gnss.t  (1:fgx, :);
+        gnss1.lat = gnss.lat(1:fgx, :);
+        gnss1.lon = gnss.lon(1:fgx, :);
+        gnss1.h   = gnss.h  (1:fgx, :);
+        gnss1.vel = gnss.vel(1:fgx, :);
     end
     
-    % Execute INS/GPS integration
+    % Execute INS/GNSS integration
     % ---------------------------------------------------------------------
-    nav1_e = ins_gps(imu1, gps1, 'quaternion', 'double');
+    nav1_e = ins_gnss(imu1, gnss1, 'dcm');
     % ---------------------------------------------------------------------
     
     save nav1_e.mat nav1_e
     
 else
     
-    fprintf('NaveGo: loading INS/GPS integration for IMU1... \n')
+    fprintf('NaveGo: loading INS/GNSS integration for IMU1... \n')
     
     load nav1_e.mat
 end
@@ -444,42 +448,42 @@ if strcmp(IMU2_INS, 'ON')
     
     fprintf('NaveGo: INS/GNSS navigation estimates for IMU2... \n')
     
-    % Sincronize GPS data and IMU data.
+    % Sincronize GNSS data and IMU data.
     
-    % Guarantee that gps.t(1) < imu2.t(1) < gps.t(2)
-    if (imu2.t(1) < gps.t(1))
+    % Guarantee that gnss.t(1) < imu2.t(1) < gnss.t(2)
+    if (imu2.t(1) < gnss.t(1))
         
-        igx  = find(imu2.t > gps.t(1), 1, 'first' );
+        igx  = find(imu2.t > gnss.t(1), 1, 'first' );
         
         imu2.t  = imu2.t  (igx:end, :);
         imu2.fb = imu2.fb (igx:end, :);
         imu2.wb = imu2.wb (igx:end, :);        
     end
     
-    % Guarantee that imu2.t(end-1) < gps.t(end) < imu2.t(end)
-    gps2 = gps;
+    % Guarantee that imu2.t(end-1) < gnss.t(end) < imu2.t(end)
+    gnss2 = gnss;
     
-    if (imu2.t(end) <= gps.t(end))
+    if (imu2.t(end) <= gnss.t(end))
         
-        fgx  = find(gps.t < imu2.t(end), 1, 'last' );
+        fgx  = find(gnss.t < imu2.t(end), 1, 'last' );
         
-        gps2.t   = gps.t  (1:fgx, :);
-        gps2.lat = gps.lat(1:fgx, :);
-        gps2.lon = gps.lon(1:fgx, :);
-        gps2.h   = gps.h  (1:fgx, :);
-        gps2.vel = gps.vel(1:fgx, :);       
+        gnss2.t   = gnss.t  (1:fgx, :);
+        gnss2.lat = gnss.lat(1:fgx, :);
+        gnss2.lon = gnss.lon(1:fgx, :);
+        gnss2.h   = gnss.h  (1:fgx, :);
+        gnss2.vel = gnss.vel(1:fgx, :);       
     end
     
-    % Execute INS/GPS integration
+    % Execute INS/GNSS integration
     % ---------------------------------------------------------------------
-    nav2_e = ins_gps(imu2, gps2, 'quaternion', 'single');
+    nav2_e = ins_gnss(imu2, gnss2, 'quaternion');
     % ---------------------------------------------------------------------
     
     save nav2_e.mat nav2_e
     
 else
     
-    fprintf('NaveGo: loading INS/GPS integration for IMU2... \n')
+    fprintf('NaveGo: loading INS/GNSS integration for IMU2... \n')
     
     load nav2_e.mat
 end
@@ -495,7 +499,7 @@ end
 
 [nav1_ref, ref_1] = navego_interpolation (nav1_e, ref);
 [nav2_ref, ref_2] = navego_interpolation (nav2_e, ref);
-[gps_ref, ref_g]  = navego_interpolation (gps, ref);
+[gnss_ref, ref_g]  = navego_interpolation (gnss, ref);
 
 ```
 
@@ -503,7 +507,7 @@ end
 
 ```matlab
 
-print_rmse (nav1_ref, gps_ref, ref_1, ref_g, 'INS/GPS IMU1');
+print_rmse (nav1_ref, gnss_ref, ref_1, ref_g, 'INS/GNSS IMU1');
 
 ```
 
@@ -511,7 +515,7 @@ print_rmse (nav1_ref, gps_ref, ref_1, ref_g, 'INS/GPS IMU1');
 
 ```matlab
 
-print_rmse (nav2_ref, gps_ref, ref_2, ref_g, 'INS/GPS IMU2');
+print_rmse (nav2_ref, gnss_ref, ref_2, ref_g, 'INS/GNSS IMU2');
 
 ```
 

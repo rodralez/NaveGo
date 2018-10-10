@@ -1,13 +1,13 @@
 function [gnss, gnss_r] = gnss_gen(ref, gnss)
-% gps_gen: generates GPS position and GPS velocity in the n-frame from reference data.
+% gnss_gen: generates GNSS position and GNSS velocity in the n-frame from reference data.
 %
 %   INPUT:
 %       ref, reference data structure.
 %       gnss, GNSS data structure.
 %
 %   OUTPUT:
-%       gnss, GPS data structure with noise measurements.
-%       gnss_r, GPS data structure with true measurements.
+%       gnss, GNSS data structure with noisy measurements.
+%       gnss_r, GNSS data structure with true measurements.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
@@ -33,6 +33,8 @@ function [gnss, gnss_r] = gnss_gen(ref, gnss)
 % Journal of Control Engineering and Applied Informatics}, vol. 17, 
 % issue 2, pp. 110-120, 2015. Sec. 2.3.
 %
+%           gen_gps.m, gnss_gen is based on this previos function.
+%
 % Version: 001
 % Date:    2018/10/10
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
@@ -40,14 +42,12 @@ function [gnss, gnss_r] = gnss_gen(ref, gnss)
 
 [m,n] = size (ref.t);
 
-if n>m, m=n; end
+if n > m, m = n; end
 
 % Downsampling GNSS estimates from ref.freq. to gnss.freq.
 dt   = mean(diff(ref.t));
 freq = 1/dt;
 dspl = round(freq / gnss.freq);
-
-% dow = floor(m/dspl);
 
 gnss_r.t     = ref.t    (1:dspl:end, :);
 gnss_r.lat   = ref.lat  (1:dspl:end, :);
@@ -57,6 +57,7 @@ gnss_r.vel   = ref.vel  (1:dspl:end, :);
 
 gnss_r.freq = round(1/mean(diff(gnss_r.t)));
 
+% Gaussian noise vectors
 r1 = randn(size(gnss_r.t));
 r2 = randn(size(gnss_r.t));
 r3 = randn(size(gnss_r.t));

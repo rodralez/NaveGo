@@ -1,12 +1,12 @@
-function rmse_v = navego_rmse (nav_e, gps, ref_n, ref_g)
-% print_rmse: print on console Root Mean Squared Errors (RMSE) between INS/GPS
-% and a reference, and between GPS-only and a reference as well.
+function rmse_v = navego_rmse (nav_e, gnss, ref_n, ref_g)
+% print_rmse: print on console Root Mean Squared Errors (RMSE) between INS/GNSS
+% and a reference, and between GNSS-only and a reference as well.
 %
 % INPUT:
-%   nav_e, INS/GPS integration data structure.
-%   gps, GPS data structure.
-%   ref_n, Reference data structure ajusted for INS/GPS measurements.
-%   ref_g, Reference data structure ajusted for GPS measurements.
+%   nav_e, INS/GNSS integration data structure.
+%   gnss, GNSS data structure.
+%   ref_n, Reference data structure ajusted for INS/GNSS measurements.
+%   ref_g, Reference data structure ajusted for GNSS measurements.
 %
 % OUTPUT
 %   rmse_v, vector with all RMSE.
@@ -37,7 +37,7 @@ function rmse_v = navego_rmse (nav_e, gps, ref_n, ref_g)
 D2R = (pi/180);     % degrees to radians
 R2D = (180/pi);     % radians to degrees
 
-%% INS/GPS attitude RMSE
+%% INS/GNSS attitude RMSE
 
 RMSE_roll  = rmse (nav_e.roll ,   ref_n.roll)  .* R2D;
 RMSE_pitch = rmse (nav_e.pitch,   ref_n.pitch) .* R2D;
@@ -46,7 +46,7 @@ RMSE_pitch = rmse (nav_e.pitch,   ref_n.pitch) .* R2D;
 idx = ( abs(nav_e.yaw - ref_n.yaw) < (150 * D2R) );
 RMSE_yaw = rmse (nav_e.yaw(idx),ref_n.yaw(idx) ) .* R2D;
 
-%% INS/GPS velocity RMSE
+%% INS/GNSS velocity RMSE
 
 if (isfield(nav_e, 'vel') & isfield( ref_n, 'vel'))
     RMSE_vn = rmse (nav_e.vel(:,1),  ref_n.vel(:,1));
@@ -58,7 +58,7 @@ else
     RMSE_vd = NaN;
 end
 
-%% INS/GPS position RMSE
+%% INS/GNSS position RMSE
 
 [RM,RN] = radius(nav_e.lat(1), 'double');
 LAT2M = (RM + double(nav_e.h(1)));                          % Coefficient for lat rad -> meters
@@ -68,27 +68,27 @@ RMSE_lat = rmse (nav_e.lat, ref_n.lat) .* LAT2M;
 RMSE_lon = rmse (nav_e.lon, ref_n.lon) .* LON2M;
 RMSE_h   = rmse (nav_e.h,   ref_n.h);
 
-%% GPS velocity RMSE
+%% GNSS velocity RMSE
 
-if (isfield(gps, 'vel') & isfield( ref_g, 'vel'))
-    RMSE_vn_g = rmse (gps.vel(:,1), ref_g.vel(:,1));
-    RMSE_ve_g = rmse (gps.vel(:,2), ref_g.vel(:,2));
-    RMSE_vd_g = rmse (gps.vel(:,3), ref_g.vel(:,3));
+if (isfield(gnss, 'vel') & isfield( ref_g, 'vel'))
+    RMSE_vn_g = rmse (gnss.vel(:,1), ref_g.vel(:,1));
+    RMSE_ve_g = rmse (gnss.vel(:,2), ref_g.vel(:,2));
+    RMSE_vd_g = rmse (gnss.vel(:,3), ref_g.vel(:,3));
 else
     RMSE_vn_g = NaN;
     RMSE_ve_g = NaN;
     RMSE_vd_g = NaN;
 end
 
-%% GPS position RMSE
+%% GNSS position RMSE
 
-[RM,RN] = radius(gps.lat(1), 'double');
-LAT2M = (RM + double(gps.h(1)));                        % Coefficient for lat rad -> meters
-LON2M = (RN + double(gps.h(1))) .* cos(gps.lat(1));     % Coefficient for lon rad -> meters
+[RM,RN] = radius(gnss.lat(1), 'double');
+LAT2M = (RM + double(gnss.h(1)));                        % Coefficient for lat rad -> meters
+LON2M = (RN + double(gnss.h(1))) .* cos(gnss.lat(1));     % Coefficient for lon rad -> meters
 
-RMSE_lat_g = rmse (gps.lat, ref_g.lat) .* LAT2M;
-RMSE_lon_g = rmse (gps.lon, ref_g.lon) .* LON2M;
-RMSE_h_g   = rmse (gps.h, ref_g.h);
+RMSE_lat_g = rmse (gnss.lat, ref_g.lat) .* LAT2M;
+RMSE_lon_g = rmse (gnss.lon, ref_g.lon) .* LON2M;
+RMSE_h_g   = rmse (gnss.h, ref_g.h);
 
 rmse_v = [  RMSE_roll;  RMSE_pitch; RMSE_yaw;    
             RMSE_vn;    RMSE_ve;    RMSE_vd;

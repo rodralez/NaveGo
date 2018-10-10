@@ -65,7 +65,7 @@ fprintf('\nNaveGo: starting simulation ... \n')
 
 % Comment any of the following parameters in order to NOT execute a particular portion of code
 
-GNSS_DATA  = 'ON';   % Generate synthetic GNSS data
+GNSS_DATA = 'ON';   % Generate synthetic GNSS data
 IMU1_DATA = 'ON';   % Generate synthetic ADIS16405 IMU data
 IMU2_DATA = 'ON';   % Generate synthetic ADIS16488 IMU data
 
