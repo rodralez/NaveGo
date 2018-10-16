@@ -1,7 +1,8 @@
 % Example of how to use NaveGo to post-process real IMU and GNSS data.
 %
 % Main goal: to integrate IMU and GNSS measurements from Ekinox-D IMU.
-% The dataset was generated driving a vehicle on the streets of Turin City.
+% The dataset was generated driving a vehicle through the streets of Turin 
+% city (Italy).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -41,7 +42,7 @@ matlabrc
 addpath ../../
 addpath ../../simulation/
 addpath ../../conversions/
-% Comment any of the following parameters in order to NOT execute a particular portion of code
+
 versionstr = 'NaveGo, release v1.1';
 
 fprintf('\n%s.\n', versionstr)
