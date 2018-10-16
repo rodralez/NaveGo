@@ -32,7 +32,7 @@ If you are using NaveGo in your research, we gently ask you to add the following
 
 An URL to NaveGo should be provided as the following cite:
 
-Rodrigo Gonzalez, Carlos Catania, and Paolo Dabove (2017). NaveGo: an open-source MATLAB/GNU-Octave toolbox for processing integrated navigation systems and performing inertial sensors profiling analysis. DOI: 10.5281/zenodo.841872. URL: https://github.com/rodralez/NaveGo/.
+Gonzalez, Rodrigo. NaveGo Release v1.1 (Version 1.1). Zenodo. http://doi.org/10.5281/zenodo.1464202. 2018, October 16.
 
 ## Contributions
 
