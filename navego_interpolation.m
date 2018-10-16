@@ -1,5 +1,11 @@
 function [ref_i, ref] = navego_interpolation (data, ref)
-% navego_interpolation: interpolates data using reference time vector.
+% navego_interpolation: interpolates navigation data using reference time vector.
+%
+% INPUT:
+%   data, navigation data to be interpolated 
+%   ref, reference dataset.
+%
+% OUTPUT
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -32,7 +38,7 @@ if (D > R)
     method = 'nearest';
 else
     
-    method = 'linear';
+    method = 'spline';
 end
 
 %% Adjust reference data structure before interpolating
