@@ -40,8 +40,8 @@
 % Revision D. October 2011. 
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 % 
-% Version: 011
-% Date:    2018/09/19
+% Version: 012
+% Date:    2018/10/16
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -56,14 +56,15 @@ addpath ../../
 addpath ../../simulation/
 addpath ../../conversions/
 
-versionstr = 'NaveGo, release v1.0';
+versionstr = 'NaveGo, release v1.1';
 
 fprintf('\n%s.\n', versionstr)
 fprintf('\nNaveGo: starting simulation ... \n')
 
 %% CODE EXECUTION PARAMETERS
 
-% Comment any of the following parameters in order to NOT execute a particular portion of code
+% Comment any of the following parameters in order to NOT execute a 
+% particular portion of code
 
 GNSS_DATA = 'ON';   % Generate synthetic GNSS data
 IMU1_DATA = 'ON';   % Generate synthetic ADIS16405 IMU data
@@ -202,6 +203,7 @@ imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude alig
 %      freq: 1x1 sampling frequency (Hz).
 %   zupt_th: 1x1 ZUPT threshold (m/s).
 %  zupt_win: 1x1 ZUPT time window (seconds).
+%       eps: 1x1 ime Epsilon in seconds to compare IMU time vector to GNSS time vector.
 
 gnss.stdm = [5 5 10];                   % GNSS positions standard deviations [lat lon h] (meters)
 gnss.stdv = 0.1 * KT2MS .* ones(1,3);   % GNSS velocities standard deviations [Vn Ve Vd] (meters/s)
@@ -211,6 +213,8 @@ gnss.freq = 5;                          % GNSS operation frequency (Hz)
 % Parameters for ZUPT detection algorithm
 gnss.zupt_th = 0.5;   % ZUPT threshold (m/s).
 gnss.zupt_win = 4;    % ZUPT time window (seconds).
+
+gnss.eps = 1E-3;
 
 %% GNSS SYNTHETIC DATA
 
@@ -285,12 +289,11 @@ else
     load imu2.mat
 end
 
-
 %% Print navigation time
 
 to = (ref.t(end) - ref.t(1));
 
-fprintf('\nNaveGo: navigation time is %.2f minutes or %.2f seconds. \n', (to/60), to)
+fprintf('NaveGo: navigation time is %.2f minutes or %.2f seconds. \n', (to/60), to)
 
 %% INS/GNSS integration using IMU1
 
@@ -298,35 +301,9 @@ if strcmp(IMU1_INS, 'ON')
     
     fprintf('NaveGo: INS/GNSS navigation estimates for IMU1... \n')
     
-    % Sincronize GNSS data with IMU data.
-    
-    % Guarantee that gnss.t(1) < imu1.t(1) < gnss.t(2)
-    if (imu1.t(1) < gnss.t(1))
-        
-        igx  = find(imu1.t > gnss.t(1), 1, 'first' );
-        
-        imu1.t  = imu1.t  (igx:end, :);
-        imu1.fb = imu1.fb (igx:end, :);
-        imu1.wb = imu1.wb (igx:end, :);        
-    end
-    
-    % Guarantee that imu1.t(end-1) < gnss.t(end) < imu1.t(end)
-    gnss1 = gnss;
-    
-    if (imu1.t(end) <= gnss.t(end))
-        
-        fgx  = find(gnss.t < imu1.t(end), 1, 'last' );
-        
-        gnss1.t   = gnss.t  (1:fgx, :);
-        gnss1.lat = gnss.lat(1:fgx, :);
-        gnss1.lon = gnss.lon(1:fgx, :);
-        gnss1.h   = gnss.h  (1:fgx, :);
-        gnss1.vel = gnss.vel(1:fgx, :);
-    end
-    
     % Execute INS/GNSS integration
     % ---------------------------------------------------------------------
-    nav1_e = ins_gnss(imu1, gnss1, 'dcm');
+    nav1_e = ins_gnss(imu1, gnss, 'dcm');
     % ---------------------------------------------------------------------
     
     save nav1_e.mat nav1_e
@@ -344,35 +321,9 @@ if strcmp(IMU2_INS, 'ON')
     
     fprintf('NaveGo: INS/GNSS navigation estimates for IMU2... \n')
     
-    % Sincronize GNSS data and IMU data.
-    
-    % Guarantee that gnss.t(1) < imu2.t(1) < gnss.t(2)
-    if (imu2.t(1) < gnss.t(1))
-        
-        igx  = find(imu2.t > gnss.t(1), 1, 'first' );
-        
-        imu2.t  = imu2.t  (igx:end, :);
-        imu2.fb = imu2.fb (igx:end, :);
-        imu2.wb = imu2.wb (igx:end, :);        
-    end
-    
-    % Guarantee that imu2.t(end-1) < gnss.t(end) < imu2.t(end)
-    gnss2 = gnss;
-    
-    if (imu2.t(end) <= gnss.t(end))
-        
-        fgx  = find(gnss.t < imu2.t(end), 1, 'last' );
-        
-        gnss2.t   = gnss.t  (1:fgx, :);
-        gnss2.lat = gnss.lat(1:fgx, :);
-        gnss2.lon = gnss.lon(1:fgx, :);
-        gnss2.h   = gnss.h  (1:fgx, :);
-        gnss2.vel = gnss.vel(1:fgx, :);       
-    end
-    
     % Execute INS/GNSS integration
     % ---------------------------------------------------------------------
-    nav2_e = ins_gnss(imu2, gnss2, 'quaternion');
+    nav2_e = ins_gnss(imu2, gnss, 'quaternion');
     % ---------------------------------------------------------------------
     
     save nav2_e.mat nav2_e
@@ -391,7 +342,7 @@ end
 
 [nav1_ref, ref_1] = navego_interpolation (nav1_e, ref);
 [nav2_ref, ref_2] = navego_interpolation (nav2_e, ref);
-[gnss_ref, ref_g]  = navego_interpolation (gnss, ref);
+[gnss_ref, ref_g] = navego_interpolation (gnss, ref);
 
 %% Print RMSE from IMU1
 
@@ -416,8 +367,8 @@ if (strcmp(PLOT,'ON'))
     plot3(ref.lon(1).*R2D, ref.lat(1).*R2D, ref.h(1), 'or', 'MarkerSize', 10, 'LineWidth', 2)
     axis tight
     title('TRAJECTORIES')
-    xlabel('Longitude [deg.]')
-    ylabel('Latitude [deg.]')
+    xlabel('Longitude [deg]')
+    ylabel('Latitude [deg]')
     zlabel('Altitude [m]')
     view(-25,35)
     legend('TRUE', 'IMU1', 'IMU2')

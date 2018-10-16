@@ -45,7 +45,7 @@ rmse_v = navego_rmse (ins_gnss, gnss, ins_gnss_r, gnss_r);
         
 %% Print RMSE
 
-fprintf( '\n>> RMSE for %s\n', string);
+fprintf( '\n>> RMSE for %s\n\n', string);
 
 fprintf(' Roll,  %s = %.4e deg \n',   string, rmse_v(1));
 fprintf(' Pitch, %s = %.4e deg \n',   string, rmse_v(2));
