@@ -1,6 +1,6 @@
 # NaveGo
 
-[![Releases](https://img.shields.io/badge/release-v1.0-green.svg?style=plastic)](https://github.com/rodralez/NaveGo/releases) [![DOI](https://zenodo.org/badge/12745155.svg)](https://zenodo.org/badge/latestdoi/12745155)
+[![Releases](https://img.shields.io/badge/release-v1.1-green.svg?style=plastic)](https://github.com/rodralez/NaveGo/releases) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1464202.svg)](https://doi.org/10.5281/zenodo.1464202)
 
 NaveGo: an open-source MATLAB/GNU-Octave toolbox for processing integrated navigation systems and performing inertial sensors profiling analysis.
 
@@ -287,6 +287,7 @@ imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude alig
 %      freq: 1x1 sampling frequency (Hz).
 %   zupt_th: 1x1 ZUPT threshold (m/s).
 %  zupt_win: 1x1 ZUPT time window (seconds).
+%       eps: 1x1 time interval to compare IMU time vector to GNSS time vector (seconds).
 
 gnss.stdm = [5 5 10];                   % GNSS positions standard deviations [lat lon h] (meters)
 gnss.stdv = 0.1 * KT2MS .* ones(1,3);   % GNSS velocities standard deviations [Vn Ve Vd] (meters/s)
@@ -296,6 +297,8 @@ gnss.freq = 5;                          % GNSS operation frequency (Hz)
 % Parameters for ZUPT detection algorithm
 gnss.zupt_th = 0.5;   % ZUPT threshold (m/s).
 gnss.zupt_win = 4;    % ZUPT time window (seconds).
+
+gnss.eps = 1E-3;
 
 ```
 
@@ -503,8 +506,7 @@ end
 
 [nav1_ref, ref_1] = navego_interpolation (nav1_e, ref);
 [nav2_ref, ref_2] = navego_interpolation (nav2_e, ref);
-[gnss_ref, ref_g]  = navego_interpolation (gnss, ref);
-
+[gnss_ref, ref_g] = navego_interpolation (gnss, ref);
 ```
 
 ### Print on console RMSE from IMU1

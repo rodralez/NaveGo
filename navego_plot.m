@@ -31,8 +31,8 @@ function  navego_plot (ref, gnss, nav_e, gnss_ref, nav_ref, ref_g, ref_n)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% Version: 005
-% Date:    2017/05/19
+% Version: 006
+% Date:    2018/10/16
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 

@@ -37,6 +37,7 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %      freq: 1x1 sampling frequency (Hz).
 %   zupt_th: 1x1 ZUPT threshold (m/s).
 %  zupt_win: 1x1 ZUPT time window (seconds).
+%       eps: 1x1 time interval to compare IMU time vector to GNSS time vector (s).      
 %
 %	att_mode, attitude mode string.
 %      'quaternion': attitude updated in quaternion format. Default value.

@@ -203,7 +203,7 @@ imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude alig
 %      freq: 1x1 sampling frequency (Hz).
 %   zupt_th: 1x1 ZUPT threshold (m/s).
 %  zupt_win: 1x1 ZUPT time window (seconds).
-%       eps: 1x1 ime Epsilon in seconds to compare IMU time vector to GNSS time vector.
+%       eps: 1x1 time interval to compare IMU time vector to GNSS time vector (seconds).
 
 gnss.stdm = [5 5 10];                   % GNSS positions standard deviations [lat lon h] (meters)
 gnss.stdv = 0.1 * KT2MS .* ones(1,3);   % GNSS velocities standard deviations [Vn Ve Vd] (meters/s)
