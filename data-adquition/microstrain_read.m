@@ -7,8 +7,8 @@ function ustrain = microstrain_read(file)
 % OUTPUT
 %   ustrain, fields in data structure depends on user selection. In this 
 %   function several fields have been added but may be modified to 
-%   comply to present fields in .cvs file. Please, read the 
-%   3DM-GX3 manual for more information about existing fields.
+%   comply to fields in .cvs file. Please, read the 
+%   3DM-GX3 manual for more information about possible fields.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -32,8 +32,8 @@ function ustrain = microstrain_read(file)
 %       Microstrain. 3DM-GX3®-35 Data Communications Protocol. 8500-0014 
 %       Revision 010. Oct. 1 2013.
 %
-% Version: 001
-% Date:    2018/09/12
+% Version: 002
+% Date:    2018/10/22
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -129,11 +129,33 @@ data_m1 = cell2mat (data_cell);
 %% IMU data
 
 % Delete rows where GPS TOW equals zero
-idx = data_m1(:,3) ~= 0;
+idx = data_m1(:,3) ~= 0.0;
 data_m2 = data_m1(idx , :);
 
-idx = data_m2(:,4) ~= 0;
-data_vld = data_m2(idx , :);
+if (~ all (idx))
+
+    warning ('Null GPS TOW timestamp will be deleted')
+end
+
+% Delete rows where IMU timestamp equals zero
+idx = data_m2(:,4) ~= 0.0;
+data_m3 = data_m2(idx , :);
+
+if (~ all (idx))
+
+    warning ('Null IMU timestamp will be deleted')
+end
+
+% Delete repeated timestamps
+dd = diff(data_m3(:, 3));
+dd = [1; dd];
+idx = dd ~= 0.0;
+data_vld = data_m3(idx , :);
+
+if (~ all (idx))
+
+    warning ('Repeated IMU timestamp will be deleted')
+end
 
 ustrain.gps_flags           = data_vld(:, 1);
 ustrain.week                = data_vld(:, 2);
@@ -226,7 +248,7 @@ ustrain.freq = round(1/dt);
 % Header
 ustrain.header = ustrain_h;
 
-% NED coordinates, check if gravity is negative. 
+% Check and correct if gravity is negative in NED coordinates.
 ustrain = correct_gravity(ustrain);
 
 fclose(ustrain_f);

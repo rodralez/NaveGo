@@ -175,7 +175,7 @@ I = eye(3);
 Z = zeros(3);
 
 % Index for INS/GNSS performance analysis matrices
-j = 1;
+% j = 1;
 
 % IMU time is the master clock
 for i = 2:LI    
@@ -254,9 +254,9 @@ for i = 2:LI
     
     %% KALMAN FILTER UPDATE 
     
-    gdx =  find (gnss.t >= imu.t(i) - gnss.eps & gnss.t < imu.t(i) + gnss.eps);
+    gdx =  find (gnss.t >= (imu.t(i) - gnss.eps) & gnss.t < (imu.t(i) + gnss.eps));
     
-    if ( ~isempty(gdx) )
+    if ( ~isempty(gdx) & gdx > 1)
         
         %% INNOVATIONS
         
@@ -341,19 +341,22 @@ for i = 2:LI
         ab_drift = S.xp(19:21);
         
         % Matrices for later INS/GNSS performance analysis
-        Xi(j,:) = S.xi';
-        Xp(j,:) = S.xp';
-        Pi(j,:) = reshape(S.Pi, 1, 441);
-        Pp(j,:) = reshape(S.Pp, 1, 441);
-        A(j,:)  = reshape(S.A, 1, 441);
+        Xi(gdx,:) = S.xi';
+        Xp(gdx,:) = S.xp';
+        Pi(gdx,:) = reshape(S.Pi, 1, 441);
+        Pp(gdx,:) = reshape(S.Pp, 1, 441);
+        A(gdx,:)  = reshape(S.A, 1, 441);
         if(zupt == true)
-            In(j,:) = [ zv; zeros(3,1);]';
+            In(gdx,:) = [ zv; zeros(3,1);]';
         else
-            In(j,:) = S.z';
+            In(gdx,:) = S.z';
         end
-        B(j,:) = [gb_fix', ab_fix', gb_drift', ab_drift'];
+        B(gdx,:) = [gb_fix', ab_fix', gb_drift', ab_drift'];
         
-        j = j + 1;
+%         j = j + 1;
+%         if (j > LG)
+%             error('j > LG')
+%         end
         
     end
 end

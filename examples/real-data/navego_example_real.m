@@ -1,8 +1,8 @@
 % Example of how to use NaveGo to post-process real IMU and GNSS data.
 %
-% Main goal: to integrate IMU and GNSS measurements from Ekinox-D IMU.
-% The dataset was generated driving a vehicle through the streets of Turin 
-% city (Italy).
+% Main goal: to integrate IMU and GNSS measurements from Ekinox-D sensor.
+% Sensors dataset was generated driving a vehicle through the streets of 
+% Turin city (Italy).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -129,9 +129,9 @@ tmin = 138000; % Entering PoliTo parking.
 % tmin = 138000; %
 % tmax = 139190; %
 
-% TUNNEL 1 STRETCH
-% tmin = 139268.5; % entering tunnel
-tmax = 139305.5; % leaving tunnel
+% TUNNEL STRETCH
+% tmin = 139268.5; % Entering tunnel
+tmax = 139305.5; % Leaving tunnel
 
 % Sincronize REF data to tmin and tmax
 idx  = find(ref.t > tmin, 1, 'first' );
