@@ -46,7 +46,7 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 % OUTPUT:
 %   nav_e, INS/GNSS navigation estimates data structure.
 %         t: Ix1 time vector (seconds).
-%        tk: Mx1 time vector when Kalman filter was executed (seconds).
+%        tg: Mx1 time vector when Kalman filter was executed (seconds).
 %      roll: Ix1 roll (radians).
 %     pitch: Ix1 pitch (radians).
 %       yaw: Ix1 yaw (radians).
@@ -54,10 +54,10 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %       lat: Ix1 latitude (radians).
 %       lon: Ix1 longitude (radians).
 %         h: Ix1 altitude (m).
-%        Pp: Mx441 Kalman filter a posteriori covariance matrices.
-%        Pi: Mx441 Kalman filter a priori covariance matrices.
-%         A: Mx441 Kalman filter transition-state matrices.
-%         B: Mx12 Kalman filter biases compensations.
+%        Pp: Mx441 Kalman filter a posteriori covariance matrices, one matrix per row.
+%        Pi: Mx441 Kalman filter a priori covariance matrices, one matrix per row.
+%         A: Mx441 Kalman filter transition-state matrices, one matrix per row.
+%         B: Mx12 Kalman filter biases compensations, [gb_fix ab_fix gb_drift ab_drift].
 %        In: Mx6  Kalman filter innovations.
 %        Xi: Mx21 Kalman filter a priori states.
 %        Xp: Mx21 Kalman filter a posteriori states.
@@ -364,7 +364,7 @@ end
 %% Estimates from INS/GNSS integration
 
 nav_e.t     = imu.t(1:i, :);    % IMU time vector
-nav_e.tg    = gnss.t;           % GNSS time vector, also time vector when the Kalman filter was executed
+nav_e.tg    = gnss.t;           % GNSS time vector, or time vector when the Kalman filter was executed
 nav_e.roll  = roll_e(1:i, :);   % Roll
 nav_e.pitch = pitch_e(1:i, :);  % Pitch
 nav_e.yaw   = yaw_e(1:i, :);    % Yaw
