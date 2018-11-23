@@ -4,7 +4,7 @@
 
 NaveGo: an open-source MATLAB/GNU-Octave toolbox for processing integrated navigation systems and performing inertial sensors profiling analysis.
 
-NaveGo is an open-source MATLAB/GNU Octave toolbox for processing integrated navigation systems and simulating inertial sensors and a GNSS receiver. It also performs inertial sensors analysis using the Allan variance. It is freely available online. It is developed under MATLAB/GNU-Octave due to this programming language has become a *de facto* standard for simulation and mathematical computing. NaveGo has been verified by processing real-world data from a real trajectory and contrasting results with a commercial, closed-source software package. Difference between both solutions have shown to be negligible. For more information read (Gonzalez et al., 2017).
+NaveGo is an open-source MATLAB/GNU Octave toolbox for processing integrated navigation systems and simulating inertial sensors and a GNSS receiver. It also performs inertial sensors analysis using the Allan variance. It is freely available online. It is developed under MATLAB/GNU-Octave due to this programming language has become a *de facto* standard for simulation and mathematical computing. NaveGo has been verified by processing real-world data from a real trajectory and contrasting results against a commercial, closed-source software package. Difference between both solutions have shown to be negligible. For more information read the following [paper](http://www.scitepress.org/Papers/2017/63139/index.html).
 
 NaveGo is supported at the moment by three academic research groups: GridTics at the National University of Technology (Argentina), Engineering School at the National University of Cuyo (Argentina), and DIATI at the Politecnico di Torino (Italy). 
 
@@ -32,7 +32,7 @@ If you are using NaveGo in your research, we gently ask you to add the following
 
 An URL to NaveGo should be provided as the following cite:
 
-Gonzalez, Rodrigo. NaveGo Release v1.1 (Version 1.1). Zenodo. http://doi.org/10.5281/zenodo.1464202. October 2018.
+R. Gonzalez, C. Catania, and P. Dabove. NaveGo: An Open-Source MATLAB/GNU-Octave Toolbox for Processing Integrated Navigation Systems and Performing Inertial Sensors Profiling Analysis. Version 1.1. URL: https://github.com/rodralez/NaveGo. DOI: doi.org/10.5281/zenodo.1464202. October 2018.
 
 ## Contributions
 
@@ -74,13 +74,15 @@ Future features of NaveGo will be:
 
 ## Who is using NaveGo?
 
-The following authors have expressed to use NaveGo in thier research:
+The following authors have expressed the use of NaveGo within their research framework:
+
+* R. Rabiee, X. Zhong, Y. Yan and W. P. Tay, "LaIF: A Lane-Level Self-Positioning Scheme for Vehicles in GNSS-Denied Environments," in IEEE Transactions on Intelligent Transportation Systems. doi: 10.1109/TITS.2018.2870048. [Link](http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8489926&isnumber=4358928).
 
 * M. Pachwicewicz and J. Weremczuk, Accuracy Estimation of the Sounding Rocket Navigation System. 2018 XV International Scientific Conference on Optoelectronic and Electronic Sensors (COE), Warsaw, 2018, pp. 1-4. doi: 10.1109/COE.2018.8435180. [Link](http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8435180&isnumber=8435144).
 
 * Ren, X., Sun, M., Jiang, C., Liu, L., & Huang, W. (2018). An Augmented Reality Geo-Registration Method for Ground Target Localization from a Low-Cost UAV Platform. Sensors, 2018, vol. 18, no 11, p. 3739. [Link](https://www.mdpi.com/1424-8220/18/11/3739/htm).
 
-* D. M G and A. A, "Analysis of INS Parameters and Error Reduction by Integrating GPS and INS Signals," 2018 International Conference on Design Innovations for 3Cs Compute Communicate Control (ICDI3C), Bangalore, 2018, pp. 18-23. doi: 10.1109/ICDI3C.2018.00013. [Link](http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8436621&isnumber=8436608).
+* D. M G and A. A, "Analysis of INS Parameters and Error Reduction by Integrating GPS and INS Signals," 2018 International Conference on Design Innovations for 3Cs Compute Communicate Control (ICDI3C), Bangalore, 2018, pp. 18-23. doi: 10.1109/ICDI3C.2018.00013.   [Link](http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8436621&isnumber=8436608).
 
 * Walendziuk, Wojciech; Oldziej, Daniel; Szatyłowicz, Ewa; Slowik, Maciej. Unmanned aerial vehicle as a measurement tool in engineering and environmental protection. Conference: Photonics Applications in Astronomy, Communications, Industry, and High-Energy Physics Experiments 2018. DOI: 10.1117/12.2501378. 
 
