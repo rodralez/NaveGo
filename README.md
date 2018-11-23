@@ -72,11 +72,12 @@ Future features of NaveGo will be:
 
 * Adaptive Kalman filter.
 
+
 ## Who is using NaveGo?
 
 The following authors have expressed the use of NaveGo within their research framework:
 
-* R. Rabiee, X. Zhong, Y. Yan and W. P. Tay, "LaIF: A Lane-Level Self-Positioning Scheme for Vehicles in GNSS-Denied Environments," in IEEE Transactions on Intelligent Transportation Systems. doi: 10.1109/TITS.2018.2870048. [Link](http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8489926&isnumber=4358928).
+* R. Rabiee, X. Zhong, Y. Yan and W. P. Tay, LaIF: A Lane-Level Self-Positioning Scheme for Vehicles in GNSS-Denied Environments. IEEE Transactions on Intelligent Transportation Systems. doi: 10.1109/TITS.2018.2870048. [Link](http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8489926&isnumber=4358928).
 
 * M. Pachwicewicz and J. Weremczuk, Accuracy Estimation of the Sounding Rocket Navigation System. 2018 XV International Scientific Conference on Optoelectronic and Electronic Sensors (COE), Warsaw, 2018, pp. 1-4. doi: 10.1109/COE.2018.8435180. [Link](http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8435180&isnumber=8435144).
 
@@ -90,9 +91,9 @@ The following authors have expressed the use of NaveGo within their research fra
 
 We would like to thank to many people that have contribute to make NaveGo a better tool:
 
-* Dr. Juan Ignacio Giribet (Universidad Nacional de Buenos Aires, Argentina) for this continuous support on theory aspects of INS/GNSS systems.
+* Dr. Juan Ignacio Giribet (National University of Buenos Aires, Argentina) for this continuous support on theory aspects of INS/GNSS systems.
 
-* Dr. Charles K. Toth (The Ohio State University, USA), Dr. Allison Kealy, and M.Sc. Azmir Hasnur-Rabiain (both from The University of Melbourne, Australia) for generously sharing IMU and GNSS datasets, and in particular, for Azmir's unselfish help.
+* Dr. Charles K. Toth (The Ohio State University, USA), Dr. Allison Kealy, and M.Sc. Azmir Hasnur-Rabiain (both from The University of Melbourne, Australia) for generously sharing IMU and GNSS datasets, and in particular, for Azmir's unselfish support and help.
 
 * Prof. Zhu, Dr. Yang, and Mr. Bo Sun, all from the Laboratory of Precision Measuring Technology and Instruments, Tianjin University, Tianjin, China, for contributing with IMU static measurements to test Allan variance routines.
 
