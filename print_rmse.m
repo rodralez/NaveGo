@@ -7,10 +7,16 @@ function rmse_v = print_rmse (ins_gnss, gnss, ins_gnss_r, gnss_r, string)
 %   gnss, GNSS data structure.
 %   ins_gnss_r, Reference data structure ajusted for INS/GNSS measurements.
 %   gnss_r, Reference data structure ajusted for GNSS measurements.
-%   string, string to print on console identifying the RMSE.
+%   string, string to print on console identifying the INS/GNSS system.
 %
 % OUTPUT
 %   rmse_v, vector with all RMSE.
+%
+%   rmse_v = [  RMSE_roll;  RMSE_pitch; RMSE_yaw;    
+%               RMSE_vn;    RMSE_ve;    RMSE_vd;
+%               RMSE_lat;   RMSE_lon;   RMSE_h;
+%               RMSE_vn_g;  RMSE_ve_g;  RMSE_vd_g;
+%               RMSE_lat_g; RMSE_lon_g; RMSE_h_g; ];
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -30,18 +36,12 @@ function rmse_v = print_rmse (ins_gnss, gnss, ins_gnss_r, gnss_r, string)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% Version: 006
-% Date:    2018/10/10
+% Version: 007
+% Date:    2018/12/04
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
 rmse_v = navego_rmse (ins_gnss, gnss, ins_gnss_r, gnss_r);
-
-% rmse_v = [  RMSE_roll;  RMSE_pitch; RMSE_yaw;    
-%             RMSE_vn;    RMSE_ve;    RMSE_vd;
-%             RMSE_lat;   RMSE_lon;   RMSE_h;
-%             RMSE_vn_g;  RMSE_ve_g;  RMSE_vd_g;
-%             RMSE_lat_g; RMSE_lon_g; RMSE_h_g; ];
         
 %% Print RMSE
 

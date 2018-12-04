@@ -45,8 +45,8 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %
 % OUTPUT:
 %   nav_e, INS/GNSS navigation estimates data structure.
-%         t: Ix1 time vector (seconds).
-%        tg: Mx1 time vector when Kalman filter was executed (seconds).
+%         t: Ix1 INS time vector (seconds).
+%        tg: Mx1 GNSS time vector, when Kalman filter was executed (seconds).
 %      roll: Ix1 roll (radians).
 %     pitch: Ix1 pitch (radians).
 %       yaw: Ix1 yaw (radians).
@@ -87,8 +87,8 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 % issue 2, pp. 110-120, 2015. Alg. 2.
 %
 %   ZUPT algothim based on Paul Groves, Principles of GNSS, Inertial, and
-% Multisensor Integrated Navigation Systems. CHAPTER 13, INS Alignment
-% and Zero Velocity Updates.
+% Multisensor Integrated Navigation Systems (2008). Chapter 13: INS
+% Alignment and Zero Velocity Updates.
 %
 %   ins_gps.m, ins_gnss function is based on that previous function.
 %
@@ -174,10 +174,7 @@ Xp(1,:) = S.xp';
 I = eye(3);
 Z = zeros(3);
 
-% Index for INS/GNSS performance analysis matrices
-% j = 1;
-
-% IMU time is the master clock
+% INS (IMU) time is the master clock
 for i = 2:LI    
     
     %% INERTIAL NAVIGATION SYSTEM (INS)
@@ -254,6 +251,7 @@ for i = 2:LI
     
     %% KALMAN FILTER UPDATE 
     
+    % Look for the GNSS index that is close to the current INS index
     gdx =  find (gnss.t >= (imu.t(i) - gnss.eps) & gnss.t < (imu.t(i) + gnss.eps));
     
     if ( ~isempty(gdx) & gdx > 1)
@@ -263,14 +261,13 @@ for i = 2:LI
         [RM,RN] = radius(lat_e(i));
         Tpr = diag([(RM + h_e(i)), (RN + h_e(i)) * cos(lat_e(i)), -1]);  % radians-to-meters
         
-        % Innovations
-        % Lever arm correction for position
+        % Innovations for position with lever arm correction     
         zp = Tpr * ([lat_e(i); lon_e(i); h_e(i);] - [gnss.lat(gdx); gnss.lon(gdx); gnss.h(gdx);]) ...
-            + (DCMbn * gnss.larm);
-        
-        % Lever arm corrections for velocity
+            + (DCMbn * gnss.larm);                         
+
+        % Innovations for velocity with lever arm correction     
         zv = (vel_e(i,:) - gnss.vel(gdx,:) - ((omega_ie_n + omega_en_n) .* (DCMbn * gnss.larm))' ...
-            + (DCMbn * skewm(wb_corrected) * gnss.larm )' )';
+            + (DCMbn * skewm(wb_corrected) * gnss.larm )' )'; 
         
         %% KALMAN FILTER
         
@@ -347,23 +344,18 @@ for i = 2:LI
         Pp(gdx,:) = reshape(S.Pp, 1, 441);
         A(gdx,:)  = reshape(S.A, 1, 441);
         if(zupt == true)
-            In(gdx,:) = [ zv; zeros(3,1);]';
+            In(gdx,:) = [ zv; zp;]';
         else
             In(gdx,:) = S.z';
         end
         B(gdx,:) = [gb_fix', ab_fix', gb_drift', ab_drift'];
-        
-%         j = j + 1;
-%         if (j > LG)
-%             error('j > LG')
-%         end
-        
+       
     end
 end
 
 %% Estimates from INS/GNSS integration
 
-nav_e.t     = imu.t(1:i, :);    % IMU time vector
+nav_e.t     = imu.t(1:i, :);    % INS time vector
 nav_e.tg    = gnss.t;           % GNSS time vector, or time vector when the Kalman filter was executed
 nav_e.roll  = roll_e(1:i, :);   % Roll
 nav_e.pitch = pitch_e(1:i, :);  % Pitch
