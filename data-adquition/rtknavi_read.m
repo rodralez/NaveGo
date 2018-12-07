@@ -5,14 +5,15 @@ function gnss = rtknavi_read (fname)
 %   fname, file name (string).
 %
 % OUTPUT
-%   gnss_data, data structure withe following format:
+%   gnss_data, data structure with the following format:
 %
-%	week, GPS Week
-%	t, GPS Time Of Week (s)
-%	stat, Solution Status
-%	ecef, ECEF position (m)
-%	vel, NED velocities (m/s)
-%	acc, NED accerelations (m/s^2) 
+%	week,   GPS Week (integer).
+%	t,      GPS Time Of Week (s).
+%	stat,   Solution Status (integer).
+%	ecef,   ECEF position (m).
+%	vel,    NED velocities (m/s).
+%	acc,    NED accerelations (m/s^2).
+%   freq,   GNSS frequency update (Hz).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -36,12 +37,11 @@ function gnss = rtknavi_read (fname)
 %   
 %       T. Takasu. RTKLIB ver. 2.4.2 Manual. April 29, 2013. 
 %
-% Version: 001
-% Date:    2018/09/11
+% Version: 002
+% Date:    2018/12/04
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-D2R = pi/180;
 
 %% OPEN FILE
 
@@ -135,7 +135,7 @@ while ~feof(fid)
             
         otherwise
             
-            fprintf('rtknavi_read: unknown type of line. \n');
+            warning('rtknavi_read: unknown type of line. \n');
             vld_flag = 0;            
     end
 
@@ -168,8 +168,8 @@ iix = find (tow > 500);
 
 % Max tow value within valid tow
 M = max(tow(iix));
-% Index of Max tow
 
+% Index of Max tow
 ffx = find (tow(iix) == M, 1, 'first');
 
 % Span valid index from element 1 to index of Max tow

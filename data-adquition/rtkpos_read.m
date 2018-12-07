@@ -1,28 +1,21 @@
 function gnss_data = rtkpos_read(fname)
-% gnss_pos_read: read RTKPOS output file and transforms it to NaveGo format.
+% rtkpos_read: read RTKPOS output file and transforms it to NaveGo format.
 %
 % INPUT:
 %   fname, file name (string).
 %
 % OUTPUT
-%   gnss_data, data structure withe following format:
+%   gnss_data, data structure with the following format:
 %
-%       week,   GPS week.
+%       week,   GPS week (integer).
 %       t,      GPS time of week (TOW, s). 
-%       latitude (rad). 
-%       longitude (rad). 
-%       height (m).  
-%       Q,      quality flag (Q=1:fix,2:float,3:sbas,4:dgps,5:single,6:ppp). 
-%       ns,     number of valid satellites.
-%
-%       The estimated standard deviations of the solution assuming a priori 
-%       error model and error parameters by the positioning options. The 
-%       sdn, sde or sdu means N (north), E (east) or U (up) component of 
-%       the standard deviations in m. The absolute value of sdne, sdeu or 
-%       sdun means square root of the absolute value of NE, EU or UN 
-%       component of the estimated covariance matrix. The sign  represents 
-%       the sign of the covariance. With all of the values, user can 
-%       reconstruct the full covariance matrix. 
+%       lat,    latitude (rad). 
+%       lon,    longitude (rad). 
+%       h,      height (m).  
+%       Q,      quality flag (Q=1:fix, 2:float, 3:sbas, 4:dgps, 5:single, 6:ppp). 
+%       ns,     number of valid satellites (integer).
+%       header, header of RTKPOS file.
+%       freq,   GNSS frequency update (Hz).
 %
 %       sdn (m).  
 %       sde (m).  
@@ -31,10 +24,23 @@ function gnss_data = rtkpos_read(fname)
 %       sdeu (m). 
 %       sdun (m).
 %
-%       age (s), age of differential. The time difference between the 
-%       observation data epochs of therover receiver and the base station. 
+%       The estimated standard deviations of the solution assuming a priori 
+%       error model and error parameters by the positioning options. The 
+%       sdn, sde or sdu means N (north), E (east) or U (up) component of 
+%       the standard deviations in m. The absolute value of sdne, sdeu or 
+%       sdun means square root of the absolute value of NE, EU or UN 
+%       component of the estimated covariance matrix. The sign represents 
+%       the sign of the covariance. With all of the values, user can 
+%       reconstruct the full covariance matrix. 
 %
-%       ratio,  ratio factor. The ratio factor of ʺratio‐testʺ for standard 
+%       age (s), 
+%
+%       Age of differential. The time difference between the 
+%       observation data epochs of the rover receiver and the base station. 
+%
+%       ratio,  ratio factor. 
+%       
+%       The ratio factor of ʺratio‐testʺ for standard 
 %       integer ambiguity validation strategy. The value means the ratio of 
 %       the squared sum of the residuals with the second best integer vector 
 %       to with the best integer vector. 
@@ -75,7 +81,7 @@ D2R = pi/180;
 
 fid = fopen(fname, 'r');
 if fid == -1
-    error('navego: %s file not found', fname)
+    error('rtkpos_read: %s file not found', fname)
 end
 
 
