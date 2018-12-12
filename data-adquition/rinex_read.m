@@ -23,13 +23,13 @@ function gnss = rinex_read(fname)
 %           5: minutes.
 %           6: seconds.
 %           7: number of satellite in view.
-%           8: pseudo-range using C/A Code on L1 (meters).
-%           9: L1 pseudo-range signal strength (0-9) where, 
+%           8: C1 pseudo-range using C/A Code on L1 (meters).
+%           9: C1 pseudo-range signal strength (0-9) where, 
 %               0 or blank: not known, don't care. 
 %               1: minimum possible signal strength.          
 %               5: threshold for good S/N ratio.              
 %               9: maximum possible signal strength.          
-%           10: phase measurements on L1 (full cycles).
+%           10: L1 phase measurements on L1 (full cycles).
 %           11: L1 phase signal strength (0-9).
 %           12: pseudo-range rate on L1 (meters/s).
 %       
@@ -112,6 +112,27 @@ end
 
 fprintf('rinex_read: %s has %d header lines. \n', fname, hdlines);
 
+% Set pointer back to the beginning
+fseek(fid,0,'bof');
+
+% SEARCH FOR INTERVAL TIME IN HEADER
+
+flag = true;
+
+while (flag)
+    
+    line = fgetl(fid);
+    flag = ~ (contains(line,'INTERVAL'));
+end
+
+line_h_time = strsplit(line);
+dt = str2double (line_h_time(2));   % INTERVAL
+
+fprintf('rinex_read: interval time is %f. \n', dt);
+
+% Set pointer back to the beginning
+fseek(fid,0,'bof');
+
 fclose(fid);
 
 %% TEQC COMMAND
@@ -130,7 +151,7 @@ fclose(fid);
 % T1, T2: Transit Integrated Doppler on 150 (T1) and 400 MHz (T2)
 % S1, S2: Raw signal strengths or SNR values as given by the receiver for the L1,L2 phase observations
 
-file_teqc = sprintf('%s.teqc', fname);
+file_teqc = sprintf('temp_%s', fname);
 
 fprintf('rinex_read: creating %s file with C1 and L1 data. \n', file_teqc);
 
@@ -141,27 +162,44 @@ if status ~= 0
     error('rinex_read: teqc command fails')
 end
 
-%% TEQC FILE
+%% TEQC FILE HEADER
 
 fid = fopen(file_teqc, 'r');
 if fid == -1
     error('rinex_read: %s file not found', file_teqc)
 end
 
-% Avoid the file header
-idx = [];
+% SEARCH FOR TIME OF FIRST OBS
+flag = true;
 
-while ( isempty(idx) )
+while (flag)
     
     line = fgetl(fid);
-    idx = find(contains(line,'END OF HEADER'));
+    flag = ~ (contains(line,'TIME OF FIRST OBS'));
 end
 
-% Body 
+line_h_time = strsplit(line);
+year = cell2mat (line_h_time(2));
+
+% SEARCH FOR FIRST ROW OF DATA
+
+flag = true;
+
+while (flag)
+    
+    line = fgetl(fid);
+    flag = ~ (contains(line, year(3:4)));
+end
+
+% Set pointer back one row
+fseek(fid,-1,'cof');
+
+%% TEQC FILE BODY
+
 data = zeros (lines, 12);
 row = 1;
 
-fprintf('rinex_read: getting data from body file...\n');
+fprintf('rinex_read: getting RINEX data from body file...\n');
 
 while ~feof(fid)
     
@@ -216,8 +254,6 @@ sat_v = nonzeros(unique(data(:,7)));
 
 M = length(sat_v);
 
-dt = 0.1;
-
 for k = 1:M
    
     sat_num = sat_v(k);
@@ -255,5 +291,21 @@ data = data(idx, :);
 gnss.raw = data;
 
 gnss.header = header;
+
+%% QUALITY
+
+c1_ss = data(:,9);
+c1_ss_median = median(c1_ss);
+c1_ss_mean = mean(c1_ss);
+
+fprintf('rinex_read: median of C1 pseudo-ranges signal strength is %f...\n', c1_ss_median);
+fprintf('rinex_read: median of C1 pseudo-ranges signal strength is %f...\n', c1_ss_mean);
+
+l1_ss = data(:,11);
+l1_ss_median = median(l1_ss);
+l1_ss_mean = mean(l1_ss);
+
+fprintf('rinex_read: median of L1 phase measurements signal strength is %f...\n', l1_ss_median);
+fprintf('rinex_read: median of L1 phase measurements signal strength is %f...\n', l1_ss_mean);
 
 
