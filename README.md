@@ -6,6 +6,8 @@ NaveGo: an open-source MATLAB/GNU-Octave toolbox for processing integrated navig
 
 NaveGo is an open-source MATLAB/GNU Octave toolbox for processing integrated navigation systems and simulating inertial sensors and a GNSS receiver. It also performs inertial sensors analysis using the Allan variance. It is freely available online. It is developed under MATLAB/GNU-Octave due to this programming language has become a *de facto* standard for simulation and mathematical computing. NaveGo has been verified by processing real-world data from a real trajectory and contrasting results against a commercial, closed-source software package. Difference between both solutions have shown to be negligible. For more information read the following [paper](http://www.scitepress.org/Papers/2017/63139/index.html).
 
+NaveGo's motto is "to bring integrated navigation to the masses".
+
 NaveGo is supported at the moment by three academic research groups: GridTics at the National University of Technology (Argentina), Engineering School at the National University of Cuyo (Argentina), and DIATI at the Politecnico di Torino (Italy). 
 
 ## Features
@@ -32,7 +34,7 @@ If you are using NaveGo in your research, we gently ask you to add the following
 
 An URL to NaveGo should be provided as the following cite:
 
-R. Gonzalez, C. Catania, and P. Dabove. NaveGo: An Open-Source MATLAB/GNU-Octave Toolbox for Processing Integrated Navigation Systems and Performing Inertial Sensors Profiling Analysis. Version 1.1. URL: https://github.com/rodralez/NaveGo. DOI: doi.org/10.5281/zenodo.1464202. October 2018.
+R. Gonzalez, C. Catania, and P. Dabove. NaveGo: An Open-Source MATLAB/GNU-Octave Toolbox for Processing Integrated Navigation Systems and Performing Inertial Sensors Profiling Analysis. Version 1.2. URL: https://github.com/rodralez/NaveGo. DOI: 10.5281/zenodo.2536950. January 2019.
 
 ## Contributions
 
