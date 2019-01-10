@@ -37,8 +37,8 @@ function wb_sim = gyro_gen (ref, imu)
 %           Aggarwal, P. et al. MEMS-Based Integrated Navigation. Artech
 % House. 2010.
 %
-% Version: 005
-% Date:    2018/03/26
+% Version: 006
+% Date:    2019/01/09
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -54,9 +54,10 @@ if (isfield(ref, 'wb'))
     
 % If not, obtain turn rates from DCM
 else
-    gyro_raw = gyro_gen_delta(ref.DCMnb, diff(ref.t));
-    gyro_raw = [gyro_raw; 0 0 0;];
+    gyro_raw = gyro_gen_delta(ref.DCMnb, ref.t);
+    gyro_raw = [0 0 0; gyro_raw;];
     
+    % Noise introduced by differentation at gyro_gen_delta() should be smoothed.
     gyro_b = my_sgolayfilt(gyro_raw);
 end
 
@@ -75,11 +76,13 @@ end
 %% SIMULATE NOISES
 
 % -------------------------------------------------------------------------
-% Simulate static bias
-[g_sbias] = noise_sbias (imu.gb_fix, N);
+% Simulate static bias as a constant random variable
+
+[g_sbias] = noise_sbias (imu.gb_sta, N);
 
 % -------------------------------------------------------------------------
 % Simulate white noise
+
 wn = randn(M);
 g_wn = zeros(M);
 
@@ -89,10 +92,10 @@ for i=1:3
 end
 
 % -------------------------------------------------------------------------
-% Simulate dynamic bias (bias instability) as a First-order Gauss-Markov model
+% Simulate dynamic bias (bias instability) as a first-order Gauss-Markov model
 
 dt = 1/imu.freq; 
-[g_dbias] = noise_dbias (imu.gb_corr, imu.gb_drift, dt, M);
+[g_dbias] = noise_dbias (imu.gb_corr, imu.gb_dyn, dt, M);
 
 % -------------------------------------------------------------------------
 % Simulate rate random walk

@@ -7,7 +7,7 @@ function [qua_n, DCMbn_n, euler] = att_update(wb, DCMbn, qua, omega_ie_N, omega_
 %   qua,        4x1 quaternion.
 %   omega_ie_N, 3x1 Earth rate (rad/s).
 %   omega_en_N, 3x1 Transport rate (rad/s).
-%   dt,         1x1 INS time period (s).
+%   dt,         1x1 IMU sampling interval (s).
 %	att_mode,   attitude mode string.
 %      'quaternion': attitude updated in quaternion format. Default value.
 %             'dcm': attitude updated in Direct Cosine Matrix format.

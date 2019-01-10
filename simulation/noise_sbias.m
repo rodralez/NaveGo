@@ -1,5 +1,5 @@
 function [sbias_n] = noise_sbias (sbias, N)
-% noise_sbias: generates a random static bias perturbation.
+% noise_sbias: generates a random static bias error.
 %
 % INPUT:
 %		sbias: static bias from [-sbias sbias].
@@ -41,4 +41,5 @@ a = -sbias;
 b =  sbias;
 ab_fix = (b' - a') .* rand(3,1) + a';
 o = ones(N,1);
+
 sbias_n = [ab_fix(1).* o   ab_fix(2).* o   ab_fix(3).* o];

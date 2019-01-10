@@ -4,7 +4,7 @@ function qua_n = qua_update(qua, wb_n, dt)
 % INPUT:
 %   qua,	4x1 quaternion.
 %   wb_n,	3x1 incremental turn rates in body-frame (rad/s).
-%   dt,     1x1 INS time period (s).
+%   dt,     1x1 IMU sampling interval (s).
 %
 % OUTPUT:
 %   qua_n,      4x1 updated quaternion.

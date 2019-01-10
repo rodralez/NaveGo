@@ -46,8 +46,8 @@ function  [F, G] = F_update(upd, DCMbn, imu)
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 22.
 %
-% Version: 003
-% Date:    2018/10/08
+% Version: 004
+% Date:    2019/01/09
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -176,19 +176,15 @@ else
     Fgg = diag(-1./imu.gb_corr);
 end
 
-F= [Fee  Fev  Fep   (DCMbn)  Z       (DCMbn)   Z;
-    Fve  Fvv  Fvp   Z       (-DCMbn)  Z       (-DCMbn);
-    Fpe  Fpv  Fpp   Z        Z        Z       Z;
-    Z    Z    Z     Z        Z        Z       Z;
-    Z    Z    Z     Z        Z        Z       Z;
-    Z    Z    Z     Z        Z        Fgg     Z;
-    Z    Z    Z     Z        Z        Z       Faa;
+F = [Fee  Fev  Fep   (DCMbn)   Z;
+     Fve  Fvv  Fvp   Z       (-DCMbn);
+     Fpe  Fpv  Fpp   Z       Z;
+     Z    Z    Z     Fgg     Z;
+     Z    Z    Z     Z       Faa;
     ];
 
 G = [DCMbn  Z     Z    Z;
     Z      -DCMbn 	Z    Z;
-    Z      Z     	Z    Z;
-    Z      Z     	Z    Z;
     Z      Z     	Z    Z;
     Z      Z     	I    Z;
     Z      Z     	Z    I;];

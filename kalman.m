@@ -11,7 +11,7 @@ function  S = kalman(S, dt)
 %       R, 6x6  observation noise covariance.
 %       Pp, 21x21 a posteriori error covariance.
 %       G, 21x12 control-input matrix.      
-%   dt, time period. 
+%   dt, sampling interval. 
 %
 % OUTPUT:
 %    S, the following fields are updated:

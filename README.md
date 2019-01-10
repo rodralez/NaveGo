@@ -51,9 +51,9 @@ If you are interested in joining to NaveGo, please feel free to contact Dr. Rodr
 
 The underlying mathematical model of NaveGo is based on two articles whose reading is recommended: 
 
-* R. Gonzalez, J.I. Giribet, and H.D. Patiño. NaveGo: a simulation framework for low-cost integrated navigation systems, Journal of Control Engineering and Applied Informatics, vol. 17, issue 2, pp. 110-120, 2015. [Link](http://ceai.srait.ro/index.php?journal=ceai&page=article&op=view&path%5B%5D=2478).
+* R. Gonzalez, J.I. Giribet, and H.D. Patiño. NaveGo: a simulation framework for low-cost integrated navigation systems, Journal of Control Engineering and Applied Informatics, vol. 17, issue 2, pp. 110-120, 2015. [Download](http://ceai.srait.ro/index.php?journal=ceai&page=article&op=view&path%5B%5D=2478).
 
-* R. Gonzalez, J.I. Giribet, and H.D. Patiño. An approach to benchmarking of loosely coupled low-cost navigation systems. Mathematical and Computer Modelling of Dynamical Systems, vol. 21, issue 3, pp. 272-287, 2015. [Link](http://www.tandfonline.com/doi/abs/10.1080/13873954.2014.952642).
+* R. Gonzalez, J.I. Giribet, and H.D. Patiño. An approach to benchmarking of loosely coupled low-cost navigation systems. Mathematical and Computer Modelling of Dynamical Systems, vol. 21, issue 3, pp. 272-287, 2015. [Download](http://www.tandfonline.com/doi/abs/10.1080/13873954.2014.952642).
 
 Other publications related to the development of NaveGo:
 
@@ -106,7 +106,7 @@ The `example` folder contains several types of examples.
 
 ## Allan variance example
 
-Just execute the file `navego_allan_example.m`. Firstly, it process 2-hours of static measurements from an Sensonor STIM300 IMU. Then, it process about 5 hours of synthetic inertial data.
+Just execute the file `navego_example_allan.m`. Firstly, it process 2-hours of static measurements from an Sensonor STIM300 IMU. Then, it process about 5 hours of synthetic inertial data.
 
 ## INS/GNSS integration example using real data
 
@@ -114,7 +114,7 @@ An example of how to use NaveGo to post-process real data is provided by `navego
 
 ## INS/GNSS integration example using synthetic (simulated) data
 
-The file `navego_example.m` tries to demonstrate how NaveGo works. It compares the performances of two simulated IMUs, ADIS16405 IMU and ADIS16488 IMU, both integrated with a simulated GNSS.
+The file `navego_example_synth.m` tries to demonstrate how NaveGo works. It compares the performances of two simulated INS/GNSS systems, one using an ADIS16405 IMU and another using an ADIS16488 IMU, both fused using a simulated GNSS receptor.
 
 Next, a description of this file.
 
@@ -131,7 +131,7 @@ addpath ../../
 addpath ../../simulation/
 addpath ../../conversions/
 
-versionstr = 'NaveGo, release v1.0';
+versionstr = 'NaveGo, release v1.2';
 
 fprintf('\n%s.\n', versionstr)
 fprintf('\nNaveGo: starting simulation ... \n')
@@ -220,10 +220,10 @@ load ref.mat
 %      vrrw: 1x3 velocity rate random walks (m/s^3/root-Hz).
 %    g_std: 1x3 gyros standard deviations (radians/s).
 %    a_std: 1x3 accrs standard deviations (m/s^2).
-%    gb_fix: 1x3 gyros static biases or turn-on biases (radians/s).
-%    ab_fix: 1x3 accrs static biases or turn-on biases (m/s^2).
-%  gb_drift: 1x3 gyros dynamic biases or bias instabilities (radians/s).
-%  ab_drift: 1x3 accrs dynamic biases or bias instabilities (m/s^2).
+%    gb_sta: 1x3 gyros static biases or turn-on biases (radians/s).
+%    ab_sta: 1x3 accrs static biases or turn-on biases (m/s^2).
+%    gb_dyn: 1x3 gyros dynamic biases or bias instabilities (radians/s).
+%    ab_dyn: 1x3 accrs dynamic biases or bias instabilities (m/s^2).
 %   gb_corr: 1x3 gyros correlation times (seconds).
 %   ab_corr: 1x3 accrs correlation times (seconds).
 %    gb_psd: 1x3 gyros dynamic biases PSD (rad/s/root-Hz).
@@ -236,10 +236,10 @@ ADIS16405.arw      = 2   .* ones(1,3);     % Angle random walks [X Y Z] (deg/roo
 ADIS16405.arrw     = zeros(1,3);           % Angle rate random walks [X Y Z] (deg/root-hour/s)
 ADIS16405.vrw      = 0.2 .* ones(1,3);     % Velocity random walks [X Y Z] (m/s/root-hour)
 ADIS16405.vrrw     = zeros(1,3);           % Velocity rate random walks [X Y Z] (deg/root-hour/s)
-ADIS16405.gb_fix   = 3   .* ones(1,3);     % Gyro static biases [X Y Z] (deg/s)
-ADIS16405.ab_fix   = 50  .* ones(1,3);     % Acc static biases [X Y Z] (mg)
-ADIS16405.gb_drift = 0.007 .* ones(1,3);   % Gyro dynamic biases [X Y Z] (deg/s)
-ADIS16405.ab_drift = 0.2 .* ones(1,3);     % Acc dynamic biases [X Y Z] (mg)
+ADIS16405.gb_sta   = 3   .* ones(1,3);     % Gyro static biases [X Y Z] (deg/s)
+ADIS16405.ab_sta   = 50  .* ones(1,3);     % Acc static biases [X Y Z] (mg)
+ADIS16405.gb_dyn   = 0.007 .* ones(1,3);   % Gyro dynamic biases [X Y Z] (deg/s)
+ADIS16405.ab_dyn   = 0.2 .* ones(1,3);     % Acc dynamic biases [X Y Z] (mg)
 ADIS16405.gb_corr  = 100 .* ones(1,3);     % Gyro correlation times [X Y Z] (seconds)
 ADIS16405.ab_corr  = 100 .* ones(1,3);     % Acc correlation times [X Y Z] (seconds)
 ADIS16405.freq     = ref.freq;             % IMU operation frequency [X Y Z] (Hz)
@@ -247,7 +247,7 @@ ADIS16405.freq     = ref.freq;             % IMU operation frequency [X Y Z] (Hz
 
 % ref dataset will be used to simulate IMU sensors.
 ADIS16405.t = ref.t;                       % IMU time vector
-dt = mean(diff(ADIS16405.t));              % IMU mean period
+dt = mean(diff(ADIS16405.t));              % IMU sampling interval
 
 imu1 = imu_si_errors(ADIS16405, dt);       % Transform IMU manufacturer error units to SI units.
 
@@ -264,10 +264,10 @@ ADIS16488.arw      = 0.3  .* ones(1,3);     % Angle random walks [X Y Z] (deg/ro
 ADIS16488.arrw     = zeros(1,3);            % Angle rate random walks [X Y Z] (deg/root-hour/s)
 ADIS16488.vrw      = 0.029.* ones(1,3);     % Velocity random walks [X Y Z] (m/s/root-hour)
 ADIS16488.vrrw     = zeros(1,3);            % Velocity rate random walks [X Y Z] (deg/root-hour/s)
-ADIS16488.gb_fix   = 0.2  .* ones(1,3);     % Gyro static biases [X Y Z] (deg/s)
-ADIS16488.ab_fix   = 16   .* ones(1,3);     % Acc static biases [X Y Z] (mg)
-ADIS16488.gb_drift = 6.5/3600  .* ones(1,3);% Gyro dynamic biases [X Y Z] (deg/s)
-ADIS16488.ab_drift = 0.1  .* ones(1,3);     % Acc dynamic biases [X Y Z] (mg)
+ADIS16488.gb_sta   = 0.2  .* ones(1,3);     % Gyro static biases [X Y Z] (deg/s)
+ADIS16488.ab_sta   = 16   .* ones(1,3);     % Acc static biases [X Y Z] (mg)
+ADIS16488.gb_dyn   = 6.5/3600  .* ones(1,3);% Gyro dynamic biases [X Y Z] (deg/s)
+ADIS16488.ab_dyn   = 0.1  .* ones(1,3);     % Acc dynamic biases [X Y Z] (mg)
 ADIS16488.gb_corr  = 100  .* ones(1,3);     % Gyro correlation times [X Y Z] (seconds)
 ADIS16488.ab_corr  = 100  .* ones(1,3);     % Acc correlation times [X Y Z] (seconds)
 ADIS16488.freq     = ref.freq;              % IMU operation frequency [X Y Z] (Hz)
@@ -275,7 +275,7 @@ ADIS16488.freq     = ref.freq;              % IMU operation frequency [X Y Z] (H
 
 % ref dataset will be used to simulate IMU sensors.
 ADIS16488.t = ref.t;                        % IMU time vector
-dt = mean(diff(ADIS16488.t));               % IMU mean period
+dt = mean(diff(ADIS16488.t));               % IMU sampling interval
 
 imu2 = imu_si_errors(ADIS16488, dt);        % Transform IMU manufacturer error units to SI units.
 
@@ -407,7 +407,7 @@ end
 
 to = (ref.t(end) - ref.t(1));
 
-fprintf('\nNaveGo: navigation time is %.2f minutes or %.2f seconds. \n', (to/60), to)
+fprintf('NaveGo: navigation time is %.2f minutes or %.2f seconds. \n', (to/60), to)o)
 
 ```
 
@@ -419,35 +419,9 @@ if strcmp(IMU1_INS, 'ON')
     
     fprintf('NaveGo: INS/GNSS navigation estimates for IMU1... \n')
     
-    % Sincronize GNSS data with IMU data.
-    
-    % Guarantee that gnss.t(1) < imu1.t(1) < gnss.t(2)
-    if (imu1.t(1) < gnss.t(1))
-        
-        igx  = find(imu1.t > gnss.t(1), 1, 'first' );
-        
-        imu1.t  = imu1.t  (igx:end, :);
-        imu1.fb = imu1.fb (igx:end, :);
-        imu1.wb = imu1.wb (igx:end, :);        
-    end
-    
-    % Guarantee that imu1.t(end-1) < gnss.t(end) < imu1.t(end)
-    gnss1 = gnss;
-    
-    if (imu1.t(end) <= gnss.t(end))
-        
-        fgx  = find(gnss.t < imu1.t(end), 1, 'last' );
-        
-        gnss1.t   = gnss.t  (1:fgx, :);
-        gnss1.lat = gnss.lat(1:fgx, :);
-        gnss1.lon = gnss.lon(1:fgx, :);
-        gnss1.h   = gnss.h  (1:fgx, :);
-        gnss1.vel = gnss.vel(1:fgx, :);
-    end
-    
     % Execute INS/GNSS integration
     % ---------------------------------------------------------------------
-    nav1_e = ins_gnss(imu1, gnss1, 'dcm');
+    nav1_e = ins_gnss(imu1, gnss, 'dcm');
     % ---------------------------------------------------------------------
     
     save nav1_e.mat nav1_e
@@ -469,35 +443,9 @@ if strcmp(IMU2_INS, 'ON')
     
     fprintf('NaveGo: INS/GNSS navigation estimates for IMU2... \n')
     
-    % Sincronize GNSS data and IMU data.
-    
-    % Guarantee that gnss.t(1) < imu2.t(1) < gnss.t(2)
-    if (imu2.t(1) < gnss.t(1))
-        
-        igx  = find(imu2.t > gnss.t(1), 1, 'first' );
-        
-        imu2.t  = imu2.t  (igx:end, :);
-        imu2.fb = imu2.fb (igx:end, :);
-        imu2.wb = imu2.wb (igx:end, :);        
-    end
-    
-    % Guarantee that imu2.t(end-1) < gnss.t(end) < imu2.t(end)
-    gnss2 = gnss;
-    
-    if (imu2.t(end) <= gnss.t(end))
-        
-        fgx  = find(gnss.t < imu2.t(end), 1, 'last' );
-        
-        gnss2.t   = gnss.t  (1:fgx, :);
-        gnss2.lat = gnss.lat(1:fgx, :);
-        gnss2.lon = gnss.lon(1:fgx, :);
-        gnss2.h   = gnss.h  (1:fgx, :);
-        gnss2.vel = gnss.vel(1:fgx, :);       
-    end
-    
     % Execute INS/GNSS integration
     % ---------------------------------------------------------------------
-    nav2_e = ins_gnss(imu2, gnss2, 'quaternion');
+    nav2_e = ins_gnss(imu2, gnss, 'quaternion');
     % ---------------------------------------------------------------------
     
     save nav2_e.mat nav2_e
@@ -521,9 +469,10 @@ end
 [nav1_ref, ref_1] = navego_interpolation (nav1_e, ref);
 [nav2_ref, ref_2] = navego_interpolation (nav2_e, ref);
 [gnss_ref, ref_g] = navego_interpolation (gnss, ref);
+
 ```
 
-### Print on console RMSE from IMU1
+### Print on console RMSE from INS/GNSS IMU1
 
 ```matlab
 
@@ -531,7 +480,7 @@ print_rmse (nav1_ref, gnss_ref, ref_1, ref_g, 'INS/GNSS IMU1');
 
 ```
 
-### Print on console RMSE from IMU2
+### Print on console RMSE from INS/GNSS IMU2
 
 ```matlab
 
@@ -541,13 +490,13 @@ print_rmse (nav2_ref, gnss_ref, ref_2, ref_g, 'INS/GNSS IMU2');
 
 ### References
 
-* R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a simulation framework for low-cost integrated navigation systems, Journal of Control Engineering and Applied Informatics, vol. 17, issue 2, pp. 110-120, 2015. Eq. 26.
+* R. Gonzalez, J.I. Giribet, and H.D. Patiño. NaveGo: a simulation framework for low-cost integrated navigation systems, Journal of Control Engineering and Applied Informatics, vol. 17, issue 2, pp. 110-120, 2015. [Download](http://ceai.srait.ro/index.php?journal=ceai&page=article&op=view&path%5B%5D=2478).
 
 * Analog Devices. ADIS16400/ADIS16405 datasheet. High Precision Tri-Axis Gyroscope, Accelerometer, Magnetometer. Rev. B. 
-http://www.analog.com/media/en/technical-documentation/data-sheets/ADIS16400_16405.pdf
+[Download](http://www.analog.com/media/en/technical-documentation/data-sheets/ADIS16400_16405.pdf).
 
 * Analog Devices. ADIS16488 datasheet. Tactical Grade Ten Degrees of Freedom Inertial Sensor. Rev. G. 
-http://www.analog.com/media/en/technical-documentation/data-sheets/ADIS16488.pdf
+[Download](http://www.analog.com/media/en/technical-documentation/data-sheets/ADIS16488.pdf).
 
 * Garmin International, Inc. GPS 18x TECHNICAL SPECIFICATIONS. Revision D. October 2011. 
-http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
+[Download](http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf).

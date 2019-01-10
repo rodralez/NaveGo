@@ -1,6 +1,15 @@
 function cor_n = coriolis(lat, vel, h)
 % coriolis: calculates Coriolis forces in the navigation frame.
 %
+% INPUT:
+%       lat: Mx1 latitude (radians).
+%       vel: Mx3 NED velocities (m/s).
+%         h: Mx1 altitude (m).
+%
+% OUTPUT:
+%		cor_n: Mx1 Coriolis forces vector in the nav-frame (m/s^2).
+%
+%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
 %   This file is part of NaveGo, an open-source MATLAB toolbox for 

@@ -36,8 +36,8 @@ function [fb_sim] = acc_gen (ref, imu)
 %           Aggarwal, P. et al. MEMS-Based Integrated Navigation. Artech
 % House. 2010.
 %
-% Version: 006
-% Date:    2018/09/19
+% Version: 007
+% Date:    2019/01/09
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -73,15 +73,15 @@ end
 
 % Gravity and Coriolis in nav-ref
 grav_n = gravity(ref.lat, ref.h);
-cor_n = coriolis(ref.lat, ref.vel, ref.h);
+cor_n  = coriolis(ref.lat, ref.vel, ref.h);
 
 % Gravity and Coriolis from nav-ref to body-ref
 grav_b = zeros(M);
 cor_b = zeros(M);
 for i = 1:N
-    dcm = reshape(ref.DCMnb(i,:), 3, 3);
-    gb = dcm * grav_n(i,:)';
-    corb =  dcm * cor_n(i,:)';
+    dcm_nb = reshape(ref.DCMnb(i,:), 3, 3);
+    gb = dcm_nb * grav_n(i,:)';
+    corb =  dcm_nb * cor_n(i,:)';
     grav_b(i,:) = gb';
     cor_b(i,:) = corb';
 end
@@ -89,11 +89,13 @@ end
 %% SIMULATE NOISES
 
 % -------------------------------------------------------------------------
-% Simulate static bias
-[a_sbias] = noise_sbias (imu.ab_fix, N);
+% Simulate static bias as a constant random variable
+
+[a_sbias] = noise_sbias (imu.ab_sta, N);
 
 % -------------------------------------------------------------------------
 % Simulate white noise
+
 wn = randn(M);
 a_wn = zeros(M);
 
@@ -103,26 +105,15 @@ for i=1:3
 end
 
 % -------------------------------------------------------------------------
-% Simulate dynamic bias (bias instability) as a First-order Gauss-Markov model
+% Simulate dynamic bias (bias instability) as a first-order Gauss-Markov model
 
 dt = 1/imu.freq; 
-[a_dbias] = noise_dbias (imu.ab_corr, imu.ab_drift, dt, M);
+[a_dbias] = noise_dbias (imu.ab_corr, imu.ab_dyn, dt, M);
 
 % -------------------------------------------------------------------------
 % Simulate rate random walk
 
 [a_rrw] = noise_rrw (imu.vrrw, dt, M);
-
-% sigma_aK = ustrain.fb_allan(idx) ; %.* sqrt(3/TAU)
-
-% for i=1:3
-%     
-%     b_noise = randn(N-1,1);
-%     
-%     for j=2:N
-%         arrw (j, i) = arrw(j-1, i) + imu.arrw(i) * dt .* b_noise(j-1);
-%     end
-% end
 
 % -------------------------------------------------------------------------
 

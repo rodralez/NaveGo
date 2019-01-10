@@ -1,6 +1,13 @@
 function g_n = gravity(lat, h)
 % gravity: calculates gravity vector in the navigation frame.
 %
+% INPUT:
+%       lat: Mx1 latitude (radians).
+%         h: Mx1 altitude (m).
+%
+% OUTPUT:
+%		g_n: Mx1 gravity vector in the nav-frame (m/s^2).
+%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
 %   This file is part of NaveGo, an open-source MATLAB toolbox for
@@ -29,8 +36,8 @@ function g_n = gravity(lat, h)
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 16.
 %
-% Version: 003
-% Date:    2018/11/02
+% Version: 004
+% Date:    2019/01/09
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -51,7 +58,9 @@ Ro = sqrt(RN .* RM);
 
 g = (g0 ./ (1 + (h ./ Ro)).^2);
 
-g_n = [0 0 g];
+Z = zeros(size(lat));
+
+g_n = [Z Z g];
 
 end
 

@@ -5,18 +5,18 @@ function [imu] = allan_imu (imu_sta, verbose)
 % -------------------------------------------------------------------------
 %
 % INPUT
-% - imu_sta. Input data structure must contains the following fields:
+%   imu_sta. Input data structure must contains the following fields:
 %
-%     fb, Nx3 matrix, accelerations [X Y Z] (m/s^2).
-%     wb, Nx3 matrix, turn rates [X Y Z] (rad/s).
-%     t,  Nx1, time vector (s).
+%       fb, Nx3 matrix, accelerations [X Y Z] (m/s^2).
+%       wb, Nx3 matrix, turn rates [X Y Z] (rad/s).
+%       t,  Nx1, time vector (s).
 %
 % - verbose. Verbose level for allan_overlap function.
 %
 % OUTPUT
-% - imu. Output data structure with the following fields:
+%   imu. Output data structure with the following fields:
 %
-%     arw, 1x3 vector, angle random walk (rad/root-s). Value is taken 
+%       arw, 1x3 vector, angle random walk (rad/root-s). Value is taken 
 %       straightfoward from the plot at t = 1 s.
 %       Note: units of rad/s from the plot have to be transformed to 
 %       rad/root-s. This is done by multiplying (rad/s * root-s/root-s) = 
@@ -24,60 +24,60 @@ function [imu] = allan_imu (imu_sta, verbose)
 %       at which random walk is evaluated.
 %     
 %
-%     vrw, 1x3 vector, velocity random walk (m/s/root-s). Value is taken 
+%       vrw, 1x3 vector, velocity random walk (m/s/root-s). Value is taken 
 %       straightfoward from the plot at t = 1 s.
 %       Note: units of m/s^2 from the plot have to be transformed to 
 %       m/s/root-s. This is done by multiplying (m/s^2 * root-s/root-s) = 
 %       (m/s^2 * root-s/1) = m/s/root-s, since root-s = 1 for tau = 1, time 
 %       at which random walk is evaluated.
 %
-%     gb_drift, 1x3 vector, gyros bias instability in rad/s. Value is taken
-%     from the plot at the minimun value.
+%       gb_dyn, 1x3 vector, gyros bias instability in rad/s. Value is taken
+%       from the plot at the minimun value.
 %
-%     ab_drift, 1x3 vector, accs bias instability in m/s^2. Value is taken
-%     from the plot at the minimun value.
+%       ab_dyn, 1x3 vector, accs bias instability in m/s^2. Value is taken
+%       from the plot at the minimun value.
 %
-%     gb_corr, 1x3 vector, gyros correlation times (s).
+%       gb_corr, 1x3 vector, gyros correlation times (s).
 %
-%     ab_corr, 1x3 vector, accs correlation times (s).
+%       ab_corr, 1x3 vector, accs correlation times (s).
 %
-%     g_std, 1x3 vector, gyros standard deviation (rad/s).
+%       g_std, 1x3 vector, gyros standard deviations (rad/s).
 %
-%     a_std, 1x3 vector, accs standard deviation (m/s^2).
+%       a_std, 1x3 vector, accs standard deviations (m/s^2).
 %
-%     g_max, 1x3 vector, gyros maximum value (rad/s).
+%       g_max, 1x3 vector, gyros maximum values (rad/s).
 %
-%     a_max, 1x3 vector, accs maximum value (m/s^2).
+%       a_max, 1x3 vector, accs maximum values (m/s^2).
 %
-%     g_min, 1x3 vector, gyros minimum value (rad/s).
+%       g_min, 1x3 vector, gyros minimum values (rad/s).
 %
-%     a_min, 1x3 vector, accs maximum value (m/s^2).
+%       a_min, 1x3 vector, accs maximum values (m/s^2).
 %
-%     g_mean, 1x3 vector, gyros mean value (rad/s).
+%       g_mean, 1x3 vector, gyros mean values (rad/s).
 %
-%     a_meam, 1x3 vector, accs mean value (m/s^2).
+%       a_meam, 1x3 vector, accs mean values (m/s^2).
 %
-%     g_median, 1x3 vector, gyros median value (rad/s).
+%       g_median, 1x3 vector, gyros median values (rad/s).
 %
-%     a_median, 1x3 vector, accs median value (m/s^2).
+%       a_median, 1x3 vector, accs median values (m/s^2).
 %
-%     fb_tau, Mx3 with time vector from AV for accelerometers [X Y Z],
-%     respectively.
+%       fb_tau, Mx3 with time vector from AV for accelerometers [X Y Z],
+%       respectively.
 %
-%     fb_allan, Mx3 with AV vector for accelerometers [X Y Z],
-%     respectively.
+%       fb_allan, Mx3 with AV vector for accelerometers [X Y Z],
+%       respectively.
 %
-%     fb_error, Mx3 with AV errors for accelerometers [X Y Z],
-%     respectively.
+%       fb_error, Mx3 with AV errors for accelerometers [X Y Z],
+%       respectively.
 %
-%     wb_tau, Mx3 with time vector from AV for gyros [X Y Z],
-%     respectively.
+%       wb_tau, Mx3 with time vector from AV for gyros [X Y Z],
+%       respectively.
 %
-%     wb_allan, Mx3 with AV vector for gyros [X Y Z],
-%     respectively.
+%       wb_allan, Mx3 with AV vector for gyros [X Y Z],
+%       respectively.
 %
-%     wb_error, Mx3 with AV errors for gyros [X Y Z],
-%     respectively.
+%       wb_error, Mx3 with AV errors for gyros [X Y Z],
+%       respectively.
 %
 % -------------------------------------------------------------------------
 %
@@ -137,16 +137,16 @@ imu.vrw = zeros(1,3);
 imu.arw = zeros(1,3);
 
 % Bias instability
-imu.ab_drift = zeros(1,3);
-imu.gb_drift = zeros(1,3);
+imu.ab_dyn = zeros(1,3);
+imu.gb_dyn = zeros(1,3);
 
 % Bias instability correlation time
 imu.ab_corr = zeros(1,3);
 imu.gb_corr = zeros(1,3);
 
 % Static bias 
-imu.ab_fix = zeros(1,3);
-imu.gb_fix = zeros(1,3);
+imu.ab_sta = zeros(1,3);
+imu.gb_sta = zeros(1,3);
 
 % Statistics
 imu.a_std    = zeros(1,3);
@@ -165,7 +165,7 @@ imu.g_outliers = zeros(1,3);
 
 %% TIME VECTOR FOR ALLAN VARIANCE
 
-% Find time period and data frequency
+% Find the sampling time and data frequency
 dt = median(diff(imu_sta.t));
 
 % Frequency must be rounded to an integer number for allan_overlap function
@@ -213,11 +213,11 @@ for i=1:3
     vrw = allan_get_rw (tau, allan_o, dt);
     imu.vrw(i) = vrw;
     
-    [b_drift, t_corr] = allan_get_bdrift (tau, allan_o);
-    imu.ab_drift(i) = b_drift;
+    [b_dyn, t_corr] = allan_get_b_dyn (tau, allan_o);
+    imu.ab_dyn(i) = b_dyn;
     imu.ab_corr(i)  = t_corr;
     
-    imu.ab_fix(i)    = s.mean; 
+    imu.ab_sta(i)    = s.mean; 
         
     imu.a_std(i)    = s.std;
     imu.a_mean(i)   = s.mean;    
@@ -251,11 +251,11 @@ for i=1:3
     arw = allan_get_rw (tau, allan_o, dt);
     imu.arw(i) = arw;
     
-    [b_drift, t_corr] = allan_get_bdrift (tau, allan_o);
-    imu.gb_drift(i) = b_drift;
+    [b_dyn, t_corr] = allan_get_b_dyn (tau, allan_o);
+    imu.gb_dyn(i) = b_dyn;
     imu.gb_corr(i) = t_corr;
     
-    imu.gb_fix(i) = s.mean;
+    imu.gb_sta(i) = s.mean;
     
     imu.g_std(i)    = s.std;
     imu.g_mean(i)   = s.mean;     

@@ -45,7 +45,7 @@ addpath ../../
 addpath ../../simulation/
 addpath ../../conversions/
 
-versionstr = 'NaveGo, release v1.1';
+versionstr = 'NaveGo, release v1.2';
 
 fprintf('\n%s.\n', versionstr)
 fprintf('\nNaveGo: starting simulation ... \n')
@@ -76,26 +76,24 @@ MS2KMH = 3.6;       % m/s to km/h
 
 %% LOAD REF DATA
 
-% Reference dataset was obtained by processing IMU Ekinox and D-GNSS Ekinox
-% with tighly-coupled integration by Inertial Explorer software.
+% Reference dataset was obtained by processing Ekinox IMU and Ekinox GNSS 
+% with tighly-coupled integration by Inertial Explorer software package.
 
-fprintf('Loading reference data... \n')
+fprintf('NaveGo: loading reference data... \n')
 
 load ref
 
 %% EKINOX IMU 
 
-fprintf('Loading Ekinox IMU data... \n')
+fprintf('NaveGo: loading Ekinox IMU data... \n')
 
 load imu
 
-
 %% EKINOX GNSS 
 
-fprintf('Loading Ekinox GNSS data... \n')
+fprintf('NaveGo: loading Ekinox GNSS data... \n')
 
 load gnss
-
 
 %% Print navigation time
 
@@ -172,7 +170,6 @@ rmse_v = print_rmse (nav_ref, gnss_ref, ref_n, ref_g, 'Ekinox IMU/GNSS');
 %% Save RMSE to CVS file
 
 csvwrite('ekinox.csv', rmse_v);
-
 
 %% PLOT
 

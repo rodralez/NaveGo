@@ -12,10 +12,10 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %       vrw: 1x3 angle velocity walks (m/s^2/root-Hz).
 %      gstd: 1x3 gyros standard deviations (radians/s).
 %      astd: 1x3 accrs standard deviations (m/s^2).
-%    gb_fix: 1x3 gyros static biases or turn-on biases (radians/s).
-%    ab_fix: 1x3 accrs static biases or turn-on biases (m/s^2).
-%  gb_drift: 1x3 gyros dynamic biases or bias instabilities (radians/s).
-%  ab_drift: 1x3 accrs dynamic biases or bias instabilities (m/s^2).
+%    gb_sta: 1x3 gyros static biases or turn-on biases (radians/s).
+%    ab_sta: 1x3 accrs static biases or turn-on biases (m/s^2).
+%    gb_dyn: 1x3 gyros dynamic biases or bias instabilities (radians/s).
+%    ab_dyn: 1x3 accrs dynamic biases or bias instabilities (m/s^2).
 %   gb_corr: 1x3 gyros correlation times (seconds).
 %   ab_corr: 1x3 accrs correlation times (seconds).
 %    gb_psd: 1x3 gyros dynamic biases PSD (rad/s/root-Hz).
@@ -54,13 +54,13 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %       lat: Ix1 latitude (radians).
 %       lon: Ix1 longitude (radians).
 %         h: Ix1 altitude (m).
-%        Pp: Mx441 Kalman filter a posteriori covariance matrices, one matrix per row.
-%        Pi: Mx441 Kalman filter a priori covariance matrices, one matrix per row.
-%         A: Mx441 Kalman filter transition-state matrices, one matrix per row.
-%         B: Mx12 Kalman filter biases compensations, [gb_fix ab_fix gb_drift ab_drift].
+%        Pp: Mx225 Kalman filter a posteriori covariance matrices, one matrix per row.
+%        Pi: Mx225 Kalman filter a priori covariance matrices, one matrix per row.
+%         A: Mx225 Kalman filter transition-state matrices, one matrix per row.
+%         B: Mx6 Kalman filter biases compensations, [gb_dyn ab_dyn].
 %        In: Mx6  Kalman filter innovations.
-%        Xi: Mx21 Kalman filter a priori states.
-%        Xp: Mx21 Kalman filter a posteriori states.
+%        Xi: Mx15 Kalman filter a priori states.
+%        Xp: Mx15 Kalman filter a posteriori states.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -92,8 +92,8 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %
 %   ins_gps.m, ins_gnss function is based on that previous function.
 %
-% Version: 002
-% Date:    2018/10/16
+% Version: 003
+% Date:    2019/01/09
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -139,14 +139,12 @@ lat_e(1) = gnss.lat(1);
 lon_e(1) = gnss.lon(1);
 
 % Biases
-gb_drift = imu.gb_drift';
-ab_drift = imu.ab_drift';
-gb_fix   = imu.gb_fix';
-ab_fix   = imu.ab_fix';
+gb_dyn = imu.gb_dyn';
+ab_dyn = imu.ab_dyn';
 
 % Initialize Kalman filter matrices
-S.xp = [ zeros(1,9), imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift ]';  % Error vector state
-S.Pp = diag([imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift].^2);
+S.xp = [ zeros(1,9), imu.gb_dyn, imu.ab_dyn ]';  % Error vector state
+S.Pp = diag([imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_sta, imu.ab_sta].^2);
 S.R  = diag([gnss.stdv, gnss.stdm].^2);
 S.Q  = diag([imu.arw, imu.vrw, imu.gb_psd, imu.ab_psd].^2);
 
@@ -158,16 +156,16 @@ S.Q  = diag([imu.arw, imu.vrw, imu.gb_psd, imu.ab_psd].^2);
 
 % Kalman matrices for later analysis
 In = zeros(LG, 6);         % Kalman filter innovations
-Pi = zeros(LG, 441);       % Elements from a priori covariance matrices, Pi
-Pp = zeros(LG, 441);       % Elements from a posteriori covariance matrices, Pp
-A  = zeros(LG, 441);       % Elements from transition-state matrices, A
-Xi = zeros(LG, 21);        % Evolution of Kalman filter a priori states, xi
-Xp = zeros(LG, 21);        % Evolution of Kalman filter a posteriori states, xp
-B  = zeros(LG, 12);        % Biases compensantions after Kalman filter correction
+Pi = zeros(LG, 225);       % Elements from a priori covariance matrices, Pi
+Pp = zeros(LG, 225);       % Elements from a posteriori covariance matrices, Pp
+A  = zeros(LG, 225);       % Elements from transition-state matrices, A
+Xi = zeros(LG, 15);        % Evolution of Kalman filter a priori states, xi
+Xp = zeros(LG, 15);        % Evolution of Kalman filter a posteriori states, xp
+B  = zeros(LG, 6);         % Biases compensantions after Kalman filter correction
 
 % Initialize matrices for INS/GNSS performance analysis
-Pp(1,:) = reshape(S.Pp, 1, 441);
-B(1,:)  = [gb_fix', ab_fix', gb_drift', ab_drift'];
+Pp(1,:) = reshape(S.Pp, 1, 225);
+B(1,:)  = [gb_dyn', ab_dyn'];
 Xp(1,:) = S.xp';
 
 % Constant matrices
@@ -184,12 +182,12 @@ for i = 2:LI
     % Print a return on console every 200,000 INS executions
     if (mod(i,200000) == 0), fprintf('\n'); end
     
-    % INS period
+    % IMU sampling interval
     dti = imu.t(i) - imu.t(i-1);
     
     % Correct inertial sensors
-    wb_corrected = (imu.wb(i,:)' + gb_fix + gb_drift );
-    fb_corrected = (imu.fb(i,:)' + ab_fix + ab_drift );
+    wb_corrected = (imu.wb(i,:)' + gb_dyn );
+    fb_corrected = (imu.fb(i,:)' + ab_dyn );
     
     % Turn-rates update
     omega_ie_n = earthrate(lat_e(i-1));
@@ -254,7 +252,7 @@ for i = 2:LI
     % Look for the GNSS index that is close to the current INS index
     gdx =  find (gnss.t >= (imu.t(i) - gnss.eps) & gnss.t < (imu.t(i) + gnss.eps));
     
-    if ( ~isempty(gdx) & gdx > 1)
+    if ( ~isempty(gdx) && gdx > 1)
         
         %% INNOVATIONS
         
@@ -271,7 +269,7 @@ for i = 2:LI
         
         %% KALMAN FILTER
         
-        % GNSS period
+        % GNSS sampling interval
         dtg = gnss.t(gdx) - gnss.t(gdx-1);
         
         % Vector to update matrix F
@@ -282,12 +280,12 @@ for i = 2:LI
         
         % Update matrix H
         if(zupt == false)
-            S.H = [ Z I Z Z Z Z Z;
-                Z Z Tpr Z Z Z Z; ];
+            S.H = [ Z I Z Z Z ;
+                Z Z Tpr Z Z ; ];
             S.R = diag([gnss.stdv gnss.stdm]).^2;
             S.z = [ zv' zp' ]';
         else
-            S.H = [ Z I Z Z Z Z Z; ];
+            S.H = [ Z I Z Z Z ; ];
             S.R = diag([gnss.stdv]).^2;
             S.z = zv;
         end
@@ -332,23 +330,21 @@ for i = 2:LI
         h_e(i)   = h_e(i)   - S.xp(9);
         
         % Biases corrections
-        gb_fix   = S.xp(10:12);
-        ab_fix   = S.xp(13:15);
-        gb_drift = S.xp(16:18);
-        ab_drift = S.xp(19:21);
+        gb_dyn   = S.xp(10:12);
+        ab_dyn   = S.xp(13:15);
         
         % Matrices for later INS/GNSS performance analysis
         Xi(gdx,:) = S.xi';
         Xp(gdx,:) = S.xp';
-        Pi(gdx,:) = reshape(S.Pi, 1, 441);
-        Pp(gdx,:) = reshape(S.Pp, 1, 441);
-        A(gdx,:)  = reshape(S.A, 1, 441);
+        Pi(gdx,:) = reshape(S.Pi, 1, 225);
+        Pp(gdx,:) = reshape(S.Pp, 1, 225);
+        A(gdx,:)  = reshape(S.A, 1, 225);
         if(zupt == true)
             In(gdx,:) = [ zv; zp;]';
         else
             In(gdx,:) = S.z';
         end
-        B(gdx,:) = [gb_fix', ab_fix', gb_drift', ab_drift'];
+        B(gdx,:) = [gb_dyn', ab_dyn'];
        
     end
 end

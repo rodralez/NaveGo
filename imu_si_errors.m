@@ -7,10 +7,10 @@ function imu_si = imu_si_errors(imu, dt)
 %         imu.arrw:     angle rate random walks [X Y Z] (deg/root-hour/s)
 %         imu.vrw:      velocity random walks [X Y Z] (m/s/root-hour)
 %		  imu.vrrw:     velocity rate random walks [X Y Z] (deg/root-hour/s)
-%         imu.gb_fix:   gyro static biases [X Y Z] (deg/s)
-%         imu.ab_fix:   acc static biases [X Y Z] (mg)
-%         imu.gb_drift: gyro dynamic biases [X Y Z] (deg/s)
-%         imu.ab_drift: acc dynamic biases [X Y Z] (mg)
+%         imu.gb_sta:   gyro static biases [X Y Z] (deg/s)
+%         imu.ab_sta:   acc static biases [X Y Z] (mg)
+%         imu.gb_dyn:   gyro dynamic biases [X Y Z] (deg/s)
+%         imu.ab_dynt:  acc dynamic biases [X Y Z] (mg)
 %         imu.gb_corr:  gyro correlation times [X Y Z] (seconds)
 %         imu.ab_corr:  acc correlation times [X Y Z] (seconds)
 %         imu.m_psd:    magnetometer noise density [X Y Z] (mgauss/root-Hz)
@@ -63,24 +63,24 @@ imu_si.a_std   = imu_si.vrw ./ sqrt(dt); % m/s^2/root-Hz  ->  m/s^2
 imu_si.g_std   = imu_si.arw ./ sqrt(dt); % rad/s/root-Hz  ->  rad/s
 
 % Static bias
-imu_si.ab_fix = imu.ab_fix .* 0.001 * G;    % mg -> m/s^2
-imu_si.gb_fix = imu.gb_fix .* D2R;              % deg/s -> rad/s;
+imu_si.ab_sta = imu.ab_sta .* 0.001 * G;    % mg -> m/s^2
+imu_si.gb_sta = imu.gb_sta .* D2R;          % deg/s -> rad/s;
 
 % Dynamic bias
-imu_si.ab_drift = imu.ab_drift .* 0.001 .* G;  % mg -> m/s^2
-imu_si.gb_drift = imu.gb_drift .* D2R;             % deg/s -> rad/s;
+imu_si.ab_dyn = imu.ab_dyn .* 0.001 .* G;   % mg -> m/s^2
+imu_si.gb_dyn = imu.gb_dyn .* D2R;          % deg/s -> rad/s;
 
 % Dynamic bias PSD
 if (isinf(imu.gb_corr))
-    imu_si.gb_psd = imu_si.gb_drift;  % rad/s (approximation)
+    imu_si.gb_psd = imu_si.gb_dyn;          % rad/s (approximation)
 else
-    imu_si.gb_psd = imu_si.gb_drift .* sqrt(imu.gb_corr);  % rad/s/root-Hz; 
+    imu_si.gb_psd = imu_si.gb_dyn .* sqrt(imu.gb_corr);  % rad/s/root-Hz; 
 end
 
 if (isinf(imu.ab_corr))
-    imu_si.ab_psd = imu_si.ab_drift;  % m/s^2 (approximation)
+    imu_si.ab_psd = imu_si.ab_dyn;          % m/s^2 (approximation)
 else
-    imu_si.ab_psd = imu_si.ab_drift .* sqrt(imu.ab_corr);  % m/s^2/root-Hz
+    imu_si.ab_psd = imu_si.ab_dyn .* sqrt(imu.ab_corr);  % m/s^2/root-Hz
 end
 
 % Correlation time

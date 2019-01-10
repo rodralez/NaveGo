@@ -1,5 +1,12 @@
-function deltha = gyro_gen_delta(DCMnb, dt)
-% gyro_gen_delta: calculates gyros delta measurements.
+function deltha = gyro_gen_delta(DCMnb, t)
+% gyro_gen_delta: calculates gyros delta angles.
+%
+% INPUT:
+%		DCMnb: Mx9 DCM nav-to-body matrices.
+%		t: Mx1 time vector (s).
+%
+% OUTPUT:
+%		deltha: Mx3 gyros delta angles (radians).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
@@ -25,32 +32,39 @@ function deltha = gyro_gen_delta(DCMnb, dt)
 % Journal of Control Engineering and Applied Informatics, vol. 17, 
 % issue 2, pp. 110-120, 2015. Eq. 5 and 6.
 %
-% Version: 002
-% Date:    2015/08/20
+% Reference:
+%
+% Version: 003
+% Date:    2019/01/09
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
-%
-% Reference:
 
-kn = max(size(DCMnb));
 
-dphi = zeros(kn-1,1);
-dtheta = zeros(kn-1,1);
-dpsi = zeros(kn-1,1);
+M = max(size(DCMnb));
 
-for k = 2:kn
+% Preallocate
 
-  dcmnb2 = reshape(DCMnb(k,:), 3, 3); 
-  dcmnb1 = reshape(DCMnb(k-1,:), 3, 3);  
+dphi   = zeros(M-1,1);
+dtheta = zeros(M-1,1);
+dpsi   = zeros(M-1,1);
 
-  dPSI = (dcmnb1 * dcmnb2') - eye(3);
+% Calculate gyros delta angles.
+
+for k = 2:M
+
+  dcmnb = reshape(DCMnb(k,:), 3, 3); 
+  dcmnb_old = reshape(DCMnb(k-1,:), 3, 3);  
+
+  dPSI = (dcmnb_old * dcmnb') - eye(3);
    
-  dphi(k-1,1)   = dPSI(3,2) ;
-  dtheta(k-1,1) = dPSI(1,3) ;
-  dpsi(k-1,1)   = dPSI(2,1) ;
- 
+  dphi(k-1,1)   = dPSI(3,2);
+  dtheta(k-1,1) = dPSI(1,3);
+  dpsi(k-1,1)   = dPSI(2,1); 
 end
 
-deltha = [dphi./dt dtheta./dt dpsi./dt];
+% Derivates
+
+t_diff = diff(t);
+deltha = [dphi./t_diff dtheta./t_diff dpsi./t_diff];
 
 end

@@ -31,8 +31,8 @@ function  navego_plot (ref, gnss, nav_e, gnss_ref, nav_ref, ref_g, ref_n)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% Version: 006
-% Date:    2018/10/16
+% Version: 007
+% Date:    2019/01/09
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -40,7 +40,7 @@ function  navego_plot (ref, gnss, nav_e, gnss_ref, nav_ref, ref_g, ref_n)
 R2D = (180/pi);     % radians to degrees
 
 % Sigma 3 vectors from navigation estimates
-sig3_v = abs(nav_e.Pp(:, 1:22:end).^(0.5)) .* 3; % Only take diagonal elements from Pp
+sig3_v = abs(nav_e.Pp(:, 1:16:end).^(0.5)) .* 3; % Only take diagonal elements from Pp
 
 % TRAJECTORY
 figure;
@@ -106,7 +106,9 @@ title('PITCH ERROR');
 grid
 
 subplot(313)
-plot(nav_ref.t, (nav_ref.yaw - ref_n.yaw).*R2D, '-b' );
+
+yaw_err = correct_yaw(nav_ref.yaw - ref_n.yaw);
+plot(nav_ref.t, yaw_err.*R2D, '-b' );
 hold on
 plot (nav_e.tg, R2D.*sig3_v(:,3), '--k', nav_e.tg, -R2D.*sig3_v(:,3), '--k' )
 ylabel('[deg]')
@@ -247,4 +249,27 @@ xlabel('Time [s]')
 ylabel('[m]')
 legend('GNSS', 'INS/GNSS', '3\sigma');
 title('ALTITUDE ERROR');
+grid
+
+% BIAS ESTIMATION
+figure;
+subplot(311)
+plot(nav_e.tg, nav_e.B(:, 1).*R2D, '-b');
+xlabel('Time [s]')
+ylabel('[deg]')
+title('KF BIAS ESTIMATION X');
+grid
+
+subplot(312)
+plot(nav_e.tg, nav_e.B(:, 2).*R2D, '-b');
+xlabel('Time [s]')
+ylabel('[deg]')
+title('KF BIAS ESTIMATION Y');
+grid
+
+subplot(313)
+plot(nav_e.tg, nav_e.B(:, 3).*R2D, '-b');
+xlabel('Time [s]')
+ylabel('[deg]')
+title('KF BIAS ESTIMATION Z');
 grid
