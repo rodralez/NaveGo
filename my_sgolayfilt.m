@@ -1,11 +1,11 @@
-function signal_f = my_sgolayfilt (signal)
+function signal_s = my_sgolayfilt (signal)
 % my_sgolayfilt: Savitzky-Golay Filtering with variable frame length.
 %
 % INPUT:
-%		signal: time serie(s) to be filter.
+%		signal: time serie(s) to be smoothed.
 %
 % OUTPUT:
-%		signal_f: filtered signal, same order of signal.
+%		signal_s: smoothed signal, same order of signal.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -38,16 +38,18 @@ signal_size = max(size(signal));
 
 sgo_framelen = floor( signal_size / 5);
 
+% sgo_framelen should not be greater than 21.
 if (sgo_framelen > 21)
     sgo_framelen = 21;
 end
 
-if ( mod(sgo_framelen,2) == 0 )
+% sgo_framelen must be odd
+if ( mod(sgo_framelen, 2) == 0 )
     sgo_framelen = sgo_framelen +1;
 end
 
 sgo_order = ceil( sgo_framelen / 2);
 
-signal_f = sgolayfilt(signal, sgo_order, sgo_framelen);
+signal_s = sgolayfilt(signal, sgo_order, sgo_framelen);
 
 end
