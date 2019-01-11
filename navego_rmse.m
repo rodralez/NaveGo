@@ -1,6 +1,7 @@
 function rmse_v = navego_rmse (nav, gnss, ref_n, ref_g)
-% navego_rmse:  calculate the Root Mean Squared Errors (RMSE) between INS/GNSS
-% and a reference, and between GNSS-only and a reference.
+% navego_rmse: calculates the Root Mean Squared Errors (RMSE) between 
+% a INS/GNSS system and a reference data structure, and between GNSS-only 
+% solution and a reference data structure.
 %
 % INPUT:
 %   nav_e, INS/GNSS integration data structure.
@@ -61,8 +62,8 @@ end
 %% INS/GNSS position RMSE
 
 [RM,RN] = radius(nav.lat(1), 'double');
-LAT2M = (RM + double(nav.h(1)));                          % Coefficient for lat rad -> meters
-LON2M = (RN + double(nav.h(1))) .* cos(nav.lat(1));   % Coefficient for lon rad -> meters
+LAT2M = (RM + double(nav.h(1)));                    % Coefficient for lat rad -> meters
+LON2M = (RN + double(nav.h(1))) .* cos(nav.lat(1)); % Coefficient for lon rad -> meters
 
 RMSE_lat = rmse (nav.lat, ref_n.lat) .* LAT2M;
 RMSE_lon = rmse (nav.lon, ref_n.lon) .* LON2M;
@@ -83,8 +84,8 @@ end
 %% GNSS position RMSE
 
 [RM,RN] = radius(gnss.lat(1), 'double');
-LAT2M = (RM + double(gnss.h(1)));                        % Coefficient for lat rad -> meters
-LON2M = (RN + double(gnss.h(1))) .* cos(gnss.lat(1));     % Coefficient for lon rad -> meters
+LAT2M = (RM + double(gnss.h(1)));                       % Coefficient for lat rad -> meters
+LON2M = (RN + double(gnss.h(1))) .* cos(gnss.lat(1));   % Coefficient for lon rad -> meters
 
 RMSE_lat_g = rmse (gnss.lat, ref_g.lat) .* LAT2M;
 RMSE_lon_g = rmse (gnss.lon, ref_g.lon) .* LON2M;

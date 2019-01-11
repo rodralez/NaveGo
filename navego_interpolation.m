@@ -1,14 +1,14 @@
 function [nav_i, ref] = navego_interpolation (nav, ref)
-% navego_interpolation: interpolates navigation data using a reference time 
+% navego_interpolation: interpolates navigation data using a reference time
 % vector.
 %
 % INPUT:
-%   nav, navigation data structure to be interpolated. 
+%   nav, navigation data structure to be interpolated.
 %   ref, reference data structure.
 %
 % OUTPUT
-%   nav_i, navigation data structure interpolated by reference vector time.
-%   ref,   reference data structure adjusted to the nav vector time.
+%   nav_i, navigation data structure interpolated by reference time vector.
+%   ref,   reference data structure adjusted by the nav time vector.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -99,7 +99,9 @@ end
 
 %% Interpolation
 
-if (isfield(nav, 'roll') & isfield(ref, 'roll'))  % If data is from INS/GNSS solution...
+% If data is from INS/GNSS solution...
+
+if (isfield(nav, 'roll') & isfield(ref, 'roll'))
     
     fprintf('navego_interpolation: %s method to interpolate INS/GNSS solution\n', method)
     
@@ -114,7 +116,7 @@ if (isfield(nav, 'roll') & isfield(ref, 'roll'))  % If data is from INS/GNSS sol
     if (isfield(ref, 'vel') & isfield( nav, 'vel'))
         
         nav_i.vel = interp1(nav.t, nav.vel,   ref.t, method);
-        flag_vel  = any(isnan(nav_i.vel));        
+        flag_vel  = any(isnan(nav_i.vel));
     else
         flag_vel = false(1,3);
     end
@@ -128,7 +130,9 @@ if (isfield(nav, 'roll') & isfield(ref, 'roll'))  % If data is from INS/GNSS sol
         error('navego_interpolation: NaN value in INS/GNSS interpolated solution')
     end
     
-else  % If dataset is from GNSS-only solution...
+% If dataset is from a GNSS-only solution...
+
+else
     
     fprintf('navego_interpolation: %s method to interpolate GNSS-only solution\n', method)
     
@@ -139,8 +143,8 @@ else  % If dataset is from GNSS-only solution...
     
     if (isfield(ref, 'vel') & isfield( nav, 'vel'))
         
-        nav_i.vel = interp1(nav.t, nav.vel,   ref.t, method);        
-        flag_vel = any(isnan(nav_i.vel));        
+        nav_i.vel = interp1(nav.t, nav.vel,   ref.t, method);
+        flag_vel = any(isnan(nav_i.vel));
     else
         flag_vel = false(1,3);
     end
