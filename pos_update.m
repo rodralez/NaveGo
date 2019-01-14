@@ -61,24 +61,18 @@ end
 
 %% Latitude
 
-if (isa(h,'single')) 
-    [RM,~] = radius(lat, 'single');
-else
-    [RM,~] = radius(lat, 'double');
-end
+[RM,~] = radius(lat);
 
 vn_c = vn / (RM + h_n);
+
 lat_n = lat + (vn_c) * dt;
 
 %% Longitude
 
-if (isa(h,'single')) 
-    [~, RN] = radius(lat_n, 'single');
-else
-    [~, RN] = radius(lat_n, 'double');
-end
+[~, RN] = radius(lat_n);
 
 ve_c  = ve / ((RN + h_n) * cos (lat_n));
+
 lon_n = lon + (ve_c) * dt;
 
 %% Position update

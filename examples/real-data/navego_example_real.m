@@ -6,6 +6,7 @@
 % Sensors dataset was generated driving a vehicle through the streets of 
 % Turin city (Italy).
 %
+%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
 %   This file is part of NaveGo, an open-source MATLAB toolbox for

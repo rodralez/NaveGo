@@ -4,6 +4,7 @@
 % simulated ADIS16405 IMU and simulated GNSS, and another using a 
 % simulated ADIS16488 IMU and the same simulated GNSS.
 %
+%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
 %   This file is part of NaveGo, an open-source MATLAB toolbox for
@@ -40,8 +41,8 @@
 % Revision D. October 2011. 
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 % sampling
-% Version: 012
-% Date:    2019/01/09
+% Version: 013
+% Date:    2019/01/14
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -522,19 +523,19 @@ if (strcmp(PLOT,'ON'))
     grid
     
     % POSITION ERRORS    
-    [RN,RE]  = radius(nav1_ref.lat, 'double');
+    [RN,RE]  = radius(nav1_ref.lat);
     LAT2M_1 = RN + nav1_ref.h;
     LON2M_1 = (RE + nav1_ref.h).*cos(nav1_ref.lat);
     
-    [RN,RE]  = radius(nav2_ref.lat, 'double');
+    [RN,RE]  = radius(nav2_ref.lat);
     LAT2M_2 = RN + nav2_ref.h;
     LON2M_2 = (RE + nav2_ref.h).*cos(nav2_ref.lat);
     
-    [RN,RE]  = radius(gnss.lat, 'double');
+    [RN,RE]  = radius(gnss.lat);
     LAT2M_G = RN + gnss.h;
     LON2M_G = (RE + gnss.h).*cos(gnss.lat);
     
-    [RN,RE]  = radius(gnss_ref.lat, 'double');
+    [RN,RE]  = radius(gnss_ref.lat);
     LAT2M_GR = RN + gnss_ref.h;
     LON2M_GR = (RE + gnss_ref.h).*cos(gnss_ref.lat);
     

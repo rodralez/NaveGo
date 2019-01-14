@@ -1,6 +1,7 @@
 % navego_allan_example: example of how to implement the Allan variance 
 % procedure with NaveGo functions.
 %
+%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
 %   This file is part of NaveGo, an open-source MATLAB toolbox for
@@ -77,7 +78,7 @@ load stim300
 to = (stim300.t(end) - stim300.t(1));
 fprintf('NaveGo: dataset time span is %.2f hours or %.2f minutes or %.2f seconds. \n\n', (to/60/60), (to/60), to)
 
-[stim300_allan] = allan_imu (stim300);
+stim300_allan = allan_imu (stim300);
 
 stim300_arw = stim300_allan.arw
 stim300_vrw = stim300_allan.vrw
@@ -171,7 +172,7 @@ ustrain.wb = wb;
 
 %% ALLAN VARIANCE
 
-[ustrain_allan] = allan_imu (ustrain);
+ustrain_allan = allan_imu (ustrain);
 
 ustrain_allan_arw = ustrain_allan.arw
 ustrain_allan_vrw = ustrain_allan.vrw

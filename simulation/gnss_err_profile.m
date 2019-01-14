@@ -37,7 +37,7 @@ function  gnss = gnss_err_profile (lat, h, gnss)
 
 gnss.std =  zeros(1,3);
 
-[RM, RN] = radius(lat, 'double');
+[RM, RN] = radius(lat);
 
 gnss.std(1) = gnss.stdm(1) / (RM + h);                  
 gnss.std(2) = gnss.stdm(2) / (RN + h) / cos (lat);    

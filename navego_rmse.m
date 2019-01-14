@@ -35,8 +35,8 @@ function rmse_v = navego_rmse (nav, gnss, ref_n, ref_g)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% Version: 002
-% Date:    2019/10/10
+% Version: 003
+% Date:    2019/01/14
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -66,7 +66,7 @@ end
 
 %% INS/GNSS position RMSE
 
-[RM,RN] = radius(nav.lat(1), 'double');
+[RM,RN] = radius(nav.lat(1));
 LAT2M = (RM + double(nav.h(1)));                    % Coefficient for lat rad -> meters
 LON2M = (RN + double(nav.h(1))) .* cos(nav.lat(1)); % Coefficient for lon rad -> meters
 
@@ -88,7 +88,7 @@ end
 
 %% GNSS position RMSE
 
-[RM,RN] = radius(gnss.lat(1), 'double');
+[RM,RN] = radius(gnss.lat(1));
 LAT2M = (RM + double(gnss.h(1)));                       % Coefficient for lat rad -> meters
 LON2M = (RN + double(gnss.h(1))) .* cos(gnss.lat(1));   % Coefficient for lon rad -> meters
 

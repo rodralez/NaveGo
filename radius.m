@@ -8,6 +8,8 @@ function [RM,RN] = radius(lat)
 %   RM, 1x1 meridian radius of curvature (m).
 %   RN, 1x1 normal radius of curvature (m).
 %
+%   Output values preserve the precision of latitude, single or double 
+%   precision.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %

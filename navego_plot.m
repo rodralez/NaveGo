@@ -31,8 +31,8 @@ function  navego_plot (ref, gnss, nav_e, gnss_ref, nav_ref, ref_g, ref_n)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% Version: 007
-% Date:    2019/01/09
+% Version: 008
+% Date:    2019/01/14
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -205,15 +205,15 @@ title('ALTITUDE');
 grid
 
 % POSITION ERRORS
-[RN,RE]  = radius(nav_ref.lat, 'double');
+[RN,RE]  = radius(nav_ref.lat);
 LAT2M_1 = RN + nav_ref.h;
 LON2M_1 = (RE + nav_ref.h).*cos(nav_ref.lat);
 
-[RN,RE]  = radius(gnss.lat, 'double');
+[RN,RE]  = radius(gnss.lat);
 LAT2M_G = RN + gnss.h;
 LON2M_G = (RE + gnss.h).*cos(gnss.lat);
 
-[RN,RE]  = radius(gnss_ref.lat, 'double');
+[RN,RE]  = radius(gnss_ref.lat);
 LAT2M_GR = RN + gnss_ref.h;
 LON2M_GR = (RE + gnss_ref.h).*cos(gnss_ref.lat);
 
