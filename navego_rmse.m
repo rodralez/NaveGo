@@ -11,6 +11,11 @@ function rmse_v = navego_rmse (nav, gnss, ref_n, ref_g)
 %
 % OUTPUT
 %   rmse_v, vector with all RMSE.
+%       RMSE_roll;  RMSE_pitch; RMSE_yaw; (degrees)    
+%       RMSE_vn;    RMSE_ve;    RMSE_vd;  (m/s) 
+%       RMSE_lat;   RMSE_lon;   RMSE_h;   (m)
+%       RMSE_vn_g;  RMSE_ve_g;  RMSE_vd_g;(m/s)
+%       RMSE_lat_g; RMSE_lon_g; RMSE_h_g; (m)
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %

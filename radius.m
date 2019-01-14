@@ -1,5 +1,13 @@
-function [RM,RN] = radius(lat, precision)
+function [RM,RN] = radius(lat)
 % radius: calculates meridian and normal radii of curvature.
+%
+% INPUT:
+%   lat, 1x1 latitude (rad).
+%
+% OUTPUT:
+%   RM, 1x1 meridian radius of curvature (m).
+%   RN, 1x1 normal radius of curvature (m).
+%
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -33,22 +41,21 @@ function [RM,RN] = radius(lat, precision)
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 11.
 %
-% Version: 003
-% Date:    2017/01/19
+% Version: 004
+% Date:    2019/01/14
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-if nargin < 2, precision = 'double'; end
-
-if strcmp(precision, 'single')
+if (isa(lat,'single')) 
     
     a = single(6378137.0);
     e = single(0.0818191908426);
     
     e2 = e^2;
     den = 1 - e2.*single(sin(lat)).^2;
-    
+
 else
+    
     a = (6378137.0);
     e = (0.0818191908426);
     

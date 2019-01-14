@@ -70,6 +70,7 @@ S.Pi =  0.5 .* (S.Pi + S.Pi');
 % Step 2, update Kalman gain
 S.C = (S.R + S.H * S.Pi * S.H');
 S.K = (S.Pi * S.H') / (S.C) ;
+% S.K = (S.Pi * S.H') * inv(S.C) ;
 
 % Step 3, update the a posteriori state xp
 S.xi = S.A * S.xp;
