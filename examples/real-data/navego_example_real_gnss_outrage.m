@@ -1,7 +1,7 @@
 % Example of how to use NaveGo to post-process both real IMU and GNSS data.
 %
 % Main goal: to integrate IMU and GNSS measurements from Ekinox-D sensor 
-% which includes both IMU and GNSS sensors.
+% which includes both IMU and GNSS sensors. Two GNSS outrage are forced.
 %
 % Sensors dataset was generated driving a vehicle through the streets of 
 % Turin city (Italy).
@@ -29,8 +29,8 @@
 %    SBG Systems. SBG Ekinox-D High Accuracy Inertial System Brochure, 
 % Tactical grade MEMS Inertial Systems, v1.0. February 2014. 
 %
-% Version: 002
-% Date:    2018/12/04
+% Version: 001
+% Date:    2019/01/15
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -96,13 +96,13 @@ fprintf('NaveGo: loading Ekinox GNSS data... \n')
 
 load gnss
 
-% Force an GNSS outrage of 1 minute
+% Force a GNSS outrage of 1 minute
 
 gdx =  find(gnss.t >= 138500, 1, 'first');
 fdx = ceil (gdx + gnss.freq * 60);
 outrage_t =  gnss.t(fdx) - gnss.t(gdx); 
 
-fprintf('NaveGo: simulated GNSS outrage of %.2f seconds, from time %.4f to %.4f... \n', outrage_t, gnss.t(gdx), gnss.t(fdx) )
+fprintf('NaveGo: forced GNSS outrage of %.2f seconds, from time %.4f to %.4f... \n', outrage_t, gnss.t(gdx), gnss.t(fdx) )
 
 % Delete elements from gdx to fdx
 
@@ -112,13 +112,13 @@ gnss.lon (gdx:fdx) = [];
 gnss.h (gdx:fdx) = []; 
 gnss.vel (gdx:fdx, :) = []; 
 
-% Force an GNSS outrage of 2 minutes
+% Force a GNSS outrage of 2 minutes
 
 gdx =  find(gnss.t >= 138900, 1, 'first');
 fdx = ceil (gdx + gnss.freq * 60 * 2);
 outrage_t =  gnss.t(fdx) - gnss.t(gdx); 
 
-fprintf('NaveGo: simulated GNSS outrage of %.2f seconds, from time %.4f to %.4f... \n', outrage_t, gnss.t(gdx), gnss.t(fdx) )
+fprintf('NaveGo: forced GNSS outrage of %.2f seconds, from time %.4f to %.4f... \n', outrage_t, gnss.t(gdx), gnss.t(fdx) )
 
 % Delete elements from gdx to fdx
 
@@ -127,7 +127,6 @@ gnss.lat (gdx:fdx) = [];
 gnss.lon (gdx:fdx) = [];
 gnss.h (gdx:fdx) = []; 
 gnss.vel (gdx:fdx, :) = [];
-
 
 %% Print navigation time
 
