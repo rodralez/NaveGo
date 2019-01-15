@@ -74,6 +74,10 @@ Future features of NaveGo will be:
 
 * Adaptive Kalman filter.
 
+* Unscented Kalman filter.
+
+* KML file generator.
+
 
 ## Who is using NaveGo?
 
