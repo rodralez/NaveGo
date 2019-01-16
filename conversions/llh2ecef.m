@@ -1,8 +1,9 @@
 function ecef = llh2ecef(llh)
-% llh2ecef: converts from LLH coordinates to ECEF coordinates.
+% llh2ecef: converts from navigation coordinates (latitude, longitude and 
+% altitude) to ECEF coordinates.
 %
 %   INPUTS
-%       llh: Nx3 LLH coordinates [lat, lon, h] (rad, rad, n).
+%       llh: Nx3 LLH coordinates [lat, lon, h] (rad, rad, m).
 %
 %   OUTPUTS
 %       ned: Nx3 NED coordinates [X Y Z] (m, m, m).
