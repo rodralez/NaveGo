@@ -1,12 +1,11 @@
-function ecef = ned2ecef(ned, llh_org)
-% ecef2ned: converts from ECEF coordinates to NED coordinates.
+function ecef = llh2ecef(llh)
+% llh2ecef: converts from LLH coordinates to ECEF coordinates.
 %
 %   INPUTS
-%       ned: Nx3 NED coordinates [X Y Z] (m, m, m)
-%       llh_org: 1x3 system origin [lat, lon, h] (rad, rad, m).
+%       llh: Nx3 LLH coordinates [lat, lon, h] (rad, rad, n).
 %
 %   OUTPUTS
-%       ecef: Nx3 ECEF coordinates [X Y Z] (m, m, m).
+%       ned: Nx3 NED coordinates [X Y Z] (m, m, m).
 %
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -28,32 +27,33 @@ function ecef = ned2ecef(ned, llh_org)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference:
+%   Guowei Cai et al. Unmanned Rotorcraft Systems. Springer. 2011. 
+%   Eq. 2.22, p. 31.
 %
-% Version: 002
+% Version: 001
 % Date:    2019/01/16
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-lat = llh_org(1);
-lon = llh_org(2);
+% Preallocate
 
-ecef_org = llh2ecef(llh_org)';
+ecef = zeros(size(llh));
+
+lat = llh(:,1);
+lon = llh(:,2);
+h   = llh(:,3);
+
+[~,RN] = radius(lat);
+
+e = 0.0818191908426;    % Eccentricity 
 
 slat = sin(lat);
 clat = cos(lat);
-slon = sin(lon);
 clon = cos(lon);
+slon = sin(lon);
 
-R = [  -slat*clon  -slat*slon   clat; ...
-       -slon          clon         0; ... 
-       -clat*clon  -clat*slon  -slat];
+ecef(:,1) = (RN + h) .* clat .* clon;
+ecef(:,2) = (RN + h) .* clat .* slon;
+ecef(:,3) = (RN *(1-e^2) + h) .* slat;
 
-[MAX, N] = size(ned);
-ecef = zeros(MAX, N);
-
-for i=1:MAX
-    
-    ecef_t = ecef_org + R' * ned(i, :)';
-    ecef (i, :) = ecef_t';
 end
-
