@@ -1,6 +1,15 @@
 function  gnss = gnss_err_profile (lat, h, gnss)
 % gps_err_profile: converts GPS standard deviation from meters to radians.
 %
+% INPUT:
+%   lat, latitude (rad).
+%   h, altitude (m).
+%   gnss, GNSS data structure.
+%
+% OUTPUT:
+%   gnss.std, 1x3 position error profile (m, m, m).
+%
+%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
 %   This file is part of NaveGo, an open-source MATLAB toolbox for 
@@ -30,8 +39,8 @@ function  gnss = gnss_err_profile (lat, h, gnss)
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21, 
 % issue 3, pp. 272-287, 2015. Eq. 7.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2019/01/28
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 

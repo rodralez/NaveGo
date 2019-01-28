@@ -7,6 +7,7 @@ function DCMnb = euler2dcm(euler)
 % OUTPUT:
 %   DCMnb,  3x3 nav-to-body DCM.
 %
+%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
 %   This file is part of NaveGo, an open-source MATLAB toolbox for 
