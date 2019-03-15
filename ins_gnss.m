@@ -151,8 +151,8 @@ gb_dyn = imu.gb_dyn';
 ab_dyn = imu.ab_dyn';
 
 % Initialize Kalman filter matrices
-S.xi = [ zeros(1,9), imu.gb_dyn, imu.ab_dyn ]';  % Error vector state
-S.Pi = diag([imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_sta, imu.ab_sta].^2);
+S.xp = [ zeros(1,9), imu.gb_dyn, imu.ab_dyn ]';  % Error vector state
+S.Pp = diag([imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_sta, imu.ab_sta].^2);
 S.R  = diag([gnss.stdv, gnss.stdm].^2);
 S.Q  = diag([imu.arw, imu.vrw, imu.gb_psd, imu.ab_psd].^2);
 
@@ -163,7 +163,7 @@ S.Q  = diag([imu.arw, imu.vrw, imu.gb_psd, imu.ab_psd].^2);
 % DEC = 0.5 * 180/pi;             % Magnetic declination (radians)
 
 % Kalman filter matrices for later analysis
-Z = zeros(LG, 6);          % Measurements
+Z = zeros(LG, 6);          % INS/GNSS measurements
 V = zeros(LG, 6);          % Kalman filter innovations
 Pi = zeros(LG, 225);       % Elements from a priori covariance matrices, Pi
 Pp = zeros(LG, 225);       % Elements from a posteriori covariance matrices, Pp
@@ -173,9 +173,9 @@ Xp = zeros(LG, 15);        % Evolution of Kalman filter a posteriori states, xp
 B  = zeros(LG, 6);         % Biases compensantions after Kalman filter correction
 
 % Initialize matrices for INS/GNSS performance analysis
-Pi(1,:) = reshape(S.Pi, 1, 225);
+Xp(1,:) = S.xp';
+Pp(1,:) = reshape(S.Pp, 1, 225);
 B(1,:)  = [imu.gb_sta, imu.ab_sta];
-Xi(1,:) = S.xi';
 
 % Constant matrices
 I = eye(3);
@@ -300,7 +300,7 @@ for i = 2:LI
         end
         
         % Execute the extended Kalman filter
-        S.xi(1:9) = zeros(9,1);     % states 1:9 are forced to be zero (error-state approach)
+        S.xp(1:9) = zeros(9,1);     % states 1:9 are forced to be zero (error-state approach)
         S = kalman(S, dtg);
         
         %% INS/GNSS CORRECTIONS

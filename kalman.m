@@ -17,13 +17,13 @@ function  S = kalman(S, dt)
 %    S, the following fields are updated:
 %       xi, 21x1 a priori state vector (updated).
 %       xp, 21x1 a posteriori state vector (updated).
-%				v,  6x1, innovation vector. 
+%		v,  6x1, innovation vector. 
 %       A,  21x21 state transition matrix.
 %       K,  21x6  Kalman gain matrix.
 %       Qd, 21x6  discrete process noise covariance.
 %       Pi, 21x21 a priori error covariance.
 %       Pp, 21x21 a posteriori error covariance.  
-%       C,   6x6  innovation (or residual) covariance.
+%       S,   6x6  innovation (or residual) covariance.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -53,44 +53,42 @@ function  S = kalman(S, dt)
 % & Sons. 2006.   
 %
 % Version: 006
-% Date:    2019/03/13
+% Date:    2019/03/15
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
 I = eye(max(size(S.F)));
 
 % Discretization of continous-time system
-S.A =  expm(S.F * dt);          					% "Exact" expression
-% S.A = I + (S.F * dt);         					% Approximated expression
-S.Qd = (S.G * S.Q * S.G') .* dt;
+S.A =  expm(S.F * dt);          				% "Exact" expression
+% S.A = I + (S.F * dt);         				% Approximated expression
+S.Qd = (S.G * S.Q * S.G') .* dt;                % Digitalized covariance matrix
 
 % **********************************************************************
 % UPDATE STEP
 % **********************************************************************
 
 % Step 1, update Kalman gain
-S.S = (S.R + S.H * S.Pi * S.H');				% Innovations covariance
-S.v =  S.z - S.H * S.xi; 						% Innovations
-S.K = (S.Pi * S.H') * (S.S)^(-1) ;				% Kalman gain
+S.S = (S.R + S.H * S.Pp * S.H');				% Innovations covariance
+S.v =  S.z - S.H * S.xp; 						% Innovations
+S.K = (S.Pp * S.H') * (S.S)^(-1) ;				% Kalman gain
 % S.K = (S.Pi * S.H') * inv(S.C) ;
 
-% Step 2, update the a posteriori covariance matrix Pp
-S.xp = S.xi + S.K * S.v; 
-J = (I - S.K * S.H);
-S.Pp = J * S.Pi * J' + S.K * S.R * S.K';    % Joseph stabilized version     
-% S.Pp = (I - S.K * S.H) * S.Pi ;           % Alternative implementation
+% Step 2, update the a priori covariance matrix Pi
+S.xi = S.xp + S.K * S.v; 
+% J = (I - S.K * S.H);
+% S.Pi = J * S.Pp * J' + S.K * S.R * S.K';      % Joseph stabilized version     
+S.Pi = S.Pp - S.K * S.S *  S.K';                % Alternative implementation
 
 % **********************************************************************
 % PREDICTION STEP
 % **********************************************************************
 
-% Step 1, predict the a posteriori state xp
-S.xi = S.A * S.xp;
-% Step 1, update the a priori covariance matrix Pi
-S.Pi = (S.A * S.Pp * S.A') + S.Qd;
-S.Pi =  0.5 .* (S.Pi + S.Pi');
+% Step 3, predict the a posteriori state vector xp
+S.xp = S.A * S.xi;
 
-
-
+% Step 4, update the a posteriori covariance matrix Pp
+S.Pp = (S.A * S.Pi * S.A') + S.Qd;
+S.Pp =  0.5 .* (S.Pp + S.Pp');
 
 end
