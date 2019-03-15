@@ -65,30 +65,32 @@ S.A =  expm(S.F * dt);          				% "Exact" expression
 S.Qd = (S.G * S.Q * S.G') .* dt;                % Digitalized covariance matrix
 
 % **********************************************************************
-% UPDATE STEP
-% **********************************************************************
-
-% Step 1, update Kalman gain
-S.S = (S.R + S.H * S.Pp * S.H');				% Innovations covariance
-S.v =  S.z - S.H * S.xp; 						% Innovations
-S.K = (S.Pp * S.H') * (S.S)^(-1) ;				% Kalman gain
-% S.K = (S.Pi * S.H') * inv(S.C) ;
-
-% Step 2, update the a priori covariance matrix Pi
-S.xi = S.xp + S.K * S.v; 
-% J = (I - S.K * S.H);
-% S.Pi = J * S.Pp * J' + S.K * S.R * S.K';      % Joseph stabilized version     
-S.Pi = S.Pp - S.K * S.S *  S.K';                % Alternative implementation
-
-% **********************************************************************
 % PREDICTION STEP
 % **********************************************************************
 
-% Step 3, predict the a posteriori state vector xp
-S.xp = S.A * S.xi;
+% Step 1, predict the a priori state vector xi
+S.xi = S.A * S.xp;
 
-% Step 4, update the a posteriori covariance matrix Pp
-S.Pp = (S.A * S.Pi * S.A') + S.Qd;
-S.Pp =  0.5 .* (S.Pp + S.Pp');
+% Step 2, update the a priori covariance matrix Pi
+S.Pi = (S.A * S.Pp * S.A') + S.Qd;
+S.Pi =  0.5 .* (S.Pi + S.Pi');                  % Force Pi to be symmetric matrix
+
+% **********************************************************************
+% UPDATE STEP
+% **********************************************************************
+
+% Step 3, update Kalman gain
+S.S = (S.R + S.H * S.Pi * S.H');				% Innovations covariance
+S.v =  S.z - S.H * S.xi; 						% Innovations vector
+S.K = (S.Pp * S.H') * (S.S)^(-1) ;				% Kalman gain matrix
+
+% Step 4, update the a posteriori state vector xp
+S.xp = S.xi + S.K * S.v; 
+
+% Step 5, update the a posteriori covariance matrix Pp
+% S.Pp = S.Pi - S.K * S.S *  S.K';                
+J = (I - S.K * S.H);                          % Joseph stabilized version     
+S.Pp = J * S.Pi * J' + S.K * S.R * S.K';      % Alternative implementation
+
 
 end
