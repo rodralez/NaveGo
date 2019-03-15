@@ -187,7 +187,7 @@ s.median=median(data.freq);
 if isfield(data,'time')
     if size(data.time,2) > size(data.time,1), data.time=data.time'; end % ensure columns
     s.linear=polyfit(data.time(1:length(data.freq)),data.freq,1);
-elseif isfield(data,'rate') && data.rate ~= 0;
+elseif isfield(data,'rate') && data.rate ~= 0
     s.linear=polyfit((1/data.rate:1/data.rate:length(data.freq)/data.rate)',data.freq,1);
 else
     error('Either "time" or "rate" must be present in DATA. Type "help allan_overlap" for details. [err1]');
@@ -212,8 +212,17 @@ if verbose >= 1 && any(abs(medianfreq) > 5*MAD)
     outliers = data.freq(odl);
     fprintf(1, 'allan_overlap: OUTLIERS: There appear to be %d outliers in the frequency data.\n', length(outliers));       
   
-%     idl = (abs(medianfreq) < 5*MAD);
-%     data.freq = data.freq(idl);
+    % ELIMINATE OUTLIERS FROM DATA
+    fit_line = polyval(s.linear, (1/data.rate:1/data.rate:length(data.freq)/data.rate)') - s.median;    
+    idl = ( medianfreq < (3*MAD + fit_line) );
+    data.freq = data.freq(idl);
+    medianfreq = medianfreq(idl);
+ 
+    fit_line = polyval(s.linear, (1/data.rate:1/data.rate:length(data.freq)/data.rate)') - s.median;
+    idl = ( medianfreq > (-3*MAD + fit_line) );
+    data.freq = data.freq(idl);
+    medianfreq = medianfreq(idl);
+    
     s.outliers = length(outliers);
     
 else 
@@ -478,7 +487,7 @@ end
 %%%%%%%%
 %% Plotting
 
-if verbose >= 2 % show all data
+if verbose >= 1 % show all data
     
     % plot the frequency data, centered on median
     if size(dtime,2) > size(dtime,1), dtime=dtime'; end % this should not be necessary, but dsplot 1.1 is a little bit brittle
@@ -497,12 +506,18 @@ if verbose >= 2 % show all data
     fx = xlim;
     % plot([fx(1) fx(2)],[s.median s.median],'-k');
     plot([fx(1) fx(2)],[0 0],':k');
+    
     % show 5x Median Absolute deviation (MAD) values
     hm=plot([fx(1) fx(2)],[5*MAD 5*MAD],'-r');
     plot([fx(1) fx(2)],[-5*MAD -5*MAD],'-r');
+    
     % show linear fit line
     hf=plot(xlim,polyval(s.linear,xlim)-s.median,'-g');    
     title(['Data: ' name],'FontSize',FontSize+2,'FontName','Arial');
+    
+    plot(xlim,polyval(s.linear,xlim)-3*MAD,'--m'); 
+    plot(xlim,polyval(s.linear,xlim)+3*MAD,'--m');
+    
     %set(get(gca,'Title'),'Interpreter','none');
     xlabel('Time [sec]','FontSize',FontSize,'FontName',FontName);
     if isfield(data,'units')
@@ -514,7 +529,6 @@ if verbose >= 2 % show all data
     legend([hd hm hf],{'data (centered on median)','5x MAD outliers',['Linear Fit (' num2str(s.linear(1),'%g') ')']},'FontSize',max(10,FontSize-2));
     % tighten up
     xlim([dtime(1) dtime(end)]);
-
     
 end % end plot raw data
 

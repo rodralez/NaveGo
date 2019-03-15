@@ -63,7 +63,8 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %         B: Mx6 Kalman filter biases compensations, [gb_dyn ab_dyn].
 %        Xi: Mx15 Kalman filter a priori states.
 %        Xp: Mx15 Kalman filter a posteriori states.
-%        In: Mx6  Kalman filter innovations.
+%         Z: Mx6  INS/GNSS measurements
+%         V: Mx6  Kalman filter innovations.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -95,8 +96,8 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %
 %   ins_gps.m, ins_gnss function is based on that previous function.
 %
-% Version: 003
-% Date:    2019/01/09
+% Version: 004
+% Date:    2019/03/15
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -150,8 +151,8 @@ gb_dyn = imu.gb_dyn';
 ab_dyn = imu.ab_dyn';
 
 % Initialize Kalman filter matrices
-S.xp = [ zeros(1,9), imu.gb_dyn, imu.ab_dyn ]';  % Error vector state
-S.Pp = diag([imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_sta, imu.ab_sta].^2);
+S.xi = [ zeros(1,9), imu.gb_dyn, imu.ab_dyn ]';  % Error vector state
+S.Pi = diag([imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_sta, imu.ab_sta].^2);
 S.R  = diag([gnss.stdv, gnss.stdm].^2);
 S.Q  = diag([imu.arw, imu.vrw, imu.gb_psd, imu.ab_psd].^2);
 
@@ -162,7 +163,8 @@ S.Q  = diag([imu.arw, imu.vrw, imu.gb_psd, imu.ab_psd].^2);
 % DEC = 0.5 * 180/pi;             % Magnetic declination (radians)
 
 % Kalman filter matrices for later analysis
-In = zeros(LG, 6);         % Kalman filter innovations
+Z = zeros(LG, 6);          % Measurements
+V = zeros(LG, 6);          % Kalman filter innovations
 Pi = zeros(LG, 225);       % Elements from a priori covariance matrices, Pi
 Pp = zeros(LG, 225);       % Elements from a posteriori covariance matrices, Pp
 A  = zeros(LG, 225);       % Elements from transition-state matrices, A
@@ -171,13 +173,13 @@ Xp = zeros(LG, 15);        % Evolution of Kalman filter a posteriori states, xp
 B  = zeros(LG, 6);         % Biases compensantions after Kalman filter correction
 
 % Initialize matrices for INS/GNSS performance analysis
-Pp(1,:) = reshape(S.Pp, 1, 225);
+Pi(1,:) = reshape(S.Pi, 1, 225);
 B(1,:)  = [imu.gb_sta, imu.ab_sta];
-Xp(1,:) = S.xp';
+Xi(1,:) = S.xi';
 
 % Constant matrices
 I = eye(3);
-Z = zeros(3);
+O = zeros(3);
 
 % INS (IMU) time is the master clock
 for i = 2:LI
@@ -287,18 +289,18 @@ for i = 2:LI
         
         % Update matrix H
         if(zupt == false)
-            S.H = [ Z I Z Z Z ;
-                Z Z Tpr Z Z ; ];
+            S.H = [ O I O O O ;
+                O O Tpr O O ; ];
             S.R = diag([gnss.stdv gnss.stdm]).^2;
             S.z = [ zv' zp' ]';
         else
-            S.H = [ Z I Z Z Z ; ];
+            S.H = [ O I O O O ; ];
             S.R = diag([gnss.stdv]).^2;
             S.z = zv;
         end
         
         % Execute the extended Kalman filter
-        S.xp(1:9) = zeros(9,1);     % states 1:9 are forced to be zero (error-state approach)
+        S.xi(1:9) = zeros(9,1);     % states 1:9 are forced to be zero (error-state approach)
         S = kalman(S, dtg);
         
         %% INS/GNSS CORRECTIONS
@@ -346,13 +348,13 @@ for i = 2:LI
         Pi(gdx,:) = reshape(S.Pi, 1, 225);
         Pp(gdx,:) = reshape(S.Pp, 1, 225);
         A(gdx,:)  = reshape(S.A, 1, 225);
-        if(zupt == true)
-            In(gdx,:) = [ zv; zp;]';
-        else
-            In(gdx,:) = S.z';
-        end
         B(gdx,:) = [gb_dyn', ab_dyn'];
         
+        if(zupt == false)
+            V(gdx,:)  = S.v';
+        else
+            V(gdx,:)  =  [ S.v' 0 0 0 ]';
+        end
     end
 end
 
@@ -370,11 +372,12 @@ nav_e.lon   = lon_e(1:i, :);    % Longitude
 nav_e.h     = h_e(1:i, :);      % Altitude
 nav_e.Pi    = Pi;       % A priori covariance matrices
 nav_e.Pp    = Pp;       % A posteriori covariance matrices
-nav_e.A     = A;        % Transicion matrices
+nav_e.A     = A;        % Transition matrices
 nav_e.B     = B;        % Biases compensations
 nav_e.Xi    = Xi;       % A priori states
 nav_e.Xp    = Xp;       % A posteriori states
-nav_e.In    = In;       % Innovations
+nav_e.Z     = Z;        % INS/GNSS measurements
+nav_e.V     = V;        % Kalman filter innovations
 
 fprintf('\n');
 
