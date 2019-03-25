@@ -3,27 +3,27 @@ function  S = kalman(S, dt)
 %
 % INPUT:
 %   S, data structure with at least the following fields:
-%       xp, 21x1 a posteriori state vector (old).
-%       z, 6x1 innovations vector.
-%       F, 21x21 state transition matrix.
-%       H, 6x21 observation matrix.
-%       Q, 12x12 process noise covariance.
-%       R, 6x6  observation noise covariance.
-%       Pp, 21x21 a posteriori error covariance.
-%       G, 21x12 control-input matrix.      
-%   dt, sampling interval. 
+%       xp: 21x1 a posteriori state vector (old).
+%        z: 6x1 innovations vector.
+%        F: 21x21 state transition matrix.
+%        H: 6x21 observation matrix.
+%        Q: 12x12 process noise covariance.
+%        R: 6x6  observation noise covariance.
+%       Pp: 21x21 a posteriori error covariance.
+%        G: 21x12 control-input matrix.      
+%   		dt: sampling interval. 
 %
 % OUTPUT:
 %    S, the following fields are updated:
-%       xi, 21x1 a priori state vector (updated).
-%       xp, 21x1 a posteriori state vector (updated).
-%		v,  6x1, innovation vector. 
-%       A,  21x21 state transition matrix.
-%       K,  21x6  Kalman gain matrix.
-%       Qd, 21x6  discrete process noise covariance.
-%       Pi, 21x21 a priori error covariance.
-%       Pp, 21x21 a posteriori error covariance.  
-%       S,   6x6  innovation (or residual) covariance.
+%       xi: 21x1 a priori state vector (updated).
+%       xp: 21x1 a posteriori state vector (updated).
+%		 		 v: 6x1 innovation vector. 
+%        A: 21x21 state transition matrix.
+%        K: 21x6  Kalman gain matrix.
+%       Qd: 21x6  discrete process noise covariance.
+%       Pi: 21x21 a priori error covariance.
+%       Pp: 21x21 a posteriori error covariance.  
+%        S: 6x6  innovation (or residual) covariance.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -50,6 +50,7 @@ function  S = kalman(S, dt)
 % issue 2, pp. 110-120, 2015. Alg. 1.
 %
 %       Dan Simon. Optimal State Estimation. Chapter 5. John Wiley 
+%     Dan Simon. Optimal State Estimation. Chapter 5. John Wiley 
 % & Sons. 2006.   
 %
 % Version: 006

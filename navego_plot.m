@@ -254,21 +254,33 @@ grid
 % BIAS ESTIMATION
 figure;
 subplot(311)
+<<<<<<< HEAD
 plot(nav_e.tg, nav_e.b(:, 1).*R2D, '-.b');
+=======
+plot(nav_e.tg, nav_e.B(:, 1).*R2D, '-.b');
+>>>>>>> fcc768f3e67577d8eaeae31b1a98bedfc344169c
 xlabel('Time [s]')
 ylabel('[deg]')
 title('KF BIAS ESTIMATION X');
 grid
 
 subplot(312)
+<<<<<<< HEAD
 plot(nav_e.tg, nav_e.b(:, 2).*R2D, '-.b');
+=======
+plot(nav_e.tg, nav_e.B(:, 2).*R2D, '-.b');
+>>>>>>> fcc768f3e67577d8eaeae31b1a98bedfc344169c
 xlabel('Time [s]')
 ylabel('[deg]')
 title('KF BIAS ESTIMATION Y');
 grid
 
 subplot(313)
+<<<<<<< HEAD
 plot(nav_e.tg, nav_e.b(:, 3).*R2D, '-.b');
+=======
+plot(nav_e.tg, nav_e.B(:, 3).*R2D, '-.b');
+>>>>>>> fcc768f3e67577d8eaeae31b1a98bedfc344169c
 xlabel('Time [s]')
 ylabel('[deg]')
 title('KF BIAS ESTIMATION Z');
