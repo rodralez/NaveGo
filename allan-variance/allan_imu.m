@@ -5,24 +5,24 @@ function [imu] = allan_imu (imu_sta, verbose)
 % -------------------------------------------------------------------------
 %
 % INPUT
-%   imu_sta. Input data structure must contains the following fields:
+%   imu_sta, input data structure must contains the following fields:
 %
 %       fb, Nx3 matrix, accelerations [X Y Z] (m/s^2).
 %       wb, Nx3 matrix, turn rates [X Y Z] (rad/s).
 %       t,  Nx1, time vector (s).
 %
-% - verbose. Verbose level for allan_overlap function.
+%   verbose. Verbose level for allan_overlap function.
+%       0 = silent & no data plots; 1 = status messages; 2 = all messages    
 %
 % OUTPUT
-%   imu. Output data structure with the following fields:
+%   imu, input data structure with the following addtional fields:
 %
 %       arw, 1x3 vector, angle random walk (rad/root-s). Value is taken 
 %       straightfoward from the plot at t = 1 s.
 %       Note: units of rad/s from the plot have to be transformed to 
 %       rad/root-s. This is done by multiplying (rad/s * root-s/root-s) = 
 %       (rad/s * root-s/1) = rad/root-s, since root-s = 1 for tau = 1, time 
-%       at which random walk is evaluated.
-%     
+%       at which random walk is evaluated.     
 %
 %       vrw, 1x3 vector, velocity random walk (m/s/root-s). Value is taken 
 %       straightfoward from the plot at t = 1 s.
@@ -38,46 +38,30 @@ function [imu] = allan_imu (imu_sta, verbose)
 %       from the plot at the minimun value.
 %
 %       gb_corr, 1x3 vector, gyros correlation times (s).
-%
 %       ab_corr, 1x3 vector, accs correlation times (s).
 %
 %       g_std, 1x3 vector, gyros standard deviations (rad/s).
-%
 %       a_std, 1x3 vector, accs standard deviations (m/s^2).
 %
 %       g_max, 1x3 vector, gyros maximum values (rad/s).
-%
 %       a_max, 1x3 vector, accs maximum values (m/s^2).
 %
 %       g_min, 1x3 vector, gyros minimum values (rad/s).
-%
 %       a_min, 1x3 vector, accs maximum values (m/s^2).
 %
 %       g_mean, 1x3 vector, gyros mean values (rad/s).
-%
 %       a_meam, 1x3 vector, accs mean values (m/s^2).
 %
 %       g_median, 1x3 vector, gyros median values (rad/s).
-%
 %       a_median, 1x3 vector, accs median values (m/s^2).
 %
-%       fb_tau, Mx3 with time vector from AV for accelerometers [X Y Z],
-%       respectively.
+%       fb_tau, Mx3 with time vector from AV for accelerometers [X Y Z].
+%       fb_allan, Mx3 with AV vector for accelerometers [X Y Z].
+%       fb_error, Mx3 with AV errors for accelerometers [X Y Z].
 %
-%       fb_allan, Mx3 with AV vector for accelerometers [X Y Z],
-%       respectively.
-%
-%       fb_error, Mx3 with AV errors for accelerometers [X Y Z],
-%       respectively.
-%
-%       wb_tau, Mx3 with time vector from AV for gyros [X Y Z],
-%       respectively.
-%
-%       wb_allan, Mx3 with AV vector for gyros [X Y Z],
-%       respectively.
-%
-%       wb_error, Mx3 with AV errors for gyros [X Y Z],
-%       respectively.
+%       wb_tau, Mx3 with time vector from AV for gyros [X Y Z].
+%       wb_allan, Mx3 with AV vector for gyros [X Y Z].
+%       wb_error, Mx3 with AV errors for gyros [X Y Z].
 %
 % -------------------------------------------------------------------------
 %
@@ -120,8 +104,8 @@ function [imu] = allan_imu (imu_sta, verbose)
 %
 % -------------------------------------------------------------------------
 %
-% Version: 006
-% Date:    2018/03/26
+% Version: 007
+% Date:    2019/02/18
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 %
@@ -155,6 +139,7 @@ imu.a_min    = zeros(1,3);
 imu.a_mean   = zeros(1,3);
 imu.a_median = zeros(1,3);    
 imu.a_outliers = zeros(1,3);    
+imu.a_linear = zeros(3,2);  
 
 imu.g_std    = zeros(1,3);
 imu.g_max    = zeros(1,3);
@@ -162,6 +147,7 @@ imu.g_min    = zeros(1,3);
 imu.g_mean   = zeros(1,3);
 imu.g_median = zeros(1,3);   
 imu.g_outliers = zeros(1,3); 
+imu.g_linear = zeros(3,2);  
 
 %% TIME VECTOR FOR ALLAN VARIANCE
 
@@ -225,6 +211,7 @@ for i=1:3
     imu.a_min(i)    = s.min;
     imu.a_median(i) = s.median;
     imu.a_outliers(i) = s.outliers;
+    imu.a_linear(i,:) = s.linear;
 end
 
 % Plot ACCRS
@@ -263,6 +250,7 @@ for i=1:3
     imu.g_min(i)    = s.min;
     imu.g_median(i) = s.median;
     imu.g_outliers(i) = s.outliers;
+    imu.g_linear(i,:) = s.linear;
 end
 
 imu.freq = data.rate;

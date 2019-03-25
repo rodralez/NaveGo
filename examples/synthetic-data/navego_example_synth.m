@@ -347,11 +347,13 @@ end
 
 %% Print RMSE from IMU1
 
-print_rmse (nav1_ref, gnss_ref, ref_1, ref_g, 'INS/GNSS IMU1');
+print_rmse (nav1_ref, gnss_ref, ref_1, ref_g, 'ADIS16405 INS/GNSS');
 
 %% Print RMSE from IMU2
 
-print_rmse (nav2_ref, gnss_ref, ref_2, ref_g, 'INS/GNSS IMU2');
+print_rmse (nav2_ref, gnss_ref, ref_2, ref_g, 'ADIS16488 INS/GNSS');
+% .m_psd = 0.054 .* ones(1,3);       % Magnetometer noise density [X Y Z] (mgauss/root-Hz)
+
 
 %% PLOT
 

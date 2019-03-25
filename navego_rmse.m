@@ -35,8 +35,8 @@ function rmse_v = navego_rmse (nav, gnss, ref_n, ref_g)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% Version: 003
-% Date:    2019/01/14
+% Version: 004
+% Date:    2019/02/19
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -54,7 +54,7 @@ RMSE_yaw = rmse (nav.yaw(idx),ref_n.yaw(idx) ) .* R2D;
 
 %% INS/GNSS velocity RMSE
 
-if (isfield(nav, 'vel') & isfield( ref_n, 'vel'))
+if (isfield(nav, 'vel') && isfield( ref_n, 'vel'))
     RMSE_vn = rmse (nav.vel(:,1),  ref_n.vel(:,1));
     RMSE_ve = rmse (nav.vel(:,2),  ref_n.vel(:,2));
     RMSE_vd = rmse (nav.vel(:,3),  ref_n.vel(:,3));
@@ -66,17 +66,17 @@ end
 
 %% INS/GNSS position RMSE
 
-[RM,RN] = radius(nav.lat(1));
-LAT2M = (RM + double(nav.h(1)));                    % Coefficient for lat rad -> meters
-LON2M = (RN + double(nav.h(1))) .* cos(nav.lat(1)); % Coefficient for lon rad -> meters
+[RM,RN] = radius(nav.lat);
+LAT2M = (RM + nav.h);                    % Coefficient for lat rad -> meters
+LON2M = (RN + nav.h) .* cos(nav.lat); % Coefficient for lon rad -> meters
 
-RMSE_lat = rmse (nav.lat, ref_n.lat) .* LAT2M;
-RMSE_lon = rmse (nav.lon, ref_n.lon) .* LON2M;
+RMSE_lat = rmse (nav.lat.* LAT2M, ref_n.lat.* LAT2M) ;
+RMSE_lon = rmse (nav.lon.* LON2M, ref_n.lon.* LON2M) ;
 RMSE_h   = rmse (nav.h,   ref_n.h);
 
 %% GNSS velocity RMSE
 
-if (isfield(gnss, 'vel') & isfield( ref_g, 'vel'))
+if (isfield(gnss, 'vel') && isfield( ref_g, 'vel'))
     RMSE_vn_g = rmse (gnss.vel(:,1), ref_g.vel(:,1));
     RMSE_ve_g = rmse (gnss.vel(:,2), ref_g.vel(:,2));
     RMSE_vd_g = rmse (gnss.vel(:,3), ref_g.vel(:,3));
@@ -88,12 +88,12 @@ end
 
 %% GNSS position RMSE
 
-[RM,RN] = radius(gnss.lat(1));
-LAT2M = (RM + double(gnss.h(1)));                       % Coefficient for lat rad -> meters
-LON2M = (RN + double(gnss.h(1))) .* cos(gnss.lat(1));   % Coefficient for lon rad -> meters
+[RMg,RNg] = radius(gnss.lat);
+LAT2Mg = (RMg + gnss.h);                       % Coefficient for lat rad -> meters
+LON2Mg = (RNg + gnss.h) .* cos(gnss.lat);   % Coefficient for lon rad -> meters
 
-RMSE_lat_g = rmse (gnss.lat, ref_g.lat) .* LAT2M;
-RMSE_lon_g = rmse (gnss.lon, ref_g.lon) .* LON2M;
+RMSE_lat_g = rmse (gnss.lat.* LAT2Mg, ref_g.lat.* LAT2Mg) ;
+RMSE_lon_g = rmse (gnss.lon.* LON2Mg, ref_g.lon.* LON2Mg) ;
 RMSE_h_g   = rmse (gnss.h, ref_g.h);
 
 rmse_v = [  RMSE_roll;  RMSE_pitch; RMSE_yaw;    

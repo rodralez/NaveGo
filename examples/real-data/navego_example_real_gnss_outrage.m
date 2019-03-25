@@ -96,7 +96,7 @@ fprintf('NaveGo: loading Ekinox GNSS data... \n')
 
 load gnss
 
-% Force a GNSS outrage of 1 minute
+% Force a GNSS outrage of 1 minute from TOW 138500
 
 gdx =  find(gnss.t >= 138500, 1, 'first');
 fdx = ceil (gdx + gnss.freq * 60);
@@ -112,7 +112,7 @@ gnss.lon (gdx:fdx) = [];
 gnss.h (gdx:fdx) = []; 
 gnss.vel (gdx:fdx, :) = []; 
 
-% Force a GNSS outrage of 2 minutes
+% Force a GNSS outrage of 2 minutes from TOW 138900
 
 gdx =  find(gnss.t >= 138900, 1, 'first');
 fdx = ceil (gdx + gnss.freq * 60 * 2);

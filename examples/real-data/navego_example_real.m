@@ -166,7 +166,7 @@ fprintf('NaveGo: navigation time under analysis is %.2f minutes or %.2f seconds.
 
 %% Print RMSE from INS/GNSS data
 
-rmse_v = print_rmse (nav_ref, gnss_ref, ref_n, ref_g, 'Ekinox IMU/GNSS');
+rmse_v = print_rmse (nav_ref, gnss_ref, ref_n, ref_g, 'Ekinox INS/GNSS');
 
 %% Save RMSE to CVS file
 

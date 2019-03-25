@@ -15,14 +15,15 @@ function  S = kalman(S, dt)
 %
 % OUTPUT:
 %    S, the following fields are updated:
-%       xi, 21x1 a priori state vector (new).
-%       xp, 21x1 a posteriori state vector (new).
+%       xi, 21x1 a priori state vector (updated).
+%       xp, 21x1 a posteriori state vector (updated).
+%		v,  6x1, innovation vector. 
 %       A,  21x21 state transition matrix.
 %       K,  21x6  Kalman gain matrix.
 %       Qd, 21x6  discrete process noise covariance.
 %       Pi, 21x21 a priori error covariance.
 %       Pp, 21x21 a posteriori error covariance.  
-%       C,   6x6  innovation (or residual) covariance.
+%       S,   6x6  innovation (or residual) covariance.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -43,41 +44,53 @@ function  S = kalman(S, dt)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference:
-%			R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+%       R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
 % simulation framework for low-cost integrated navigation systems,
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015. Alg. 1.
 %
-%           Dan Simon. Optimal State Estimation. Chapter 5. John Wiley 
+%       Dan Simon. Optimal State Estimation. Chapter 5. John Wiley 
 % & Sons. 2006.   
 %
-% Version: 005
-% Date:    2018/10/10
+% Version: 006
+% Date:    2019/03/15
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
 I = eye(max(size(S.F)));
 
 % Discretization of continous-time system
-S.A =  expm(S.F * dt);          % "Exact" expression
-% S.A = I + (S.F * dt);         % Approximated expression
-S.Qd = (S.G * S.Q * S.G') .* dt;
+S.A =  expm(S.F * dt);          				% Exact solution for linerar systems
+% S.A = I + (S.F * dt);         				% Approximated solution by Euler method 
+S.Qd = (S.G * S.Q * S.G') .* dt;                % Digitalized covariance matrix
 
-% Step 1, update the a priori covariance matrix Pi
-S.Pi = (S.A * S.Pp * S.A') + S.Qd;
-S.Pi =  0.5 .* (S.Pi + S.Pi');
+% **********************************************************************
+% PREDICTION STEP
+% **********************************************************************
 
-% Step 2, update Kalman gain
-S.C = (S.R + S.H * S.Pi * S.H');
-S.K = (S.Pi * S.H') / (S.C) ;
-% S.K = (S.Pi * S.H') * inv(S.C) ;
-
-% Step 3, update the a posteriori state xp
+% Step 1, predict the a priori state vector xi
 S.xi = S.A * S.xp;
-S.xp = S.xi + S.K * (S.z - S.H * S.xi);
 
-% Step 4, update the a posteriori covariance matrix Pp
-J = (I - S.K * S.H);
-S.Pp = J * S.Pi * J' + S.K * S.R * S.K';    % Joseph stabilized version     
-% S.Pp = (I - S.K * S.H) * S.Pi ;           % Alternative implementation
+% Step 2, update the a priori covariance matrix Pi
+S.Pi = (S.A * S.Pp * S.A') + S.Qd;
+S.Pi =  0.5 .* (S.Pi + S.Pi');                  % Force Pi to be symmetric matrix
+
+% **********************************************************************
+% UPDATE STEP
+% **********************************************************************
+
+% Step 3, update Kalman gain
+S.S = (S.R + S.H * S.Pi * S.H');				% Innovations covariance matrix
+S.v =  S.z - S.H * S.xi; 						% Innovations vector
+S.K = (S.Pp * S.H') * (S.S)^(-1) ;				% Kalman gain matrix
+
+% Step 4, update the a posteriori state vector xp
+S.xp = S.xi + S.K * S.v; 
+
+% Step 5, update the a posteriori covariance matrix Pp
+% S.Pp = S.Pi - S.K * S.S *  S.K';                
+J = (I - S.K * S.H);                          % Joseph stabilized version     
+S.Pp = J * S.Pi * J' + S.K * S.R * S.K';      % Alternative implementation
+
+
 end
