@@ -38,7 +38,7 @@
 % of Freedom Inertial Sensor. Rev. G. 
 % http://www.analog.com/media/en/technical-documentation/data-sheets/ADIS16488.pdf
 %
-%		Garmin International, Inc. GPS 18x TECHNICAL SPECIFICATIONS.
+%   Garmin International, Inc. GPS 18x TECHNICAL SPECIFICATIONS.
 % Revision D. October 2011. 
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 %
@@ -62,7 +62,7 @@ addpath ../../conversions/
 versionstr = 'NaveGo, release v1.2';
 
 fprintf('\n%s.\n', versionstr)
-fprintf('\nNaveGo: starting simulation ... \n')
+fprintf('\nNaveGo: starting simulated INS/GNSS integration... \n')
 
 %% CODE EXECUTION PARAMETERS
 

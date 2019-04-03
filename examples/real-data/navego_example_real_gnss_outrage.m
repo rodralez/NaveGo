@@ -51,8 +51,7 @@ addpath ../../conversions/
 versionstr = 'NaveGo, release v1.2';
 
 fprintf('\n%s.\n', versionstr)
-fprintf('\nNaveGo: starting simulation ... \n')
-
+fprintf('\nNaveGo: starting real INS/GNSS integration... \n')
 
 %% PARAMETERS
 
@@ -82,6 +81,8 @@ MS2KMH = 3.6;       % m/s to km/h
 % Reference dataset was obtained by processing Ekinox IMU and Ekinox GNSS 
 % with tighly-coupled integration by Inertial Explorer software package.
 
+% Dataset from time 138000 (TOW) to 139255 (TOW).
+
 fprintf('NaveGo: loading reference data... \n')
 
 load ref
@@ -98,7 +99,7 @@ fprintf('NaveGo: loading Ekinox GNSS data... \n')
 
 load gnss
 
-% Force a GNSS outrage of 1 minute from TOW 138500
+% Force a GNSS outrage of 1 minute from 138500 (TOW)
 
 gdx =  find(gnss.t >= 138500, 1, 'first');
 fdx = ceil (gdx + gnss.freq * 60);
@@ -114,7 +115,7 @@ gnss.lon (gdx:fdx) = [];
 gnss.h (gdx:fdx) = []; 
 gnss.vel (gdx:fdx, :) = []; 
 
-% Force a GNSS outrage of 2 minutes from TOW 138900
+% Force a GNSS outrage of 2 minutes from 138900 (TOW)
 
 gdx =  find(gnss.t >= 138900, 1, 'first');
 fdx = ceil (gdx + gnss.freq * 60 * 2);
@@ -156,17 +157,20 @@ end
 
 %% ANALYZE A CERTAIN PART OF THE INS/GNSS DATASET
 
-% SHORT TEST
+% Dataset from time 138000 (TOW) to 139255 (TOW).
+
+% COMPLETE TRAJECTORY
 tmin = 138000; % Entering PoliTo parking.
-% tmax = 138380; % Leaving PoliTo parking.
+% tmax = 138380; % Short test. Leaving PoliTo parking.
+tmax = 139255; % Before entering tunnel
 
-% STREET STRETCH
-% tmin = 138000; %
-% tmax = 139190; %
+% OUTRAGE 1
+% tmin = 138500;
+% tmax = 138500 + 60; % 1 minute outrage
 
-% TUNNEL STRETCH
-% tmin = 139268.5; % Entering tunnel
-tmax = 139305.5; % Leaving tunnel
+% OUTRAGE 2
+% tmin = 138900; 
+% tmax = 138900 + 120; % 2 minutes outrage
 
 % Sincronize REF data to tmin and tmax
 idx  = find(ref.t > tmin, 1, 'first' );

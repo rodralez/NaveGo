@@ -39,10 +39,10 @@ clear
 close all
 matlabrc
 
-addpath ./.
-addpath ./simulation/
-addpath ./conversions/
-addpath ./allan-variance/
+addpath ../../.
+addpath ../../simulation/
+addpath ../../conversions/
+addpath ../../allan-variance/
 
 versionstr = 'NaveGo, release v1.2';
 

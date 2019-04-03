@@ -43,15 +43,14 @@ close all
 clear
 matlabrc
 
-addpath ./
-addpath ./simulation/
-addpath ./conversions/
+addpath ../../.
+addpath ../../simulation/
+addpath ../../conversions/
 
 versionstr = 'NaveGo, release v1.2';
 
 fprintf('\n%s.\n', versionstr)
-fprintf('\nNaveGo: starting simulation ... \n')
-
+fprintf('\nNaveGo: starting real INS/GNSS integration... \n')
 
 %% PARAMETERS
 
@@ -81,7 +80,7 @@ MS2KMH = 3.6;       % m/s to km/h
 % Reference dataset was obtained by processing Ekinox IMU and Ekinox GNSS 
 % with tighly-coupled integration by Inertial Explorer software package.
 
-% From time 138000 (TOW) to 139255 (TOW).
+% Dataset from time 138000 (TOW) to 139255 (TOW).
 
 fprintf('NaveGo: loading reference data... \n')
 
@@ -125,13 +124,12 @@ end
 
 %% ANALYZE A CERTAIN PART OF THE INS/GNSS DATASET
 
-% From time 138000 (TOW) to 139255 (TOW).
+% Dataset from time 138000 (TOW) to 139255 (TOW).
 
 % SHORT TEST
 tmin = 138000; % Entering PoliTo parking.
 % tmax = 138380; % Leaving PoliTo parking.
 
-% TUNNEL STRETCH
 tmax = 139255; % Before entering tunnel
 
 % Sincronize REF data to tmin and tmax

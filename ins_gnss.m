@@ -157,7 +157,7 @@ ab_dyn = imu.ab_dyn';
 % Initialize Kalman filter matrices
 
 % Prior estimates
-kf.xp = [ zeros(1,9), imu.gb_sta, imu.ab_sta ]';  % Error vector state
+kf.xp = [ imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_sta, imu.ab_sta ]';  % Error vector state
 kf.Pp = diag([imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_sta, imu.ab_sta].^2);
 
 kf.R  = diag([gnss.stdv, gnss.stdm].^2);
