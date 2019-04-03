@@ -1,8 +1,8 @@
 function  S = kalman(S, dt)
 % kalman: Kalman filter algorithm.
 %
-% INPUT:
-%   S, data structure with at least the following fields:
+% INPUT
+%   S: data structure with at least the following fields:
 %       xp: 21x1 a posteriori state vector (old).
 %        z: 6x1 innovations vector.
 %        F: 21x21 state transition matrix.
@@ -13,8 +13,8 @@ function  S = kalman(S, dt)
 %        G: 21x12 control-input matrix.      
 %   		dt: sampling interval. 
 %
-% OUTPUT:
-%    S, the following fields are updated:
+% OUTPUT
+%    S: the following fields are updated:
 %       xi: 21x1 a priori state vector (updated).
 %       xp: 21x1 a posteriori state vector (updated).
 %		 		 v: 6x1 innovation vector. 
@@ -44,13 +44,12 @@ function  S = kalman(S, dt)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference:
-%       R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+%   R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
 % simulation framework for low-cost integrated navigation systems,
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015. Alg. 1.
 %
-%       Dan Simon. Optimal State Estimation. Chapter 5. John Wiley 
-%     Dan Simon. Optimal State Estimation. Chapter 5. John Wiley 
+%   Dan Simon. Optimal State Estimation. Chapter 5. John Wiley 
 % & Sons. 2006.   
 %
 % Version: 006
@@ -83,15 +82,15 @@ S.Pi =  0.5 .* (S.Pi + S.Pi');                  % Force Pi to be symmetric matri
 % Step 3, update Kalman gain
 S.S = (S.R + S.H * S.Pi * S.H');				% Innovations covariance matrix
 S.v =  S.z - S.H * S.xi; 						% Innovations vector
-S.K = (S.Pp * S.H') * (S.S)^(-1) ;				% Kalman gain matrix
+S.K = (S.Pi * S.H') * (S.S)^(-1) ;				% Kalman gain matrix
 
 % Step 4, update the a posteriori state vector xp
 S.xp = S.xi + S.K * S.v; 
 
 % Step 5, update the a posteriori covariance matrix Pp
-% S.Pp = S.Pi - S.K * S.S *  S.K';                
-J = (I - S.K * S.H);                          % Joseph stabilized version     
-S.Pp = J * S.Pi * J' + S.K * S.R * S.K';      % Alternative implementation
+S.Pp = S.Pi - S.K * S.S *  S.K';                
+% J = (I - S.K * S.H);                          % Joseph stabilized version     
+% S.Pp = J * S.Pi * J' + S.K * S.R * S.K';      % Alternative implementation
 S.Pp =  0.5 .* (S.Pp + S.Pp');                  % Force Pi to be symmetric matrix
 
 end

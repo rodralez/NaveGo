@@ -81,6 +81,8 @@ MS2KMH = 3.6;       % m/s to km/h
 % Reference dataset was obtained by processing Ekinox IMU and Ekinox GNSS 
 % with tighly-coupled integration by Inertial Explorer software package.
 
+% From time 138000 (TOW) to 139255 (TOW).
+
 fprintf('NaveGo: loading reference data... \n')
 
 load ref
@@ -123,17 +125,14 @@ end
 
 %% ANALYZE A CERTAIN PART OF THE INS/GNSS DATASET
 
+% From time 138000 (TOW) to 139255 (TOW).
+
 % SHORT TEST
 tmin = 138000; % Entering PoliTo parking.
 % tmax = 138380; % Leaving PoliTo parking.
 
-% STREET STRETCH
-% tmin = 138000; %
-% tmax = 139190; %
-
 % TUNNEL STRETCH
-% tmin = 139268.5; % Entering tunnel
-tmax = 139305.5; % Leaving tunnel
+tmax = 139255; % Before entering tunnel
 
 % Sincronize REF data to tmin and tmax
 idx  = find(ref.t > tmin, 1, 'first' );
