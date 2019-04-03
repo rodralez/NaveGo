@@ -1,11 +1,11 @@
 function DCMbn = qua2dcm(qua)
 % qua2dcm: transforms quaternion to body-to-nav DCM.
 %
-% INPUT:
-%   qua,	4x1 quaternion.
+% INPUT
+%   qua: 4x1 quaternion.
 %
-% OUTPUT:
-%   DCMbn,	3x3 body-to-nav DCM.
+% OUTPUT
+%   DCMbn: 3x3 body-to-nav DCM.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -26,16 +26,16 @@ function DCMbn = qua2dcm(qua)
 %   <http://www.gnu.org/licenses/>.
 %
 % References:
-%			Titterton, D.H. and Weston, J.L. (2004). Strapdown
+%		Titterton, D.H. and Weston, J.L. (2004). Strapdown
 % Inertial Navigation Technology (2nd Ed.). Institution
 % of Engineering and Technology, USA. Eq. 3.63.
 %
-%  			R. Gonzalez, J. Giribet, and H. Patiño. An approach to
+%  	R. Gonzalez, J. Giribet, and H. Patiño. An approach to
 % benchmarking of loosely coupled low-cost navigation systems,
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 14.
 %
-%			Crassidis, J.L. and Junkins, J.L. (2011). Optimal Esti-
+%		Crassidis, J.L. and Junkins, J.L. (2011). Optimal Esti-
 % mation of Dynamic Systems, 2nd Ed. Chapman and Hall/CRC, USA.
 % Eq. 7.39, p. 458.
 %
@@ -44,7 +44,7 @@ function DCMbn = qua2dcm(qua)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-% Quaternion format as used in Crassidis' quaternion equations.
+% Quaternion format from Crassidis' book.
 a = qua(4); b = qua(1); c = qua(2); d = qua(3);
 
 DCMbn(1,1) = a*a + b*b - c*c - d*d;

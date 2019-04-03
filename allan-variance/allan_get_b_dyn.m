@@ -1,14 +1,13 @@
-function [b_drift, t_corr] = allan_get_b_dyn (tau, allan)
-% allan_get_b_dyn: finds bias instability values from Allan variance.
+function [b_dyn, t_corr] = allan_get_b_dyn (tau, allan)
+% allan_get_b_dyn: gets dynamic bias values from Allan variance.
 %
-% INPUT:
-%       tau, Nx1 Allan variance time vector in seconds.
-%       allan, Nx1 Allan variance vector.
+% INPUT
+%   tau: Nx1 Allan variance time vector in seconds.
+%   allan: Nx1 Allan variance vector.
 % 
-% OUTPUT:
-%       b_drift, bias instability values.
-%       t_corr, correlation time values.
-%
+% OUTPUT
+%   b_dyn: dynamic bias values.
+%   t_corr: correlation time values.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -29,7 +28,7 @@ function [b_drift, t_corr] = allan_get_b_dyn (tau, allan)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference:
-%			None.
+%			
 %
 % Version: 001
 % Date:    2016/11/02
@@ -38,6 +37,6 @@ function [b_drift, t_corr] = allan_get_b_dyn (tau, allan)
 
 idx = find (allan == min(allan));   % Index for minimun value of AV.   
 
-b_drift = allan(idx) ;              % BI. For gyro, rad-per-sec.
+b_dyn = allan(idx) ;              % BI. For gyro, rad-per-sec.
                                     % BI. For acc,  meters-per-sec^2.
-t_corr  = tau(idx)  ;               % BI, correlation time, in seconds.  
+t_corr = tau(idx)  ;               % BI, correlation time, in seconds.  

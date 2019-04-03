@@ -109,6 +109,10 @@ zupt = false;
 
 %% PREALLOCATION
 
+% Constant matrices
+I = eye(3);
+O = zeros(3);
+
 % Length of INS time vector
 LI = length(imu.t);
 
@@ -151,10 +155,36 @@ gb_dyn = imu.gb_dyn';
 ab_dyn = imu.ab_dyn';
 
 % Initialize Kalman filter matrices
+
+% Prior estimates
 kf.xp = [ zeros(1,9), imu.gb_sta, imu.ab_sta ]';  % Error vector state
 kf.Pp = diag([imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_sta, imu.ab_sta].^2);
+
 kf.R  = diag([gnss.stdv, gnss.stdm].^2);
 kf.Q  = diag([imu.arw, imu.vrw, imu.gb_psd, imu.ab_psd].^2);
+
+fb_corrected = (imu.fb(1,:)' + ab_dyn );
+fn = (DCMbn * fb_corrected);
+
+% Vector to update matrix F
+upd = [gnss.vel(1,:) gnss.lat(1) gnss.h(1) fn'];
+
+% Update matrices F and G
+[kf.F, kf.G] = F_update(upd, DCMbn, imu);
+
+[RM,RN] = radius(gnss.lat(1));
+Tpr = diag([(RM + gnss.h(1)), (RN + gnss.h(1)) * cos(gnss.lat(1)), -1]);  % radians-to-meters
+        
+% Update matrix H
+kf.H = [ O I O O O ;
+    O O Tpr O O ; ];
+kf.R = diag([gnss.stdv gnss.stdm]).^2;
+kf.z = [ gnss.stdv, gnss.stdm ]';
+        
+dtg = 1 / gnss.freq;
+
+% Propagate prior estimates to get xp(1) and Pp(1)
+kf = kalman(kf, dtg);
 
 % PENDING: UD filter matrices
 % [Up, Dp] = myUD(S.P);
@@ -179,10 +209,6 @@ S  = zeros(LG, 36);       % Innovation matrices, S
 xp(1,:) = kf.xp';
 Pp(1,:) = reshape(kf.Pp, 1, 225);
 b(1,:)  = [imu.gb_sta, imu.ab_sta];
-
-% Constant matrices
-I = eye(3);
-O = zeros(3);
 
 % INS (IMU) time is the master clock
 for i = 2:LI
@@ -253,9 +279,7 @@ for i = 2:LI
             h_e(i)   = mean (h_e(i-idz:i , :));
             
             zupt = true;
-%         else
-%             
-%             zupt = false;
+
         end
     end
     
@@ -337,15 +361,15 @@ for i = 2:LI
         vel_e (i,3) = vel_e (i,3) - kf.xp(6);
         
         % Position corrections
-        lat_e(i) = lat_e(i) - double(kf.xp(7));
-        lon_e(i) = lon_e(i) - double(kf.xp(8));
+        lat_e(i) = lat_e(i) - (kf.xp(7));
+        lon_e(i) = lon_e(i) - (kf.xp(8));
         h_e(i)   = h_e(i)   - kf.xp(9);
         
         % Biases corrections
         gb_dyn   = kf.xp(10:12);
         ab_dyn   = kf.xp(13:15);
         
-        % Matrices for later INS/GNSS performance analysis
+        % Matrices for later Kalman filter performance analysis
         xi(gdx,:) = kf.xi';
         xp(gdx,:) = kf.xp';
         b(gdx,:) = [gb_dyn', ab_dyn'];

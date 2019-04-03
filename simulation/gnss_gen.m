@@ -1,13 +1,13 @@
 function [gnss, gnss_r] = gnss_gen(ref, gnss)
 % gnss_gen: generates GNSS position and GNSS velocity in the n-frame from reference data.
 %
-%   INPUT:
-%       ref, reference data structure.
-%       gnss, GNSS data structure.
+% INPUT
+%   ref: reference data structure.
+%   gnss: GNSS data structure.
 %
-%   OUTPUT:
-%       gnss, GNSS data structure with noisy measurements.
-%       gnss_r, GNSS data structure with true measurements.
+% OUTPUT
+%   gnss: GNSS data structure with noisy measurements.
+%   gnss_r: GNSS data structure with true measurements.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
@@ -27,13 +27,14 @@ function [gnss, gnss_r] = gnss_gen(ref, gnss)
 %   License along with this program. If not, see 
 %   <http://www.gnu.org/licenses/>.
 %
-% Reference:
-%			R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
+% References:
+%
+%	  R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
 % simulation framework for low-cost integrated navigation systems, 
 % Journal of Control Engineering and Applied Informatics}, vol. 17, 
 % issue 2, pp. 110-120, 2015. Sec. 2.3.
 %
-%           gen_gps.m, gnss_gen is based on this previos function.
+%   gen_gps.m, gnss_gen is based on this previous function.
 %
 % Version: 001
 % Date:    2018/10/10
@@ -44,7 +45,7 @@ function [gnss, gnss_r] = gnss_gen(ref, gnss)
 
 if n > m, m = n; end
 
-% Downsampling GNSS estimates from ref.freq. to gnss.freq.
+% Downsampling GNSS estimates from ref.freq to gnss.freq.
 dt   = mean(diff(ref.t));
 freq = 1/dt;
 dspl = round(freq / gnss.freq);

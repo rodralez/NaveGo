@@ -1,69 +1,64 @@
-function [imu] = allan_imu (imu_sta, verbose)
+function imu = allan_imu (imu_sta, verbose)
 % allan_imu: performs Allan variance analysis on inertial measurements
 % coming from an IMU in order to characterize several types of IMU errors.
 %
-% -------------------------------------------------------------------------
-%
 % INPUT
-%   imu_sta, input data structure must contains the following fields:
-%
-%       fb, Nx3 matrix, accelerations [X Y Z] (m/s^2).
-%       wb, Nx3 matrix, turn rates [X Y Z] (rad/s).
-%       t,  Nx1, time vector (s).
+%   imu_sta: input data structure must contains the following fields
+%     fb: Nx3 accelerations [X Y Z] (m/s^2).
+%     wb: Nx3 turn rates [X Y Z] (rad/s).
+%      t: Nx1 time vector (s).
 %
 %   verbose. Verbose level for allan_overlap function.
-%       0 = silent & no data plots; 1 = status messages; 2 = all messages    
+%      0 = silent & no data plots; 1 = status messages; 2 = all messages    
 %
 % OUTPUT
-%   imu, input data structure with the following addtional fields:
+%   imu: input data structure with the following addtional fields
 %
-%       arw, 1x3 vector, angle random walk (rad/root-s). Value is taken 
+%     arw: 1x3 angle random walk (rad/root-s). Value is taken 
 %       straightfoward from the plot at t = 1 s.
 %       Note: units of rad/s from the plot have to be transformed to 
 %       rad/root-s. This is done by multiplying (rad/s * root-s/root-s) = 
 %       (rad/s * root-s/1) = rad/root-s, since root-s = 1 for tau = 1, time 
 %       at which random walk is evaluated.     
 %
-%       vrw, 1x3 vector, velocity random walk (m/s/root-s). Value is taken 
+%     vrw: 1x3 velocity random walk (m/s/root-s). Value is taken 
 %       straightfoward from the plot at t = 1 s.
 %       Note: units of m/s^2 from the plot have to be transformed to 
 %       m/s/root-s. This is done by multiplying (m/s^2 * root-s/root-s) = 
 %       (m/s^2 * root-s/1) = m/s/root-s, since root-s = 1 for tau = 1, time 
 %       at which random walk is evaluated.
 %
-%       gb_dyn, 1x3 vector, gyros bias instability in rad/s. Value is taken
+%     gb_dyn: 1x3 gyros bias instability in rad/s. Value is taken
 %       from the plot at the minimun value.
 %
-%       ab_dyn, 1x3 vector, accs bias instability in m/s^2. Value is taken
+%     ab_dyn: 1x3 accrs bias instability in m/s^2. Value is taken
 %       from the plot at the minimun value.
 %
-%       gb_corr, 1x3 vector, gyros correlation times (s).
-%       ab_corr, 1x3 vector, accs correlation times (s).
+%     gb_corr: 1x3 gyros correlation times (s).
+%     ab_corr: 1x3 accrs correlation times (s).
 %
-%       g_std, 1x3 vector, gyros standard deviations (rad/s).
-%       a_std, 1x3 vector, accs standard deviations (m/s^2).
+%     g_std: 1x3 gyros standard deviations (rad/s).
+%     a_std: 1x3 accrs standard deviations (m/s^2).
 %
-%       g_max, 1x3 vector, gyros maximum values (rad/s).
-%       a_max, 1x3 vector, accs maximum values (m/s^2).
+%     g_max: 1x3 gyros maximum values (rad/s).
+%     a_max: 1x3 accrs maximum values (m/s^2).
 %
-%       g_min, 1x3 vector, gyros minimum values (rad/s).
-%       a_min, 1x3 vector, accs maximum values (m/s^2).
+%     g_min: 1x3 gyros minimum values (rad/s).
+%     a_min: 1x3 accrs maximum values (m/s^2).
 %
-%       g_mean, 1x3 vector, gyros mean values (rad/s).
-%       a_meam, 1x3 vector, accs mean values (m/s^2).
+%     g_mean: 1x3 gyros mean values (rad/s).
+%     a_meam: 1x3 accrs mean values (m/s^2).
 %
-%       g_median, 1x3 vector, gyros median values (rad/s).
-%       a_median, 1x3 vector, accs median values (m/s^2).
+%     g_median: 1x3 gyros median values (rad/s).
+%     a_median: 1x3 accrs median values (m/s^2).
 %
-%       fb_tau, Mx3 with time vector from AV for accelerometers [X Y Z].
-%       fb_allan, Mx3 with AV vector for accelerometers [X Y Z].
-%       fb_error, Mx3 with AV errors for accelerometers [X Y Z].
+%     fb_tau:   Mx3 time vector from AV for accelerometers [X Y Z].
+%     fb_allan: Mx3 AV vector for accelerometers [X Y Z].
+%     fb_error: Mx3 AV errors for accelerometers [X Y Z].
 %
-%       wb_tau, Mx3 with time vector from AV for gyros [X Y Z].
-%       wb_allan, Mx3 with AV vector for gyros [X Y Z].
-%       wb_error, Mx3 with AV errors for gyros [X Y Z].
-%
-% -------------------------------------------------------------------------
+%     wb_tau:   Mx3 time vector from AV for gyros [X Y Z].
+%     wb_allan: Mx3 AV vector for gyros [X Y Z].
+%     wb_error: Mx3 AV errors for gyros [X Y Z].
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -83,33 +78,27 @@ function [imu] = allan_imu (imu_sta, verbose)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% -------------------------------------------------------------------------
-%
 % References:
 %
-%       IEEE-SA Standards Board. IEEE Standard Specification Format
-%       Guide and Test Procedure for Single-Axis Interferometric Fiber Optic
-%       Gyros. ISBN 1-55937-961-8. September 1997.
+%   IEEE-SA Standards Board. IEEE Standard Specification Format
+% Guide and Test Procedure for Single-Axis Interferometric Fiber Optic
+% Gyros. ISBN 1-55937-961-8. September 1997.
 %
-%       Naser El-Sheimy et at. Analysis and Modeling of Inertial Sensors
-%       Using Allan Variance. IEEE TRANSACTIONS ON INSTRUMENTATION AND
-%       MEASUREMENT, VOL. 57, NO. 1, JANUARY 2008.
+%   Naser El-Sheimy et at. Analysis and Modeling of Inertial Sensors
+% Using Allan Variance. IEEE TRANSACTIONS ON INSTRUMENTATION AND
+% MEASUREMENT, VOL. 57, NO. 1, JANUARY 2008.
 %
-%       Oliver J. Woodman. An introduction to inertial navigation. Technical
-%       Report. ISSN 1476-2986. University of Cambridge, Computer Laboratory.
-%       August 2007.
+%   Oliver J. Woodman. An introduction to inertial navigation. Technical
+% Report. ISSN 1476-2986. University of Cambridge, Computer Laboratory.
+% August 2007.
 %
-%		M.A. Hopcroft. Allan overlap MATLAB function v2.24.
-%       https://www.mathworks.com/matlabcentral/fileexchange/13246-allan
-%
-% -------------------------------------------------------------------------
+%	  M.A. Hopcroft. Allan overlap MATLAB function v2.24.
+% https://www.mathworks.com/matlabcentral/fileexchange/13246-allan
 %
 % Version: 007
 % Date:    2019/02/18
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
-%
-% -------------------------------------------------------------------------
 
 % Verbose for allan_overlap function
 if (nargin < 2), verbose = 2; end

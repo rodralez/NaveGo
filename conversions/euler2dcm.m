@@ -1,12 +1,11 @@
 function DCMnb = euler2dcm(euler)
 % euler2dcm: converts from Euler angles to DCM nav-to-body.
 % 
-% INPUT:
-%   euler,	3x1 Euler angles (rad).
+% INPUT
+%   euler: 3x1 Euler angles [roll pitch yaw] (rad, rad, rad).
 %
-% OUTPUT:
-%   DCMnb,  3x3 nav-to-body DCM.
-%
+% OUTPUT
+%   DCMnb: 3x3 nav-to-body DCM.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
@@ -27,7 +26,7 @@ function DCMnb = euler2dcm(euler)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference: 
-%			Titterton, D.H. and Weston, J.L. (2004). Strapdown
+%		Titterton, D.H. and Weston, J.L. (2004). Strapdown
 % Inertial Navigation Technology (2nd Ed.). Institution
 % of Engineering and Technology, USA. Eq. 3.47, p. 41.
 %

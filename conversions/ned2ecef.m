@@ -1,13 +1,12 @@
 function ecef = ned2ecef(ned, llh_org)
 % ecef2ned: converts from ECEF coordinates to NED coordinates.
 %
-%   INPUTS
-%       ned: Nx3 NED coordinates [X Y Z] (m, m, m)
-%       llh_org: 1x3 system origin [lat, lon, h] (rad, rad, m).
+% INPUTS
+%   ned: Nx3 NED coordinates [X Y Z] (m, m, m)
+%   llh_org: 1x3 system origin [lat, lon, h] (rad, rad, m).
 %
-%   OUTPUTS
-%       ecef: Nx3 ECEF coordinates [X Y Z] (m, m, m).
-%
+% OUTPUTS
+%   ecef: Nx3 ECEF coordinates [X Y Z] (m, m, m).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %

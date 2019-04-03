@@ -1,12 +1,14 @@
 function deltha = gyro_gen_delta(DCMnb, t)
 % gyro_gen_delta: calculates gyros delta angles.
 %
-% INPUT:
-%		DCMnb: Mx9 DCM nav-to-body matrices.
+% INPUT
+%   DCMnb: Nx9 matrix with nav-to-body direct cosine matrix (DCM). 
+%		Each row contains [a11 a21 a31 a12 a22 a32 a13 a23 a33] elements 
+%		from each DCM.
 %		t: Mx1 time vector (s).
 %
-% OUTPUT:
-%		deltha: Mx3 gyros delta angles (radians).
+% OUTPUT
+%		deltha: Mx3 gyros delta angles [X, Y, Z] (rad, rad, rad).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
@@ -27,12 +29,11 @@ function deltha = gyro_gen_delta(DCMnb, t)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference: 
-%			R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
+%
+%		R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
 % simulation framework for low-cost integrated navigation systems, 
 % Journal of Control Engineering and Applied Informatics, vol. 17, 
 % issue 2, pp. 110-120, 2015. Eq. 5 and 6.
-%
-% Reference:
 %
 % Version: 003
 % Date:    2019/01/09

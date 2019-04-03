@@ -2,13 +2,13 @@ function wb_sim = gyro_gen (ref, imu)
 % gyro_gen: generates simulated gyros measurements from reference data and
 %          imu error profile.
 %
-% INPUT:
+% INPUT
 %		ref: data structure with true trajectory.
 %		imu: data structure with IMU error profile.
 %
-% OUTPUT:
-%		wb_sim: Nx3 matrix with [wx, wy, wz] simulated gryos in the
-%		body frame.
+% OUTPUT
+%		wb_sim: Nx3 matrix with simulated gryos in the body frame [X Y Z] 
+%     (rad, rad, rad).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -28,13 +28,14 @@ function wb_sim = gyro_gen (ref, imu)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% Reference:
-%			R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+% References:
+%
+%  	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
 % simulation framework for low-cost integrated navigation systems,
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015. Sec. 2.1.
 %
-%           Aggarwal, P. et al. MEMS-Based Integrated Navigation. Artech
+%   Aggarwal, P. et al. MEMS-Based Integrated Navigation. Artech
 % House. 2010.
 %
 % Version: 006

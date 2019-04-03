@@ -1,6 +1,17 @@
 function cor_b = coriolis_b(lat, vel, h, DCMnb)
 % coriolis_b: projects Coriolis forces from navigation frame to the body frame
 %
+% INPUT
+%		lat: Nx1 latitudes (radians).
+%		vel: Nx3 NED velocities [N E D](m/s, m/s, m/s).
+%   h:   Nx1 altitude (meters).
+%   DCMnb: Nx9 matrix with nav-to-body direct cosine matrix (DCM). 
+%		Each row contains [a11 a21 a31 a12 a22 a32 a13 a23 a33] elements 
+%		from each DCM.
+%
+% OUTPUT
+%		cor_b: Nx3 Coriolis forces in the body frame.
+%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
 %   This file is part of NaveGo, an open-source MATLAB toolbox for 

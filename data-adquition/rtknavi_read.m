@@ -1,19 +1,19 @@
 function gnss = rtknavi_read (fname)
-% rtknavi_read: read RTKAVI output file and transforms it to NaveGo format.
+% rtknavi_read: reads RTKAVI output file and transforms it to NaveGo format.
 %
-% INPUT:
-%   fname, file name (string).
+% INPUT
+%   fname: file name (string).
 %
 % OUTPUT
-%   gnss_data, data structure with the following format:
+%   gnss_data: data structure with the following format:
 %
-%	week,   GPS Week (integer).
-%	t,      GPS Time Of Week (s).
-%	stat,   Solution Status (integer).
-%	ecef,   ECEF position (m).
-%	vel,    NED velocities (m/s).
-%	acc,    NED accerelations (m/s^2).
-%   freq,   GNSS frequency update (Hz).
+%	    week: GPS Week (integer).
+%	    t:    GPS Time Of Week (s).
+%	    stat: Solution Status (integer).
+%	    ecef: ECEF position (m).
+%	    vel:  NED velocities (m/s).
+%	    acc:  NED accerelations (m/s^2).
+%     freq: GNSS frequency update (Hz).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -33,15 +33,14 @@ function gnss = rtknavi_read (fname)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-%   Reference:
+% Reference:
 %   
-%       T. Takasu. RTKLIB ver. 2.4.2 Manual. April 29, 2013. 
+%   T. Takasu. RTKLIB ver. 2.4.2 Manual. April 29, 2013. 
 %
 % Version: 002
 % Date:    2018/12/04
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
-
 
 %% OPEN FILE
 

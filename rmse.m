@@ -1,6 +1,13 @@
 function rmserr = rmse (estimate, true)
 % rmse: rooted mean squarred error between two vectors.
 %
+% INPUT:
+%   estimate: Nx1 estimate values.
+%   true:     Nx1 true values, reference.
+%
+% OUTPUT:
+%    rmserr: rooted mean squarred error.
+%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
 %   This file is part of NaveGo, an open-source MATLAB toolbox for 
@@ -19,13 +26,17 @@ function rmserr = rmse (estimate, true)
 %   License along with this program. If not, see 
 %   <http://www.gnu.org/licenses/>.
 %
-% Version: 002
-% Date:    2016/11/16
+% Version: 003
+% Date:    2019/04/03
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
-if( any(isnan(estimate)) || any(isnan(true)))
+if( any(isnan(estimate)) || any(isnan(true)) )
     error('rmse: input vector with at least one NaN value');
+end
+
+if ( length (estimate) ~= length (true) )   
+    error('rmse: vectors must have the same length')
 end
 
 rmserr =  sqrt ( mean ( ( estimate - true).^2 ) ) ;

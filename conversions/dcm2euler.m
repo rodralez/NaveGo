@@ -1,14 +1,14 @@
 function euler = dcm2euler(DCMbn)
 % dcm2euler: converts from body-to-nav DCM to Euler angles.
 %
-% INPUT:
-%   DCMbn,	3x3 body-to-nav DCM.
+% INPUT
+%   DCMbn: 3x3 body-to-nav DCM.
 %
-% OUTPUT:
-%   euler,	3x1 Euler angles (rad).
+% OUTPUT
+%   euler: 3x1 Euler angles [roll pitch yaw] (rad, rad, rad).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
-%
+% 
 %   This file is part of NaveGo, an open-source MATLAB toolbox for
 %   simulation of integrated navigation systems.
 %
@@ -26,11 +26,11 @@ function euler = dcm2euler(DCMbn)
 %   <http://www.gnu.org/licenses/>.
 %
 % References:
-% 			Titterton, D.H. and Weston, J.L. (2004). Strapdown
+% 	Titterton, D.H. and Weston, J.L. (2004). Strapdown
 % Inertial Navigation Technology (2nd Ed.). Institution
 % of Engineering and Technology, USA. Eq. 11.4. Eq. 3.66, p. 46.
 %
-%			R. Gonzalez, J. Giribet, and H.D. Patiño,. An approach to
+%		R. Gonzalez, J. Giribet, and H.D. Patiño,. An approach to
 % benchmarking of loosely coupled low-cost navigation systems,
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 2, pp. 272-287. Eq. 15.

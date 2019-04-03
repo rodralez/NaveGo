@@ -1,6 +1,16 @@
 function g_b = gravity_b(lat, h, DCMnb)
 %  gravity_b: computes gravity vector in the b-frame.
 %
+% INPUT
+%		lat: Nx1 latitudes (radians).
+%		vel: Nx3 NED velocities [N E D](m/s, m/s, m/s).
+%   DCMnb: Nx9 matrix with nav-to-body direct cosine matrix (DCM). 
+%		Each row contains [a11 a21 a31 a12 a22 a32 a13 a23 a33] elements 
+%		from each DCM.
+%
+% OUTPUT
+%		g_b: Nx1 gravity force in the body frame.
+%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
 %   This file is part of NaveGo, an open-source MATLAB toolbox for 
@@ -20,7 +30,8 @@ function g_b = gravity_b(lat, h, DCMnb)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference: 
-%			R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
+%
+%		R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
 % simulation framework for low-cost integrated navigation systems, 
 % Journal of Control Engineering and Applied Informatics}, vol. 17, 
 % issue 2, pp. 110-120, 2015. Eq. 12.

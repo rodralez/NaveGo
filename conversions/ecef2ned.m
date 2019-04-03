@@ -1,13 +1,12 @@
 function ned = ecef2ned(ecef, llh_org)
 % ecef2ned: converts from ECEF coordinates to NED coordinates.
 %
-%   INPUTS
-%       ecef: Nx3 ECEF coordinates [X Y Z] (m, m, m).
-%       llh_org: 1x3 [ lat, lon, h] system origin (rad, rad, m).
+% INPUTS
+%   ecef: Nx3 ECEF coordinates [X Y Z] (m, m, m).
+%   llh_org: 1x3 system origin [lat, lon, h] (rad, rad, m).
 %
-%   OUTPUTS
-%       ned: Nx3 NED coordinates [X Y Z] (m, m, m).
-%
+% OUTPUTS
+%   ned: Nx3 NED coordinates [X Y Z] (m, m, m).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
@@ -28,7 +27,7 @@ function ned = ecef2ned(ecef, llh_org)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference: 
-%			R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
+%		R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
 % simulation framework for low-cost integrated navigation systems, 
 % Journal of Control Engineering and Applied Informatics}, vol. 17, 
 % issue 2, pp. 110-120, 2015. Inverse process of Eq. 15.

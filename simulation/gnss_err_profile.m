@@ -1,14 +1,13 @@
 function  gnss = gnss_err_profile (lat, h, gnss)
 % gps_err_profile: converts GPS standard deviation from meters to radians.
 %
-% INPUT:
-%   lat, latitude (rad).
-%   h, altitude (m).
-%   gnss, GNSS data structure.
+% INPUT
+%   lat: 1x1 latitude (radians).
+%   h:   1x1 altitude (m).
+%   gnss: GNSS data structure.
 %
-% OUTPUT:
-%   gnss.std, 1x3 position error profile (m, m, m).
-%
+% OUTPUT
+%   gnss.std: 1x3 position error profile (m, m, m).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
@@ -29,12 +28,13 @@ function  gnss = gnss_err_profile (lat, h, gnss)
 %   <http://www.gnu.org/licenses/>.
 %
 % References: 
-%			R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
+%
+%		R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
 % simulation framework for low-cost integrated navigation systems, 
 % Journal of Control Engineering and Applied Informatics, vol. 17, 
 % issue 2, pp. 110-120, 2015. Eq. 20.
 %
-%  			R. Gonzalez, J. Giribet, and H. Patiño. An approach to 
+%  	R. Gonzalez, J. Giribet, and H. Patiño. An approach to 
 % benchmarking of loosely coupled low-cost navigation systems, 
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21, 
 % issue 3, pp. 272-287, 2015. Eq. 7.

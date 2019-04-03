@@ -1,14 +1,15 @@
-function [dbias_n] = noise_dbias (b_corr, b_drift, dt, M)
+function [dbias_n] = noise_dbias (b_corr, b_dyn, dt, M)
 % noise_dbias: generates a dynamic bias perturbation.
 %
-% INPUT:
-%		b_corr: 1x3, correlation times.
-%       b_drift: 1x3, level of dynamic biases.
-%       dt: sample time.
-%		M: 1x2, dimension of output vector.
+% INPUT
+%		b_corr:  1x3 correlation times.
+%   b_dyn: 1x3 level of dynamic biases.
+%   dt: 1x1 sampling time.
+%		M: 1x2 dimensions of output vector.
 %
-% OUTPUT:
-%		dbias_n: M matrix with [x, y, z] simulated dynamic biases.
+% OUTPUT
+%		dbias_n: M matrix with simulated dynamic biases [X Y Z] 
+%     (rad/s, rad/s, rad/s).
 %
 %   Copyright (C) 2014, Rodrigo González, all rights reserved.
 %
@@ -29,7 +30,8 @@ function [dbias_n] = noise_dbias (b_corr, b_drift, dt, M)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference:
-%           Aggarwal, P. et al. MEMS-Based Integrated Navigation. Artech
+%
+%   Aggarwal, P. et al. MEMS-Based Integrated Navigation. Artech
 % House. 2010. Eq. 3.33, page 57.
 %
 % Version: 001
@@ -47,7 +49,7 @@ if (~isinf(b_corr))
     for i=1:3
 
         beta  = dt / ( b_corr(i) );
-        sigma = b_drift(i);
+        sigma = b_dyn(i);
         a1 = exp(-beta);
         a2 = sigma * sqrt(1 - exp(-2*beta) );
 
@@ -60,7 +62,7 @@ if (~isinf(b_corr))
     
 % If not...
 else
-    sigma = b_drift;
+    sigma = b_dyn;
     bn = randn(M);
     
     dbias_n = [sigma(1) .* bn(:,1), sigma(2) .* bn(:,2), sigma(3) .* bn(:,3)];

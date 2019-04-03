@@ -1,28 +1,28 @@
 function gnss_data = rtkpos_read(fname)
-% rtkpos_read: read RTKPOS output file and transforms it to NaveGo format.
+% rtkpos_read: reads RTKPOS output file and transforms it to NaveGo format.
 %
-% INPUT:
-%   fname, file name (string).
+% INPUT
+%   fname: file name (string).
 %
 % OUTPUT
-%   gnss_data, data structure with the following format:
+%   gnss_data: data structure with the following format:
 %
-%       week,   GPS week (integer).
-%       t,      GPS time of week (TOW, s). 
-%       lat,    latitude (rad). 
-%       lon,    longitude (rad). 
-%       h,      height (m).  
-%       Q,      quality flag (Q=1:fix, 2:float, 3:sbas, 4:dgps, 5:single, 6:ppp). 
-%       ns,     number of valid satellites (integer).
-%       header, header of RTKPOS file.
-%       freq,   GNSS frequency update (Hz).
+%     week:   GPS week (integer).
+%     t:      GPS time of week (TOW, s). 
+%     lat:    latitude (rad). 
+%     lon:    longitude (rad). 
+%     h:      height (m).  
+%     Q:      quality flag (Q=1:fix, 2:float, 3:sbas, 4:dgps, 5:single, 6:ppp). 
+%     ns:     number of valid satellites (integer).
+%     header: header of RTKPOS file.
+%     freq:   GNSS frequency update (Hz).
 %
-%       sdn (m).  
-%       sde (m).  
-%       sdu (m). 
-%       sdne (m). 
-%       sdeu (m). 
-%       sdun (m).
+%     sdn (m).  
+%     sde (m).  
+%     sdu (m). 
+%     sdne (m). 
+%     sdeu (m). 
+%     sdun (m).
 %
 %       The estimated standard deviations of the solution assuming a priori 
 %       error model and error parameters by the positioning options. The 
@@ -33,12 +33,12 @@ function gnss_data = rtkpos_read(fname)
 %       the sign of the covariance. With all of the values, user can 
 %       reconstruct the full covariance matrix. 
 %
-%       age (s), 
+%     age (s). 
 %
 %       Age of differential. The time difference between the 
 %       observation data epochs of the rover receiver and the base station. 
 %
-%       ratio,  ratio factor. 
+%     ratio:  ratio factor. 
 %       
 %       The ratio factor of ʺratio‐testʺ for standard 
 %       integer ambiguity validation strategy. The value means the ratio of 
@@ -63,9 +63,9 @@ function gnss_data = rtkpos_read(fname)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-%   Reference:
+% Reference:
 %   
-%       T. Takasu. RTKLIB ver. 2.4.2 Manual. April 29, 2013. 
+%   T. Takasu. RTKLIB ver. 2.4.2 Manual. April 29, 2013. 
 %
 % Version: 001
 % Date:    2018/09/11

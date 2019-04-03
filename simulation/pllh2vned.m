@@ -2,12 +2,12 @@ function [vel_ned, acc_ned] = pllh2vned (ref)
 % pllh2vned: generates NED accelerations and velocities from 
 % navigation position.
 %
-% INPUT:
+% INPUT
 %		ref: data structure with true trajectory.
 %
-% OUTPUT:
-%		vel_ned: Nx3 matrix with [Vn Ve Vd] velocities in the NED frame.
-%		acc_ned: Nx3 matrix with [An Ae Ad] accelerations in the NED frame.
+% OUTPUT
+%		vel_ned: Nx3 matrix with velocities in the NED frame [VN VE VD] (m/s, m/s, m/s).
+%		acc_ned: Nx3 matrix with accelerations in the NED frame [AN AE AD] (m/s^2, m/s^2, m/s^2).
 %
 %   Copyright (C) 2014, Rodrigo González, all rights reserved. 
 %     
@@ -27,12 +27,14 @@ function [vel_ned, acc_ned] = pllh2vned (ref)
 %   License along with this program. If not, see 
 %   <http://www.gnu.org/licenses/>.
 %
+% Reference:
+%
+%
 % Version: 001
 % Date:    2014/09/11
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
-%
-% Reference:
+
 
 % Method: LLH > ECEF > NED 
 
@@ -60,13 +62,13 @@ function [vel_ned, acc_ned] = pllh2vned (ref)
 % VEL
 vel_raw =  diff(ned) ./ [diff(ref.t) diff(ref.t) diff(ref.t);];
 vel_raw = [ 0 0 0; vel_raw; ];
-vel_ned = sgolayfilt(vel_raw, 15, 299);  
-vel_ned = sgolayfilt(vel_ned, 15, 199);
+vel_ned = my_sgolayfilt(vel_raw);  
+vel_ned = my_sgolayfilt(vel_ned);
 
-%ACC    
+% ACC    
 acc_raw = (diff(vel_ned)) ./ [diff(ref.t) diff(ref.t) diff(ref.t)];
 acc_raw = [ 0 0 0; acc_raw; ];
-acc_ned = sgolayfilt(acc_raw, 15, 299);
-acc_ned = sgolayfilt(acc_ned, 10, 99);
+acc_ned = my_sgolayfilt(acc_raw);
+acc_ned = my_sgolayfilt(acc_ned);
     
 end

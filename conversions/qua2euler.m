@@ -1,11 +1,11 @@
 function euler = qua2euler(qin)
 % qua2euler: transforms quaternion to Euler angles.
 %
-% INPUT:
-%   qin,    4x1 quaternion.
+% INPUT
+%   qin: 4x1 quaternion.
 %
-% OUTPUT:
-%   euler,  3x1 Euler angles (radians).
+% OUTPUT
+%   euler: 3x1 Euler angles [roll pitch yaw] (rad, rad, rad).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -25,17 +25,21 @@ function euler = qua2euler(qin)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% Reference:
+% References:
 %
-%			Dr. Paolo Zoccarato's comments at
-%   https://github.com/rodralez/NaveGo/pull/9
+%		Dr. Paolo Zoccarato's comments at
+% https://github.com/rodralez/NaveGo/pull/9
+%
+%		Crassidis, J.L. and Junkins, J.L. (2011). Optimal Esti-
+% mation of Dynamic Systems, 2nd Ed. Chapman and Hall/CRC, USA.
+% Eq. 7.39, p. 458.
 %
 % Version: 005
 % Date:    2017/12/05
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-% Quaternion format as used in Crassidis' book quaternion equations.
+% Quaternion format from Crassidis' book.
 
 DCMbn = qua2dcm(qin);
 

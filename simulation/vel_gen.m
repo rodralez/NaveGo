@@ -1,14 +1,14 @@
 function vel_ned = vel_gen(lat, lon, h, t)
 % vel_gen: generates NED velocities from llh position
 %
-% INPUT:
-%   lat,  Nx1 latitude (radians)
-%   lon,  Nx1 longitude (radians)
-%   h,    Nx1 altitude (m)
-%   dt,   1x1 sample time (s)
+% INPUT
+%   lat: Nx1 latitude (radians).
+%   lon: Nx1 longitude (radians).
+%   h:   Nx1 altitude (m).
+%   dt:  1x1 sampling time (s).
 %
-% OUTPUT:
-%   vel,  Nx3 NED velocities [Vn Ve Vd] (m/s)
+% OUTPUT
+%   vel: Nx3 NED velocities [VN VE VD] (m/s, m/s, m/s).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -28,12 +28,12 @@ function vel_ned = vel_gen(lat, lon, h, t)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% References:
+% Reference:
 %
 %   pos_update() function from NaveGo.
 %
-% Version: 001
-% Date:    2017/11/03
+% Version: 002
+% Date:    2019/04/03
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -45,36 +45,18 @@ if any(idl)
     warning('vel_gen: negative altitude.')
 end
 
-% h_n  = h - (vd) * dt;
-
 vd = - diff_central(t, h);
 
 %% North Velocity 
 
-if (isa(h,'single'))
-    [RM,~] = radius(lat(2:end-1), 'single');
-else
-    [RM,~] = radius(lat(2:end-1), 'double');
-end
-
-% lat_n = lat + (vn_c) * dt;
-% vn_c = vn / (RM + h_n);
-
-% vn_c = diff(lat) ./ diff(t);
+[RM, ~] = radius(lat(2:end-1));
 
 vn_c = diff_central(t, lat);
 vn = vn_c .* (RM + h(2:end-1));
 
 %% East Velocity 
 
-if (isa(h,'single'))
-    [~, RN] = radius(lat(2:end-1), 'single');
-else
-    [~, RN] = radius(lat(2:end-1), 'double');
-end
-
-% lon_n = lon + (ve_c) * dt;
-% ve_c  = ve / ((RN + h_n) * cos (lat_n));
+[~, RN] = radius(lat(2:end-1));
 
 ve_c = diff_central(t, lon);
 ve   = ve_c .* (RN + h(2:end-1)) .* cos (lat(2:end-1));
@@ -83,7 +65,6 @@ ve   = ve_c .* (RN + h(2:end-1)) .* cos (lat(2:end-1));
   
 vel = [vn ve vd];
 
-vel_ned = sgolayfilt(vel, 5, 15);
-
+vel_ned = my_sgolayfilt(vel);
 
 end

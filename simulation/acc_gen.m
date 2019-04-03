@@ -1,11 +1,12 @@
 function [fb_sim] = acc_gen (ref, imu)
 % acc_gen: generates simulated accelerometers measurements from reference
-%           data and imu error profile.
-% INPUT:
+%  data and imu error profile.
+%
+% INPUT
 %		ref: data structure with true trajectory.
 %		imu: data structure with IMU error profile.
 %
-% OUTPUT:
+% OUTPUT
 %		fb_sim: Nx3 matrix with [fx, fy, fz] simulated accelerations in the
 %		body frame.
 %
@@ -27,13 +28,14 @@ function [fb_sim] = acc_gen (ref, imu)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% Reference:
-%			R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+% References:
+%
+%		R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
 % simulation framework for low-cost integrated navigation systems,
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015. Sec. 2.2.
 %
-%           Aggarwal, P. et al. MEMS-Based Integrated Navigation. Artech
+%   Aggarwal, P. et al. MEMS-Based Integrated Navigation. Artech
 % House. 2010.
 %
 % Version: 007

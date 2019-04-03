@@ -1,12 +1,12 @@
-function [sbias_n] = noise_sbias (sbias, N)
+function [sbias_n] = noise_sbias (sbias, M)
 % noise_sbias: generates a random static bias error.
 %
-% INPUT:
+% INPUT
 %		sbias: static bias from [-sbias sbias].
-%		N: dimension of output vector.
+%		M: dimension of output vector.
 %
-% OUTPUT:
-%		sbias_n: Nx3 matrix with [x, y, z] simulated static biases.
+% OUTPUT
+%		sbias_n: Mx3 matrix with simulated static biases [X Y Z] (rad, rad, rad).
 %
 %   Copyright (C) 2014, Rodrigo González, all rights reserved.
 %
@@ -27,6 +27,7 @@ function [sbias_n] = noise_sbias (sbias, N)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference:
+%
 %			R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
 % simulation framework for low-cost integrated navigation systems,
 % Journal of Control Engineering and Applied Informatics, vol. 17,
@@ -40,6 +41,6 @@ function [sbias_n] = noise_sbias (sbias, N)
 a = -sbias;
 b =  sbias;
 ab_fix = (b' - a') .* rand(3,1) + a';
-o = ones(N,1);
+o = ones(M,1);
 
 sbias_n = [ab_fix(1).* o   ab_fix(2).* o   ab_fix(3).* o];

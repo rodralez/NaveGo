@@ -2,14 +2,13 @@ function [lat, lon, h] = ecef2llh(ecef)
 % ecef2llh:	converts from ECEF coordinates to navigation coordinates
 %  (latitude, longitude and altitude).
 %
-%   INPUTS
-%       ecef: Nx3 ECEF coordinates [X Y Z] (m, m, m).
+% INPUTS
+%   ecef: Nx3 ECEF coordinates [X Y Z] (m, m, m).
 %
-%   OUTPUTS
-%       lat: NX1 latitude (radians)
-%       lon: NX1 longitude (radians)
-%       h:   NX1 altitude above ellipsoid (meters)
-%
+% OUTPUTS
+%   lat: Nx1 latitude (radians).
+%   lon: Nx1 longitude (radians).
+%   h:   Nx1 altitude above ellipsoid (meters).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -30,10 +29,10 @@ function [lat, lon, h] = ecef2llh(ecef)
 %   <http://www.gnu.org/licenses/>.
 %
 % References:
-%			H. Vermeille. Direct transformation from geocentric
+%		H. Vermeille. Direct transformation from geocentric
 % coordinates to geodetic coordinates. Journal of Geodesy, 2002.
 %
-%  			R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+%  	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
 % simulation framework for low-cost integrated navigation systems,
 % Journal of Control Engineering and Applied Informatics}, vol. 17,
 % issue 2, pp. 110-120, 2015. Eq. 17.

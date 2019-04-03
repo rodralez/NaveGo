@@ -1,7 +1,6 @@
 % navego_allan_example: example of how to implement the Allan variance 
 % procedure with NaveGo functions.
 %
-%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
 %   This file is part of NaveGo, an open-source MATLAB toolbox for
@@ -40,10 +39,10 @@ clear
 close all
 matlabrc
 
-addpath ../../
-addpath ../../simulation/
-addpath ../../conversions/
-addpath ../../allan-variance/
+addpath ./.
+addpath ./simulation/
+addpath ./conversions/
+addpath ./allan-variance/
 
 versionstr = 'NaveGo, release v1.2';
 

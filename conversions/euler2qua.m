@@ -1,11 +1,11 @@
 function qua = euler2qua(euler)
 % euler2qua: converts from Euler angles to quaternion.
 % 
-% INPUT:
-%   euler,	3x1 Euler angles (rad).
+% INPUT
+%   euler:3x1 Euler angles [roll pitch yaw] (rad, rad, rad).
 %
-% OUTPUT:
-%   qua,    4x1 quaternion.
+% OUTPUT
+%   qua: 4x1 quaternion.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -27,7 +27,7 @@ function qua = euler2qua(euler)
 %
 % Reference:
 %
-%			Crassidis, J.L. and Junkins, J.L. (2011). Optimal Esti-
+%	  Crassidis, J.L. and Junkins, J.L. (2011). Optimal Esti-
 % mation of Dynamic Systems, 2nd Ed. Chapman and Hall/CRC, USA.
 % Eq. 7.39, p. 458.
 %
@@ -48,7 +48,7 @@ q = [ c_eul(1).*c_eul(2).*c_eul(3) + s_eul(1).*s_eul(2).*s_eul(3), ...
       c_eul(1).*s_eul(2).*c_eul(3) + s_eul(1).*c_eul(2).*s_eul(3), ...
       s_eul(1).*c_eul(2).*c_eul(3) - c_eul(1).*s_eul(2).*s_eul(3)];
 
-% Quaternion format used in Crassidis' quaternion update.
+% Quaternion format from Crassidis' book.
 qua = [q(2) q(3) q(4) q(1)]';
 
 end

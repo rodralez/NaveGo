@@ -1,4 +1,5 @@
-% Example of how to use NaveGo to generate synthetic (simulated) data.
+% navego_example_synth: Example of how to use NaveGo to generate 
+% synthetic (simulated) data and then fuse them.
 % 
 % Main goal: to compare two INS/GNSS systems performances, one using a 
 % simulated ADIS16405 IMU and simulated GNSS, and another using a 
@@ -24,29 +25,30 @@
 %   <http://www.gnu.org/licenses/>.
 %
 % References:
-%           R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+%   R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
 % simulation framework for low-cost integrated navigation systems,
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015.
 %
-%           Analog Devices. ADIS16400/ADIS16405 datasheet. High Precision 
+%   Analog Devices. ADIS16400/ADIS16405 datasheet. High Precision 
 % Tri-Axis Gyroscope, Accelerometer, Magnetometer. Rev. B. 
 % http://www.analog.com/media/en/technical-documentation/data-sheets/ADIS16400_16405.pdf
 %
-%           Analog Devices. ADIS16488 datasheet. Tactical Grade Ten Degrees 
+%   Analog Devices. ADIS16488 datasheet. Tactical Grade Ten Degrees 
 % of Freedom Inertial Sensor. Rev. G. 
 % http://www.analog.com/media/en/technical-documentation/data-sheets/ADIS16488.pdf
 %
-%			Garmin International, Inc. GPS 18x TECHNICAL SPECIFICATIONS.
+%		Garmin International, Inc. GPS 18x TECHNICAL SPECIFICATIONS.
 % Revision D. October 2011. 
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
-% sampling
+%
 % Version: 013
 % Date:    2019/01/14
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-% NOTE: NaveGo supposes that IMU is aligned with respect to body-frame as X-forward, Y-right, and Z-down.
+% NOTE: NaveGo supposes that IMU is aligned with respect to body-frame as 
+% X-forward, Y-right, and Z-down.
 
 clc
 close all

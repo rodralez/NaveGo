@@ -1,11 +1,11 @@
-% Example of how to use NaveGo to post-process both real IMU and GNSS data.
+% navego_allan_real: Example of how to use NaveGo to post-process both 
+%  real IMU and GNSS data.
 %
 % Main goal: to integrate IMU and GNSS measurements from Ekinox-D sensor 
 % which includes both IMU and GNSS sensors.
 %
 % Sensors dataset was generated driving a vehicle through the streets of 
 % Turin city (Italy).
-%
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -25,8 +25,9 @@
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% References:
-%    SBG Systems. SBG Ekinox-D High Accuracy Inertial System Brochure, 
+% Reference:
+%
+%   SBG Systems. SBG Ekinox-D High Accuracy Inertial System Brochure, 
 % Tactical grade MEMS Inertial Systems, v1.0. February 2014. 
 %
 % Version: 002
@@ -34,7 +35,7 @@
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-% NOTE: NaveGo supposes that IMU is aligned with respect to body-frame as 
+% NOTE: NaveGo assumes that IMU is aligned with respect to body-frame as 
 % X-forward, Y-right, and Z-down.
 
 clc
@@ -42,9 +43,9 @@ close all
 clear
 matlabrc
 
-addpath ../../
-addpath ../../simulation/
-addpath ../../conversions/
+addpath ./
+addpath ./simulation/
+addpath ./conversions/
 
 versionstr = 'NaveGo, release v1.2';
 

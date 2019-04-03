@@ -1,13 +1,14 @@
 function [rrw_n] = noise_rrw (rrw, dt, M)
 % noise_rrw: generates rate random walk noise.
 %
-% INPUT:
-%		rrw: 1x3, level of rate random walk.
-%		dt: sampling time.
-%       M: 1x2, dimension of output vector.
+% INPUT
+%		rrw: 1x3 level of rate random walk.
+%		dt: 1x1 sampling time.
+%   M: 1x2 dimensionx of output vector.
 %
-% OUTPUT:
-%		rrw_n: M matrix with [x, y, z] simulated rate random walk noise.
+% OUTPUT
+%		rrw_n: M matrix with simulated rate random walk noise [X Y Z] 
+%     (rad/s^2, rad/s^2, rad/s^2).
 %
 %   Copyright (C) 2014, Rodrigo González, all rights reserved.
 %

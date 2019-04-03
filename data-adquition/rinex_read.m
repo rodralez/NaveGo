@@ -9,13 +9,13 @@ function gnss = rinex_read(fname)
 %
 % L1 and C1 data are taken from GPS system only.
 %
-% INPUT:
-%   fname, RINEX file name (string).
+% INPUT
+%   fname: RINEX file name (string).
 %
 % OUTPUT
-%   gnss, data structure with the following format. 
+%   gnss: data structure with the following format. 
 %
-%     - raw, Nx15 matrix with rinex data ordered into columns as:
+%      raw: Nx15 rinex data ordered into columns as:
 %           1: year.
 %           2: month.
 %           3: day.
@@ -33,10 +33,9 @@ function gnss = rinex_read(fname)
 %           11: L1 phase signal strength (0-9).
 %           12: pseudo-range rate on L1 (meters/s).
 %       
-%     - header, RINEX file header.   
+%      header, RINEX file header.   
 %
-% Each epoch in the raw matrix should have information for several satellites.
-%
+% Each epoch at the raw matrix may have information for several satellites.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -56,19 +55,19 @@ function gnss = rinex_read(fname)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-%   References:
+% References:
 %  
-%       UNACOV. Teqc Tutorial, Basics of Teqc Use and Teqc Products. June 6, 
-%       2014. 
+%   UNACOV. Teqc Tutorial, Basics of Teqc Use and Teqc Products. June 6, 
+% 2014. 
 %
-%       Mark Petovello. How does a GNSS receiver estimate velocity?
-%       InsideGNSS Magazine. March/April 2015.
+%   Mark Petovello. How does a GNSS receiver estimate velocity?
+% InsideGNSS Magazine. March/April 2015.
 %
-%       Werner Gurtner. RINEX: The Receiver Independent Exchange Format
-%       Version 2.11 (v2). June 26, 2012.
+%   Werner Gurtner. RINEX: The Receiver Independent Exchange Format
+% Version 2.11 (v2). June 26, 2012.
 %   
-%       Paul Groves, Principles of GNSS, Inertial, and
-%       Multisensor Integrated Navigation Systems (2008). Chapter 7.
+%   Paul Groves, Principles of GNSS, Inertial, and
+% Multisensor Integrated Navigation Systems (2008). Chapter 7.
 %
 % Version: 001
 % Date:    2018/12/07

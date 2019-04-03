@@ -92,6 +92,6 @@ S.xp = S.xi + S.K * S.v;
 % S.Pp = S.Pi - S.K * S.S *  S.K';                
 J = (I - S.K * S.H);                          % Joseph stabilized version     
 S.Pp = J * S.Pi * J' + S.K * S.R * S.K';      % Alternative implementation
-
+S.Pp =  0.5 .* (S.Pp + S.Pp');                  % Force Pi to be symmetric matrix
 
 end

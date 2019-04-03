@@ -1,14 +1,14 @@
 function ustrain = microstrain_read(file)
 % microstrain_read: reads .cvs files created by Microstrain software. 
 %
-% INPUT:
-%   fname, file name (string).
+% INPUT
+%   fname: .cvs file name (string).
 %
 % OUTPUT
-%   ustrain, fields in data structure depends on user selection. In this 
-%   function several fields have been added but may be modified to 
-%   comply to fields in .cvs file. Please, read the 
-%   3DM-GX3 manual for more information about possible fields.
+%   ustrain: fields in data structure depends on user selection. In this 
+%     function several fields have been added but may be modified to 
+%     comply to exiting fields in .cvs file. Please, read the 
+%     3DM-GX3 manual for more information about possible fields.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -28,9 +28,10 @@ function ustrain = microstrain_read(file)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-%   Reference:
-%       Microstrain. 3DM-GX3®-35 Data Communications Protocol. 8500-0014 
-%       Revision 010. Oct. 1 2013.
+% Reference:
+%
+%   Microstrain. 3DM-GX3®-35 Data Communications Protocol. 8500-0014 
+% Revision 010. Oct. 1 2013.
 %
 % Version: 002
 % Date:    2018/10/22
@@ -254,4 +255,3 @@ ustrain = correct_gravity(ustrain);
 fclose(ustrain_f);
 
 end
-
