@@ -3,7 +3,7 @@ function  gnss = gnss_err_profile (lat, h, gnss)
 %
 % INPUT
 %   lat: 1x1 latitude (radians).
-%   h:   1x1 altitude (m).
+%   h:   1x1 altitude (meters).
 %   gnss: GNSS data structure.
 %
 % OUTPUT

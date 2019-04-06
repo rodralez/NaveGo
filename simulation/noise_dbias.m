@@ -5,7 +5,7 @@ function [dbias_n] = noise_dbias (b_corr, b_dyn, dt, M)
 %		b_corr:  1x3 correlation times.
 %   b_dyn: 1x3 level of dynamic biases.
 %   dt: 1x1 sampling time.
-%		M: 1x2 dimensions of output vector.
+%		M: 1x2 dimension of output vector.
 %
 % OUTPUT
 %		dbias_n: M matrix with simulated dynamic biases [X Y Z] 

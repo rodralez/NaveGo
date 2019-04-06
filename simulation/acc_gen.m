@@ -7,8 +7,8 @@ function [fb_sim] = acc_gen (ref, imu)
 %		imu: data structure with IMU error profile.
 %
 % OUTPUT
-%		fb_sim: Nx3 matrix with [fx, fy, fz] simulated accelerations in the
-%		body frame.
+%		fb_sim: Nx3 matrix with simulated accelerations in the
+%		body frame [X Y Z] (m/s^2, m/s^2, m/s^2).
 %
 %   Copyright (C) 2014, Rodrigo González, all rights reserved.
 %

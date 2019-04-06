@@ -1,11 +1,11 @@
-function signal_s = my_sgolayfilt (signal)
+function samples_s = my_sgolayfilt (samples)
 % my_sgolayfilt: Savitzky-Golay Filtering with variable frame length.
 %
-% INPUT:
-%		signal: time serie(s) to be smoothed.
+% INPUT
+%		samples: Nx1 samples to be smoothed.
 %
-% OUTPUT:
-%		signal_s: smoothed signal, same order of signal.
+% OUTPUT
+%		samples_s: Nx1 smoothed samples.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -34,9 +34,9 @@ function signal_s = my_sgolayfilt (signal)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-signal_size = max(size(signal));
+samples_size = max(size(samples));
 
-sgo_framelen = floor( signal_size / 5);
+sgo_framelen = floor( samples_size / 5);
 
 % sgo_framelen should not be greater than 21.
 if (sgo_framelen > 21)
@@ -50,6 +50,6 @@ end
 
 sgo_order = ceil( sgo_framelen / 2);
 
-signal_s = sgolayfilt(signal, sgo_order, sgo_framelen);
+samples_s = sgolayfilt(samples, sgo_order, sgo_framelen);
 
 end
