@@ -10,7 +10,7 @@ function cor_b = coriolis_b(lat, vel, h, DCMnb)
 %		from each DCM.
 %
 % OUTPUT
-%		cor_b: Nx3 Coriolis forces in the body frame.
+%		cor_b: Nx3 Coriolis forces in the body frame [X Y Z] (m/s^2, m/s^2, m/s^2).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
@@ -31,7 +31,7 @@ function cor_b = coriolis_b(lat, vel, h, DCMnb)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference: 
-%			R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
+%	  R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
 % simulation framework for low-cost integrated navigation systems, 
 % Journal of Control Engineering and Applied Informatics}, vol. 17, 
 % issue 2, pp. 110-120, 2015. Eq. 11.

@@ -3,19 +3,19 @@ function rmse_v = navego_rmse (nav, gnss, ref_n, ref_g)
 % a INS/GNSS system and a reference data structure, and between GNSS-only 
 % solution and a reference data structure.
 %
-% INPUT:
+% INPUT
 %   nav_e, INS/GNSS integration data structure.
 %   gnss,  GNSS data structure.
-%   ref_n, Reference data structure ajusted for INS/GNSS measurements.
+%   ref_n, Reference data structure ajusted for INS/GNSS estimations.
 %   ref_g, Reference data structure ajusted for GNSS measurements.
 %
 % OUTPUT
 %   rmse_v, vector with all RMSE.
-%       RMSE_roll;  RMSE_pitch; RMSE_yaw; (degrees)    
-%       RMSE_vn;    RMSE_ve;    RMSE_vd;  (m/s) 
-%       RMSE_lat;   RMSE_lon;   RMSE_h;   (m)
-%       RMSE_vn_g;  RMSE_ve_g;  RMSE_vd_g;(m/s)
-%       RMSE_lat_g; RMSE_lon_g; RMSE_h_g; (m)
+%       RMSE_roll;  RMSE_pitch; RMSE_yaw; (degrees, degrees, degrees)    
+%       RMSE_vn;    RMSE_ve;    RMSE_vd;  (m/s, m/s, m/s) 
+%       RMSE_lat;   RMSE_lon;   RMSE_h;   (m, m, m)
+%       RMSE_vn_g;  RMSE_ve_g;  RMSE_vd_g;(m/s, m/s, m/s)
+%       RMSE_lat_g; RMSE_lon_g; RMSE_h_g; (m, m, m)
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -35,8 +35,8 @@ function rmse_v = navego_rmse (nav, gnss, ref_n, ref_g)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% Version: 004
-% Date:    2019/02/19
+% Version: 005
+% Date:    2019/04/05
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -45,12 +45,12 @@ R2D = (180/pi);     % radians to degrees
 
 %% INS/GNSS attitude RMSE
 
-RMSE_roll  = rmse (nav.roll ,   ref_n.roll)  .* R2D;
-RMSE_pitch = rmse (nav.pitch,   ref_n.pitch) .* R2D;
+RMSE_roll  = rmse (nav.roll , ref_n.roll)  .* R2D;
+RMSE_pitch = rmse (nav.pitch, ref_n.pitch) .* R2D;
 
 % Avoid difference greater than 100 deg when comparing yaw angles.
 idx = ( abs(nav.yaw - ref_n.yaw) < (100 * D2R) );
-RMSE_yaw = rmse (nav.yaw(idx),ref_n.yaw(idx) ) .* R2D;
+RMSE_yaw = rmse ( nav.yaw(idx),ref_n.yaw(idx) ) .* R2D;
 
 %% INS/GNSS velocity RMSE
 
@@ -66,9 +66,9 @@ end
 
 %% INS/GNSS position RMSE
 
-[RM,RN] = radius(nav.lat);
-LAT2M = (RM + nav.h);                    % Coefficient for lat rad -> meters
-LON2M = (RN + nav.h) .* cos(nav.lat); % Coefficient for lon rad -> meters
+[RM,RN] = radius(ref_n.lat);
+LAT2M = (RM + ref_n.h);                 % Coefficient for lat, radians to meters
+LON2M = (RN + ref_n.h) .* cos(ref_n.lat); % Coefficient for lon, radians to meters
 
 RMSE_lat = rmse (nav.lat.* LAT2M, ref_n.lat.* LAT2M) ;
 RMSE_lon = rmse (nav.lon.* LON2M, ref_n.lon.* LON2M) ;
@@ -88,9 +88,9 @@ end
 
 %% GNSS position RMSE
 
-[RMg,RNg] = radius(gnss.lat);
-LAT2Mg = (RMg + gnss.h);                       % Coefficient for lat rad -> meters
-LON2Mg = (RNg + gnss.h) .* cos(gnss.lat);   % Coefficient for lon rad -> meters
+[RMg,RNg] = radius(ref_g.lat);
+LAT2Mg = (RMg + ref_g.h);                    % Coefficient for lat, radians to meters
+LON2Mg = (RNg + ref_g.h) .* cos(ref_g.lat);   % Coefficient for lon, radians to meters
 
 RMSE_lat_g = rmse (gnss.lat.* LAT2Mg, ref_g.lat.* LAT2Mg) ;
 RMSE_lon_g = rmse (gnss.lon.* LON2Mg, ref_g.lon.* LON2Mg) ;

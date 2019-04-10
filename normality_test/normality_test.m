@@ -46,7 +46,7 @@ ref = randn (1000,1) * sig + mu;
 %% Test normality
 
 % Kolmogorov–Smirnov test
-[hk , pk] = kstest2 (samples, ref);
+[hk , pk] = kstest2 (samples, ref, 'alpha', 0.001)
 
 % Other normality tests
 % [hz , pz] = ztest  (data, mu, sig)

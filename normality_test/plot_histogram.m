@@ -47,7 +47,7 @@ ref_pdf = pdf(pd, x);
 
 EPS = 1E-3;
 
-mu = pd.mu;
+mu = mean(samples);
 med = median(samples);
 
 idx1 = find( x >= mu - EPS   & x < mu + EPS );
