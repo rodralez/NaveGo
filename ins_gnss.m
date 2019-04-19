@@ -96,8 +96,8 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %
 %   ins_gps.m, ins_gnss function is based on that previous function.
 %
-% Version: 004
-% Date:    2019/03/15
+% Version: 005
+% Date:    2019/04/19
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -157,9 +157,8 @@ ab_dyn = imu.ab_dyn';
 % Initialize Kalman filter matrices
 
 % Prior estimates
-% kf.xp = [ imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_sta, imu.ab_sta ]';  % Error vector state
-kf.xp = [ zeros(1,9), imu.gb_dyn, imu.ab_dyn ]';  % Error vector state
-kf.Pp = diag([imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_dyn, imu.ab_dyn].^2);
+kf.xi = [ zeros(1,9), imu.gb_dyn, imu.ab_dyn ]';  % Error vector state
+kf.Pi = diag([imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_dyn, imu.ab_dyn].^2);
 
 kf.R  = diag([gnss.stdv, gnss.stdm].^2);
 kf.Q  = diag([imu.arw, imu.vrw, imu.gb_psd, imu.ab_psd].^2);
@@ -185,7 +184,7 @@ kf.z = [ gnss.stdv, gnss.stdm ]';
 dtg = 1 / gnss.freq;
 
 % Propagate prior estimates to get xp(1) and Pp(1)
-kf = kalman(kf, dtg);
+kf = kf_update( kf );
 
 % PENDING: UD filter matrices
 % [Up, Dp] = myUD(S.P);
@@ -328,7 +327,7 @@ for i = 2:LI
         end
         
         % Execute the extended Kalman filter
-        kf.xp(1:9) = zeros(9,1);     % states 1:9 are forced to be zero (error-state approach)
+        kf.xp(1:9) = 0;              % states 1:9 are forced to be zero (error-state approach)
         kf = kalman(kf, dtg);
         
         %% INS/GNSS CORRECTIONS

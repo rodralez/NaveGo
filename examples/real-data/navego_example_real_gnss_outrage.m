@@ -99,6 +99,8 @@ fprintf('NaveGo: loading Ekinox GNSS data... \n')
 
 load gnss
 
+gnss.eps = 2E-3;
+
 % Force a GNSS outrage of 1 minute from 138500 (TOW)
 
 gdx =  find(gnss.t >= 138500, 1, 'first');
