@@ -3,8 +3,8 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %
 % ins_gnss integrates IMU and GNSS measurements by using an Extended Kalman filter.
 %
-% INPUT:
-%   imu, IMU data structure.
+% INPUT
+%   imu: IMU data structure.
 %         t: Ix1 time vector (seconds).
 %        fb: Ix3 accelerations vector in body frame XYZ (m/s^2).
 %        wb: Ix3 turn rates vector in body frame XYZ (radians/s).
@@ -24,7 +24,7 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 % ini_align: 1x3 initial attitude at t(1).
 % ini_align_err: 1x3 initial attitude errors at t(1).
 %
-%	gnss, GNSS data structure.
+%	gnss: GNSS data structure.
 %         t: Mx1 time vector (seconds).
 %       lat: Mx1 latitude (radians).
 %       lon: Mx1 longitude (radians).
@@ -39,12 +39,12 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %  zupt_win: 1x1 ZUPT time window (seconds).
 %       eps: 1x1 time interval to compare IMU time vector to GNSS time vector (s).
 %
-%	att_mode, attitude mode string.
+%	att_mode: attitude mode string.
 %      'quaternion': attitude updated in quaternion format. Default value.
 %             'dcm': attitude updated in Direct Cosine Matrix format.
 %
-% OUTPUT:
-%   nav_e, INS/GNSS navigation estimates data structure.
+% OUTPUT
+%   nav_e: INS/GNSS navigation estimates data structure.
 %         t: Ix1 INS time vector (seconds).
 %        tg: Mx1 GNSS time vector, when Kalman filter was executed (seconds).
 %      roll: Ix1 roll (radians).
@@ -181,8 +181,6 @@ kf.H = [ O I O O O ;
 kf.R = diag([gnss.stdv gnss.stdm]).^2;
 kf.z = [ gnss.stdv, gnss.stdm ]';
         
-dtg = 1 / gnss.freq;
-
 % Propagate prior estimates to get xp(1) and Pp(1)
 kf = kf_update( kf );
 
