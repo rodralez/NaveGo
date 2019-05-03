@@ -157,7 +157,6 @@ ab_dyn = imu.ab_dyn';
 % Initialize Kalman filter matrices
 
 % Prior estimates
-% kf.xp = [ imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_sta, imu.ab_sta ]';  % Error vector state
 kf.xp = [ zeros(1,9), imu.gb_dyn, imu.ab_dyn ]';  % Error vector state
 kf.Pp = diag([imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_dyn, imu.ab_dyn].^2);
 
@@ -210,6 +209,20 @@ S  = zeros(LG, 36);       % Innovation matrices, S
 xp(1,:) = kf.xp';
 Pp(1,:) = reshape(kf.Pp, 1, 225);
 b(1,:)  = [imu.gb_sta, imu.ab_sta];
+
+% Initialize the particle filter
+N = 34000 * 2;
+
+% Xf = zeros(15, N, LG);
+% Wf = ones(N, LG) / N;
+
+% Prior states
+kf.xf = mvnrnd ( kf.xp, kf.Pp, N )';
+kf.wf = ones(N, 1) .* (1 / N);
+
+kf  = pf_update(kf, dtg); % Wp(:,1)
+% Xf(:,:,1) =  kf.xf;
+% Wf(:,1) =  kf.wf;
 
 % INS (IMU) time is the master clock
 for i = 2:LI
@@ -328,8 +341,10 @@ for i = 2:LI
         end
         
         % Execute the extended Kalman filter
-        kf.xp(1:9) = zeros(9,1);     % states 1:9 are forced to be zero (error-state approach)
-        kf = kalman(kf, dtg);
+        kf.xp(1:9) = zeros(9,1);     % states 1:9 are forced to be zero (error-state approach)//
+%        kf = kalman(kf, dtg);
+        
+        kf = particle_filter(kf, dtg);
         
         %% INS/GNSS CORRECTIONS
         
