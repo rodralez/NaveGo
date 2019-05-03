@@ -1,29 +1,29 @@
-function  S = kalman(S, dt)
+function  kf = kalman(kf, dt)
 % kalman: Kalman filter algorithm.
 %
 % INPUT
-%   S: data structure with at least the following fields:
-%       xp: 15x1 a posteriori state vector (old).
+%   kf: data structure with at least the following fields:
+%       xp: 21x1 a posteriori state vector (old).
 %        z: 6x1 innovations vector.
-%        F: 15x15 state transition matrix.
-%        H: 6x15 observation matrix.
+%        F: 21x21 state transition matrix.
+%        H: 6x21 observation matrix.
 %        Q: 12x12 process noise covariance.
-%        R: 6x6 observation noise covariance.
-%       Pp: 15x15 a posteriori error covariance.
-%        G: 15x12 control-input matrix.      
-%   	dt: sampling interval. 
+%        R: 6x6  observation noise covariance.
+%       Pp: 21x21 a posteriori error covariance.
+%        G: 21x12 control-input matrix.      
+%   		dt: sampling interval. 
 %
 % OUTPUT
-%    S: the following fields are updated:
-%       xi: 15x1 a priori state vector.
-%       xp: 15x1 a posteriori state vector.
-%		 v: 6x1 innovation vector. 
-%        A: 15x15 state transition matrix.
-%        K: 15x6 Kalman gain matrix.
-%       Qd: 15x6 discrete process noise covariance.
-%       Pi: 15x15 a priori error covariance.
-%       Pp: 15x15 a posteriori error covariance.  
-%        S: 6x6 innovation (or residual) covariance.
+%    kf: the following fields are updated:
+%       xi: 21x1 a priori state vector (updated).
+%       xp: 21x1 a posteriori state vector (updated).
+%		 		 v: 6x1 innovation vector. 
+%        A: 21x21 state transition matrix.
+%        K: 21x6  Kalman gain matrix.
+%       Qd: 21x6  discrete process noise covariance.
+%       Pi: 21x21 a priori error covariance.
+%       Pp: 21x21 a posteriori error covariance.  
+%        S: 6x6  innovation (or residual) covariance.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -52,45 +52,17 @@ function  S = kalman(S, dt)
 %   Dan Simon. Optimal State Estimation. Chapter 5. John Wiley 
 % & Sons. 2006.   
 %
-% Version: 006
-% Date:    2019/03/15
+% Version: 007
+% Date:    2019/04/19
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-I = eye(max(size(S.F)));
-
-% Discretization of continous-time system
-S.A =  expm(S.F * dt);          				% Exact solution for linear systems
-% S.A = I + (S.F * dt);         				% Approximated solution by Euler method 
-S.Qd = (S.G * S.Q * S.G') .* dt;                % Digitalized process noise covariance matrix
-
-% **********************************************************************
 % PREDICTION STEP
-% **********************************************************************
 
-% Step 1, predict the a priori state vector xi
-S.xi = S.A * S.xp;
+kf = kf_prediction(kf, dt);
 
-% Step 2, update the a priori covariance matrix Pi
-S.Pi = (S.A * S.Pp * S.A') + S.Qd;
-S.Pi =  0.5 .* (S.Pi + S.Pi');                  % Force Pi to be symmetric matrix
-
-% **********************************************************************
 % UPDATE STEP
-% **********************************************************************
 
-% Step 3, update Kalman gain
-S.S = (S.R + S.H * S.Pi * S.H');				% Innovations covariance matrix
-S.v =  S.z - S.H * S.xi; 						% Innovations vector
-S.K = (S.Pi * S.H') * (S.S)^(-1) ;				% Kalman gain matrix
-
-% Step 4, update the a posteriori state vector xp
-S.xp = S.xi + S.K * S.v; 
-
-% Step 5, update the a posteriori covariance matrix Pp
-S.Pp = S.Pi - S.K * S.S *  S.K';                
-% J = (I - S.K * S.H);                          % Joseph stabilized version     
-% S.Pp = J * S.Pi * J' + S.K * S.R * S.K';      % Alternative implementation
-S.Pp =  0.5 .* (S.Pp + S.Pp');                  % Force Pi to be symmetric matrix
+kf = kf_update(kf);
 
 end

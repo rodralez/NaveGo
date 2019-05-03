@@ -98,6 +98,8 @@ fprintf('NaveGo: loading Ekinox GNSS data... \n')
 
 load gnss
 
+gnss.eps = 2E-3;
+
 %% Print navigation time
 
 to = (ref.t(end) - ref.t(1));
