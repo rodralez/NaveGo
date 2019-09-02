@@ -1,5 +1,5 @@
-% navego_normality_test: script to evaluate functions related to test normality
-% from a samples vector
+% navego_normality_test: example of how to use NaveGo functions for 
+% test normality of a data vector
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -22,7 +22,7 @@
 % Reference:
 %
 % Version: 001
-% Date:    2019/04/03
+% Date:    2019/09/02
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -34,6 +34,7 @@ matlabrc
 format SHORTE
 
 addpath ./
+addpath ./../
 
 X = randn(10000,1);
 
@@ -47,6 +48,6 @@ figure
 r = plot_cdf (X, pd);
 title('NORMAL CUMULATIVE DISTRIBUTION')
 
-fprintf('RMSE between expected CDF and real CDF is %f \n', r)
+fprintf('navego_normality_test: RMSE between ideal CDF and real CDF is %f \n', r)
 
 

@@ -1,4 +1,4 @@
-function rmse_err = plot_cdf (data, pd)
+function rmse_err = plot_cdf (samples, pd)
 % plot_cdf: plots cumulative distribution function (CDF) from samples 
 % (empirical CDF) and compares to inferred CDF (reference CDF)
 %
@@ -31,22 +31,43 @@ function rmse_err = plot_cdf (data, pd)
 % Reference:
 %
 %
-% Version: 001
-% Date:    2019/04/03
+% Version: 002
+% Date:    2019/05/23
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-%% REFERENCE CDF
+%% PLOT PARAMETERS
 
-N = length(data);
+font_tick = 12;
+font_label = 16;
+line_wd = 3;
+
+bins = 100;
+blue_new = [0 0.4470 0.7410];
+orange_new = [0.8500 0.3250 0.0980];
+
+%% Only plot 1-sigma elements
+
+M = 1;
+
 sig = pd.sigma;
 mu = pd.mu;
-x = linspace(min(data), max(data), N );
+
+edge = abs(M * sig + mu);
+idx = find (samples > -edge, 1, 'first');
+fdx = find (samples <  edge, 1, 'last');
+samples = samples(idx:fdx);
+
+%% REFERENCE CDF
+
+N = length(samples);
+x = linspace(min(samples), max(samples), N );
 ref_cdf = normcdf(x, mu, sig)';
+
 
 %% EMPIRICAL CDF
 
-x_sort = sort(data);
+x_sort = sort(samples);
 emp_cdf = ( (1:N) - 0.5)' ./ N;
 
 % Root mean squared error
@@ -54,19 +75,23 @@ rmse_err = rmse(ref_cdf, emp_cdf);
 
 %% PLOT
 
-blue_new = [0 0.4470 0.7410];
-orange_new = [0.8500 0.3250 0.0980];
-
-p1 = plot(x, ref_cdf, '-.',  'LineWidth', 2, 'Color', orange_new);
+h = plot(x, ref_cdf, '--',  'LineWidth', 2, 'Color', orange_new);
 hold on
 
-p2 = stairs(x_sort, emp_cdf,'-', 'LineWidth', 2, 'Color', blue_new);
-xlabel('Samples');
-ylabel('Cumulative probability (CDF)');
-legend([p1, p2], 'Reference CDF', 'Empirical CDF' )
+s = stairs(x_sort, emp_cdf,'-.', 'LineWidth', 2, 'Color', blue_new);
+
+legend([h, s], 'Ideal CDF', 'Real CDF' )
+
+xl = xlabel('Samples');
+% yl = ylabel('Cumulative probability (CDF)');
 
 grid
 hold off
 
-end
+set(h,'Linewidth', line_wd );
+set(gca, 'YTickMode', 'auto', 'FontSize', font_tick);
 
+set(xl,'FontSize', font_label);
+% set(yl,'FontSize', font_label);
+
+end

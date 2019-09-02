@@ -1,4 +1,4 @@
-function [pd, hk, pk] = normality_test (samples)
+function [pd, ha, pa] = normality_test (samples)
 % normality_test: checks if samples come from a normal distribution.
 %
 % INPUT
@@ -30,34 +30,35 @@ function [pd, hk, pk] = normality_test (samples)
 %
 % Reference:
 %
-% Version: 001
-% Date:    2019/04/03
+% Version: 002
+% Date:    2019/09/02
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
 %% Fit data to a normal disribution
 pd = fitdist(samples, 'normal');
 
-sig = pd.sigma;
-mu = pd.mu;
-
-ref = randn (1000,1) * sig + mu;
+% sig = pd.sigma;
+% mu = pd.mu;
+% ref = randn (1000,1) * sig + mu;
 
 %% Test normality
 
+% Anderson-Darling goodness-of-fit hypothesis test
+[ha, pa, adstat, cv] = adtest (samples,'Distribution', pd);
+
 % Kolmogorov–Smirnov test
-[hk , pk] = kstest2 (samples, ref, 'alpha', 0.001)
+% [hk , pk] = kstest2 (samples, ref, 'alpha', 0.001);
 
 % Other normality tests
-% [hz , pz] = ztest  (data, mu, sig)
-% [ht , pt] = ttest  (data, mu)size(data)
-% [hc , pc] = chi2gof(data)
-% [hj , pj] = jbtest (data)
-% [hk , pk] = kstest (data, 'CDF', pd, 'Alpha',0.5)
-% [ha, pa, adstat, cv] = adtest (data,'Distribution', pd)
+% [hz , pz] = ztest  (samples, mu, sig)
+% [ht , pt] = ttest  (samples, mu)size(data)
+% [hc , pc] = chi2gof(samples)
+% [hj , pj] = jbtest (samples)
+% [hk , pk] = kstest (samples, 'CDF', pd, 'Alpha',0.5)
 
 % if ~( hz || ht || ha || hc || hj || hk )
-if ~( hk )    
+if ~( ha )    
     disp('normality_test: data under analysis comes from a normal distribution.');
     
 else
