@@ -1,5 +1,6 @@
 function [pd, ha, pa] = normality_test (samples)
-% normality_test: checks if samples come from a normal distribution.
+% normality_test: checks if samples come from a normal distribution using
+% the Anderson-Darling goodness-of-fit hypothesis test.
 %
 % INPUT
 %   samples: Nx1 samples to test.
@@ -45,19 +46,16 @@ pd = fitdist(samples, 'normal');
 %% Test normality
 
 % Anderson-Darling goodness-of-fit hypothesis test
-[ha, pa, adstat, cv] = adtest (samples,'Distribution', pd);
-
-% Kolmogorov–Smirnov test
-% [hk , pk] = kstest2 (samples, ref, 'alpha', 0.001);
+[ha, pa, ~, ~] = adtest (samples,'Distribution', pd);
 
 % Other normality tests
+% [hk , pk] = kstest2 (samples, ref);           % Kolmogorov–Smirnov test
 % [hz , pz] = ztest  (samples, mu, sig)
 % [ht , pt] = ttest  (samples, mu)size(data)
 % [hc , pc] = chi2gof(samples)
 % [hj , pj] = jbtest (samples)
 % [hk , pk] = kstest (samples, 'CDF', pd, 'Alpha',0.5)
 
-% if ~( hz || ht || ha || hc || hj || hk )
 if ~( ha )    
     disp('normality_test: data under analysis comes from a normal distribution.');
     
