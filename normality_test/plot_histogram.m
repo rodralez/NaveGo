@@ -59,12 +59,12 @@ idx = find (samples > -edge, 1, 'first');
 fdx = find (samples <  edge, 1, 'last');
 samples = samples(idx:fdx);
 
-%% REFERENCE PDF
+%% IDEAL PDF
 
 N = length(samples);
 
-x = linspace(min(samples), max(samples), N );
-ref_pdf = pdf(pd, x);
+x = linspace( min(samples), max(samples), N );
+ideal_pdf = pdf(pd, x);
 
 %% STATISTIC ANALYSIS
 
@@ -87,17 +87,18 @@ idx2 = idx2( ceil(end/2) );
 histogram(samples, bins, 'Normalization', 'pdf', 'FaceColor', [.9 .9 .9]);
 hold on
 
-% Plot the reference pdf
-h = plot(x, ref_pdf, '-',  'LineWidth', 2);
+% Plot the ideal pdf
+h = plot(x, ideal_pdf, '-',  'LineWidth', 2);
 
-% Plot lines
-y = ref_pdf (idx1);
+% Plot mean
+y = ideal_pdf (idx1);
 l1 = line( [mu, mu] , [0, y], 'Color', blue_new, 'LineWidth', line_wd, 'LineStyle','-.');
 
-y = ref_pdf (idx2);
+% Plot median
+y = ideal_pdf (idx2);
 l2 = line( [med, med] , [0, y], 'Color', orange_new, 'LineWidth', line_wd, 'LineStyle', '--' );
 
-legend([h, l1, l2], 'Reference PDF', 'Mean', 'Median')
+legend([h, l1, l2], 'Ideal PDF', 'Mean', 'Median')
 
 xl = xlabel('Samples');
 % yl = ylabel('Probability density function (PDF)');

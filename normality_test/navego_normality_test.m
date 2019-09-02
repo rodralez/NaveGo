@@ -21,7 +21,7 @@
 %
 % Reference:
 %
-% Version: 001
+% Version: 002
 % Date:    2019/09/02
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
@@ -36,12 +36,46 @@ format SHORTE
 addpath ./
 addpath ./../
 
+%% TEST A GAUSSIAN DISTRIBUTION
+
 X = randn(10000,1);
 
-pd = normality_test (X);
+[pd, ha] = normality_test (X);
+
+if ~( ha )    
+    disp('navego_normality_test: Data under analysis comes from a normal distribution.');
+    
+else
+    disp('navego_normality_test: data under analysis does not come from a normal distribution.');
+    
+end
 
 figure
 plot_histogram (X, pd)
+title ('HISTOGRAM')
+
+figure
+r = plot_cdf (X, pd);
+title('NORMAL CUMULATIVE DISTRIBUTION')
+
+fprintf('navego_normality_test: RMSE between ideal CDF and real CDF is %f \n', r)
+
+%% TEST A UNIFORM DISTRIBUTION
+
+Y = rand(10000,1);
+
+[pd, ha] = normality_test (Y);
+
+if ~( ha )    
+    disp('navego_normality_test: Data under analysis comes from a normal distribution.');
+    
+else
+    disp('navego_normality_test: data under analysis does not come from a normal distribution.');
+    
+end
+
+figure
+plot_histogram (Y, pd)
 title ('HISTOGRAM')
 
 figure

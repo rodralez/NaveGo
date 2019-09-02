@@ -56,12 +56,4 @@ pd = fitdist(samples, 'normal');
 % [hj , pj] = jbtest (samples)
 % [hk , pk] = kstest (samples, 'CDF', pd, 'Alpha',0.5)
 
-if ~( ha )    
-    disp('normality_test: data under analysis comes from a normal distribution.');
-    
-else
-    disp('normality_test: data under analysis does not come from a normal distribution.');
-    
-end
-
 end

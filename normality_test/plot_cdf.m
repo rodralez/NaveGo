@@ -42,7 +42,6 @@ font_tick = 12;
 font_label = 16;
 line_wd = 3;
 
-bins = 100;
 blue_new = [0 0.4470 0.7410];
 orange_new = [0.8500 0.3250 0.0980];
 
@@ -58,27 +57,26 @@ idx = find (samples > -edge, 1, 'first');
 fdx = find (samples <  edge, 1, 'last');
 samples = samples(idx:fdx);
 
-%% REFERENCE CDF
+%% IDEAL CDF
 
 N = length(samples);
 x = linspace(min(samples), max(samples), N );
-ref_cdf = normcdf(x, mu, sig)';
+ideal_cdf = normcdf(x, mu, sig)';
 
-
-%% EMPIRICAL CDF
+%% REAL CDF
 
 x_sort = sort(samples);
-emp_cdf = ( (1:N) - 0.5)' ./ N;
+real_cdf = ( (1:N) - 0.5)' ./ N;
 
 % Root mean squared error
-rmse_err = rmse(ref_cdf, emp_cdf);
+rmse_err = rmse(ideal_cdf, real_cdf);
 
 %% PLOT
 
-h = plot(x, ref_cdf, '--',  'LineWidth', 2, 'Color', orange_new);
+h = plot(x, ideal_cdf, '--',  'LineWidth', 2, 'Color', orange_new);
 hold on
 
-s = stairs(x_sort, emp_cdf,'-.', 'LineWidth', 2, 'Color', blue_new);
+s = stairs(x_sort, real_cdf,'-.', 'LineWidth', 2, 'Color', blue_new);
 
 legend([h, s], 'Ideal CDF', 'Real CDF' )
 
