@@ -8,7 +8,8 @@ function rmse_err = plot_cdf (samples, pd)
 %
 % OUTPUT
 %   rmse_err: RMSE between the two curves.
-%   figure with empirical CDF and reference CDF.
+%   figure with real CDF and ideal CDF.
+%
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %

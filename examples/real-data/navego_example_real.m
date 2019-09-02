@@ -155,8 +155,8 @@ ref.vel     = ref.vel  (idx:fdx, :);
 % INS/GNSS estimates and GNSS data are interpolated according to the
 % reference dataset.
 
-[nav_ref,  ref_n] = navego_interpolation (nav_e, ref);
-[gnss_ref, ref_g] = navego_interpolation (gnss,  ref);
+[nav_r,  ref_n] = navego_interpolation (nav_e, ref);
+[gnss_r, ref_g] = navego_interpolation (gnss,  ref);
 
 %% Print navigation time
 
@@ -166,7 +166,7 @@ fprintf('NaveGo: navigation time under analysis is %.2f minutes or %.2f seconds.
 
 %% Print RMSE from INS/GNSS data
 
-rmse_v = print_rmse (nav_ref, gnss_ref, ref_n, ref_g, 'Ekinox INS/GNSS');
+rmse_v = print_rmse (nav_r, gnss_r, ref_n, ref_g, 'Ekinox INS/GNSS');
 
 %% Save RMSE to CVS file
 
@@ -176,5 +176,5 @@ csvwrite('ekinox.csv', rmse_v);
 
 if (strcmp(PLOT,'ON'))
     
-   navego_plot (ref, gnss, nav_e, gnss_ref, nav_ref, ref_g, ref_n)
+   navego_plot (ref, gnss, nav_e, gnss_r, nav_r, ref_g, ref_n)
 end

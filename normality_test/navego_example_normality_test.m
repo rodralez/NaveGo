@@ -1,4 +1,4 @@
-% navego_normality_test: example of how to use NaveGo functions for 
+% navego_example_normality_test: example of how to use NaveGo functions for 
 % test normality of a data vector
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.

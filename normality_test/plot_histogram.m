@@ -8,7 +8,7 @@ function plot_histogram (samples, pd)
 %   pd: probality distribution object from ProbabilityDistribution class.
 %
 % OUTPUT
-%   figure with histogram, reference PDF, mean and median.
+%   figure with histogram, ideal PDF, mean and median.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %

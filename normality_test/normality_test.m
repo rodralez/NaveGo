@@ -7,9 +7,10 @@ function [pd, ha, pa] = normality_test (samples)
 %
 % OUTPUT
 %    pd: probality distribution object from ProbabilityDistribution class.
-%    hk: = 0 => samples come from a normal distribution.
+%    ha: = 0 => samples come from a normal distribution.
 %        = 1 => samples do not come from a normal distribution.
-%    pk: p-value.
+%    pa: p-value.
+%
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -30,6 +31,7 @@ function [pd, ha, pa] = normality_test (samples)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference:
+%       
 %
 % Version: 002
 % Date:    2019/09/02
@@ -37,10 +39,11 @@ function [pd, ha, pa] = normality_test (samples)
 % URL:     https://github.com/rodralez/navego
 
 %% Fit data to a normal disribution
+
 pd = fitdist(samples, 'normal');
 
 % sig = pd.sigma;
-% mu = pd.mu;
+% mu  = pd.mu;
 % ref = randn (1000,1) * sig + mu;
 
 %% Test normality
