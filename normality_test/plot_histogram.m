@@ -68,7 +68,7 @@ ideal_pdf = pdf(pd, x);
 
 %% STATISTIC ANALYSIS
 
-EPS = 1E-3;
+EPS = 1E-2;
 
 idx1 = find( x >= mu - EPS   & x < mu + EPS );
 idx2 = find( x >= med - EPS & x < med + EPS );
