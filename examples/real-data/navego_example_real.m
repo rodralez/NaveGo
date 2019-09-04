@@ -30,8 +30,8 @@
 %   SBG Systems. SBG Ekinox-D High Accuracy Inertial System Brochure, 
 % Tactical grade MEMS Inertial Systems, v1.0. February 2014. 
 %
-% Version: 002
-% Date:    2018/12/04
+% Version: 003
+% Date:    2019/09/03
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -98,8 +98,6 @@ fprintf('NaveGo: loading Ekinox GNSS data... \n')
 
 load gnss
 
-gnss.eps = 2E-3;
-
 %% Print navigation time
 
 to = (ref.t(end) - ref.t(1));
@@ -124,15 +122,15 @@ else
     load nav_e
 end
 
-%% ANALYZE A CERTAIN PART OF THE INS/GNSS DATASET
+%% ANALYZE PERFORMANCE FOR A CERTAIN PART OF THE INS/GNSS DATASET
 
-% Dataset from time 138000 (TOW) to 139255 (TOW).
+% Dataset from time 138000 (TOW) to 139262 (TOW).
 
 % SHORT TEST
 tmin = 138000; % Entering PoliTo parking.
-% tmax = 138380; % Leaving PoliTo parking.
 
-tmax = 139255; % Before entering tunnel
+% tmax = 138380; % Leaving PoliTo parking.
+tmax = 139262; % Before entering tunnel
 
 % Sincronize REF data to tmin and tmax
 idx  = find(ref.t > tmin, 1, 'first' );
