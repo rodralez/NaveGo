@@ -2,23 +2,15 @@
 <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
 <Document>
 	<name>Navego Example Real Trajectory</name>
-	<open>1</open>
-	<Style id="hl">
+	<Style id="sn_ylw-pushpin">
+		<LineStyle>
+			<width>2</width>
+		</LineStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin">
 		<IconStyle>
 			<scale>1.2</scale>
 		</IconStyle>
-		<LineStyle>
-			<color>ff00aaff</color>
-			<width>2</width>
-		</LineStyle>
-	</Style>
-	<Style id="default">
-		<LineStyle>
-			<color>ff00aaff</color>
-			<width>2</width>
-		</LineStyle>
-	</Style>
-	<Style id="sn_ylw-pushpin">
 		<LineStyle>
 			<width>2</width>
 		</LineStyle>
@@ -33,6 +25,21 @@
 			<styleUrl>#hl</styleUrl>
 		</Pair>
 	</StyleMap>
+	<Style id="default">
+		<LineStyle>
+			<color>ffff5500</color>
+			<width>2</width>
+		</LineStyle>
+	</Style>
+	<Style id="hl">
+		<IconStyle>
+			<scale>1.2</scale>
+		</IconStyle>
+		<LineStyle>
+			<color>ffff5500</color>
+			<width>2</width>
+		</LineStyle>
+	</Style>
 	<StyleMap id="msn_ylw-pushpin">
 		<Pair>
 			<key>normal</key>
@@ -43,14 +50,6 @@
 			<styleUrl>#sh_ylw-pushpin</styleUrl>
 		</Pair>
 	</StyleMap>
-	<Style id="sh_ylw-pushpin">
-		<IconStyle>
-			<scale>1.2</scale>
-		</IconStyle>
-		<LineStyle>
-			<width>2</width>
-		</LineStyle>
-	</Style>
 	<Folder id="ID2">
 		<name>Permanent Station</name>
 		<Placemark>
