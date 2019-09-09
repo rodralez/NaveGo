@@ -57,7 +57,7 @@ fprintf('\nNaveGo: starting real INS/GNSS integration... \n')
 % Comment any of the following parameters in order to NOT execute a 
 % particular portion of code
 
-INS_GNSS = 'ON';
+% INS_GNSS = 'ON';
 PLOT     = 'ON';
 
 if (~exist('INS_GNSS','var')), INS_GNSS = 'OFF'; end
