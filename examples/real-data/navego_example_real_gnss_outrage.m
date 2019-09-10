@@ -106,37 +106,37 @@ load ekinox_gnss
 
 % Force two GNSS outrage paths
 
-% GNSS-DENIED 1
-tdenied1_min = 138906;
-tdenied1_max = 138906 + 32;
+% GNSS OUTRAGE TIME INTERVAL 1
+tor1_min = 138906;
+tor1_max = 138906 + 32;
 
-% GNSS-DENIED 2
-tdenied2_min = 139170;
-tdenied2_max = 139170 + 32;
+% GNSS OUTRAGE TIME INTERVAL 2
+tor2_min = 139170;
+tor2_max = 139170 + 32;
 
 if (strcmp(GNSS_OUTRAGE, 'ON'))
     
     fprintf('NaveGo: two GNSS outrages are forced... \n')
     
-    % GNSS OUTRAGE
-    idx  = find(ekinox_gnss.t > tdenied1_min, 1, 'first' );
-    fdx  = find(ekinox_gnss.t < tdenied1_max, 1, 'last' );
+    % GNSS OUTRAGE 1
+    idx  = find(ekinox_gnss.t > tor1_min, 1, 'first' );
+    fdx  = find(ekinox_gnss.t < tor1_max, 1, 'last' );
     
     ekinox_gnss.t(idx:fdx) = [];
     ekinox_gnss.lat(idx:fdx) = [];
     ekinox_gnss.lon(idx:fdx) = [];
     ekinox_gnss.h(idx:fdx)   = [];
-    ekinox_gnss.vel(idx:fdx, :)   = [];
+    ekinox_gnss.vel(idx:fdx, :) = [];
     
-    % GNSS OUTRAGE
-    idx  = find(ekinox_gnss.t > tdenied2_min, 1, 'first' );
-    fdx  = find(ekinox_gnss.t < tdenied2_max, 1, 'last' );
+    % GNSS OUTRAGE 2
+    idx  = find(ekinox_gnss.t > tor2_min, 1, 'first' );
+    fdx  = find(ekinox_gnss.t < tor2_max, 1, 'last' );
     
     ekinox_gnss.t(idx:fdx) = [];
     ekinox_gnss.lat(idx:fdx) = [];
     ekinox_gnss.lon(idx:fdx) = [];
     ekinox_gnss.h(idx:fdx)   = [];
-    ekinox_gnss.vel(idx:fdx, :)   = [];
+    ekinox_gnss.vel(idx:fdx, :) = [];
 end
 
 %% Print navigation time
@@ -170,12 +170,12 @@ tmin = 138000; % Entering PoliTo parking.
 tmax = 139262; % Before entering tunnel
 
 % OUTRAGE 1
-% tmin = tdenied1_min;
-% tmax = tdenied1_max; 
+% tmin = tor1_min;
+% tmax = tor1_max; 
 
 % OUTRAGE 2
-% tmin = tdenied2_min;
-% tmax = tdenied2_max; 
+% tmin = tor2_min;
+% tmax = tor2_max; 
 
 % Sincronize REF data to tmin and tmax
 idx  = find(ref.t > tmin, 1, 'first' );
