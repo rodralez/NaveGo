@@ -4,7 +4,7 @@
 
 NaveGo: an open-source MATLAB/GNU-Octave toolbox for processing integrated navigation systems and performing inertial sensors profiling analysis.
 
-NaveGo is an open-source MATLAB/GNU Octave toolbox for processing integrated navigation systems and simulating inertial sensors and a GNSS receiver. It also performs inertial sensors analysis using the Allan variance. It is freely available online. It is developed under MATLAB/GNU-Octave due to this programming language has become a *de facto* standard for simulation and mathematical computing. NaveGo has been verified by processing real-world data from a real trajectory and contrasting results against a commercial, closed-source software package. Difference between both solutions have shown to be negligible. For more information read the following [paper](https://www.scitepress.org/PublicationsDetail.aspx?ID=Ds7NC2qnRSw%3d&t=1).
+NaveGo is an open-source MATLAB/GNU Octave toolbox for processing integrated navigation systems and simulating inertial sensors and a GNSS receiver. It also performs inertial sensors analysis using the Allan variance. It is freely available online. It is developed under MATLAB/GNU-Octave due to this programming language has become a *de facto* standard for simulation and mathematical computing. 
 
 NaveGo's motto is "to bring integrated navigation to the masses".
 
@@ -36,23 +36,11 @@ The underlying mathematical model of NaveGo is based on two articles:
 Be aware that the original Kalman filter state vector has been reduced from 21 to 15 states.
 
 
-##  Publications related to the development of NaveGo
+##  NaveGo Model Validation
 
-* R. Gonzalez and P. Dabove. Performance Assessment of an Ultra Low-Cost Inertial Measurement Unit for Ground Vehicle Navigation. Sensors 2019, 19(18), 3865; https://doi.org/10.3390/s19183865. September 2019. [Download](https://www.mdpi.com/1424-8220/19/18/3865/pdf).
-
-* R. Gonzalez, C.A. Catania, P. Dabove, J.C. Taffernaberry, and M. Piras. Model validation of an open-source framework for post-processing INS/GNSS systems. III International Conference on Geographical Information Systems Theory, Applications and Management (GISTAM 2017). Porto, Portugal. April 2017. [Download](https://www.scitepress.org/PublicationsDetail.aspx?ID=Ds7NC2qnRSw%3d&t=1).
-
-## Please, cite our work!
-
-If you are using NaveGo in your research, we gently ask you to add the following two cites to your future papers:
+NaveGo has been validated by processing real-world data from a real trajectory and contrasting results against Inertial Explorer, a commercial, closed-source software package. Difference between both solutions have shown to be negligible. For more information read the following paper,
 
 * R. Gonzalez, C.A. Catania, P. Dabove, J.C. Taffernaberry, and M. Piras. Model validation of an open-source framework for post-processing INS/GNSS systems. III International Conference on Geographical Information Systems Theory, Applications and Management (GISTAM 2017). Porto, Portugal. April 2017. [Download](https://www.scitepress.org/PublicationsDetail.aspx?ID=Ds7NC2qnRSw%3d&t=1).
-
-* R. Gonzalez, J.I. Giribet, and H.D. Patiño. NaveGo: a simulation framework for low-cost integrated navigation systems, Journal of Control Engineering and Applied Informatics, vol. 17, issue 2, pp. 110-120, 2015. [Download](http://ceai.srait.ro/index.php?journal=ceai&page=article&op=view&path%5B%5D=2478).
-
-An URL to NaveGo should be provided as the following cite:
-
-R. Gonzalez, C. Catania, and P. Dabove. NaveGo: An Open-Source MATLAB/GNU-Octave Toolbox for Processing Integrated Navigation Systems and Performing Inertial Sensors Profiling Analysis. Version 1.2. URL: https://github.com/rodralez/NaveGo. DOI: 10.5281/zenodo.2536950. January 2019.
 
 
 ## Roadmap
@@ -68,6 +56,19 @@ Future features of NaveGo will be:
 * Unscented Kalman filter.
 
 * KML file generator.
+
+
+## Please, cite our work!
+
+If you are using NaveGo in your research, we gently ask you to add the following two cites to your future papers:
+
+* R. Gonzalez, C.A. Catania, P. Dabove, J.C. Taffernaberry, and M. Piras. Model validation of an open-source framework for post-processing INS/GNSS systems. III International Conference on Geographical Information Systems Theory, Applications and Management (GISTAM 2017). Porto, Portugal. April 2017. [Download](https://www.scitepress.org/PublicationsDetail.aspx?ID=Ds7NC2qnRSw%3d&t=1).
+
+* R. Gonzalez, J.I. Giribet, and H.D. Patiño. NaveGo: a simulation framework for low-cost integrated navigation systems, Journal of Control Engineering and Applied Informatics, vol. 17, issue 2, pp. 110-120, 2015. [Download](http://ceai.srait.ro/index.php?journal=ceai&page=article&op=view&path%5B%5D=2478).
+
+An URL to NaveGo should be provided as the following cite:
+
+R. Gonzalez, C. Catania, and P. Dabove. NaveGo: An Open-Source MATLAB/GNU-Octave Toolbox for Processing Integrated Navigation Systems and Performing Inertial Sensors Profiling Analysis. Version 1.2. URL: https://github.com/rodralez/NaveGo. DOI: 10.5281/zenodo.2536950. January 2019.
 
 
 ## Contributions
@@ -115,11 +116,16 @@ The `example` folder contains several types of examples.
 
 ## Allan variance example
 
-Just execute the file `navego_example_allan.m`. Firstly, it process 2-hours of static measurements from an Sensonor STIM300 IMU. Then, it process about 5 hours of synthetic inertial data.
+Just execute the file `navego_example_allan.m`. Firstly, Allan variance is applied to 2-hours of real static measurements from an Sensonor STIM300 IMU. Then, about 5 hours of synthetic inertial data are created and Allan variance is run on these data.
 
 ## INS/GNSS integration example using real data
 
 Two examples of how to use NaveGo to post-process real data are provided as `navego_example_real_xxxx.m`, one for Ekinox-D IMU and another for MPU-6000 IMU. Both IMU data are integrated with Ekinox-D GNSS. These datasets were generated by driving a vehicle through the streets of Turin city (Italy).
+
+Provided real examples were used to develop the following article,
+
+* R. Gonzalez and P. Dabove. Performance Assessment of an Ultra Low-Cost Inertial Measurement Unit for Ground Vehicle Navigation. Sensors 2019, 19(18), 3865; https://doi.org/10.3390/s19183865. September 2019. [Download](https://www.mdpi.com/1424-8220/19/18/3865/pdf).
+
 
 ## INS/GNSS integration example using synthetic (simulated) data
 
