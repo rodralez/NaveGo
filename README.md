@@ -51,15 +51,17 @@ If you are interested in joining to NaveGo, please feel free to contact Dr. Rodr
 
 ## Publications
 
-The underlying mathematical model of NaveGo is based on two articles whose reading is recommended: 
+The underlying mathematical model of NaveGo is based on two articles: 
 
 * R. Gonzalez, J.I. Giribet, and H.D. Patiño. NaveGo: a simulation framework for low-cost integrated navigation systems, Journal of Control Engineering and Applied Informatics, vol. 17, issue 2, pp. 110-120, 2015. [Download](http://ceai.srait.ro/index.php?journal=ceai&page=article&op=view&path%5B%5D=2478).
 
 * R. Gonzalez, J.I. Giribet, and H.D. Patiño. An approach to benchmarking of loosely coupled low-cost navigation systems. Mathematical and Computer Modelling of Dynamical Systems, vol. 21, issue 3, pp. 272-287, 2015. [Download](http://www.tandfonline.com/doi/abs/10.1080/13873954.2014.952642).
 
-Other publications related to the development of NaveGo:
+The original Kalman filter state vector has been reduced from 21 to 15 states.
 
-* R. Gonzalez, E.M. Martinez, and P. Dabove. Assessment of Discrete Stochastic Models of MEMS Inertial Sensors by Using the Allan Variance. In the III International Conference on Sensors and Electronics Instrumentation Advances (SEIA' 2017), 20-22 September 2017, Moscow, Russia.
+Other publications related to the development of NaveGo are:
+
+* R. Gonzalez and P. Dabove. Performance Assessment of an Ultra Low-Cost Inertial Measurement Unit for Ground Vehicle Navigation. Sensors 2019, 19(18), 3865; https://doi.org/10.3390/s19183865. September 2019. [Download](https://www.mdpi.com/1424-8220/19/18/3865/pdf).
 
 * R. Gonzalez, C.A. Catania, P. Dabove, J.C. Taffernaberry, and M. Piras. Model validation of an open-source framework for post-processing INS/GNSS systems. III International Conference on Geographical Information Systems Theory, Applications and Management (GISTAM 2017). Porto, Portugal. April 2017.
 
@@ -81,17 +83,21 @@ Future features of NaveGo will be:
 
 ## Who is using NaveGo?
 
-The following authors have expressed the use of NaveGo within their research framework:
+The following authors have expressed the use of NaveGo within their research frameworks:
 
-* R. Rabiee, X. Zhong, Y. Yan and W. P. Tay, LaIF: A Lane-Level Self-Positioning Scheme for Vehicles in GNSS-Denied Environments. IEEE Transactions on Intelligent Transportation Systems. doi: 10.1109/TITS.2018.2870048. [Link](http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8489926&isnumber=4358928).
+1. R. Rabiee, X. Zhong, Y. Yan and W.P. Tay, "LaIF: A Lane-Level Self-Positioning Scheme for Vehicles in GNSS-Denied Environments," in IEEE Transactions on Intelligent Transportation Systems, vol. 20, no. 8, pp. 2944-2961, August 2019. doi: 10.1109/TITS.2018.2870048. [Link](https://ieeexplore.ieee.org/document/8489926). NaveGo is used as a benchmark to compare to a proposed fusion algorithm based on a particle filter to achieve lane-level tracking accuracy under a GNSS-denied environment.
 
-* M. Pachwicewicz and J. Weremczuk, Accuracy Estimation of the Sounding Rocket Navigation System. 2018 XV International Scientific Conference on Optoelectronic and Electronic Sensors (COE), Warsaw, 2018, pp. 1-4. doi: 10.1109/COE.2018.8435180. [Link](http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8435180&isnumber=8435144).
+2. O. Tokluoğlu and E. Çavuş, "Study of Utilizing Multiple IMUs for Inertial Navigation Systems Without GPS Aid," 2019 1st Global Power, Energy and Communication Conference (GPECOM), Nevsehir, Turkey, June 2019, pp. 86-89. doi: 10.1109/GPECOM.2019.8778612.  [Link](https://ieeexplore.ieee.org/abstract/document/8778612). NaveGo is used to test multiple IMUs in an INS/GNSS system.
 
-* Ren, X., Sun, M., Jiang, C., Liu, L., & Huang, W. (2018). An Augmented Reality Geo-Registration Method for Ground Target Localization from a Low-Cost UAV Platform. Sensors, 2018, vol. 18, no 11, p. 3739. [Link](https://www.mdpi.com/1424-8220/18/11/3739/htm).
+3. Bac Nghia Vu, Khanh Nhu Nguyen and Mung Huy Vu, "Practical Considerations of IMU Data Generator," 2019 3rd International Conference on Recent Advances in Signal Processing, Telecommunications & Computing (SigTelCom), Hanoi, Vietnam, March 2019, pp. 63-68. doi: 10.1109/SIGTELCOM.2019.8696196. [Link](https://ieeexplore.ieee.org/abstract/document/8696196/). NaveGo method to simulate gyros data is compared to a proposed method for the same goal.
 
-* D. M G and A. A, "Analysis of INS Parameters and Error Reduction by Integrating GPS and INS Signals," 2018 International Conference on Design Innovations for 3Cs Compute Communicate Control (ICDI3C), Bangalore, 2018, pp. 18-23. doi: 10.1109/ICDI3C.2018.00013.   [Link](http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8436621&isnumber=8436608).
+4. Ren, X., Sun, M., Jiang, C., Liu, L., & Huang, W. (2018). An Augmented Reality Geo-Registration Method for Ground Target Localization from a Low-Cost UAV Platform. Sensors, October 2018, vol. 18, no 11, p. 3739. [Link](https://www.mdpi.com/1424-8220/18/11/3739/htm). NaveGo is used to process RTK GPS data in the context of an INS/GNSS system for geo-registration and target localization. 
 
-* Walendziuk, Wojciech; Oldziej, Daniel; Szatyłowicz, Ewa; Slowik, Maciej. Unmanned aerial vehicle as a measurement tool in engineering and environmental protection. Conference: Photonics Applications in Astronomy, Communications, Industry, and High-Energy Physics Experiments 2018. DOI: 10.1117/12.2501378. 
+5. M. Pachwicewicz and J. Weremczuk, "Accuracy Estimation of the Sounding Rocket Navigation System," 2018 XV International Scientific Conference on Optoelectronic and Electronic Sensors (COE), Warsaw, June 2018, pp. 1-4. doi: 10.1109/COE.2018.8435180. [Link](https://ieeexplore.ieee.org/abstract/document/8435180). NaveGo is used as a simulation framework for three types of the IMUs.
+
+6. M.G. Deepika and A. Arun, "Analysis of INS Parameters and Error Reduction by Integrating GPS and INS Signals," 2018 International Conference on Design Innovations for 3Cs Compute Communicate Control (ICDI3C), Bangalore, April 2018, pp. 18-23. doi: 10.1109/ICDI3C.2018.00013. [Link](https://ieeexplore.ieee.org/abstract/document/8436621). This work directly uses the sensors simulation example provided by NaveGo. It is not clear what is the contribution of this paper.
+
+7. Walendziuk, Wojciech; Oldziej, Daniel; Szatyłowicz, Ewa; Slowik, Maciej. Unmanned aerial vehicle as a measurement tool in engineering and environmental protection. Conference: Photonics Applications in Astronomy, Communications, Industry, and High-Energy Physics Experiments 2018. DOI: 10.1117/12.2501378. 
 
 ## Acknowledgments
 
@@ -116,7 +122,7 @@ Just execute the file `navego_example_allan.m`. Firstly, it process 2-hours of s
 
 ## INS/GNSS integration example using real data
 
-An example of how to use NaveGo to post-process real data is provided by `navego_example_real.m`. This script integrates measurements coming from an Ekinox-D IMU and Ekinox-D GNSS. This dataset was generated by driving a vehicle through the streets of Turin city (Italy).
+Two examples of how to use NaveGo to post-process real data are provided as `navego_example_real_xxxx.m`, one for Ekinox-D IMU and another for MPU-6000 IMU. Both IMU data are integrated with Ekinox-D GNSS. These datasets were generated by driving a vehicle through the streets of Turin city (Italy).
 
 ## INS/GNSS integration example using synthetic (simulated) data
 
