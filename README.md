@@ -63,7 +63,8 @@ Other publications related to the development of NaveGo are:
 
 * R. Gonzalez and P. Dabove. Performance Assessment of an Ultra Low-Cost Inertial Measurement Unit for Ground Vehicle Navigation. Sensors 2019, 19(18), 3865; https://doi.org/10.3390/s19183865. September 2019. [Download](https://www.mdpi.com/1424-8220/19/18/3865/pdf).
 
-* R. Gonzalez, C.A. Catania, P. Dabove, J.C. Taffernaberry, and M. Piras. Model validation of an open-source framework for post-processing INS/GNSS systems. III International Conference on Geographical Information Systems Theory, Applications and Management (GISTAM 2017). Porto, Portugal. April 2017.
+* R. Gonzalez, C.A. Catania, P. Dabove, J.C. Taffernaberry, and M. Piras. Model validation of an open-source framework for post-processing INS/GNSS systems. III International Conference on Geographical Information Systems Theory, Applications and Management (GISTAM 2017). Porto, Portugal. April 2017. [Download](https://www.scitepress.org/PublicationsDetail.aspx?ID=Ds7NC2qnRSw%3d&t=1).
+
 
 
 ## Roadmap
