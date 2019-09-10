@@ -81,9 +81,9 @@ Future features of NaveGo will be:
 * KML file generator.
 
 
-## Who is using NaveGo?
+## Researchers who are using NaveGo
 
-The following authors have expressed the use of NaveGo within their research frameworks:
+The following authors have expressed the use of NaveGo within their research:
 
 1. R. Rabiee, X. Zhong, Y. Yan and W.P. Tay, "LaIF: A Lane-Level Self-Positioning Scheme for Vehicles in GNSS-Denied Environments," in IEEE Transactions on Intelligent Transportation Systems, vol. 20, no. 8, pp. 2944-2961, August 2019. doi: 10.1109/TITS.2018.2870048. [Link](https://ieeexplore.ieee.org/document/8489926). NaveGo is used as a benchmark to compare to a proposed fusion algorithm based on a particle filter to achieve lane-level tracking accuracy under a GNSS-denied environment.
 
