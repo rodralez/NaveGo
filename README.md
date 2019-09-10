@@ -99,6 +99,8 @@ The following authors have expressed the use of NaveGo within their research fra
 
 7. Walendziuk, Wojciech; Oldziej, Daniel; Szatyłowicz, Ewa; Slowik, Maciej. Unmanned aerial vehicle as a measurement tool in engineering and environmental protection. Conference: Photonics Applications in Astronomy, Communications, Industry, and High-Energy Physics Experiments 2018. DOI: 10.1117/12.2501378. 
 
+8. P.K. Diamantidis, ‘Attitude Navigation using a Sigma-Point Kalman Filter in an Error State Formulation’, Dissertation. Department of Space and Plasma Physics, School of Electrical Engineering, KTH Royal Institute of Technology, Stockholm, Sweden. 2017. [Link](http://www.diva-portal.org/smash/get/diva2:1141205/FULLTEXT01.pdf). A 30 min static measurement of the gyroscope was made and its Allan Variance plot is presented using the NaveGo algorithm. 
+
 ## Acknowledgments
 
 We would like to thank to many people that have contribute to make NaveGo a better tool:
