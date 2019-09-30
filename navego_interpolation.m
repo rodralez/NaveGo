@@ -137,7 +137,8 @@ else
     fprintf('navego_interpolation: %s method to interpolate GNSS-only solution\n', method)
     
     nav_i.t   = ref.t;
-    nav_i.lat = interp1(nav.t, nav.lat, ref.t, method);
+    nav_i.lat = interp1(nav.t, nav.lat, ref.t, method);        nav_i.vel = interp1(nav.t, nav.vel,   ref.t, method);
+
     nav_i.lon = interp1(nav.t, nav.lon, ref.t, method);
     nav_i.h   = interp1(nav.t, nav.h,   ref.t, method);
     
