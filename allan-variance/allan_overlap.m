@@ -93,11 +93,14 @@ function [retval, s, errorb, tau] = allan_overlap(data,tau,name,verbose)
 %
 % I welcome your comments and feedback!
 %
+% *************************************************************************
 % This file has been modified for NaveGo toolbox.
-% Version: 001
-% Date:    2018/03/26
+% *************************************************************************
+% Version: 002
+% Date:    2019/09/30
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
+% *************************************************************************
 %
 % MH Mar2014
 % v2.24 fix bug related to generating freq data from phase with timestamps
@@ -214,12 +217,12 @@ if verbose >= 1 && any(abs(medianfreq) > 5*MAD)
   
     % ELIMINATE OUTLIERS FROM DATA
     fit_line = polyval(s.linear, (1/data.rate:1/data.rate:length(data.freq)/data.rate)') - s.median;    
-    idl = ( medianfreq < (3*MAD + fit_line) );
+    idl = ( medianfreq < (5*MAD + fit_line) );
     data.freq = data.freq(idl);
     medianfreq = medianfreq(idl);
  
     fit_line = polyval(s.linear, (1/data.rate:1/data.rate:length(data.freq)/data.rate)') - s.median;
-    idl = ( medianfreq > (-3*MAD + fit_line) );
+    idl = ( medianfreq > (-5*MAD + fit_line) );
     data.freq = data.freq(idl);
     medianfreq = medianfreq(idl);
     
