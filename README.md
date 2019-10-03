@@ -339,7 +339,7 @@ gnss.eps = 1E-3;
 % Epsilon:          |-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|  
 % GNSS time vector:  --|------|------|------|------|------|------|
 %                      G1     G2     G4     G5     G6     G7     G8
-% KF execution:               ^		 ^      ^             ^      ^ 					 	
+% KF execution:               ^      ^      ^             ^      ^ 					 	
 %
 % It can be seen that the KF is not execute at G1 and G6 because of a wrong choice of epsilon.
 
