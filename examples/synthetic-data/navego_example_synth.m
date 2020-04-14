@@ -42,8 +42,8 @@
 % Revision D. October 2011. 
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 %
-% Version: 013
-% Date:    2019/01/14
+% Version: 014
+% Date:    2020/03/04
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -80,7 +80,7 @@ PLOT      = 'ON';   % Plot results.
 
 % If a particular parameter is commented above, it is set by default to 'OFF'.
 
-if (~exist('GNSS_DATA','var')),  GNSS_DATA  = 'OFF'; end
+if (~exist('GNSS_DATA','var')), GNSS_DATA  = 'OFF'; end
 if (~exist('IMU1_DATA','var')), IMU1_DATA = 'OFF'; end
 if (~exist('IMU2_DATA','var')), IMU2_DATA = 'OFF'; end
 if (~exist('IMU1_INS','var')),  IMU1_INS  = 'OFF'; end
@@ -218,6 +218,22 @@ gnss.zupt_th = 0.5;   % ZUPT threshold (m/s).
 gnss.zupt_win = 4;    % ZUPT time window (seconds).
 
 gnss.eps = 1E-3;
+
+% The following figure tries to show when the Kalman filter (KF) will be run.
+% If a new element from GNSS time vector is available at the current INS time inside the window time
+% set by epsilon, the Kalman filter (KF) will be executed.
+%
+%                    I1  I2  I3  I4  I5  I6  I7  I8  I9  I10 I11 I12 I3 
+% INS time vector:   |---|---|---|---|---|---|---|---|---|---|---|---|
+% Epsilon:          |-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|  
+% GNSS time vector:  --|------|------|------|------|------|------|
+%                      G1     G2     G4     G5     G6     G7     G8
+% KF execution:               ^      ^      ^             ^      ^ 					 	
+%
+% It can be seen that the KF is not execute at G1 and G6 because of a wrong choice of epsilon.
+%
+% A longer epsilon will tend to not recognize a new GNSS input. On the other hand, a shorter 
+% epsilon will tend to execute the KF using the same GNSS input.
 
 %% GNSS SYNTHETIC DATA
 
