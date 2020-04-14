@@ -9,7 +9,7 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %        fb: Ix3 accelerations vector in body frame XYZ (m/s^2).
 %        wb: Ix3 turn rates vector in body frame XYZ (radians/s).
 %       arw: 1x3 angle random walks (rad/s/root-Hz).
-%       vrw: 1x3 angle velocity walks (m/s^2/root-Hz).
+%       vrw: 1x3 velocity random walks (m/s^2/root-Hz).
 %      gstd: 1x3 gyros standard deviations (radians/s).
 %      astd: 1x3 accrs standard deviations (m/s^2).
 %    gb_sta: 1x3 gyros static biases or turn-on biases (radians/s).
@@ -287,6 +287,8 @@ for i = 2:LI
     gdx =  find (gnss.t >= (imu.t(i) - gnss.eps) & gnss.t < (imu.t(i) + gnss.eps));
     
     if ( ~isempty(gdx) && gdx > 1)
+        
+%         gdx 
         
         %% INNOVATIONS
         

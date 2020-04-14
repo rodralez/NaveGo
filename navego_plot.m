@@ -47,6 +47,7 @@ figure;
 plot3(ref_n.lon.*R2D, ref_n.lat.*R2D, ref_n.h, '--k')
 hold on
 plot3(nav_r.lon.*R2D, nav_r.lat.*R2D, nav_r.h, '-.b')
+plot3(nav_r.lon.*R2D, nav_r.lat.*R2D, nav_r.h, 'og')
 plot3(ref_n.lon(1).*R2D, ref_n.lat(1).*R2D, ref_n.h(1), 'or', 'MarkerSize', 10, 'LineWidth', 2)
 axis tight
 title('TRAJECTORY')
