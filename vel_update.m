@@ -6,7 +6,7 @@ function vel_n = vel_update(fn, vel, omega_ie_n, omega_en_n, g, dt)
 %   vel, 3x1 previous (old) velocity vector in the nav-frame. 
 %   omega_ie_n, 3x1 Earth rate in the nav-frame.
 %   omega_en_n, 3x1 transport rate in the nav-frame.
-%   g, 1x1 gravity in the nav-frame.
+%   g, 3x1 gravity in the nav-frame.
 %   dt, 1x1 integration time step.
 %
 % OUTPUT
