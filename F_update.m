@@ -35,17 +35,17 @@ function  [F, G] = F_update(upd, DCMbn, imu)
 % References:
 %			Titterton, D.H. and Weston, J.L. (2004). Strapdown
 % Inertial Navigation Technology (2nd Ed.). Institution
-% of Engineering and Technology, USA. Eq. 12.18, p. 345.
+% of Engineering and Technology, USA. Eq. 12.18, p. 345, matrix F.
 %
-% 			Farrell, J. (2008). Aided Navigation: GPS With High Rate
-% Sensors. McGraw-Hill Professional, USA. Eq. 11.108, p. 407.
+% 		Farrell, J. (2008). Aided Navigation: GPS With High Rate
+% Sensors. McGraw-Hill Professional, USA. Eq. 11.108, p. 407, matrix G.
 %
 %			R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
 % simulation framework for low-cost integrated navigation systems,
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015. Eq. 26.
 %
-%  			R. Gonzalez, J. Giribet, and H. Patiño. An approach to
+%  		R. Gonzalez, J. Giribet, and H. Patiño. An approach to
 % benchmarking of loosely coupled low-cost navigation systems,
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 22.
