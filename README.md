@@ -127,9 +127,13 @@ These two real examples are part of the data collection for the following articl
 
 ## INS/GNSS integration example using synthetic (simulated) data
 
+The NaveGo example with synthetic data is based on the output of a trajectory generator. This program provided both truth accelerations and angular velocities for a previous defined trajectory. Then, inertial sensor's measurements were simulated according to a specific real IMU error profile.
+
+NaveGo does not provide a trajectory generator.
+
 The file `navego_example_synth.m` tries to expose how NaveGo can be used step by step. It compares the performances of two simulated INS/GNSS systems, one using an ADIS16405 IMU and another using an ADIS16488 IMU, both fused using a simulated GNSS sensor.
 
-Next, a description of this file is provided.
+Next, a description of `navego_example_synth.m` file is provided.
 
 ### Reset section
 
