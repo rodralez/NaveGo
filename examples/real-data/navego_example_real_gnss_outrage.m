@@ -92,11 +92,21 @@ fprintf('NaveGo: loading reference data... \n')
 
 load ref
 
-%% EKINOX IMU
+%% EKINOX IMU 
 
-fprintf('NaveGo: loading Ekinox IMU data... \n')
+% fprintf('NaveGo: loading Ekinox IMU data... \n')
+% 
+% load ekinox_imu
+% 
+% imu = ekinox_imu;
+
+%% MPU-6000 IMU
+
+fprintf('NaveGo: loading MPU-6000 IMU data... \n')
 
 load mpu6000_imu
+
+imu = mpu6000_imu;
 
 %% EKINOX GNSS
 
@@ -104,39 +114,43 @@ fprintf('NaveGo: loading Ekinox GNSS data... \n')
 
 load ekinox_gnss
 
+gnss = ekinox_gnss;
+
+gnss.eps = mean(diff(imu.t)) / 2; %  A rule of thumb for choosing eps.
+
 % Force two GNSS outrage paths
 
 % GNSS OUTRAGE TIME INTERVAL 1
-tor1_min = 138906;
-tor1_max = 138906 + 32;
+tor1_min = 138906;          % (seconds)
+tor1_max = 138906 + 32;     % (seconds)
 
 % GNSS OUTRAGE TIME INTERVAL 2
-tor2_min = 139170;
-tor2_max = 139170 + 32;
+tor2_min = 139170;          % (seconds)
+tor2_max = 139170 + 32;     % (seconds)
 
 if (strcmp(GNSS_OUTRAGE, 'ON'))
     
     fprintf('NaveGo: two GNSS outrages are forced... \n')
     
     % GNSS OUTRAGE 1
-    idx  = find(ekinox_gnss.t > tor1_min, 1, 'first' );
-    fdx  = find(ekinox_gnss.t < tor1_max, 1, 'last' );
+    idx  = find(gnss.t > tor1_min, 1, 'first' );
+    fdx  = find(gnss.t < tor1_max, 1, 'last' );
     
-    ekinox_gnss.t(idx:fdx) = [];
-    ekinox_gnss.lat(idx:fdx) = [];
-    ekinox_gnss.lon(idx:fdx) = [];
-    ekinox_gnss.h(idx:fdx)   = [];
-    ekinox_gnss.vel(idx:fdx, :) = [];
+    gnss.t(idx:fdx) = [];
+    gnss.lat(idx:fdx) = [];
+    gnss.lon(idx:fdx) = [];
+    gnss.h(idx:fdx)   = [];
+    gnss.vel(idx:fdx, :) = [];
     
     % GNSS OUTRAGE 2
-    idx  = find(ekinox_gnss.t > tor2_min, 1, 'first' );
-    fdx  = find(ekinox_gnss.t < tor2_max, 1, 'last' );
+    idx  = find(gnss.t > tor2_min, 1, 'first' );
+    fdx  = find(gnss.t < tor2_max, 1, 'last' );
     
-    ekinox_gnss.t(idx:fdx) = [];
-    ekinox_gnss.lat(idx:fdx) = [];
-    ekinox_gnss.lon(idx:fdx) = [];
-    ekinox_gnss.h(idx:fdx)   = [];
-    ekinox_gnss.vel(idx:fdx, :) = [];
+    gnss.t(idx:fdx) = [];
+    gnss.lat(idx:fdx) = [];
+    gnss.lon(idx:fdx) = [];
+    gnss.h(idx:fdx)   = [];
+    gnss.vel(idx:fdx, :) = [];
 end
 
 %% Print navigation time
@@ -153,29 +167,21 @@ if strcmp(INS_GNSS, 'ON')
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    nav_ekinox_or = ins_gnss(mpu6000_imu, ekinox_gnss, 'quaternion'); %
+    nav_or = ins_gnss(mpu6000_imu, gnss, 'quaternion'); %
     % ---------------------------------------------------------------------
     
-    save nav_ekinox_or.mat nav_ekinox_or
+    save nav_or.mat nav_or
     
 else
     
-    load nav_ekinox_or
+    load nav_or
 end
 
 %% ANALYZE A CERTAIN PART OF THE INS/GNSS DATASET
 
-% COMPLETE TRAJECTORY
-tmin = 138000; % Entering PoliTo parking.
-tmax = 139262; % Before entering tunnel
-
-% OUTRAGE 1
-% tmin = tor1_min;
-% tmax = tor1_max; 
-
-% OUTRAGE 2
-% tmin = tor2_min;
-% tmax = tor2_max; 
+% COMPLETE TEST
+tmin = 138000;      % Entering PoliTo parking (seconds)
+tmax = 139255;      % Entering tunnel (seconds)
 
 % Sincronize REF data to tmin and tmax
 idx  = find(ref.t > tmin, 1, 'first' );
@@ -198,8 +204,8 @@ ref.vel     = ref.vel  (idx:fdx, :);
 % INS/GNSS estimates and GNSS data are interpolated according to the
 % reference dataset.
 
-[nav_ref,  ref_n] = navego_interpolation (nav_ekinox_or, ref);
-[gnss_ref, ref_g] = navego_interpolation (ekinox_gnss,  ref);
+[nav_ref,  ref_n] = navego_interpolation (nav_or, ref);
+[gnss_ref, ref_g] = navego_interpolation (gnss,  ref);
 
 %% Print navigation time
 
@@ -219,5 +225,5 @@ csvwrite('nav_ekinox_or.csv', rmse_v);
 
 if (strcmp(PLOT,'ON'))
     
-    navego_plot (ref, ekinox_gnss, nav_ekinox_or, gnss_ref, nav_ref, ref_g, ref_n)
+    navego_plot (ref, gnss, nav_or, gnss_ref, nav_ref, ref_g, ref_n)
 end

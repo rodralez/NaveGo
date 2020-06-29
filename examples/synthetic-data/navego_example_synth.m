@@ -231,9 +231,6 @@ gnss.eps = 1E-3;
 % KF execution:               ^      ^      ^             ^      ^ 					 	
 %
 % It can be seen that the KF is not execute at G1 and G6 because of a wrong choice of epsilon.
-%
-% A longer epsilon will tend to not recognize a new GNSS input. On the other hand, a shorter 
-% epsilon will tend to execute the KF using the same GNSS input.
 
 %% GNSS SYNTHETIC DATA
 

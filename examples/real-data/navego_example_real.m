@@ -1,7 +1,8 @@
-% navego_example_real_ekinox: post-processing integration of MPU-6000 
-% IMU and Ekinox GNSS data.
+% navego_allan_real: Example of how to use NaveGo to post-process both 
+%  real IMU and GNSS data.
 %
-% Main goal: to integrate MPU-6000 IMU and Ekinox-D GNSS measurements.
+% Main goal: to integrate IMU and GNSS measurements from Ekinox-D sensor 
+% which includes both IMU and GNSS sensors.
 %
 % Sensors dataset was generated driving a vehicle through the streets of 
 % Turin city (Italy).
@@ -29,12 +30,8 @@
 %   SBG Systems. SBG Ekinox-D High Accuracy Inertial System Brochure, 
 % Tactical grade MEMS Inertial Systems, v1.0. February 2014. 
 %
-%   R. Gonzalez and P. Dabove. Performance Assessment of an Ultra Low-Cost 
-% Inertial Measurement Unit for Ground Vehicle Navigation. Sensors 2019,  
-% 19(18). https://www.mdpi.com/530156.
-%
-% Version: 001
-% Date:    2019/09/09
+% Version: 003
+% Date:    2020/06/29
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -83,21 +80,37 @@ MS2KMH = 3.6;       % m/s to km/h
 % Reference dataset was obtained by processing Ekinox IMU and Ekinox GNSS 
 % with tighly-coupled integration by Inertial Explorer software package.
 
+% Dataset from time 138000 (TOW) to 139255 (TOW).
+
 fprintf('NaveGo: loading reference data... \n')
 
 load ref
 
 %% EKINOX IMU 
 
-fprintf('NaveGo: loading MPU-6000 IMU data... \n')
+fprintf('NaveGo: loading Ekinox IMU data... \n')
 
-load mpu6000_imu
+load ekinox_imu
+
+imu = ekinox_imu;
+
+%% MPU-6000 IMU
+
+% fprintf('NaveGo: loading MPU-6000 IMU data... \n')
+
+% load mpu6000_imu
+% 
+% imu = mpu6000_imu;
 
 %% EKINOX GNSS 
 
 fprintf('NaveGo: loading Ekinox GNSS data... \n')
 
 load ekinox_gnss
+
+gnss = ekinox_gnss;
+
+gnss.eps = mean(diff(imu.t)) / 2; %  A rule of thumb for choosing eps.
 
 %% Print navigation time
 
@@ -113,24 +126,30 @@ if strcmp(INS_GNSS, 'ON')
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    nav_mpu6000 = ins_gnss(mpu6000_imu, ekinox_gnss, 'quaternion'); %
+    nav_e = ins_gnss(imu, gnss, 'quaternion'); %
     % ---------------------------------------------------------------------
     
-    save nav_mpu6000.mat nav_mpu6000
+    save nav_e.mat nav_e
     
 else
     
-    load nav_mpu6000
+    load nav_e
 end
 
-%% ANALYZE PERFORMANCE FOR A CERTAIN PART OF THE INS/GNSS DATASET
+%% ANALYZE A CERTAIN PART OF THE INS/GNSS DATASET
 
-tmin_rmse = ref.t(1); 
-tmax_rmse = ref.t(end); 
+% Dataset from time 138000 (TOW) to 139255 (TOW).
+
+% SHORT TEST
+tmin = 138000;      % Entering PoliTo parking (seconds)
+% tmax = 138380;    % Leaving PoliTo parking (seconds)
+
+% COMPLETE TEST
+tmax = 139255;      % Entering tunnel (seconds)
 
 % Sincronize REF data to tmin and tmax
-idx  = find(ref.t > tmin_rmse, 1, 'first' );
-fdx  = find(ref.t < tmax_rmse, 1, 'last' );
+idx  = find(ref.t > tmin, 1, 'first' );
+fdx  = find(ref.t < tmax, 1, 'last' );
 if(isempty(idx) || isempty(fdx))
     error('ref: empty index')
 end
@@ -149,8 +168,8 @@ ref.vel     = ref.vel  (idx:fdx, :);
 % INS/GNSS estimates and GNSS data are interpolated according to the
 % reference dataset.
 
-[nav_r,  ref_n] = navego_interpolation (nav_mpu6000, ref);
-[gnss_r, ref_g] = navego_interpolation (ekinox_gnss, ref);
+[nav_i,  ref_n] = navego_interpolation (nav_e, ref);
+[gnss_i, ref_g] = navego_interpolation (gnss,  ref);
 
 %% Print navigation time
 
@@ -160,7 +179,7 @@ fprintf('NaveGo: navigation time under analysis is %.2f minutes or %.2f seconds.
 
 %% Print RMSE from INS/GNSS data
 
-rmse_v = print_rmse (nav_r, gnss_r, ref_n, ref_g, 'Ekinox INS/GNSS');
+rmse_v = print_rmse (nav_i, gnss_i, ref_n, ref_g, 'Ekinox INS/GNSS');
 
 %% Save RMSE to CVS file
 
@@ -170,5 +189,5 @@ csvwrite('ekinox.csv', rmse_v);
 
 if (strcmp(PLOT,'ON'))
     
-   navego_plot (ref, ekinox_gnss, nav_mpu6000, gnss_r, nav_r, ref_g, ref_n)
+   navego_plot (ref, gnss, nav_e, gnss_i, nav_i, ref_g, ref_n)
 end
