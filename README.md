@@ -88,6 +88,8 @@ If you are interested in joining to NaveGo, please feel free to contact Dr. Rodr
 
 Your donation help us to improve NaveGo. You can make a donation to support our work. 
 
+* PAYPAL: [paypal.me/supportnavego](https://www.paypal.com/paypalme/supportnavego).
+
 * BITCOIN public key: bc1qdcf4c5t0t2a0uhqluae67yzuj5uerj8hgrxwwf .
 
 * ETHEREUM (or DAI) public key: 0x92EC236bD4C5CAD90CB2F7B2BA327047e853A6cE .
