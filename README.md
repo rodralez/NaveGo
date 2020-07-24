@@ -84,6 +84,14 @@ You can contribute in many ways:
 
 If you are interested in joining to NaveGo, please feel free to contact Dr. Rodrigo Gonzalez at rodralez [at] frm [dot] utn [dot] edu [dot] ar.
 
+## Donations
+
+Your donation help us to improve NaveGo. You can make a donation to support our work. 
+
+* BITCOIN public key: bc1qdcf4c5t0t2a0uhqluae67yzuj5uerj8hgrxwwf .
+
+* ETHEREUM (or DAI) public key: 0x92EC236bD4C5CAD90CB2F7B2BA327047e853A6cE .
+
 
 ## Researchers who are using NaveGo
 
