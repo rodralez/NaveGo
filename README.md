@@ -138,6 +138,8 @@ These two real examples are part of the data collection used in the following ar
 
 The following 10 papers have expressed the use of NaveGo within their research:
 
+* Benjamin Noack, Christopher Funk, Susanne Radtke,and Uwe D. Hanebeck. State Estimation with Event-Based InputsUsing Stochastic Triggers.  1st Virtual IFAC World Congress (IFAC-V 2020). Germany, July 11-17, 2020 [Link](https://isas.iar.kit.edu/pdf/IFAC20_Noack.pdf).
+
 * W. Sun, J. Wu, W. Ding and S. Duan, "A Robust Indirect Kalman Filter Based on the Gradient Descent Algorithm for Attitude Estimation During Dynamic Conditions," in IEEE Access, vol. 8, pp. 96487-96494, 2020, doi: 10.1109/ACCESS.2020.2997250.
 
 * R. Rabiee, X. Zhong, Y. Yan and W.P. Tay, "LaIF: A Lane-Level Self-Positioning Scheme for Vehicles in GNSS-Denied Environments," in IEEE Transactions on Intelligent Transportation Systems, vol. 20, no. 8, pp. 2944-2961, August 2019. doi: 10.1109/TITS.2018.2870048. [Link](https://ieeexplore.ieee.org/document/8489926). NaveGo is used as a benchmark to compare to a proposed fusion algorithm based on a particle filter to achieve lane-level tracking accuracy under a GNSS-denied environment.
