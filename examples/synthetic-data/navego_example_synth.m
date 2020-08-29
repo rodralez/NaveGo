@@ -42,8 +42,8 @@
 % Revision D. October 2011. 
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 %
-% Version: 014
-% Date:    2020/03/04
+% Version: 015
+% Date:    2020/08/29
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -217,8 +217,6 @@ gnss.freq = 5;                          % GNSS operation frequency (Hz)
 gnss.zupt_th = 0.5;   % ZUPT threshold (m/s).
 gnss.zupt_win = 4;    % ZUPT time window (seconds).
 
-gnss.eps = 1E-3;
-
 % The following figure tries to show when the Kalman filter (KF) will be run.
 % If a new element from GNSS time vector is available at the current INS time inside the window time
 % set by epsilon, the Kalman filter (KF) will be executed.
@@ -231,6 +229,10 @@ gnss.eps = 1E-3;
 % KF execution:               ^      ^      ^             ^      ^ 					 	
 %
 % It can be seen that the KF is not execute at G1 and G6 because of a wrong choice of epsilon.
+%
+% A rule of thumb for choosing eps is:
+
+gnss.eps = mean(diff(imu1.t)) / 3; 
 
 %% GNSS SYNTHETIC DATA
 
@@ -384,7 +386,7 @@ if (strcmp(PLOT,'ON'))
     plot3(nav2_e.lon.*R2D, nav2_e.lat.*R2D, nav2_e.h, 'r')
     plot3(ref.lon(1).*R2D, ref.lat(1).*R2D, ref.h(1), 'or', 'MarkerSize', 10, 'LineWidth', 2)
     axis tight
-    title('TRAJECTORIES')
+    title('TRAJECTORY')
     xlabel('Longitude [deg]')
     ylabel('Latitude [deg]')
     zlabel('Altitude [m]')
