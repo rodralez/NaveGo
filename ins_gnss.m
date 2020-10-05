@@ -96,8 +96,8 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %
 %   ins_gps.m, ins_gnss function is based on that previous function.
 %
-% Version: 006
-% Date:    2020/06/23
+% Version: 007
+% Date:    2020/10/05
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
