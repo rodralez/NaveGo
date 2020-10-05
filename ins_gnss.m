@@ -94,7 +94,7 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 % Multisensor Integrated Navigation Systems (2008). Chapter 13: INS
 % Alignment and Zero Velocity Updates.
 %
-%   ins_gps.m, ins_gnss function is based on that previous function.
+%   ins_gps.m, ins_gnss function is based on that previous NaveGo function.
 %
 % Version: 007
 % Date:    2020/10/05
@@ -197,8 +197,8 @@ v = zeros(LG, 6);          % Kalman filter innovations
 b  = zeros(LG, 6);         % Biases compensantions after Kalman filter correction
 
 A  = zeros(LG, 225);       % Transition-state matrices, A
-Pi = zeros(LG, 225);       % Priori covariance matrices, Pi
-Pp = zeros(LG, 225);       % Posteriori covariance matrices, Pp
+Pi = zeros(LG, 225);       % A priori covariance matrices, Pi
+Pp = zeros(LG, 225);       % A posteriori covariance matrices, Pp
 K  = zeros(LG, 90);        % Kalman gain matrices, K
 S  = zeros(LG, 36);        % Innovation matrices, S
 
