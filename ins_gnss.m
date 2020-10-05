@@ -39,7 +39,7 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %  zupt_win: 1x1 ZUPT time window (seconds).
 %       eps: 1x1 time interval to compare current IMU time to current GNSS time vector (s).
 %
-%	att_mode: attitude mode string.
+%  att_mode: attitude mode string.
 %      'quaternion': attitude updated in quaternion format. Default value.
 %             'dcm': attitude updated in Direct Cosine Matrix format.
 %
@@ -119,13 +119,13 @@ LI = length(imu.t);
 % Length of GNSS time vector
 LG = length(gnss.t);
 
-% Attitude
+% Preallocate attitude vectors
 roll_e  = zeros (LI, 1);
 pitch_e = zeros (LI, 1);
 yaw_e   = zeros (LI, 1);
-%     yawm_e  = zeros (Mi, 1);
+%  yawm_e  = zeros (Mi, 1);
 
-% Initialize estimates at INS time = 1
+% Initial attitude at INS time = 1
 roll_e(1)  = imu.ini_align(1);
 pitch_e(1) = imu.ini_align(2);
 yaw_e(1)   = imu.ini_align(3);
@@ -134,18 +134,18 @@ DCMnb = euler2dcm([roll_e(1); pitch_e(1); yaw_e(1);]);
 DCMbn = DCMnb';
 qua   = euler2qua([roll_e(1) pitch_e(1) yaw_e(1)]);
 
-% Velocities
+% Preallocate velocity vector
 vel_e   = zeros (LI, 3);
 
-% Initialize estimates at INS time = 1
+% Initial velocity at INS time = 1
 vel_e(1,:) = gnss.vel(1,:);
 
-% Positions
+% Preallocate position vectors
 lat_e    = zeros (LI,1);
 lon_e    = zeros (LI,1);
 h_e      = zeros (LI, 1);
 
-% Initialize estimates at INS time = 1
+% Initial position at INS time = 1
 h_e(1)   = gnss.h(1);
 lat_e(1) = gnss.lat(1);
 lon_e(1) = gnss.lon(1);
@@ -163,10 +163,10 @@ kf.Pi = diag([imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_dyn, imu.ab_dyn].^2
 kf.Q  = diag([imu.arw, imu.vrw, imu.gb_psd, imu.ab_psd].^2);
 
 fb_corrected = (imu.fb(1,:)' + ab_dyn );
-fn = (DCMbn * fb_corrected);
+f_n = (DCMbn * fb_corrected);
 
 % Vector to update matrix F
-upd = [gnss.vel(1,:) gnss.lat(1) gnss.h(1) fn'];
+upd = [gnss.vel(1,:) gnss.lat(1) gnss.h(1) f_n'];
 
 % Update matrices F and G
 [kf.F, kf.G] = F_update(upd, DCMbn, imu);
@@ -189,7 +189,7 @@ kf = kf_update( kf );
 
 % DEC = 0.5 * 180/pi;             % Magnetic declination (radians)
 
-% Kalman filter matrices for later performance analysis
+% Preallocate Kalman filter matrices for later performance analysis
 xi = zeros(LG, 15);        % Evolution of Kalman filter a priori states, xi
 xp = zeros(LG, 15);        % Evolution of Kalman filter a posteriori states, xp
 z = zeros(LG, 6);          % INS/GNSS measurements
@@ -199,10 +199,10 @@ b  = zeros(LG, 6);         % Biases compensantions after Kalman filter correctio
 A  = zeros(LG, 225);       % Transition-state matrices, A
 Pi = zeros(LG, 225);       % Priori covariance matrices, Pi
 Pp = zeros(LG, 225);       % Posteriori covariance matrices, Pp
-K  = zeros(LG, 90);       % Kalman gain matrices, K
-S  = zeros(LG, 36);       % Innovation matrices, S
+K  = zeros(LG, 90);        % Kalman gain matrices, K
+S  = zeros(LG, 36);        % Innovation matrices, S
 
-% Initialize matrices for Kalman filter performance analysis
+% Initial matrices for Kalman filter performance analysis
 xp(1,:) = kf.xp';
 Pp(1,:) = reshape(kf.Pp, 1, 225);
 b(1,:)  = [imu.gb_sta, imu.ab_sta];
@@ -237,18 +237,18 @@ for i = 2:LI
     qua = qua_n;
     
     % Gravity update
-    gn = gravity(lat_e(i-1), h_e(i-1));
+    g_n = gravity(lat_e(i-1), h_e(i-1));
     
     % Velocity update
-    fn = (DCMbn * fb_corrected);
-    vel_n = vel_update(fn, vel_e(i-1,:), omega_ie_n, omega_en_n, gn', dti);
+    f_n = (DCMbn * fb_corrected);
+    vel_n = vel_update(f_n, vel_e(i-1,:), omega_ie_n, omega_en_n, g_n', dti);
     vel_e (i,:) = vel_n;
     
     % Position update
-    pos = pos_update([lat_e(i-1) lon_e(i-1) h_e(i-1)], vel_e(i,:), dti);
-    lat_e(i) = pos(1);
-    lon_e(i) = pos(2);
-    h_e(i)   = pos(3);
+    pos_n = pos_update([lat_e(i-1) lon_e(i-1) h_e(i-1)], vel_e(i,:), dti);
+    lat_e(i) = pos_n(1);
+    lon_e(i) = pos_n(2);
+    h_e(i)   = pos_n(3);
     
     % PENDING. Magnetic heading update
     %         yawm_e(i) = hd_update (imu.mb(i,:), roll_e(i),  pitch_e(i), D);
@@ -287,7 +287,7 @@ for i = 2:LI
     
     if ( ~isempty(gdx) && gdx > 1)
         
-%         gdx 
+%         gdx   % DEBUG
         
         %% INNOVATIONS
         
@@ -308,7 +308,7 @@ for i = 2:LI
         dtg = gnss.t(gdx) - gnss.t(gdx-1);
         
         % Vector to update matrix F
-        upd = [vel_e(i,:) lat_e(i) h_e(i) fn'];
+        upd = [vel_e(i,:) lat_e(i) h_e(i) f_n'];
         
         % Update matrices F and G
         [kf.F, kf.G] = F_update(upd, DCMbn, imu);
@@ -340,7 +340,7 @@ for i = 2:LI
         % DCM correction
         DCMbn = qua2dcm(qua);
         
-        % Another possible attitude correction
+        % Another possible attitude correction algorithm
         %     euler = qua2euler(qua);
         %     roll_e(i) = euler(1);
         %     pitch_e(i)= euler(2);

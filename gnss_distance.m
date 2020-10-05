@@ -1,4 +1,4 @@
-function [d, d_v] = gnss_distance (lat, lon)
+function [d, dp] = gnss_distance (lat, lon)
 % gnss_distance: provides distance between geographic coordinates based on 
 % haversine function.
 %
@@ -7,8 +7,8 @@ function [d, d_v] = gnss_distance (lat, lon)
 %       lon: Mx1 longitudes (radians).
 %
 % OUTPUT:
-%		d:  total distance in kilometeres.
-%       d_v: M-1x1 incremental distances between near points in kilometeres.
+%		d: total distance in meters.
+%       dp: Mx1 incremental distances between near points in meters.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -32,30 +32,27 @@ function [d, d_v] = gnss_distance (lat, lon)
 %			Ritchie Smith. Harversine function in Mathworks File Exchange. 
 % URL: https://www.mathworks.com/matlabcentral/fileexchange/32883-haversine
 %
-% Version: 001
-% Date:    2020/03/04
+% Version: 002
+% Date:    2020/09/03
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-M = max ( size ( lat) );
-
-d_v = zeros(M-1, 1);            % Incremental distances between near points
-
-R = 6371;                       % Earth's radius in km
+R = 6.3781 * 10^6;              % Earth's radius in m
 
 delta_lat = diff ( lat );   
-    
+delta_lat = [0; delta_lat];
+
 delta_lon = diff ( lon );
-    
-for i = 1:M-1
-   
-    a = sin( delta_lat(i) / 2)^2 + cos( lat(i) )  * cos( lon(i) ) * ...
-    sin( delta_lon(i) / 2)^2;
+delta_lon = [0; delta_lon];
 
-    c = 2 * atan2 ( sqrt(a), sqrt (1-a) );
+a = sin( delta_lat ./ 2 ).^2 + cos( lat ).* cos( lon ) .* ...
+        sin( delta_lon ./ 2 ).^2;
 
-    d_v(i) = R * c;                          % distance in km
+c = 2 .* atan2 ( sqrt(a), sqrt (1-a) );
+
+dp = R .* c;
+
+d = sum(dp);
+
 end
-
-d = sum(d_v);
 

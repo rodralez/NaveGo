@@ -1,9 +1,9 @@
-function vel_n = vel_update(fn, vel, omega_ie_n, omega_en_n, g, dt)
+function vel_n = vel_update(fn, vel_n, omega_ie_n, omega_en_n, g, dt)
 % vel_update: updates velocity vector in the NED frame.
 %
 % INPUT
 %   fn, 3x1 specific forces in the nav-frame.    
-%   vel, 3x1 previous (old) velocity vector in the nav-frame. 
+%   vel_n, 3x1 previous (old) velocity vector in the nav-frame. 
 %   omega_ie_n, 3x1 Earth rate in the nav-frame.
 %   omega_en_n, 3x1 transport rate in the nav-frame.
 %   g, 3x1 gravity in the nav-frame.
@@ -40,17 +40,17 @@ function vel_n = vel_update(fn, vel, omega_ie_n, omega_en_n, g, dt)
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 17.
 %
-% Version: 002
-% Date:    2015/07/18
+% Version: 003
+% Date:    2020/10/05
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-S = skewm(vel);     % Skew matrix with velocities
+S = skewm(vel_n);                               % Skew matrix with velocities
  
 coriolis = S * (omega_en_n + 2 * omega_ie_n);   % Coriolis 
 
-fn_c = fn - coriolis - g;   % Corrected specific force in nav-frame
+fn_c = fn - coriolis - g;                       % Corrected specific force in nav-frame
 
-vel_n = vel + (fn_c' * dt);
+vel_n = vel_n + (fn_c' * dt);
 
 end

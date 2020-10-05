@@ -29,6 +29,9 @@
 %   SBG Systems. SBG Ekinox-D High Accuracy Inertial System Brochure, 
 % Tactical grade MEMS Inertial Systems, v1.0. February 2014. 
 %
+%   InvenSense Inc. MPU-6000/MPU-6050 Product Specification. Document  
+% Number: PS-MPU-6000A-00. Revision: 3.4. Release Date: 08/19/2013.
+%
 %   R. Gonzalez and P. Dabove. Performance Assessment of an Ultra Low-Cost 
 % Inertial Measurement Unit for Ground Vehicle Navigation. Sensors 2019,  
 % 19(18). https://www.mdpi.com/530156.
@@ -118,8 +121,7 @@ if strcmp(INS_GNSS, 'ON')
     nav_mpu6000 = ins_gnss(mpu6000_imu, ekinox_gnss, 'quaternion'); %
     % ---------------------------------------------------------------------
     
-    save nav_mpu6000.mat nav_mpu6000
-    
+    save nav_mpu6000.mat nav_mpu6000    
 else
     
     load nav_mpu6000
