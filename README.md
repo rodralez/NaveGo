@@ -178,6 +178,6 @@ We would like to thank to the many people that have contributed to make NaveGo a
 
 * Dr. Paolo Dabove and Dr. Marco Piras (both from DIATI, Politecnico di Torino, Italy) for helping to debug NaveGo and suggesting new features.
 
-
+* Dr. Paolo Zoccarato for his comments attitude conversion.
 
 	
