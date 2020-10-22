@@ -34,8 +34,8 @@
 % Inertial Measurement Unit for Ground Vehicle Navigation. Sensors 2019,  
 % 19(18). https://www.mdpi.com/530156.
 %
-% Version: 001
-% Date:    2020/08/29
+% Version: 002
+% Date:    2020/10/22
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -50,6 +50,7 @@ matlabrc
 addpath ../../.
 addpath ../../simulation/
 addpath ../../conversions/
+addpath ../../performance_analysis/
 
 versionstr = 'NaveGo, release v1.2';
 
@@ -175,3 +176,10 @@ if (strcmp(PLOT,'ON'))
     
    navego_plot (ref, ekinox_gnss, nav_ekinox, gnss_r, nav_r, ref_g, ref_n)
 end
+
+%% ESTIMATION PERFORMANCE ANALYSIS
+
+fprintf('\nNaveGo: Kalman filter performance analysis\n') 
+
+kf_analysis (nav_ekinox)
+
