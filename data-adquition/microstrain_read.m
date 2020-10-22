@@ -5,7 +5,7 @@ function ustrain = microstrain_read(file)
 %   fname: .cvs file name (string).
 %
 % OUTPUT
-%   ustrain: fields in data structure depends on user selection. In this 
+%   ustrain: data structure which fields depends on user selection. In this 
 %     function several fields have been added but may be modified to 
 %     comply to exiting fields in .cvs file. Please, read the 
 %     3DM-GX3 manual for more information about possible fields.
