@@ -110,14 +110,14 @@ ref.h   = zeros(N,1);
 ref.fb = zeros(M);
 ref.wb = zeros(M);
 
-%     DCMnb: Nx9 Direct Cosine Matrix nav-to-body. Each row contains 
-%            the elements of one matrix ordered by columns as 
-%            [a11 a21 a31 a12 a22 a32 a13 a23 a33].
+%   DCMnb_m: Nx9 matrix with nav-to-body direct cosine matrices (DCM).
+%       Each row of DCMnb_m contains the 9 elements of a particular DCMnb_m
+%       matrix ordered as [a11 a21 a31 a12 a22 a32 a13 a23 a33].
 
-ref.DCMnb = zeros(N,9);
-ref.DCMnb(:,1) = ones(N,1);
-ref.DCMnb(:,5) = ones(N,1);
-ref.DCMnb(:,9) = ones(N,1);
+ref.DCMnb_m = zeros(N,9);
+ref.DCMnb_m(:,1) = ones(N,1);
+ref.DCMnb_m(:,5) = ones(N,1);
+ref.DCMnb_m(:,9) = ones(N,1);
 
 %% Microstrain 3DM-GX3-35 IMU
 
@@ -144,17 +144,17 @@ ref.DCMnb(:,9) = ones(N,1);
 ustrain.a_std = [0.00643187932253599  0.00661386698561032  0.00673225201283004];
 ustrain.g_std = [0.00272391738310747  0.00248849782611228  0.00272332577563485];
 
+ustrain.ab_dyn = [0.000252894096875598 0.000349683866037958 0.000323068534025731];
+ustrain.gb_dyn = [7.6339404800228e-05  4.50248175403541e-05 8.75796277840371e-05];
+
+ustrain.ab_corr = [ 40  20 100];
+ustrain.gb_corr = [500 700 200];
+
 ustrain.ab_sta = [1.73301445792617e-13 -7.93732502701179e-13 -1.84847751355576e-13];
 ustrain.gb_sta = [4.00424136983284e-14 4.98197419961447e-15 -6.5696457219509e-15];
-      
-ustrain.ab_corr = [40 20 1000];
-ustrain.gb_corr = [500 700 200];
-   
-ustrain.vrrw = [0.00031522133759985 0.000519606636158211 0.000396688807571295];      
-ustrain.arrw = [8.21484738626e-05 4.54275740041735e-05 0.000103299115514897]; 
 
-ustrain.ab_dyn = [0.000252894096875598 0.000349683866037958 0.000323068534025731];
-ustrain.gb_dyn = [7.6339404800228e-05 4.50248175403541e-05 8.75796277840371e-05];
+ustrain.arrw = [8.21484738626e-05 4.54275740041735e-05 0.000103299115514897]; 
+ustrain.vrrw = [0.00031522133759985 0.000519606636158211 0.000396688807571295];      
 
 ustrain.freq = ref.freq;
 ustrain.t = ref.t;
@@ -168,6 +168,8 @@ fprintf('NaveGo: generating IMU GYRO synthetic data... \n')
 
 wb = gyro_gen (ref, ustrain);  % Generate gyro in the body frame
 ustrain.wb = wb;
+
+clear fb wb 
 
 %% ALLAN VARIANCE
 

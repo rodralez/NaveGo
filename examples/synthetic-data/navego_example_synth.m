@@ -1,10 +1,10 @@
-% navego_example_synth: Example of how to use NaveGo to generate 
-% synthetic (simulated) data and then fuse them.
-% 
-% Main goal: to compare two INS/GNSS systems performances, one using a 
-% simulated ADIS16405 IMU and simulated GNSS, and another using a 
-% simulated ADIS16488 IMU and the same simulated GNSS.
+% navego_example_synth: Example of how to use NaveGo to generate
+% both IMU and GNSS synthetic (simulated) data. Then, synthetic data is 
+% fused.
 %
+% Main goal: to compare two INS/GNSS systems performances, one using a
+% synthetic ADIS16405 IMU and synthetic GNSS, and another using a
+% synthetic ADIS16488 IMU and the same synthetic GNSS.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -30,24 +30,24 @@
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015.
 %
-%   Analog Devices. ADIS16400/ADIS16405 datasheet. High Precision 
-% Tri-Axis Gyroscope, Accelerometer, Magnetometer. Rev. B. 
+%   Analog Devices. ADIS16400/ADIS16405 datasheet. High Precision
+% Tri-Axis Gyroscope, Accelerometer, Magnetometer. Rev. B.
 % http://www.analog.com/media/en/technical-documentation/data-sheets/ADIS16400_16405.pdf
 %
-%   Analog Devices. ADIS16488 datasheet. Tactical Grade Ten Degrees 
-% of Freedom Inertial Sensor. Rev. G. 
+%   Analog Devices. ADIS16488 datasheet. Tactical Grade Ten Degrees
+% of Freedom Inertial Sensor. Rev. G.
 % http://www.analog.com/media/en/technical-documentation/data-sheets/ADIS16488.pdf
 %
 %   Garmin International, Inc. GPS 18x TECHNICAL SPECIFICATIONS.
-% Revision D. October 2011. 
+% Revision D. October 2011.
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 %
-% Version: 015
-% Date:    2020/08/29
+% Version: 016
+% Date:    2020/11/03
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-% NOTE: NaveGo supposes that IMU is aligned with respect to body-frame as 
+% NOTE: NaveGo assumes that IMU is aligned with respect to body-frame as
 % X-forward, Y-right, and Z-down.
 
 clc
@@ -62,25 +62,25 @@ addpath ../../conversions/
 versionstr = 'NaveGo, release v1.2';
 
 fprintf('\n%s.\n', versionstr)
-fprintf('\nNaveGo: starting simulated INS/GNSS integration... \n')
+fprintf('\nNaveGo: starting simulation of INS/GNSS integration... \n')
 
 %% CODE EXECUTION PARAMETERS
 
-% Comment any of the following parameters in order to NOT execute a 
+% Please, comment any of the following parameters in order to NOT execute a
 % particular portion of code
 
-GNSS_DATA = 'ON';   % Generate synthetic GNSS data
-IMU1_DATA = 'ON';   % Generate synthetic ADIS16405 IMU data
-IMU2_DATA = 'ON';   % Generate synthetic ADIS16488 IMU data
+GNSS_DATA = 'ON';   % Generation of synthetic GNSS data
+IMU1_DATA = 'ON';   % Generation of synthetic ADIS16405 IMU data
+IMU2_DATA = 'ON';   % Generation of synthetic ADIS16488 IMU data
 
-IMU1_INS  = 'ON';   % Execute INS/GNSS integration for ADIS16405 IMU
-IMU2_INS  = 'ON';   % Execute INS/GNSS integration for ADIS16488 IMU
+IMU1_INS  = 'ON';   % Execution of INS/GNSS integration for ADIS16405 IMU
+IMU2_INS  = 'ON';   % Execution of INS/GNSS integration for ADIS16488 IMU
 
-PLOT      = 'ON';   % Plot results.
+PLOT      = 'ON';   % Generation of plots
 
 % If a particular parameter is commented above, it is set by default to 'OFF'.
 
-if (~exist('GNSS_DATA','var')), GNSS_DATA  = 'OFF'; end
+if (~exist('GNSS_DATA','var')), GNSS_DATA = 'OFF'; end
 if (~exist('IMU1_DATA','var')), IMU1_DATA = 'OFF'; end
 if (~exist('IMU2_DATA','var')), IMU2_DATA = 'OFF'; end
 if (~exist('IMU1_INS','var')),  IMU1_INS  = 'OFF'; end
@@ -99,13 +99,13 @@ R2D = (180/pi);     % radians to degrees
 KT2MS = 0.514444;   % knot to m/s
 MS2KMH = 3.6;       % m/s to km/h
 
-%% LOAD REFERENCE DATA
+%% REFERENCE DATA
 
 fprintf('NaveGo: loading reference dataset from a trajectory generator... \n')
 
 load ref.mat
 
-% ref.mat contains the reference data structure from which inertial 
+% ref.mat contains the reference data structure from which inertial
 % sensors and GNSS wil be simulated. It must contain the following fields:
 
 %         t: Nx1 time vector (seconds).
@@ -116,9 +116,9 @@ load ref.mat
 %      roll: Nx1 roll angles (radians).
 %     pitch: Nx1 pitch angles (radians).
 %       yaw: Nx1 yaw angle vector (radians).
-%     DCMnb: Nx9 Direct Cosine Matrix nav-to-body. Each row contains 
-%            the elements of one DCM matrix ordered by columns as 
-%            [a11 a21 a31 a12 a22 a32 a13 a23 a33].
+%   DCMnb_m: Nx9 matrix with nav-to-body direct cosine matrices (DCM).
+%            Each row of DCMnb_m contains the 9 elements of a particular DCMnb
+%            matrix ordered as [a11 a21 a31 a12 a22 a32 a13 a23 a33].
 %      freq: sampling frequency (Hz).
 
 %% ADIS16405 IMU error profile
@@ -158,13 +158,13 @@ ADIS16405.ab_corr  = 100 .* ones(1,3);     % Acc correlation times [X Y Z] (seco
 ADIS16405.freq     = ref.freq;             % IMU operation frequency [X Y Z] (Hz)
 % ADIS16405.m_psd     = 0.066 .* ones(1,3);  % Magnetometer noise density [X Y Z] (mgauss/root-Hz)
 
-% ref dataset will be used to simulate IMU sensors.
+% ref time is used to simulate IMU sensors
 ADIS16405.t = ref.t;                       % IMU time vector
 dt = mean(diff(ADIS16405.t));              % IMU sampling interval
 
-imu1 = imu_si_errors(ADIS16405, dt);       % Transform IMU manufacturer error units to SI units.
+imu1 = imu_si_errors(ADIS16405, dt);       % IMU manufacturer error units to SI units.
 
-imu1.ini_align_err = [3 3 10] .* D2R;                   % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)  
+imu1.ini_align_err = [3 3 10] .* D2R;                   % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)
 imu1.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)]; % Initial attitude align at t(1) (radians).
 
 %% ADIS16488 IMU error profile
@@ -182,14 +182,14 @@ ADIS16488.ab_corr  = 100  .* ones(1,3);     % Acc correlation times [X Y Z] (sec
 ADIS16488.freq     = ref.freq;              % IMU operation frequency [X Y Z] (Hz)
 % ADIS16488.m_psd = 0.054 .* ones(1,3);       % Magnetometer noise density [X Y Z] (mgauss/root-Hz)
 
-% ref dataset will be used to simulate IMU sensors.
+% ref time is used to simulate IMU sensors
 ADIS16488.t = ref.t;                        % IMU time vector
 dt = mean(diff(ADIS16488.t));               % IMU sampling interval
 
 imu2 = imu_si_errors(ADIS16488, dt);        % Transform IMU manufacturer error units to SI units.
 
-imu2.ini_align_err = [1 1 5] .* D2R;                     % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)  
-imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude align at t(1) (radians).
+imu2.ini_align_err = [1 1 5] .* D2R;                     % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)
+imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude align at t(1) (radians)
 
 %% Garmin 5-18 Hz GPS error profile
 
@@ -217,58 +217,58 @@ gnss.freq = 5;                          % GNSS operation frequency (Hz)
 gnss.zupt_th = 0.5;   % ZUPT threshold (m/s).
 gnss.zupt_win = 4;    % ZUPT time window (seconds).
 
-% The following figure tries to show when the Kalman filter (KF) will be run.
+% The following figure tries to show when the Kalman filter (KF) will be execute.
 % If a new element from GNSS time vector is available at the current INS time inside the window time
 % set by epsilon, the Kalman filter (KF) will be executed.
 %
-%                    I1  I2  I3  I4  I5  I6  I7  I8  I9  I10 I11 I12 I3 
+%                    I1  I2  I3  I4  I5  I6  I7  I8  I9  I10 I11 I12 I3
 % INS time vector:   |---|---|---|---|---|---|---|---|---|---|---|---|
-% Epsilon:          |-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|  
+% Epsilon:          |-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
 % GNSS time vector:  --|------|------|------|------|------|------|
 %                      G1     G2     G4     G5     G6     G7     G8
-% KF execution:               ^      ^      ^             ^      ^ 					 	
+% KF execution:               ^      ^      ^             ^      ^
 %
 % It can be seen that the KF is not execute at G1 and G6 because of a wrong choice of epsilon.
 %
 % A rule of thumb for choosing eps is:
 
-gnss.eps = mean(diff(imu1.t)) / 3; 
+gnss.eps = mean(diff(imu1.t)) / 3;
 
 %% GNSS SYNTHETIC DATA
 
-rng('shuffle')                  % Reset pseudo-random seed
+rng('shuffle')                  % Pseudo-random seed reset
 
-if strcmp(GNSS_DATA, 'ON')       % If simulation of GNSS data is required ...
+if strcmp(GNSS_DATA, 'ON')      % If simulation of GNSS data is required...
     
     fprintf('NaveGo: generating GNSS synthetic data... \n')
     
-    gnss = gnss_err_profile(ref.lat(1), ref.h(1), gnss); % Transform GNSS manufacturer error units to SI units.
+    gnss = gnss_err_profile(ref.lat(1), ref.h(1), gnss); % Transform GNSS manufacturer error units to SI units
     
-    gnss = gnss_gen(ref, gnss);  % Generate GNSS dataset from reference dataset.
-
+    gnss = gnss_gen(ref, gnss);  % Generation of GNSS dataset from reference dataset
+    
     save gnss.mat gnss
     
 else
     
-    fprintf('NaveGo: loading GNSS data... \n') 
+    fprintf('NaveGo: loading GNSS synthetic data... \n')
     
     load gnss.mat
 end
 
 %% IMU1 SYNTHETIC DATA
 
-rng('shuffle')                  % Reset pseudo-random seed
+rng('shuffle')                  % Pseudo-random seed reset
 
-if strcmp(IMU1_DATA, 'ON')      % If simulation of IMU1 data is required ...
+if strcmp(IMU1_DATA, 'ON')      % If simulation of IMU1 data is required...
     
     fprintf('NaveGo: generating IMU1 ACCR synthetic data... \n')
     
-    fb = acc_gen (ref, imu1);   % Generate acc in the body frame
+    fb = acc_gen (ref, imu1);   % Generation of acc in the body frame
     imu1.fb = fb;
     
     fprintf('NaveGo: generating IMU1 GYRO synthetic data... \n')
     
-    wb = gyro_gen (ref, imu1);  % Generate gyro in the body frame
+    wb = gyro_gen (ref, imu1);  % Generation of gyro in the body frame
     imu1.wb = wb;
     
     save imu1.mat imu1
@@ -276,25 +276,25 @@ if strcmp(IMU1_DATA, 'ON')      % If simulation of IMU1 data is required ...
     clear wb fb;
     
 else
-    fprintf('NaveGo: loading IMU1 data... \n')
+    fprintf('NaveGo: loading IMU1 synthetic data... \n')
     
     load imu1.mat
 end
 
 %% IMU2 SYNTHETIC DATA
 
-rng('shuffle')					% Reset pseudo-random seed
+rng('shuffle')					% Pseudo-random seed reset
 
 if strcmp(IMU2_DATA, 'ON')      % If simulation of IMU2 data is required ...
     
     fprintf('NaveGo: generating IMU2 ACCR synthetic data... \n')
     
-    fb = acc_gen (ref, imu2);   % Generate acc in the body frame
+    fb = acc_gen (ref, imu2);   % Generation of acc in the body frame
     imu2.fb = fb;
     
     fprintf('NaveGo: generating IMU2 GYRO synthetic data... \n')
     
-    wb = gyro_gen (ref, imu2);  % Generate gyro in the body frame
+    wb = gyro_gen (ref, imu2);  % Generation of gyro in the body frame
     imu2.wb = wb;
     
     save imu2.mat imu2
@@ -302,12 +302,12 @@ if strcmp(IMU2_DATA, 'ON')      % If simulation of IMU2 data is required ...
     clear wb fb;
     
 else
-    fprintf('NaveGo: loading IMU2 data... \n')
+    fprintf('NaveGo: loading IMU2 synthetic data... \n')
     
     load imu2.mat
 end
 
-%% Print navigation time
+%% Printing of navigation time
 
 to = (ref.t(end) - ref.t(1));
 
@@ -317,18 +317,18 @@ fprintf('NaveGo: navigation time is %.2f minutes or %.2f seconds. \n', (to/60), 
 
 if strcmp(IMU1_INS, 'ON')
     
-    fprintf('NaveGo: INS/GNSS navigation estimates for IMU1... \n')
+    fprintf('NaveGo: processing INS/GNSS navigation estimates for IMU1... \n')
     
-    % Execute INS/GNSS integration
+    % INS/GNSS integration
     % ---------------------------------------------------------------------
-    nav1_e = ins_gnss(imu1, gnss, 'dcm');
+    nav1_e = ins_gnss(imu1, gnss, 'dcm');   % Attitude will be estimated by the DCM method
     % ---------------------------------------------------------------------
     
     save nav1_e.mat nav1_e
     
 else
     
-    fprintf('NaveGo: loading INS/GNSS integration for IMU1... \n')
+    fprintf('NaveGo: loading INS/GNSS navigation estimates for IMU1... \n')
     
     load nav1_e.mat
 end
@@ -337,23 +337,23 @@ end
 
 if strcmp(IMU2_INS, 'ON')
     
-    fprintf('NaveGo: INS/GNSS navigation estimates for IMU2... \n')
+    fprintf('NaveGo: processing INS/GNSS navigation estimates for IMU2... \n')
     
-    % Execute INS/GNSS integration
+    % INS/GNSS integration
     % ---------------------------------------------------------------------
-    nav2_e = ins_gnss(imu2, gnss, 'quaternion');
+    nav2_e = ins_gnss(imu2, gnss, 'quaternion');    % Attitude will be estimated by quaternion method
     % ---------------------------------------------------------------------
     
     save nav2_e.mat nav2_e
     
 else
     
-    fprintf('NaveGo: loading INS/GNSS integration for IMU2... \n')
+    fprintf('NaveGo: loading INS/GNSS navigation estimates for IMU2... \n')
     
     load nav2_e.mat
 end
 
-%% Interpolate INS/GNSS dataset 
+%% INS/GNSS INTERPOLATION
 
 % INS/GNSS estimates and GNSS data are interpolated according to the
 % reference dataset.
@@ -362,17 +362,15 @@ end
 [nav2_r, ref_2] = navego_interpolation (nav2_e, ref);
 [gnss_r, ref_g] = navego_interpolation (gnss, ref);
 
-%% Print RMSE from IMU1
+%% Printing of RMSE from IMU1
 
 print_rmse (nav1_r, gnss_r, ref_1, ref_g, 'ADIS16405 INS/GNSS');
 
-%% Print RMSE from IMU2
+%% Printing of RMSE from IMU2
 
 print_rmse (nav2_r, gnss_r, ref_2, ref_g, 'ADIS16488 INS/GNSS');
-% .m_psd = 0.054 .* ones(1,3);       % Magnetometer noise density [X Y Z] (mgauss/root-Hz)
 
-
-%% PLOT
+%% PLOTS
 
 if (strcmp(PLOT,'ON'))
     
@@ -541,7 +539,7 @@ if (strcmp(PLOT,'ON'))
     title('ALTITUDE');
     grid
     
-    % POSITION ERRORS    
+    % POSITION ERRORS
     [RN,RE]  = radius(nav1_r.lat);
     LAT2M_1 = RN + nav1_r.h;
     LON2M_1 = (RE + nav1_r.h).*cos(nav1_r.lat);
@@ -592,6 +590,36 @@ if (strcmp(PLOT,'ON'))
     xlabel('Time [s]')
     ylabel('[m]')
     legend('GNSS', 'IMU1', 'IMU2', '3\sigma');
-    title('ALTITUDE ERROR'); 
+    title('ALTITUDE ERROR');
     grid
+    
+    % BIAS ESTIMATION
+    figure;
+    subplot(311)
+    plot(nav1_e.tg, nav1_e.b(:, 1).*R2D, '-.b');
+    hold on
+    plot(nav2_e.tg, nav2_e.b(:, 1).*R2D, '-.r');
+    xlabel('Time [s]')
+    ylabel('[deg]')
+    title('KF BIAS ESTIMATION X');
+    legend('IMU1', 'IMU2');
+    grid
+    
+    subplot(312)
+    plot(nav1_e.tg, nav1_e.b(:, 2).*R2D, '-.b');
+    hold on
+    plot(nav2_e.tg, nav2_e.b(:, 2).*R2D, '-.r');
+    xlabel('Time [s]')
+    ylabel('[deg]')
+    title('KF BIAS ESTIMATION Y');
+    grid
+    
+    subplot(313)
+    plot(nav1_e.tg, nav1_e.b(:, 3).*R2D, '-.b');
+    hold on
+    plot(nav2_e.tg, nav2_e.b(:, 3).*R2D, '-.r');
+    xlabel('Time [s]')
+    ylabel('[deg]')
+    title('KF BIAS ESTIMATION Z');
+    grid    
 end

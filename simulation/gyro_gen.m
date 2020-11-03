@@ -1,13 +1,13 @@
 function wb_sim = gyro_gen (ref, imu)
 % gyro_gen: generates simulated gyros measurements from reference data and
-%          imu error profile.
+%          IMU error profile.
 %
 % INPUT
-%		ref: data structure with true trajectory.
-%		imu: data structure with IMU error profile.
+%	ref: data structure with true trajectory.
+%	imu: data structure with IMU error profile.
 %
 % OUTPUT
-%		wb_sim: Nx3 matrix with simulated gryos in the body frame [X Y Z] 
+%	wb_sim: Nx3 matrix with simulated gryos in the body frame [X Y Z] 
 %     (rad, rad, rad).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -38,51 +38,51 @@ function wb_sim = gyro_gen (ref, imu)
 %   Aggarwal, P. et al. MEMS-Based Integrated Navigation. Artech
 % House. 2010.
 %
-% Version: 006
-% Date:    2019/01/09
+% Version: 007
+% Date:    2020/11/03
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
 N = max(size(ref.t));
 M = [N, 3];
 
-%% SIMULATE GYRO
+%% SIMULATION OF GYROS
 
-% If true turn rates are provided...
+% If true, turn rates are provided...
 if (isfield(ref, 'wb'))
     
     gyro_b = ref.wb;
     
-% If not, obtain turn rates from DCM
+% If not, turn rates are obtained from DCM...
 else
-    gyro_raw = gyro_gen_delta(ref.DCMnb, ref.t);
+    gyro_raw = gyro_gen_delta(ref.DCMnb_m, ref.t);
     gyro_raw = [0 0 0; gyro_raw;];
     
-    % Noise introduced by differentation at gyro_gen_delta() should be smoothed.
+    % Noise introduced by derivatives at gyro_gen_delta() should be smoothed
     gyro_b = my_sgolayfilt(gyro_raw);
 end
 
-%% SIMULATE TRANSPORTE AND EARTH RATES
+%% SIMULATION OF TRANSPORTE AND EARTH RATES
 
 g_err_b = zeros(M);
 for i = 1:N
     
-    dcmnb = reshape(ref.DCMnb(i,:), 3, 3);
+    dcmnb = reshape(ref.DCMnb_m(i,:), 3, 3);
     omega_ie_n = earthrate(ref.lat(i));
     omega_en_n = transportrate(ref.lat(i), ref.vel(i,1), ref.vel(i,2), ref.h(i));
     omega_in_b = dcmnb * (omega_en_n + omega_ie_n );
     g_err_b(i,:) = ( omega_in_b )';
 end
 
-%% SIMULATE NOISES
+%% SIMULATION OF NOISES
 
 % -------------------------------------------------------------------------
-% Simulate static bias as a constant random variable
+% Simulation of static bias as a constant random variable
 
 [g_sbias] = noise_sbias (imu.gb_sta, N);
 
 % -------------------------------------------------------------------------
-% Simulate white noise
+% Simulation of white noise
 
 wn = randn(M);
 g_wn = zeros(M);
@@ -93,13 +93,13 @@ for i=1:3
 end
 
 % -------------------------------------------------------------------------
-% Simulate dynamic bias (bias instability) as a first-order Gauss-Markov model
+% Simulation of dynamic bias (bias instability) as a first-order Gauss-Markov model
 
 dt = 1/imu.freq; 
 [g_dbias] = noise_dbias (imu.gb_corr, imu.gb_dyn, dt, M);
 
 % -------------------------------------------------------------------------
-% Simulate rate random walk
+% Simulation of rate random walk
 
 [g_rrw] = noise_rrw (imu.arrw, dt, M);
 

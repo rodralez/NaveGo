@@ -1,16 +1,16 @@
-function fb = acc_nav2body (acc_n, DCMnb)
+function fb = acc_nav2body (acc_n, DCMnb_m)
 % acc_nav2body: transforms accelerations from navigation frame to body
 % frame.
 %
 % INPUT
-%		acc_n: Nx3 matrix with [fn, fe, fd] accelerations in the navigation 
+%	acc_n: Nx3 matrix with [fn, fe, fd] accelerations in the navigation
 %		frame.
-%		DCMnb: Nx9 matrix with nav-to-body direct cosine matrix (DCM). 
-%		Each row contains [a11 a21 a31 a12 a22 a32 a13 a23 a33] elements 
-%		from each DCM.
+%   DCMnb_m: Nx9 matrix with nav-to-body direct cosine matrices (DCM).
+%       Each row of DCMnb_m contains the 9 elements of a particular DCMnb
+%       matrix ordered as [a11 a21 a31 a12 a22 a32 a13 a23 a33].
 %
 % OUTPUT
-%		fb: Nx3 matrix with [fx, fy, fz] simulated accelerations in the
+%	fb: Nx3 matrix with [fx, fy, fz] simulated accelerations in the
 %		body frame.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -33,23 +33,24 @@ function fb = acc_nav2body (acc_n, DCMnb)
 %
 % Reference:
 %
-%	  R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+%   R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
 % simulation framework for low-cost integrated navigation systems,
 % Journal of Control Engineering and Applied Informatics}, vol. 17,
 % issue 2, pp. 110-120, 2015. Eq. 10.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2020/11/03
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
 fb = zeros(size(acc_n));
 
-for k = 1:max(size(acc_n)),
+M = max(size(acc_n));
+
+for k = 1:M
     
-    DCMnb1 = reshape(DCMnb(k,:), 3, 3);
-    fb(k,:) = ( DCMnb1 * ( acc_n(k,:)') )';
-    
+    dcmnb = reshape(DCMnb_m(k,:), 3, 3);
+    fb(k,:) = ( dcmnb * ( acc_n(k,:)' ) )';
 end
 
 end

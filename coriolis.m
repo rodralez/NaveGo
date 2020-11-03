@@ -39,11 +39,11 @@ function cor_n = coriolis(lat, vel, h)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
-kn = max(size(lat)); 
+M = max(size(lat)); 
 
-cor_n = zeros(kn, 3);
+cor_n = zeros(M, 3);
 
-for i = 1:kn
+for i = 1:M
    
     omega_en_N = transportrate(lat(i), vel(i,1), vel(i,2), h(i));
     omega_ie_N = earthrate(lat(i));
