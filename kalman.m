@@ -23,7 +23,7 @@ function  kf = kalman(kf, dt)
 %       Qd: 21x6  discrete process noise covariance.
 %       Pi: 21x21 a priori error covariance.
 %       Pp: 21x21 a posteriori error covariance.  
-%        S: 6x6  innovation (or residual) covariance.
+%        S: 6x6 innovation (or residual) covariance.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %

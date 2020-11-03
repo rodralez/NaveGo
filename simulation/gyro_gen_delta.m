@@ -1,10 +1,10 @@
-function deltha = gyro_gen_delta(DCMnb, t)
+function deltha = gyro_gen_delta(DCMnb_m, t)
 % gyro_gen_delta: calculates gyros delta angles.
 %
 % INPUT
-%   DCMnb: Nx9 matrix with nav-to-body direct cosine matrix (DCM). 
-%		Each row contains [a11 a21 a31 a12 a22 a32 a13 a23 a33] elements 
-%		from each DCM.
+%   DCMnb_m: Nx9 matrix with nav-to-body direct cosine matrix (DCM). 
+%		Each row of DCMnb_m contains the 9 elements of a particular DCMnb 
+%   matrix ordered as [a11 a21 a31 a12 a22 a32 a13 a23 a33].
 %		t: Mx1 time vector (s).
 %
 % OUTPUT
@@ -41,7 +41,7 @@ function deltha = gyro_gen_delta(DCMnb, t)
 % URL:     https://github.com/rodralez/navego 
 
 
-M = max(size(DCMnb));
+M = max(size(DCMnb_m));
 
 % Preallocate
 
@@ -53,8 +53,8 @@ dpsi   = zeros(M-1,1);
 
 for k = 2:M
 
-  dcmnb = reshape(DCMnb(k,:), 3, 3); 
-  dcmnb_old = reshape(DCMnb(k-1,:), 3, 3);  
+  dcmnb = reshape(DCMnb_m(k,:), 3, 3); 
+  dcmnb_old = reshape(DCMnb_m(k-1,:), 3, 3);  
 
   dPSI = (dcmnb_old * dcmnb') - eye(3);
    

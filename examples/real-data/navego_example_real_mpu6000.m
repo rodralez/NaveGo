@@ -182,5 +182,5 @@ end
 
 fprintf('\nNaveGo: Kalman filter performance analysis\n') 
 
-kf_analysis (nav_mpu6000)
+kf_analysis (nav_r)
 

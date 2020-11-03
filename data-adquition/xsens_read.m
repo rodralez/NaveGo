@@ -1,11 +1,14 @@
-function xsens = xsens_read(file)
-% xsens_read: reads .cvs files created by Xsens software. 
+function [xsens_data, xsens ] = xsens_read(file, row_lines, columns_max)
+% xsens_read: reads .cvs files created by Xsens software.
 %
 % INPUT
 %   fname: .cvs file name (string).
+%   blockMatrix:
+%   columns: maximum column to be read.
 %
 % OUTPUT
-%   xsens: data structure which fields depends on user selection. 
+%   xsens: data structure where each field is a column found in the file.
+%   xsens_fields: cell vector with the names of each field found in the file.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -28,15 +31,10 @@ function xsens = xsens_read(file)
 % Reference:
 %
 %
-% Version: 001
-% Date:    2020/10/22
+% Version: 002
+% Date:    2020/10/30
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
-
-%% CONSTANTS
-
-G =   9.80665;
-D2R = pi/180;
 
 disp('xsens_read: processing data...')
 
@@ -45,90 +43,95 @@ disp('xsens_read: processing data...')
 xsens_f = fopen(file, 'r');
 if xsens_f == -1
     error('xsens_read: ERROR: %s not found', file)
-end
-
-%% TOTAL NUMBER OF LINES
-
-lines = nnz(fread(xsens_f) == 10);
-fprintf('xsens_read: %s file has %d lines. \n', file, lines);
-
-% Set pointer back to the beginning of file
-fseek(xsens_f,0,'bof');
-
-%% DATA STRUCTURE
-
-xsens = struct;
-xsens_fields = {'packet_counter','year','month','day','second','UTC_nano', ...
-                'UTC_year','UTC_month','UTC_day', 'UTC_hour','UTC_minute', ...
-                'UTC_second','UTC_valid','vel_inc_X','vel_inc_Y','vel_inc_Z', ...
-                'ori_inc_q0','ori_inc_q1','ori_inc_q2','ori_inc_q3'};
-
-N = max(size(xsens_fields));
-
-for i=1:N
-    xsens.(xsens_fields{i}) = 0;
+else
+    fprintf('xsens_read: loading %s...\n', file)
 end
 
 %% HEADER
 
-header_rows = 14;
+header_rows = 13;
 
 xsens_h = cell(header_rows,1);
 for i = 1:header_rows
     xsens_h{i,1} = fgets(xsens_f);
 end
 
-% Set pointer back to the beginning of file
-fseek(xsens_f,0,'bof');
+%% FIELDS
 
-%% DATA
+xsens_line = fgets(xsens_f);
+xsens_line = strrep(xsens_line,'[','_');    % Chance '[' for '_'
+xsens_line = strrep(xsens_line,']','');     % Delete ']'
+
+xsens_fields = textscan(xsens_line, '%s', 'Delimiter', ',' , 'EmptyValue', 0);
+
+xsens_fields = xsens_fields{1};
+
+[columns,~] = size (xsens_fields);
+
+xsens.fields = xsens_fields;
+
+fprintf('xsens_read: %s has %d columns. \n', file, columns);
+
+%% GET DATA
+
+% Set pointer back to the beginning of file
+% fseek(xsens_f,0,'bof');
 
 % Pattern for textscan()
-str = repmat('%f ', 1, N);
+formatSpec = repmat('%f ', 1, columns);
 
-data_cell = textscan(xsens_f, str, 'HeaderLines', 14, 'Delimiter',',','EmptyValue',0);
-data_m = cell2mat (data_cell);
+% Init data matrix
+xsens_data = zeros(row_lines, columns_max);
 
-%% IMU data
+j = 1;  % index for reading data
 
-% Delete repeated timestamps
-dd = diff(data_m(:, 6));
-dd = [1; dd];
-idl = dd ~= 0.0;
-data_vld = data_m(idl , :);
+m = 0;  % index for dividing data in several matrices
 
-if (~ all (idl))
-    warning ('Repeated IMU timestamp will be deleted')
+blockRows = 10000;
+
+while ~feof(xsens_f)
+    
+    fprintf('xsens_read: processing row %d...\n', j)
+    
+    data_c = textscan(xsens_f, formatSpec, blockRows, 'Delimiter',',','EmptyValue',0);
+    data = cell2mat(data_c);
+    
+    % Avoid rows where time is NaN
+    idl = isnan(data(:, 7));
+    data_vld = data( ~idl , :);
+    
+    % Avoid rows where acc is NaN
+    idl = ~isnan(data_vld(:, 18));
+    data_vld = data_vld(idl , :);    
+    
+    [M, ~]  = size( data_vld );
+    
+    k = j + M - 1;
+    xsens_data(j:k , :) = data_vld(: , 1:columns_max);
+    j = k + 1;
+    
+    clear data_c data data_vld idl    
 end
 
-xsens.packet_counter    = data_vld(:, 1);
+%% DATA TO STRUCTURE
 
-xsens.year              = data_vld(:, 2);
-xsens.month             = data_vld(:, 3);
-xsens.day               = data_vld(:, 4);
-xsens.second            = data_vld(:, 5);
+% for i=1:columns_max
+%     xsens.(xsens_fields{i}) = xsens_data(:, i);
+% end
 
-xsens.UTC_nano          = data_vld(:, 6);
-xsens.UTC_year          = data_vld(:, 7);
-xsens.UTC_month         = data_vld(:, 8);
-xsens.UTC_day           = data_vld(:, 9);
-xsens.UTC_hour          = data_vld(:, 10);
-xsens.UTC_minute        = data_vld(:, 11);
-xsens.UTC_second        = data_vld(:, 12);
+%% DATA TO TABLE
 
-xsens.UTC_valid         = data_vld(:, 13);
+% xsens_table = array2table(xsens_data, 'VariableNames', xsens_fields(1:66)) ;
 
-xsens.vel_inc_X         = data_vld(:, 14);
-xsens.vel_inc_Y         = data_vld(:, 15);
-xsens.vel_inc_Z         = data_vld(:, 16);
+%%
 
-xsens.ori_inc_q0        = data_vld(:, 17);
-xsens.ori_inc_q1        = data_vld(:, 18);
-xsens.ori_inc_q2        = data_vld(:, 19);
-xsens.ori_inc_q3        = data_vld(:, 20);
+% Delete extra rows where time is zero
+idl = (xsens_data(:, 7)) == 0.0;
+xsens_data = xsens_data( ~idl , :);
 
 % Frequency
-dt = median(diff(xsens.UTC_nano)) * 10e-9;
+time = xsens_data( ~isnan(xsens_data(:, 7)) , 7);
+dt = median( diff(time) ) * 10e-10;
 xsens.freq = round(1/dt);
 
 % Header
@@ -139,6 +142,6 @@ xsens.header = xsens_h;
 
 fclose(xsens_f);
 
-disp('xsens_read: data is ready.')
+disp('xsens_read: finishing processing.')
 
 end

@@ -23,8 +23,8 @@ function  kf_analysis (nav_e)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference:
-%   Kalman filter tuning and consistency. ChM015x Sensor Fusion and Non-linear 
-%   Filtering for Automotive Systems, section 4.3, course at www.edx.org. 
+%   Kalman filter tuning and consistency. ChM015x Sensor Fusion and Non-linear
+%   Filtering for Automotive Systems, section 4.3, course at www.edx.org.
 %
 % Version: 001
 % Date:    2019/09/02
@@ -32,45 +32,48 @@ function  kf_analysis (nav_e)
 % URL:     https://github.com/rodralez/navego
 
 
-%% A POSTERIORI STATE ANALYSIS
+%% INNOVATION CONSISTENCY
 
-variable = { 'roll', 'pitch', 'yaw', 'vel N', 'vel E', 'vel D', 'latitude', 'longitude', 'altitude' };
+% Innovations should be zero mean and uncorrelated.
 
-for i=1:9
+
+N = max( size( nav_e.tg ) ) ;
+
+chi = zeros(N,1);
+
+for i=1:N
     
-    [pd, ha] = normality_test ( nav_e.xp (:, i) );
+    S = reshape(nav_e.S(i,:), 6, 6);
     
-    figure(i)
-    plot_histogram ( nav_e.xp (:, i), pd, variable{i} )
-    
-    if ~( ha )
-        fprintf('kf_analysis: state vector for %s comes from a normal distribution.\n', variable{i});
-        
-    else
-         fprintf('kf_analysis: %s analysis does not come from a normal distribution.\n', variable{i});
-        
-    end
+    chi(i) = nav_e.v(i,:) * S * nav_e.v(i,:)';
 end
 
-%% INNOVATION ANALYSIS
+[pd, hk, pk] = normality_test (chi);
 
-variable = { 'vel N', 'vel E', 'vel D', 'latitude', 'longitude', 'altitude' };
-
-for i=1:6
-    
-    [pd, ha] = normality_test ( nav_e.v (:, i) );
-    
-    figure(i+9)
-    plot_histogram (nav_e.v (:, i), pd, variable{i} )
-    
-    if ~( ha )
-        fprintf('kf_analysis: innovations for %s comes from a normal distribution.\n', variable{i});
-        
-    else
-         fprintf('kf_analysis: innovations for %s does not come from a normal distribution.\n', variable{i});
-        
-    end
+if ~( hk )
+    fprintf('kf_analysis: innovations comes from a normal distribution.\n' );    
+else
+    fprintf('kf_analysis: innovations does not come from a normal distribution.\n' );    
 end
 
+plot_histogram ( chi, pd, 'Innovations' );
+
+% variable = { 'vel N', 'vel E', 'vel D', 'latitude', 'longitude', 'altitude' };
+% 
+% for i=1:6
+%     
+%     [pd, ha] = normality_test ( nav_e.v (:, i) );
+%     
+%     figure(i+9)
+%     plot_histogram (nav_e.v (:, i), pd, variable{i} )
+%     
+%     if ~( ha )
+%         fprintf('kf_analysis: innovations for %s comes from a normal distribution.\n', variable{i});
+%         
+%     else
+%         fprintf('kf_analysis: innovations for %s does not come from a normal distribution.\n', variable{i});
+%         
+%     end
+% end
 
 end

@@ -46,13 +46,20 @@ ref_pdf = pdf(pd, x);
 
 %% STATISTIC ANALYSIS
 
-EPS = 1E-3;
-
 mu = mean(samples);
 med = median(samples);
 
-idx1 = find( x >= mu - EPS   & x < mu + EPS );
-idx2 = find( x >= med - EPS & x < med + EPS );
+i = -5;
+idx1 = [];
+idx2 = [];
+
+while (isempty(idx1) || isempty(idx2))
+    
+    EPS = 10^i;
+    idx1 = find( x >= mu - EPS   & x < mu + EPS );
+    idx2 = find( x >= med - EPS & x < med + EPS );
+    i = i + 1;    
+end
 
 if ( isempty(idx1) || isempty(idx2) )
     error('plot_histogram: no match for mean or median')
@@ -67,6 +74,8 @@ idx2 = idx2( ceil(end/2) );
 bins = 100;
 blue_new = [0 0.4470 0.7410];
 orange_new = [0.8500 0.3250 0.0980];
+
+figure
 
 % Plot histogram from data
 histogram(samples, bins, 'Normalization', 'pdf', 'FaceColor', [.9 .9 .9]);
