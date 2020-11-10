@@ -27,7 +27,7 @@ Main features of NaveGo are:
 
 ## NaveGo Mathematical Model
 
-The underlying mathematical model of NaveGo is based on two articles:
+The underlying mathematical model of NaveGo is based on the two following articles:
 
 * R. Gonzalez, J.I. Giribet, and H.D. Patiño. NaveGo: a simulation framework for low-cost integrated navigation systems, Journal of Control Engineering and Applied Informatics, vol. 17, issue 2, pp. 110-120, 2015. [Download](http://ceai.srait.ro/index.php?journal=ceai&page=article&op=view&path%5B%5D=2478).
 
@@ -38,7 +38,7 @@ Be aware that the original Kalman filter state vector has been reduced from 21 t
 
 ##  NaveGo Model Validation
 
-NaveGo has been validated by processing real-world data from a real trajectory and contrasting results against Inertial Explorer, a commercial, closed-source software package. Differences between both solutions have shown to be negligible. For more information read the following paper,
+NaveGo has been validated by processing real-world data from a real trajectory and contrasting results against Inertial Explorer, a commercial, closed-source software package. Differences between both solutions have shown to be negligible. For more information read the following paper:
 
 * R. Gonzalez, C.A. Catania, P. Dabove, J.C. Taffernaberry, and M. Piras. Model validation of an open-source framework for post-processing INS/GNSS systems. III International Conference on Geographical Information Systems Theory, Applications and Management (GISTAM 2017). Porto, Portugal. April 2017. [Download](https://www.scitepress.org/PublicationsDetail.aspx?ID=Ds7NC2qnRSw%3d&t=1).
 
@@ -178,6 +178,6 @@ We would like to thank to the many people that have contributed to make NaveGo a
 
 * Dr. Paolo Dabove and Dr. Marco Piras (both from DIATI, Politecnico di Torino, Italy) for helping to debug NaveGo and suggesting new features.
 
-* Dr. Paolo Zoccarato for his comments attitude conversion.
+* Dr. Paolo Zoccarato for his comments on attitude conversion.
 
 	
