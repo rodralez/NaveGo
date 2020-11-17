@@ -91,7 +91,7 @@ fprintf('NaveGo: loading reference data... \n')
 
 load ref
 
-%% EKINOX IMU 
+%% MPU-6000 IMU 
 
 fprintf('NaveGo: loading MPU-6000 IMU data... \n')
 
