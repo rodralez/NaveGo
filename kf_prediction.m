@@ -3,19 +3,19 @@ function  kf = kf_prediction(kf, dt)
 %
 % INPUT
 %   kf: data structure with at least the following fields:
-%       xp: 21x1 a posteriori state vector (old).
-%       Pp: 21x21 a posteriori error covariance (old).
-%        F: 21x21 state transition matrix.
+%       xp: 15x1 a posteriori state vector (old).
+%       Pp: 15x15 a posteriori error covariance (old).
+%        F: 15x15 state transition matrix.
 %        Q: 12x12 process noise covariance.
-%        G: 21x12 control-input matrix.      
+%        G: 15x12 control-input matrix.      
 %   		dt: sampling interval. 
 %
 % OUTPUT
 %    kf: the following fields are updated:
-%       xi: 21x1 a priori state vector (updated).
-%       Pi: 21x21 a priori error covariance.
-%        A: 21x21 state transition matrix.
-%       Qd: 21x6  discrete process noise covariance.
+%       xi: 15x1 a priori state vector (updated).
+%       Pi: 15x15 a priori error covariance.
+%        A: 15x15 state transition matrix.
+%       Qd: 15x6  discrete process noise covariance.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -50,7 +50,7 @@ function  kf = kf_prediction(kf, dt)
 % URL:     https://github.com/rodralez/navego
 
 % Discretization of continous-time system
-kf.A =  expm(kf.F * dt);          				% Exact solution for linerar systems
+kf.A =  expm(kf.F * dt);          				% Exact solution for linear systems
 % S.A = I + (S.F * dt);         				% Approximated solution by Euler method 
 kf.Qd = (kf.G * kf.Q * kf.G') .* dt;            % Digitalized covariance matrix
 

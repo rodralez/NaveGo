@@ -3,18 +3,18 @@ function  kf = kf_update( kf )
 %
 % INPUT
 %   kf: data structure with at least the following fields:
-%       xi: 21x1 a priori state vector.
-%       Pi: 21x21 a priori error covariance.
+%       xi: 15x1 a priori state vector.
+%       Pi: 15x15 a priori error covariance.
 %        z: 6x1 innovations vector.
-%        H: 6x21 observation matrix.
+%        H: 6x15 observation matrix.
 %        R: 6x6  observation noise covariance.
 %
 % OUTPUT
 %    kf: the following fields are updated:
-%       xp: 21x1 a posteriori state vector (updated).
-%       Pp: 21x21 a posteriori error covariance (updated).  
+%       xp: 15x1 a posteriori state vector (updated).
+%       Pp: 15x15 a posteriori error covariance (updated).  
 %		 		 v: 6x1 innovation vector. 
-%        K: 21x6  Kalman gain matrix.
+%        K: 15x6  Kalman gain matrix.
 %        S: 6x6  innovation (or residual) covariance.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -63,6 +63,6 @@ kf.xp = kf.xi + kf.K * kf.v;
 kf.Pp = kf.Pi - kf.K * kf.S *  kf.K';                
 % J = (I - S.K * S.H);                          % Joseph stabilized version     
 % S.Pp = J * S.Pi * J' + S.K * S.R * S.K';      % Alternative implementation
-kf.Pp =  0.5 .* (kf.Pp + kf.Pp');               % Force Pi to be symmetric matrix
+kf.Pp =  0.5 .* (kf.Pp + kf.Pp');               % Force Pi to be a symmetric matrix
 
 end
