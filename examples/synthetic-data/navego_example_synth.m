@@ -42,8 +42,8 @@
 % Revision D. October 2011.
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 %
-% Version: 016
-% Date:    2020/11/03
+% Version: 017
+% Date:    2020/11/18
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -601,7 +601,7 @@ if (strcmp(PLOT,'ON'))
     plot(nav2_e.tg, nav2_e.b(:, 1).*R2D, '-.r');
     xlabel('Time [s]')
     ylabel('[deg]')
-    title('KF BIAS ESTIMATION X');
+    title('KF BIAS GYRO X ESTIMATION');
     legend('IMU1', 'IMU2');
     grid
     
@@ -611,7 +611,7 @@ if (strcmp(PLOT,'ON'))
     plot(nav2_e.tg, nav2_e.b(:, 2).*R2D, '-.r');
     xlabel('Time [s]')
     ylabel('[deg]')
-    title('KF BIAS ESTIMATION Y');
+    title('KF BIAS GYRO Y ESTIMATION');
     grid
     
     subplot(313)
@@ -620,6 +620,35 @@ if (strcmp(PLOT,'ON'))
     plot(nav2_e.tg, nav2_e.b(:, 3).*R2D, '-.r');
     xlabel('Time [s]')
     ylabel('[deg]')
-    title('KF BIAS ESTIMATION Z');
+    title('KF BIAS GYRO Z ESTIMATION');
     grid    
+    
+    figure;
+    subplot(311)
+    plot(nav1_e.tg, nav1_e.b(:, 4), '-.b');
+    hold on
+    plot(nav2_e.tg, nav2_e.b(:, 4), '-.r');
+    xlabel('Time [s]')
+    ylabel('[m/s^2]')
+    title('KF BIAS ACCR X ESTIMATION');
+    legend('IMU1', 'IMU2');
+    grid
+    
+    subplot(312)
+    plot(nav1_e.tg, nav1_e.b(:, 5), '-.b');
+    hold on
+    plot(nav2_e.tg, nav2_e.b(:, 5), '-.r');
+    xlabel('Time [s]')
+    ylabel('[m/s^2]')
+    title('KF BIAS ACCR Y ESTIMATION');
+    grid
+    
+    subplot(313)
+    plot(nav1_e.tg, nav1_e.b(:, 6), '-.b');
+    hold on
+    plot(nav2_e.tg, nav2_e.b(:, 6), '-.r');
+    xlabel('Time [s]')
+    ylabel('[m/s^2]')
+    title('KF BIAS ACCR Z ESTIMATION');
+    grid  
 end
