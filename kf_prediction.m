@@ -2,20 +2,20 @@ function  kf = kf_prediction(kf, dt)
 % kf_prediction: Prediction update part of the Kalman filter algorithm.
 %
 % INPUT
-%   kf: data structure with at least the following fields:
+%   kf, data structure with at least the following fields:
 %       xp: 15x1 a posteriori state vector (old).
-%       Pp: 15x15 a posteriori error covariance (old).
+%       Pp: 15x15 a posteriori error covariance matrix (old).
 %        F: 15x15 state transition matrix.
-%        Q: 12x12 process noise covariance.
+%        Q: 12x12 process noise covariance matrix.
 %        G: 15x12 control-input matrix.      
-%   		dt: sampling interval. 
+%   	dt: sampling interval. 
 %
 % OUTPUT
-%    kf: the following fields are updated:
+%   kf, the following fields are updated:
 %       xi: 15x1 a priori state vector (updated).
-%       Pi: 15x15 a priori error covariance.
+%       Pi: 15x15 a priori error covariance matrix.
 %        A: 15x15 state transition matrix.
-%       Qd: 15x6  discrete process noise covariance.
+%       Qd: 15x6 discrete process noise covariance matrix.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -59,6 +59,6 @@ kf.xi = kf.A * kf.xp;
 
 % Step 2, update the a priori covariance matrix Pi
 kf.Pi = (kf.A * kf.Pp * kf.A') + kf.Qd;
-kf.Pi =  0.5 .* (kf.Pi + kf.Pi');                  % Force Pi to be symmetric matrix
+kf.Pi =  0.5 .* (kf.Pi + kf.Pi');               % Force Pi to be symmetric matrix
 
 end

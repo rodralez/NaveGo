@@ -2,28 +2,28 @@ function  kf = kalman(kf, dt)
 % kalman: Kalman filter algorithm.
 %
 % INPUT
-%   kf: data structure with at least the following fields:
+%   kf, data structure with at least the following fields:
 %       xp: 15x1 a posteriori state vector (old).
 %        z: 6x1 innovations vector.
 %        F: 15x15 state transition matrix.
 %        H: 6x15 observation matrix.
-%        Q: 12x12 process noise covariance.
-%        R: 6x6  observation noise covariance.
-%       Pp: 15x15 a posteriori error covariance.
+%        Q: 12x12 process noise covariance matrix.
+%        R: 6x6 observation noise covariance matrix.
+%       Pp: 15x15 a posteriori error covariance matrix.
 %        G: 15x12 control-input matrix.      
-%   		dt: sampling interval. 
+%   	dt: sampling interval. 
 %
 % OUTPUT
-%    kf: the following fields are updated:
+%    kf, the following fields are updated:
 %       xi: 15x1 a priori state vector (updated).
 %       xp: 15x1 a posteriori state vector (updated).
-%		 		 v: 6x1 innovation vector. 
+%		 v: 6x1 innovation vector. 
 %        A: 15x15 state transition matrix.
-%        K: 15x6  Kalman gain matrix.
-%       Qd: 15x6  discrete process noise covariance.
+%        K: 15x6 Kalman gain matrix.
+%       Qd: 15x6 discrete process noise covariance matrix.
 %       Pi: 15x15 a priori error covariance.
 %       Pp: 15x15 a posteriori error covariance.  
-%        S: 6x6 innovation (or residual) covariance.
+%        S: 6x6 innovation (not residual) covariance matrix.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %

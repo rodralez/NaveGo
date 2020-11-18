@@ -2,7 +2,7 @@ function  kf_analysis (nav_e)
 % kf_analysis: evaluates Kalman filter performance.
 %
 % INPUT
-%   nav,  INS/GNSS dataset.
+%   nav,  INS/GNSS estimations.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
