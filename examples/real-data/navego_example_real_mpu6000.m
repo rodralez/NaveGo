@@ -91,7 +91,7 @@ fprintf('NaveGo: loading reference data... \n')
 
 load ref
 
-%% EKINOX IMU 
+%% MPU-6000 IMU 
 
 fprintf('NaveGo: loading MPU-6000 IMU data... \n')
 
@@ -182,5 +182,5 @@ end
 
 fprintf('\nNaveGo: Kalman filter performance analysis\n') 
 
-kf_analysis (nav_r)
+kf_analysis (nav_mpu6000)
 

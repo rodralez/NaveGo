@@ -36,7 +36,6 @@ function  kf_analysis (nav_e)
 
 % Innovations should be zero mean and uncorrelated.
 
-
 N = max( size( nav_e.tg ) ) ;
 
 chi = zeros(N,1);
