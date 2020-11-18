@@ -30,15 +30,15 @@ function [RM,RN] = radius(lat)
 %   <http://www.gnu.org/licenses/>.
 %
 % References:
-%			Titterton, D.H. and Weston, J.L. (2004). Strapdown
+%	Titterton, D.H. and Weston, J.L. (2004). Strapdown
 % Inertial Navigation Technology (2nd Ed.). Institution
 % of Engineering and Technology, USA. Eq. 2.6 and 2.7.
 %
-% 			Groves, P. (2008). Principles of GNSS, Inertial, and
+% 	Groves, P. (2008). Principles of GNSS, Inertial, and
 % Multisensor Integrated Navigation Systems. Artech House, UK.
 % Eq. 2.65 and 2.66.
 %
-%  			R. Gonzalez, J. Giribet, and H. Patiño. An approach to
+%  	R. Gonzalez, J. Giribet, and H. Patiño. An approach to
 % benchmarking of loosely coupled low-cost navigation systems,
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 11.
@@ -65,10 +65,10 @@ else
     den = 1 - e2 .* (sin(lat)).^2;
 end
 
-% Meridian radius of curvature: radius of curvature for north-south motion.
+% Meridian radius of curvature: radius of curvature for North-South motion.
 RM = a .* (1-e2) ./ (den).^(3/2);
 
-% Normal radius of curvature: radius of curvature for east-west motion. 
+% Normal radius of curvature: radius of curvature for East-West motion. 
 % AKA transverse radius.
 RN = a ./ sqrt(den);
 

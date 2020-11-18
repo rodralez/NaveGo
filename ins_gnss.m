@@ -119,7 +119,7 @@ LI = length(imu.t);
 % Length of GNSS time vector
 LG = length(gnss.t);
 
-% Preallocate attitude vectors
+% Preallocation of attitude vectors
 roll_e  = zeros (LI, 1);
 pitch_e = zeros (LI, 1);
 yaw_e   = zeros (LI, 1);
@@ -134,13 +134,13 @@ DCMnb = euler2dcm([roll_e(1); pitch_e(1); yaw_e(1);]);
 DCMbn = DCMnb';
 qua   = euler2qua([roll_e(1) pitch_e(1) yaw_e(1)]);
 
-% Preallocate velocity vector
+% Preallocation of velocity vector
 vel_e   = zeros (LI, 3);
 
 % Initial velocity at INS time = 1
 vel_e(1,:) = gnss.vel(1,:);
 
-% Preallocate position vectors
+% Preallocation of position vectors
 lat_e    = zeros (LI,1);
 lon_e    = zeros (LI,1);
 h_e      = zeros (LI, 1);
@@ -189,18 +189,19 @@ kf = kf_update( kf );
 
 % DEC = 0.5 * 180/pi;             % Magnetic declination (radians)
 
-% Preallocate Kalman filter matrices for later performance analysis
+% Preallocation of Kalman filter matrices for later performance analysis
 xi = zeros(LG, 15);        % Evolution of Kalman filter a priori states, xi
 xp = zeros(LG, 15);        % Evolution of Kalman filter a posteriori states, xp
 z = zeros(LG, 6);          % INS/GNSS measurements
 v = zeros(LG, 6);          % Kalman filter innovations
-b  = zeros(LG, 6);         % Biases compensantions after Kalman filter correction
+b = zeros(LG, 6);          % Biases compensantions after Kalman filter correction
 
 A  = zeros(LG, 225);       % Transition-state matrices, A
 Pi = zeros(LG, 225);       % A priori covariance matrices, Pi
 Pp = zeros(LG, 225);       % A posteriori covariance matrices, Pp
 K  = zeros(LG, 90);        % Kalman gain matrices, K
 S  = zeros(LG, 36);        % Innovation matrices, S
+ob = zeros(LG, 1);         % Number of observable states at each GNSS data arriving
 
 % Initial matrices for Kalman filter performance analysis
 xp(1,:) = kf.xp';
@@ -282,19 +283,22 @@ for i = 2:LI
     
     %% KALMAN FILTER UPDATE
     
-    % Check if there is new GNSS data to process at current INS time
+    % Check if there is new GNSS measurement to process at current INS time
     gdx =  find (gnss.t >= (imu.t(i) - gnss.eps) & gnss.t < (imu.t(i) + gnss.eps));
     
     if ( ~isempty(gdx) && gdx > 1)
         
 %         gdx   % DEBUG
         
-        %% INNOVATIONS
+        %% MEASUREMENTS
         
+        % Update meridian and normal radii of curvature
         [RM,RN] = radius(lat_e(i));
-        Tpr = diag([(RM + h_e(i)), (RN + h_e(i)) * cos(lat_e(i)), -1]);  % radians-to-meters
         
-        % Innovations for position with lever arm correction
+        % Radians-to-meters matrix
+        Tpr = diag([(RM + h_e(i)), (RN + h_e(i)) * cos(lat_e(i)), -1]);  
+        
+        % Measurements for position in meters with lever arm correction
         zp = Tpr * ([lat_e(i); lon_e(i); h_e(i);] - [gnss.lat(gdx); gnss.lon(gdx); gnss.h(gdx);]) ...
             + (DCMbn * gnss.larm);
         
@@ -329,6 +333,11 @@ for i = 2:LI
         kf.xp(1:9) = 0;              % states 1:9 are forced to be zero (error-state approach)
         kf = kalman(kf, dtg);
         
+        %% OBSERVABILITY
+        
+        % Number the observable states at current GNSS time
+        ob(gdx) = rank(obsv(kf.F, kf.H)); 
+                
         %% INS/GNSS CORRECTIONS
         
         % Quaternion corrections
@@ -360,8 +369,8 @@ for i = 2:LI
         vel_e (i,3) = vel_e (i,3) - kf.xp(6);
         
         % Position corrections
-        lat_e(i) = lat_e(i) - (kf.xp(7));
-        lon_e(i) = lon_e(i) - (kf.xp(8));
+        lat_e(i) = lat_e(i) - kf.xp(7);
+        lon_e(i) = lon_e(i) - kf.xp(8);
         h_e(i)   = h_e(i)   - kf.xp(9);
         
         % Biases corrections
@@ -413,6 +422,7 @@ nav_e.Pi    = Pi;       % A priori covariance matrices
 nav_e.Pp    = Pp;       % A posteriori covariance matrices
 nav_e.K     = K;        % Kalman gain matrices
 nav_e.S     = S;        % Innovation matrices
+nav_e.ob    = ob;       % Number of observable states at each GNSS data arriving
 
 fprintf('\n');
 
