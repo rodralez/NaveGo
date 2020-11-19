@@ -121,20 +121,20 @@ gnss.eps = mean(diff(imu.t)) / 2; %  A rule of thumb for choosing eps.
 % Force two GNSS outrage paths
 
 % GNSS OUTRAGE TIME INTERVAL 1
-tor1_min = 138906;          % (seconds)
-tor1_max = 138906 + 32;     % (seconds)
+tor1_start  = 138906;          % (seconds)
+tor1_finish = 138906 + 32;     % (seconds)
 
 % GNSS OUTRAGE TIME INTERVAL 2
-tor2_min = 139170;          % (seconds)
-tor2_max = 139170 + 32;     % (seconds)
+tor2_start  = 139170;          % (seconds)
+tor2_finish = 139170 + 32;     % (seconds)
 
 if (strcmp(GNSS_OUTRAGE, 'ON'))
     
     fprintf('NaveGo: two GNSS outrages are forced... \n')
     
     % GNSS OUTRAGE 1
-    idx  = find(gnss.t > tor1_min, 1, 'first' );
-    fdx  = find(gnss.t < tor1_max, 1, 'last' );
+    idx  = find(gnss.t > tor1_start, 1, 'first' );
+    fdx  = find(gnss.t < tor1_finish, 1, 'last' );
     
     gnss.t(idx:fdx) = [];
     gnss.lat(idx:fdx) = [];
@@ -143,8 +143,8 @@ if (strcmp(GNSS_OUTRAGE, 'ON'))
     gnss.vel(idx:fdx, :) = [];
     
     % GNSS OUTRAGE 2
-    idx  = find(gnss.t > tor2_min, 1, 'first' );
-    fdx  = find(gnss.t < tor2_max, 1, 'last' );
+    idx  = find(gnss.t > tor2_start, 1, 'first' );
+    fdx  = find(gnss.t < tor2_finish, 1, 'last' );
     
     gnss.t(idx:fdx) = [];
     gnss.lat(idx:fdx) = [];
@@ -153,11 +153,11 @@ if (strcmp(GNSS_OUTRAGE, 'ON'))
     gnss.vel(idx:fdx, :) = [];
 end
 
-%% Print navigation time
+%% Printing navigation time
 
 to = (ref.t(end) - ref.t(1));
 
-fprintf('NaveGo: navigation time is %.2f minutes or %.2f seconds. \n', (to/60), to)
+fprintf('NaveGo: navigation time under analysis is %.2f minutes or %.2f seconds. \n', (to/60), to)
 
 %% INS/GNSS integration
 
@@ -177,7 +177,13 @@ else
     load nav_or
 end
 
-%% ANALYZE A CERTAIN PART OF THE INS/GNSS DATASET
+%% Printing traveled distance
+
+distance = gnss_distance (nav_or.lat, nav_or.lon);
+
+fprintf('NaveGo: distance traveled by the vehicle is %.2f meters or %.2f km. \n', distance, distance/1000)
+
+%% ANALYSIS OF PERFORMANCE FOR A CERTAIN PART OF THE INS/GNSS DATASET
 
 % COMPLETE TEST
 tmin = 138000;      % Entering PoliTo parking (seconds)
@@ -199,25 +205,19 @@ ref.lon     = ref.lon  (idx:fdx);
 ref.h       = ref.h    (idx:fdx);
 ref.vel     = ref.vel  (idx:fdx, :);
 
-%% Interpolate INS/GNSS dataset
+%% Interpolation of INS/GNSS dataset
 
 % INS/GNSS estimates and GNSS data are interpolated according to the
 % reference dataset.
 
-[nav_ref,  ref_n] = navego_interpolation (nav_or, ref);
-[gnss_ref, ref_g] = navego_interpolation (gnss,  ref);
+[nav_i,  ref_n] = navego_interpolation (nav_or, ref);
+[gnss_i, ref_g] = navego_interpolation (gnss,  ref);
 
-%% Print navigation time
+%% Printing RMSE from INS/GNSS data
 
-to = (ref.t(end) - ref.t(1));
+rmse_v = print_rmse (nav_i, gnss_i, ref_n, ref_g, 'Ekinox IMU/GNSS');
 
-fprintf('NaveGo: navigation time under analysis is %.2f minutes or %.2f seconds. \n', (to/60), to)
-
-%% Print RMSE from INS/GNSS data
-
-rmse_v = print_rmse (nav_ref, gnss_ref, ref_n, ref_g, 'Ekinox IMU/GNSS');
-
-%% Save RMSE to CVS file
+%% Saving RMSE to CVS file
 
 csvwrite('nav_ekinox_or.csv', rmse_v);
 
@@ -225,5 +225,5 @@ csvwrite('nav_ekinox_or.csv', rmse_v);
 
 if (strcmp(PLOT,'ON'))
     
-    navego_plot (ref, gnss, nav_or, gnss_ref, nav_ref, ref_g, ref_n)
+    navego_plot (ref, gnss, nav_or, gnss_i, nav_i, ref_g, ref_n)
 end

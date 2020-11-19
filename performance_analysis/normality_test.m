@@ -30,12 +30,13 @@ function [pd, hk, pk] = normality_test (samples)
 %
 % Reference:
 %
-% Version: 001
-% Date:    2019/04/03
+% Version: 002
+% Date:    2020/11/19
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
 %% Fit data to a normal disribution
+
 pd = fitdist(samples, 'normal');
 
 sig = pd.sigma;
@@ -48,19 +49,12 @@ ref = randn (1000,1) * sig + mu;
 % Kolmogorov–Smirnov test
 [hk , pk] = kstest2 (samples, ref, 'alpha', 0.001);
 
-% Other normality tests
-% [hz , pz] = ztest  (data, mu, sig)
-% [ht , pt] = ttest  (data, mu)size(data)
-% [hc , pc] = chi2gof(data)
-% [hj , pj] = jbtest (data)
-% [hk , pk] = kstest (data, 'CDF', pd, 'Alpha',0.5)
-% [ha, pa, adstat, cv] = adtest (data,'Distribution', pd)
-
-% if ~( hz || ht || ha || hc || hj || hk )
-% if ~( hk )    
-%     disp('normality_test: data under analysis comes from a normal distribution.');    
-% else
-%     disp('normality_test: data under analysis does not come from a normal distribution.');    
-% end
+% Others normality tests
+% [hz , pz] = ztest  (samples, mu, sig)
+% [ht , pt] = ttest  (samples, mu)
+% [hc , pc] = chi2gof(samples)
+% [hj , pj] = jbtest (samples)
+% [hk , pk] = kstest (samples, 'CDF', pd, 'Alpha',0.5)
+% [ha, pa, adstat, cv] = adtest (samples,'Distribution', pd)
 
 end

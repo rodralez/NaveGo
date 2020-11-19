@@ -358,22 +358,22 @@ for i = 2:LI
         %     E = skewm(S.xp(1:3));
         %     DCMbn = (eye(3) + E) * DCMbn_n;
         
-        % Attitude corrections
+        % Attitude correction
         roll_e(i)  = roll_e(i)  - kf.xp(1);
         pitch_e(i) = pitch_e(i) - kf.xp(2);
         yaw_e(i)   = yaw_e(i)   - kf.xp(3);
         
-        % Velocity corrections
+        % Velocity correction
         vel_e (i,1) = vel_e (i,1) - kf.xp(4);
         vel_e (i,2) = vel_e (i,2) - kf.xp(5);
         vel_e (i,3) = vel_e (i,3) - kf.xp(6);
         
-        % Position corrections
+        % Position correction
         lat_e(i) = lat_e(i) - kf.xp(7);
         lon_e(i) = lon_e(i) - kf.xp(8);
         h_e(i)   = h_e(i)   - kf.xp(9);
         
-        % Biases corrections
+        % Biases estimation
         gb_dyn   = kf.xp(10:12);
         ab_dyn   = kf.xp(13:15);
         

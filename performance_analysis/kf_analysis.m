@@ -26,11 +26,10 @@ function  kf_analysis (nav_e)
 %   Kalman filter tuning and consistency. ChM015x Sensor Fusion and Non-linear
 %   Filtering for Automotive Systems, section 4.3, course at www.edx.org.
 %
-% Version: 001
-% Date:    2019/09/02
+% Version: 002
+% Date:    2020/11/19
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
-
 
 %% INNOVATION CONSISTENCY
 
@@ -47,7 +46,11 @@ for i=1:N
     chi(i) = nav_e.v(i,:) * S * nav_e.v(i,:)';
 end
 
-[pd, hk, pk] = normality_test (chi);
+% Chi must include positive and negative numbers in order to represent a
+% Guassian distribution
+chi_t = [chi; -chi];
+
+[pd, hk, ~] = normality_test (chi_t);
 
 if ~( hk )
     fprintf('kf_analysis: innovations comes from a normal distribution.\n' );    
@@ -55,7 +58,7 @@ else
     fprintf('kf_analysis: innovations does not come from a normal distribution.\n' );    
 end
 
-plot_histogram ( chi, pd, 'Innovations' );
+plot_histogram ( chi_t, pd, 'Innovations' );
 
 % variable = { 'vel N', 'vel E', 'vel D', 'latitude', 'longitude', 'altitude' };
 % 

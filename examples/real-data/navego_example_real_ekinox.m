@@ -127,7 +127,13 @@ else
     load nav_ekinox
 end
 
-%% ANALYZE PERFORMANCE FOR A CERTAIN PART OF THE INS/GNSS DATASET
+%% Printing traveled distance
+
+distance = gnss_distance (nav_ekinox.lat, nav_ekinox.lon);
+
+fprintf('NaveGo: distance traveled by the vehicle is %.2f meters or %.2f km. \n', distance, distance/1000)
+
+%% ANALYSIS OF PERFORMANCE FOR A CERTAIN PART OF THE INS/GNSS DATASET
 
 tmin_rmse = ref.t(1); 
 tmax_rmse = ref.t(end); 
@@ -148,25 +154,19 @@ ref.lon     = ref.lon  (idx:fdx);
 ref.h       = ref.h    (idx:fdx);
 ref.vel     = ref.vel  (idx:fdx, :);
 
-%% Interpolate INS/GNSS dataset 
+%% Interpolation of INS/GNSS dataset 
 
 % INS/GNSS estimates and GNSS data are interpolated according to the
 % reference dataset.
 
-[nav_r,  ref_n] = navego_interpolation (nav_ekinox, ref);
-[gnss_r, ref_g] = navego_interpolation (ekinox_gnss, ref);
+[nav_i,  ref_n] = navego_interpolation (nav_ekinox, ref);
+[gnss_i, ref_g] = navego_interpolation (ekinox_gnss, ref);
 
-%% Print navigation time
+%% Printing RMSE from INS/GNSS data
 
-to = (ref.t(end) - ref.t(1));
+rmse_v = print_rmse (nav_i, gnss_i, ref_n, ref_g, 'Ekinox INS/GNSS');
 
-fprintf('NaveGo: navigation time under analysis is %.2f minutes or %.2f seconds. \n', (to/60), to)
-
-%% Print RMSE from INS/GNSS data
-
-rmse_v = print_rmse (nav_r, gnss_r, ref_n, ref_g, 'Ekinox INS/GNSS');
-
-%% Save RMSE to CVS file
+%% Saving RMSE to CVS file
 
 csvwrite('ekinox.csv', rmse_v);
 
@@ -174,12 +174,12 @@ csvwrite('ekinox.csv', rmse_v);
 
 if (strcmp(PLOT,'ON'))
     
-   navego_plot (ref, ekinox_gnss, nav_ekinox, gnss_r, nav_r, ref_g, ref_n)
+   navego_plot (ref, ekinox_gnss, nav_ekinox, gnss_i, nav_i, ref_g, ref_n)
 end
 
-%% ESTIMATION PERFORMANCE ANALYSIS
+%% Performance analysis of the Kalman filter
 
-fprintf('\nNaveGo: Kalman filter performance analysis\n') 
+fprintf('\nNaveGo: Kalman filter performance analysis...\n') 
 
 kf_analysis (nav_ekinox)
 

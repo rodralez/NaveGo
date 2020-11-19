@@ -1,14 +1,14 @@
-function [d, dp] = gnss_distance (lat, lon)
-% gnss_distance: provides distance between geographic coordinates based on 
-% haversine function.
+function [distance, delta_pos] = gnss_distance (lat, lon)
+% gnss_distance: provides the distance distance traveled by a vehicle based 
+% on haversine function.
 %
 % INPUT:
-%       lat: Mx1 latitudes (radians).
-%       lon: Mx1 longitudes (radians).
+%   lat: Mx1 latitudes (radians).
+%   lon: Mx1 longitudes (radians).
 %
 % OUTPUT:
-%		d: total distance in meters.
-%       dp: Mx1 incremental distances between near points in meters.
+%	distance: total distance (meters).
+%   delta_pos: Mx1 incremental distances between near points (meters).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -29,30 +29,28 @@ function [d, dp] = gnss_distance (lat, lon)
 %   <http://www.gnu.org/licenses/>.
 %
 % References:
-%			Ritchie Smith. Harversine function in Mathworks File Exchange. 
+%	Ritchie Smith. Harversine function in Mathworks File Exchange. 
 % URL: https://www.mathworks.com/matlabcentral/fileexchange/32883-haversine
 %
-% Version: 002
-% Date:    2020/09/03
+% Version: 003
+% Date:    2020/11/19
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
 R = 6.3781 * 10^6;              % Earth's radius in m
 
-delta_lat = diff ( lat );   
-delta_lat = [0; delta_lat];
+delta_lat = [ 0; diff(lat) ];
 
-delta_lon = diff ( lon );
-delta_lon = [0; delta_lon];
+delta_lon = [ 0; diff(lon) ];
 
 a = sin( delta_lat ./ 2 ).^2 + cos( lat ).* cos( lon ) .* ...
         sin( delta_lon ./ 2 ).^2;
 
 c = 2 .* atan2 ( sqrt(a), sqrt (1-a) );
 
-dp = R .* c;
+delta_pos = R .* c;
 
-d = sum(dp);
+distance = sum(delta_pos);
 
 end
 

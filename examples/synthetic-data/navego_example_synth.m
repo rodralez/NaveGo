@@ -8,7 +8,7 @@
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
-%   This file is part of NaveGo, an open-source MATLAB toolbox for
+%   This file is part of NaveGo, an open-source MATLAB toolbox ford
 %   simulation of integrated navigation systems.
 %
 %   NaveGo is free software: you can redistribute it and/or modify
@@ -42,8 +42,8 @@
 % Revision D. October 2011.
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 %
-% Version: 017
-% Date:    2020/11/18
+% Version: 018
+% Date:    2020/11/19
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -307,7 +307,7 @@ else
     load imu2.mat
 end
 
-%% Printing of navigation time
+%% Printing navigation time
 
 to = (ref.t(end) - ref.t(1));
 
@@ -353,22 +353,34 @@ else
     load nav2_e.mat
 end
 
+%% Printing traveled distance
+
+distance = gnss_distance (nav2_e.lat, nav2_e.lon);
+
+fprintf('NaveGo: distance traveled by the vehicle is %.2f meters or %.2f km. \n', distance, distance/1000)
+
 %% INS/GNSS INTERPOLATION
 
 % INS/GNSS estimates and GNSS data are interpolated according to the
 % reference dataset.
 
-[nav1_r, ref_1] = navego_interpolation (nav1_e, ref);
-[nav2_r, ref_2] = navego_interpolation (nav2_e, ref);
-[gnss_r, ref_g] = navego_interpolation (gnss, ref);
+[nav1_i, ref_n1] = navego_interpolation (nav1_e, ref);
+[nav2_i, ref_n2] = navego_interpolation (nav2_e, ref);
+[gnss_i, ref_g] = navego_interpolation (gnss, ref);
 
 %% Printing of RMSE from IMU1
 
-print_rmse (nav1_r, gnss_r, ref_1, ref_g, 'ADIS16405 INS/GNSS');
+print_rmse (nav1_i, gnss_i, ref_n1, ref_g, 'ADIS16405 INS/GNSS');
 
 %% Printing of RMSE from IMU2
 
-print_rmse (nav2_r, gnss_r, ref_2, ref_g, 'ADIS16488 INS/GNSS');
+print_rmse (nav2_i, gnss_i, ref_n2, ref_g, 'ADIS16488 INS/GNSS');
+
+%% Performance analysis of the Kalman filter
+
+fprintf('\nNaveGo: Kalman filter performance analysis...\n') 
+
+kf_analysis (nav2_e)
 
 %% PLOTS
 
@@ -421,7 +433,7 @@ if (strcmp(PLOT,'ON'))
     % ATTITUDE ERRORS
     figure;
     subplot(311)
-    plot(nav1_e.t, (nav1_r.roll - ref_1.roll).*R2D, '-b', nav2_r.t, (nav2_r.roll - ref_2.roll).*R2D, '-r');
+    plot(nav1_e.t, (nav1_i.roll - ref_n1.roll).*R2D, '-b', nav2_i.t, (nav2_i.roll - ref_n2.roll).*R2D, '-r');
     hold on
     plot (gnss.t, R2D.*sig3_rr(:,1), '--k', gnss.t, -R2D.*sig3_rr(:,1), '--k' )
     ylabel('[deg]')
@@ -431,7 +443,7 @@ if (strcmp(PLOT,'ON'))
     grid
     
     subplot(312)
-    plot(nav1_e.t, (nav1_r.pitch - ref_1.pitch).*R2D, '-b', nav2_r.t, (nav2_r.pitch - ref_2.pitch).*R2D, '-r');
+    plot(nav1_e.t, (nav1_i.pitch - ref_n1.pitch).*R2D, '-b', nav2_i.t, (nav2_i.pitch - ref_n2.pitch).*R2D, '-r');
     hold on
     plot (gnss.t, R2D.*sig3_rr(:,2), '--k', gnss.t, -R2D.*sig3_rr(:,2), '--k' )
     ylabel('[deg]')
@@ -441,9 +453,9 @@ if (strcmp(PLOT,'ON'))
     grid
     
     subplot(313)
-    yaw1_err = correct_yaw(nav1_r.yaw - ref_1.yaw);
-    yaw2_err = correct_yaw(nav2_r.yaw - ref_2.yaw);
-    plot(nav1_e.t, (yaw1_err).*R2D, '-b', nav2_r.t, (yaw2_err).*R2D, '-r');
+    yaw1_err = correct_yaw(nav1_i.yaw - ref_n1.yaw);
+    yaw2_err = correct_yaw(nav2_i.yaw - ref_n2.yaw);
+    plot(nav1_e.t, (yaw1_err).*R2D, '-b', nav2_i.t, (yaw2_err).*R2D, '-r');
     hold on
     plot (gnss.t, R2D.*sig3_rr(:,3), '--k', gnss.t, -R2D.*sig3_rr(:,3), '--k' )
     ylabel('[deg]')
@@ -481,9 +493,9 @@ if (strcmp(PLOT,'ON'))
     % VELOCITIES ERRORS
     figure;
     subplot(311)
-    plot(gnss_r.t, (gnss_r.vel(:,1) - ref_g.vel(:,1)), '-c');
+    plot(gnss_i.t, (gnss_i.vel(:,1) - ref_g.vel(:,1)), '-c');
     hold on
-    plot(nav1_r.t, (nav1_r.vel(:,1) - ref_1.vel(:,1)), '-b', nav2_r.t, (nav2_r.vel(:,1) - ref_2.vel(:,1)), '-r');
+    plot(nav1_i.t, (nav1_i.vel(:,1) - ref_n1.vel(:,1)), '-b', nav2_i.t, (nav2_i.vel(:,1) - ref_n2.vel(:,1)), '-r');
     plot (gnss.t, sig3_rr(:,4), '--k', gnss.t, -sig3_rr(:,4), '--k' )
     xlabel('Time [s]')
     ylabel('[m/s]')
@@ -492,9 +504,9 @@ if (strcmp(PLOT,'ON'))
     grid
     
     subplot(312)
-    plot(gnss_r.t, (gnss_r.vel(:,2) - ref_g.vel(:,2)), '-c');
+    plot(gnss_i.t, (gnss_i.vel(:,2) - ref_g.vel(:,2)), '-c');
     hold on
-    plot(nav1_r.t, (nav1_r.vel(:,2) - ref_1.vel(:,2)), '-b', nav2_r.t, (nav2_r.vel(:,2) - ref_2.vel(:,2)), '-r');
+    plot(nav1_i.t, (nav1_i.vel(:,2) - ref_n1.vel(:,2)), '-b', nav2_i.t, (nav2_i.vel(:,2) - ref_n2.vel(:,2)), '-r');
     plot (gnss.t, sig3_rr(:,5), '--k', gnss.t, -sig3_rr(:,5), '--k' )
     xlabel('Time [s]')
     ylabel('[m/s]')
@@ -503,9 +515,9 @@ if (strcmp(PLOT,'ON'))
     grid
     
     subplot(313)
-    plot(gnss_r.t, (gnss_r.vel(:,3) - ref_g.vel(:,3)), '-c');
+    plot(gnss_i.t, (gnss_i.vel(:,3) - ref_g.vel(:,3)), '-c');
     hold on
-    plot(nav1_r.t, (nav1_r.vel(:,3) - ref_1.vel(:,3)), '-b', nav2_r.t, (nav2_r.vel(:,3) - ref_2.vel(:,3)), '-r');
+    plot(nav1_i.t, (nav1_i.vel(:,3) - ref_n1.vel(:,3)), '-b', nav2_i.t, (nav2_i.vel(:,3) - ref_n2.vel(:,3)), '-r');
     plot (gnss.t, sig3_rr(:,6), '--k', gnss.t, -sig3_rr(:,6), '--k' )
     xlabel('Time [s]')
     ylabel('[m/s]')
@@ -540,28 +552,28 @@ if (strcmp(PLOT,'ON'))
     grid
     
     % POSITION ERRORS
-    [RN,RE]  = radius(nav1_r.lat);
-    LAT2M_1 = RN + nav1_r.h;
-    LON2M_1 = (RE + nav1_r.h).*cos(nav1_r.lat);
+    [RN,RE]  = radius(nav1_i.lat);
+    LAT2M_1 = RN + nav1_i.h;
+    LON2M_1 = (RE + nav1_i.h).*cos(nav1_i.lat);
     
-    [RN,RE]  = radius(nav2_r.lat);
-    LAT2M_2 = RN + nav2_r.h;
-    LON2M_2 = (RE + nav2_r.h).*cos(nav2_r.lat);
+    [RN,RE]  = radius(nav2_i.lat);
+    LAT2M_2 = RN + nav2_i.h;
+    LON2M_2 = (RE + nav2_i.h).*cos(nav2_i.lat);
     
     [RN,RE]  = radius(gnss.lat);
     LAT2M_G = RN + gnss.h;
     LON2M_G = (RE + gnss.h).*cos(gnss.lat);
     
-    [RN,RE]  = radius(gnss_r.lat);
-    LAT2M_GR = RN + gnss_r.h;
-    LON2M_GR = (RE + gnss_r.h).*cos(gnss_r.lat);
+    [RN,RE]  = radius(gnss_i.lat);
+    LAT2M_GR = RN + gnss_i.h;
+    LON2M_GR = (RE + gnss_i.h).*cos(gnss_i.lat);
     
     figure;
     subplot(311)
-    plot(gnss_r.t,  LAT2M_GR.*(gnss_r.lat - ref_g.lat), '-c')
+    plot(gnss_i.t,  LAT2M_GR.*(gnss_i.lat - ref_g.lat), '-c')
     hold on
-    plot(nav1_r.t, LAT2M_1.*(nav1_r.lat - ref_1.lat), '-b')
-    plot(nav2_r.t, LAT2M_2.*(nav2_r.lat - ref_2.lat), '-r')
+    plot(nav1_i.t, LAT2M_1.*(nav1_i.lat - ref_n1.lat), '-b')
+    plot(nav2_i.t, LAT2M_2.*(nav2_i.lat - ref_n2.lat), '-r')
     plot (gnss.t, LAT2M_G.*sig3_rr(:,7), '--k', gnss.t, -LAT2M_G.*sig3_rr(:,7), '--k' )
     xlabel('Time [s]')
     ylabel('[m]')
@@ -570,10 +582,10 @@ if (strcmp(PLOT,'ON'))
     grid
     
     subplot(312)
-    plot(gnss_r.t, LON2M_GR.*(gnss_r.lon - ref_g.lon), '-c')
+    plot(gnss_i.t, LON2M_GR.*(gnss_i.lon - ref_g.lon), '-c')
     hold on
-    plot(nav1_r.t, LON2M_1.*(nav1_r.lon - ref_1.lon), '-b')
-    plot(nav2_r.t, LON2M_2.*(nav2_r.lon - ref_2.lon), '-r')
+    plot(nav1_i.t, LON2M_1.*(nav1_i.lon - ref_n1.lon), '-b')
+    plot(nav2_i.t, LON2M_2.*(nav2_i.lon - ref_n2.lon), '-r')
     plot(gnss.t, LON2M_G.*sig3_rr(:,8), '--k', gnss.t, -LON2M_G.*sig3_rr(:,8), '--k' )
     xlabel('Time [s]')
     ylabel('[m]')
@@ -582,10 +594,10 @@ if (strcmp(PLOT,'ON'))
     grid
     
     subplot(313)
-    plot(gnss_r.t, (gnss_r.h - ref_g.h), '-c')
+    plot(gnss_i.t, (gnss_i.h - ref_g.h), '-c')
     hold on
-    plot(nav1_r.t, (nav1_r.h - ref_1.h), '-b')
-    plot(nav2_r.t, (nav2_r.h - ref_2.h), '-r')
+    plot(nav1_i.t, (nav1_i.h - ref_n1.h), '-b')
+    plot(nav2_i.t, (nav2_i.h - ref_n2.h), '-r')
     plot(gnss.t, sig3_rr(:,9), '--k', gnss.t, -sig3_rr(:,9), '--k' )
     xlabel('Time [s]')
     ylabel('[m]')
