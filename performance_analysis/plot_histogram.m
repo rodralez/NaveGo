@@ -32,8 +32,8 @@ function plot_histogram (samples, pd, x_label)
 % Reference:
 %
 %
-% Version: 002
-% Date:    2020/10/22
+% Version: 003
+% Date:    2020/10/23
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -94,7 +94,8 @@ l2 = line( [med, med] , [0, y], 'Color', orange_new, 'LineWidth', 2, 'LineStyle'
 legend([p0, l1, l2], 'Reference PDF', 'Mean', 'Median')
 
 xlabel(x_label);
-ylabel('Probability density function (PDF)');
+% ylabel('Probability density function (PDF)');
+title('INNOVATIONS HISTOGRAM')
 
 grid on
 hold off
