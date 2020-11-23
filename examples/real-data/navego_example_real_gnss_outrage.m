@@ -34,8 +34,8 @@
 % Inertial Measurement Unit for Ground Vehicle Navigation. Sensors 2019,  
 % 19(18). https://www.mdpi.com/530156.
 %
-% Version: 003
-% Date:    2020/11/19
+% Version: 004
+% Date:    2020/11/23
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -97,7 +97,9 @@ load ref
 % fprintf('NaveGo: loading Ekinox IMU data... \n')
 % 
 % load ekinox_imu
-% 
+%
+% ekinox_imu.ab_sta = ekinox_imu.ab_sta - [0 0 G];
+%
 % imu = ekinox_imu;
 
 %% MPU-6000 IMU
@@ -105,6 +107,8 @@ load ref
 fprintf('NaveGo: loading MPU-6000 IMU data... \n')
 
 load mpu6000_imu
+
+ekinox_imu.ab_sta = ekinox_imu.ab_sta - [0 0 G];
 
 imu = mpu6000_imu;
 

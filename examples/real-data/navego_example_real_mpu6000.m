@@ -36,8 +36,8 @@
 % Inertial Measurement Unit for Ground Vehicle Navigation. Sensors 2019,  
 % 19(18). https://www.mdpi.com/530156.
 %
-% Version: 003
-% Date:    2020/11/19
+% Version: 004
+% Date:    2020/11/23
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -96,6 +96,8 @@ load ref
 fprintf('NaveGo: loading MPU-6000 IMU data... \n')
 
 load mpu6000_imu
+
+mpu6000_imu.ab_sta = mpu6000_imu.ab_sta - [0 0 G];
 
 %% EKINOX GNSS 
 
@@ -165,7 +167,7 @@ ref.vel     = ref.vel  (idx:fdx, :);
 
 %% Print RMSE from INS/GNSS data
 
-rmse_v = print_rmse (nav_i, gnss_i, ref_n, ref_g, 'Ekinox INS/GNSS');
+rmse_v = print_rmse (nav_i, gnss_i, ref_n, ref_g, 'MPU-6000 INS/GNSS');
 
 %% Saving RMSE to CVS file
 

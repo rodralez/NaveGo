@@ -36,8 +36,8 @@ function rmse_v = print_rmse (ins_gnss, gnss, ins_gnss_r, gnss_r, string)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% Version: 007
-% Date:    2018/12/04
+% Version: 008
+% Date:    2020/11/23
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -45,7 +45,7 @@ rmse_v = navego_rmse (ins_gnss, gnss, ins_gnss_r, gnss_r);
         
 %% Print RMSE
 
-fprintf( '\n>> RMSE for %s\n\n', string);
+fprintf( '\nprint_rmse: RMSE for %s\n\n', string);
 
 fprintf(' Roll,  %s = %.4e deg \n',   string, rmse_v(1));
 fprintf(' Pitch, %s = %.4e deg \n',   string, rmse_v(2));
