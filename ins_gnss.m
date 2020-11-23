@@ -90,14 +90,16 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015. Alg. 2.
 %
-%   ZUPT algothim based on Paul Groves, Principles of GNSS, Inertial, and
-% Multisensor Integrated Navigation Systems (2008). Chapter 13: INS
-% Alignment and Zero Velocity Updates.
+%   Groves, P.D. (2013), Principles of GNSS, Inertial, and
+% Multisensor Integrated Navigation Systems (2nd Ed.). Artech House.
+
+%   ZUPT algothim based on Groves, Chapter 15, "INS Alignment, Zero Updates,
+% and Motion Constraints".
 %
 %   ins_gps.m, ins_gnss function is based on that previous NaveGo function.
 %
-% Version: 007
-% Date:    2020/10/05
+% Version: 008
+% Date:    2020/11/23
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -173,13 +175,13 @@ upd = [gnss.vel(1,:) gnss.lat(1) gnss.h(1) f_n'];
 
 [RM,RN] = radius(gnss.lat(1));
 Tpr = diag([(RM + gnss.h(1)), (RN + gnss.h(1)) * cos(gnss.lat(1)), -1]);  % radians-to-meters
-        
+
 % Update matrix H
 kf.H = [ O I O O O ;
     O O Tpr O O ; ];
 kf.R = diag([gnss.stdv gnss.stdm]).^2;
 kf.z = [ gnss.stdv, gnss.stdm ]';
-        
+
 % Propagate prior estimates to get xp(1) and Pp(1)
 kf = kf_update( kf );
 
@@ -213,6 +215,9 @@ for i = 2:LI
     
     %% INERTIAL NAVIGATION SYSTEM (INS)
     
+    % Update order according to Groves, Figure 5.8:
+    % Velocity > Position > Attitute
+    
     % Print a dot on console every 10,000 INS executions
     if (mod(i,10000) == 0), fprintf('. ');  end
     % Print a return on console every 200,000 INS executions
@@ -221,21 +226,9 @@ for i = 2:LI
     % IMU sampling interval
     dti = imu.t(i) - imu.t(i-1);
     
-    % Inertial sensors corrected with KF biases estimation
-    wb_corrected = (imu.wb(i,:)' + gb_dyn );
-    fb_corrected = (imu.fb(i,:)' + ab_dyn );
-    
     % Turn-rates update
     omega_ie_n = earthrate(lat_e(i-1));
     omega_en_n = transportrate(lat_e(i-1), vel_e(i-1,1), vel_e(i-1,2), h_e(i-1));
-    
-    % Attitude update
-    [qua_n, DCMbn, euler] = att_update(wb_corrected, DCMbn, qua, ...
-        omega_ie_n, omega_en_n, dti, att_mode);
-    roll_e(i) = euler(1);
-    pitch_e(i)= euler(2);
-    yaw_e(i)  = euler(3);
-    qua = qua_n;
     
     % Gravity update
     g_n = gravity(lat_e(i-1), h_e(i-1));
@@ -250,6 +243,22 @@ for i = 2:LI
     lat_e(i) = pos_n(1);
     lon_e(i) = pos_n(2);
     h_e(i)   = pos_n(3);
+    
+    % Inertial sensors corrected with a posteriori KF biases estimation
+    wb_corrected = (imu.wb(i,:)' + gb_dyn );
+    fb_corrected = (imu.fb(i,:)' + ab_dyn );
+    
+    % Turn-rates update with both updated velocity and position
+    omega_ie_n = earthrate(lat_e(i));
+    omega_en_n = transportrate(lat_e(i), vel_e(i,1), vel_e(i,2), h_e(i));
+    
+    % Attitude update
+    [qua_n, DCMbn, euler] = att_update(wb_corrected, DCMbn, qua, ...
+        omega_ie_n, omega_en_n, dti, att_mode);
+    roll_e(i) = euler(1);
+    pitch_e(i)= euler(2);
+    yaw_e(i)  = euler(3);
+    qua = qua_n;
     
     % PENDING. Magnetic heading update
     %         yawm_e(i) = hd_update (imu.mb(i,:), roll_e(i),  pitch_e(i), D);
@@ -277,7 +286,7 @@ for i = 2:LI
             h_e(i)   = mean (h_e(i-idz:i , :));
             
             zupt = true;
-
+            
         end
     end
     
@@ -288,7 +297,7 @@ for i = 2:LI
     
     if ( ~isempty(gdx) && gdx > 1)
         
-%         gdx   % DEBUG
+        %         gdx   % DEBUG
         
         %% MEASUREMENTS
         
@@ -296,7 +305,7 @@ for i = 2:LI
         [RM,RN] = radius(lat_e(i));
         
         % Radians-to-meters matrix
-        Tpr = diag([(RM + h_e(i)), (RN + h_e(i)) * cos(lat_e(i)), -1]);  
+        Tpr = diag([(RM + h_e(i)), (RN + h_e(i)) * cos(lat_e(i)), -1]);
         
         % Measurements for position in meters with lever arm correction
         zp = Tpr * ([lat_e(i); lon_e(i); h_e(i);] - [gnss.lat(gdx); gnss.lon(gdx); gnss.h(gdx);]) ...
@@ -336,8 +345,8 @@ for i = 2:LI
         %% OBSERVABILITY
         
         % Number the observable states at current GNSS time
-        ob(gdx) = rank(obsv(kf.F, kf.H)); 
-                
+        ob(gdx) = rank(obsv(kf.F, kf.H));
+        
         %% INS/GNSS CORRECTIONS
         
         % Quaternion corrections
@@ -354,9 +363,6 @@ for i = 2:LI
         %     roll_e(i) = euler(1);
         %     pitch_e(i)= euler(2);
         %     yaw_e(i)  = euler(3);
-        %
-        %     E = skewm(S.xp(1:3));
-        %     DCMbn = (eye(3) + E) * DCMbn_n;
         
         % Attitude correction
         roll_e(i)  = roll_e(i)  - kf.xp(1);
@@ -383,8 +389,8 @@ for i = 2:LI
         b(gdx,:) = [gb_dyn', ab_dyn'];
         A(gdx,:)  = reshape(kf.A, 1, 225);
         Pi(gdx,:) = reshape(kf.Pi, 1, 225);
-        Pp(gdx,:) = reshape(kf.Pp, 1, 225);        
-              
+        Pp(gdx,:) = reshape(kf.Pp, 1, 225);
+        
         if(zupt == false)
             v(gdx,:)  = kf.v';
             K(gdx,:)  = reshape(kf.K, 1, 90);

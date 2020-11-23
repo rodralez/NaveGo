@@ -27,25 +27,32 @@ function DCMbn_n = dcm_update(DCMbn, euler)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference:
-%			Titterton, D.H. and Weston, J.L. (2004). Strapdown
+%	Titterton, D.H. and Weston, J.L. (2004). Strapdown
 % Inertial Navigation Technology (2nd Ed.). Institution
 % of Engineering and Technology, USA. Eq. 11.4 and 11.10.
 %
-% Version: 002
-% Date:    2016/11/26
+%   Groves, P.D. (2013), Principles of GNSS, Inertial, and
+% Multisensor Integrated Navigation Systems (2nd Ed.). Artech House.
+% 
+% Version: 003
+% Date:    2020/11/23
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
 S = skewm(euler);
 magn = norm(euler);
 
-if magn == 0,
+if magn == 0
     
     A = eye(3);
 else
-    % A(k), Eq. 11.10, p. 312.
-    A = eye(3) + (sin(magn)/magn) * S + ((1-cos(magn))/(magn^2)) * S * S;
+    % Titterton, A(k), Eq. 11.10, p. 312.
+    % Rodrigues' formula,
+    % A = eye(3) + (sin(magn)/magn) * S + ((1-cos(magn))/(magn^2)) * S * S;
+    
+    % Exact expression. Groves, Eq. 5.10.
+    A = expm(S);
 end
 
-% Eq. 11.4, p. 311.
+% Titterton, Eq. 11.4, p. 311.
 DCMbn_n = DCMbn * A;

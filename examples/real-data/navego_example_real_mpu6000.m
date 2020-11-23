@@ -121,7 +121,7 @@ if strcmp(INS_GNSS, 'ON')
     
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
-    nav_mpu6000 = ins_gnss(mpu6000_imu, ekinox_gnss, 'quaternion'); %
+    nav_mpu6000 = ins_gnss(mpu6000_imu, ekinox_gnss, 'quaternion'); % dcm
     % ---------------------------------------------------------------------
     
     save nav_mpu6000.mat nav_mpu6000    
