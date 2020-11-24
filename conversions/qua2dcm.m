@@ -26,7 +26,7 @@ function DCMbn = qua2dcm(qua)
 %   <http://www.gnu.org/licenses/>.
 %
 % References:
-%		Titterton, D.H. and Weston, J.L. (2004). Strapdown
+%	Titterton, D.H. and Weston, J.L. (2004). Strapdown
 % Inertial Navigation Technology (2nd Ed.). Institution
 % of Engineering and Technology, USA. Eq. 3.63.
 %
@@ -35,7 +35,7 @@ function DCMbn = qua2dcm(qua)
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 14.
 %
-%		Crassidis, J.L. and Junkins, J.L. (2011). Optimal Esti-
+%	Crassidis, J.L. and Junkins, J.L. (2011). Optimal Esti-
 % mation of Dynamic Systems, 2nd Ed. Chapman and Hall/CRC, USA.
 % Eq. 7.39, p. 458.
 %
