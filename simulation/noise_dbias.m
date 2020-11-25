@@ -34,8 +34,8 @@ function [dbias_n] = noise_dbias (b_corr, b_dyn, dt, M)
 %   Aggarwal, P. et al. MEMS-Based Integrated Navigation. Artech
 % House. 2010. Eq. 3.33, page 57.
 %
-% Version: 001
-% Date:    2017/07/27
+% Version: 002
+% Date:    2020/11/24
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -51,20 +51,24 @@ if (~isinf(b_corr))
         beta  = dt / ( b_corr(i) );
         sigma = b_dyn(i);
         a1 = exp(-beta);
-        a2 = sigma * sqrt(1 - exp(-2*beta) );
+        % The system noise variance is modeled as an exponentially correlated
+        % fixed-variance first-order Markov process
+        sigma_gm = sigma * sqrt(1 - exp(-2*beta) );
 
-        b_noise = randn(N-1,1); 
+        b_noise = sigma_gm .* randn(N,1); 
         
         for j=2:N
-            dbias_n(j, i) = a1 * dbias_n(j-1, i) + a2 .* b_noise(j-1);
+%             dbias_n(j, i) = a1 * dbias_n(j-1, i) +  b_noise(j-1);
+            dbias_n(j, i) = a1 * dbias_n(j-1, i);
         end
+        dbias_n(:, i) = dbias_n(:, i) +  b_noise;
     end
     
 % If not...
 else
     sigma = b_dyn;
-    bn = randn(M);
+    b_noise = randn(M);
     
-    dbias_n = [sigma(1) .* bn(:,1), sigma(2) .* bn(:,2), sigma(3) .* bn(:,3)];
+    dbias_n = [sigma(1).*b_noise(:,1) , sigma(2).*b_noise(:,2) , sigma(3).*b_noise(:,3)];
     
 end

@@ -33,19 +33,19 @@ function  [F, G] = F_update(upd, DCMbn, imu)
 %   <http://www.gnu.org/licenses/>.
 %
 % References:
-%			Titterton, D.H. and Weston, J.L. (2004). Strapdown
+%	Titterton, D.H. and Weston, J.L. (2004). Strapdown
 % Inertial Navigation Technology (2nd Ed.). Institution
 % of Engineering and Technology, USA. Eq. 12.18, p. 345, matrix F.
 %
-% 		Farrell, J. (2008). Aided Navigation: GPS With High Rate
+% 	Farrell, J. (2008). Aided Navigation: GPS With High Rate
 % Sensors. McGraw-Hill Professional, USA. Eq. 11.108, p. 407, matrix G.
 %
-%			R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+%	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
 % simulation framework for low-cost integrated navigation systems,
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015. Eq. 26.
 %
-%  		R. Gonzalez, J. Giribet, and H. Patiño. An approach to
+%  	R. Gonzalez, J. Giribet, and H. Patiño. An approach to
 % benchmarking of loosely coupled low-cost navigation systems,
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 22.
@@ -59,7 +59,7 @@ Vn =  upd(1);
 Ve =  upd(2);
 Vd =  upd(3);
 lat = upd(4);
-h   = upd(5);
+h  =  upd(5);
 fn =  upd(6);
 fe =  upd(7);
 fd =  upd(8);
@@ -180,8 +180,8 @@ else
     Fgg = diag(-1./imu.gb_corr);
 end
 
-F = [Fee  Fev  Fep   (DCMbn)   Z;
-     Fve  Fvv  Fvp   Z       (-DCMbn);
+F = [Fee  Fev  Fep   DCMbn   Z;
+     Fve  Fvv  Fvp   Z       -DCMbn;
      Fpe  Fpv  Fpp   Z       Z;
      Z    Z    Z     Fgg     Z;
      Z    Z    Z     Z       Faa;
@@ -191,5 +191,6 @@ G = [DCMbn  Z     Z    Z;
     Z      -DCMbn 	Z    Z;
     Z      Z     	Z    Z;
     Z      Z     	I    Z;
-    Z      Z     	Z    I;];
+    Z      Z     	Z    I;
+    ];
 end

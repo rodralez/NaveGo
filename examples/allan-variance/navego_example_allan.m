@@ -54,7 +54,6 @@ load stim300
 %% ALLAN VARIANCE FOR STIM300 IMU
 
 % IMU data structure:
-% IMU data structure:
 %         t: Ix1 time vector (seconds).
 %        fb: Ix3 accelerations vector in body frame XYZ (m/s^2).
 %        wb: Ix3 turn rates vector in body frame XYZ (radians/s).
@@ -77,7 +76,7 @@ load stim300
 to = (stim300.t(end) - stim300.t(1));
 fprintf('NaveGo: dataset time span is %.2f hours or %.2f minutes or %.2f seconds. \n\n', (to/60/60), (to/60), to)
 
-stim300_allan = allan_imu (stim300);
+stim300_allan = allan_imu (stim300, 1);
 
 stim300_arw = stim300_allan.arw
 stim300_vrw = stim300_allan.vrw
@@ -94,7 +93,7 @@ fprintf('NaveGo: Allan variance analysis from synthetic data based on Microstrai
 
 %% SYNTHETIC STATIC DATA
 
-N = 1917878;
+N = 24 * 60 * 60;   % 12 hours of simulation
 M = [N, 3];
 
 ref.freq = 100;
@@ -173,7 +172,7 @@ clear fb wb
 
 %% ALLAN VARIANCE
 
-ustrain_allan = allan_imu (ustrain);
+ustrain_allan = allan_imu (ustrain, 1);
 
 ustrain_allan_arw = ustrain_allan.arw
 ustrain_allan_vrw = ustrain_allan.vrw

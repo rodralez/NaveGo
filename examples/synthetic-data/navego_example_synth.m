@@ -156,7 +156,7 @@ ADIS16405.ab_dyn   = 0.2 .* ones(1,3);     % Acc dynamic biases [X Y Z] (mg)
 ADIS16405.gb_corr  = 100 .* ones(1,3);     % Gyro correlation times [X Y Z] (seconds)
 ADIS16405.ab_corr  = 100 .* ones(1,3);     % Acc correlation times [X Y Z] (seconds)
 ADIS16405.freq     = ref.freq;             % IMU operation frequency [X Y Z] (Hz)
-% ADIS16405.m_psd     = 0.066 .* ones(1,3);  % Magnetometer noise density [X Y Z] (mgauss/root-Hz)
+ADIS16405.m_psd     = 0.066 .* ones(1,3);  % Magnetometer noise density [X Y Z] (mgauss/root-Hz)
 
 % ref time is used to simulate IMU sensors
 ADIS16405.t = ref.t;                       % IMU time vector
@@ -180,7 +180,7 @@ ADIS16488.ab_dyn   = 0.1  .* ones(1,3);     % Acc dynamic biases [X Y Z] (mg)
 ADIS16488.gb_corr  = 100  .* ones(1,3);     % Gyro correlation times [X Y Z] (seconds)
 ADIS16488.ab_corr  = 100  .* ones(1,3);     % Acc correlation times [X Y Z] (seconds)
 ADIS16488.freq     = ref.freq;              % IMU operation frequency [X Y Z] (Hz)
-% ADIS16488.m_psd = 0.054 .* ones(1,3);       % Magnetometer noise density [X Y Z] (mgauss/root-Hz)
+ADIS16488.m_psd = 0.054 .* ones(1,3);       % Magnetometer noise density [X Y Z] (mgauss/root-Hz)
 
 % ref time is used to simulate IMU sensors
 ADIS16488.t = ref.t;                        % IMU time vector
@@ -321,7 +321,7 @@ if strcmp(IMU1_INS, 'ON')
     
     % INS/GNSS integration
     % ---------------------------------------------------------------------
-    nav1_e = ins_gnss(imu1, gnss, 'dcm');   % Attitude will be estimated by the DCM method
+    nav1_e = ins_gnss(imu1, gnss, 'dcm');           % Attitude will be estimated by the DCM equations
     % ---------------------------------------------------------------------
     
     save nav1_e.mat nav1_e
@@ -341,7 +341,7 @@ if strcmp(IMU2_INS, 'ON')
     
     % INS/GNSS integration
     % ---------------------------------------------------------------------
-    nav2_e = ins_gnss(imu2, gnss, 'quaternion');    % Attitude will be estimated by quaternion method
+    nav2_e = ins_gnss(imu2, gnss, 'quaternion');    % Attitude will be estimated by quaternion equations
     % ---------------------------------------------------------------------
     
     save nav2_e.mat nav2_e

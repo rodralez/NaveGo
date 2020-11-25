@@ -2,22 +2,34 @@ function imu_si = imu_si_errors(imu, dt)
 % imu_err_profile: converts IMU errors manufacturer units to SI units.
 %
 % INPUT:
-%		imu, data structure with IMU error profile in manufacturer units.
-%         imu.arw:      angle random walks [X Y Z] (deg/root-hour)
-%         imu.arrw:     angle rate random walks [X Y Z] (deg/root-hour/s)
-%         imu.vrw:      velocity random walks [X Y Z] (m/s/root-hour)
-%		      imu.vrrw:     velocity rate random walks [X Y Z] (deg/root-hour/s)
-%         imu.gb_sta:   gyro static biases [X Y Z] (deg/s)
-%         imu.ab_sta:   acc static biases [X Y Z] (mg)
-%         imu.gb_dyn:   gyro dynamic biases [X Y Z] (deg/s)
-%         imu.ab_dynt:  acc dynamic biases [X Y Z] (mg)
-%         imu.gb_corr:  gyro correlation times [X Y Z] (seconds)
-%         imu.ab_corr:  acc correlation times [X Y Z] (seconds)
-%         imu.m_psd:    magnetometer noise density [X Y Z] (mgauss/root-Hz)
-%		dt:  IMU sampling interval.
+%	imu, data structure with IMU error profile in manufacturer units.
+%       imu.arw:      angle random walks [X Y Z] (deg/root-hour)
+%       imu.arrw:     angle rate random walks [X Y Z] (deg/root-hour/s)
+%       imu.vrw:      velocity random walks [X Y Z] (m/s/root-hour)
+%		imu.vrrw:     velocity rate random walks [X Y Z] (deg/root-hour/s)
+%       imu.gb_sta:   gyro static biases [X Y Z] (deg/s)
+%       imu.ab_sta:   acc static biases [X Y Z] (mg)
+%       imu.gb_dyn:   gyro dynamic biases [X Y Z] (deg/s)
+%       imu.ab_dynt:  acc dynamic biases [X Y Z] (mg)
+%       imu.gb_corr:  gyro correlation times [X Y Z] (seconds)
+%       imu.ab_corr:  acc correlation times [X Y Z] (seconds)
+%       imu.m_psd:    magnetometer noise density [X Y Z] (mgauss/root-Hz)
+%		dt:           IMU sampling interval (seconds).
 %
 % OUTPUT:
-%		imu_si: data structure with IMU error profile in SI units.
+%	imu_si: data structure with IMU error profile in SI units.
+%       imu_si.arw:      angle random walks [X Y Z] (rad/s/root-Hz)
+%       imu_si.arrw:     angle rate random walks [X Y Z] (rad/s^2/root-Hz)
+%       imu_si.vrw:      velocity random walks [X Y Z] (m/s^2/root-Hz)
+%		imu_si.vrrw:     velocity rate random walks [X Y Z] (m/s^3/root-Hz)
+%       imu_si.gb_sta:   gyro static biases [X Y Z] (rad/s)
+%       imu_si.ab_sta:   acc static biases [X Y Z] (m/s^2)
+%       imu_si.gb_dyn:   gyro dynamic biases [X Y Z] (rad/s)
+%       imu_si.ab_dynt:  acc dynamic biases [X Y Z] (m/s^2)
+%       imu_si.gb_corr:  gyro correlation times [X Y Z] (seconds)
+%       imu_si.ab_corr:  acc correlation times [X Y Z] (seconds)
+%       imu_si.m_psd:    magnetometer noise density [X Y Z] (tesla). 
+%		dt:              IMU sampling interval (seconds).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
@@ -38,13 +50,13 @@ function imu_si = imu_si_errors(imu, dt)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference: 
-%			R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
+%	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
 % simulation framework for low-cost integrated navigation systems, 
 % Journal of Control Engineering and Applied Informatics, vol. 17, 
 % issue 2, pp. 110-120, 2015. Eq. 9, 14, and 30.
 %
-% Version: 007
-% Date:    2019/09/20
+% Version: 008
+% Date:    2020/11/24
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
@@ -54,7 +66,7 @@ G   =  9.80665;     % g to m/s^2
 % Copy previois fields
 imu_si = imu;
 
-% Noise PSD
+% PSD noise
 imu_si.arw = (imu.arw ./ 60) .* D2R;   % deg/root-hour -> rad/s/root-Hz
 imu_si.vrw = (imu.vrw ./ 60);          % m/s/root-hour -> m/s^2/root-Hz
 
@@ -88,6 +100,8 @@ imu_si.ab_corr = imu.ab_corr;
 imu_si.gb_corr = imu.gb_corr;
 
 % MAG
-%imu_nav.mstd = (imu.m_psd .* 1e-3) ./ sqrt(dt) .* 1e-4; % mgauss/root-Hz -> tesla
+if isfield(imu , {'m_psd'})
+    imu_nav.mstd = (imu.m_psd .* 1e-3) ./ sqrt(dt) .* 1e-4; % mgauss/root-Hz -> tesla
+end
 
 end

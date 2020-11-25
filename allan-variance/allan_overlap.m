@@ -260,7 +260,7 @@ if isfield(data,'rate') && data.rate > 0 % if data rate was given
     if isfield(data,'time')
         % adjust time data to remove any starting gap; first time step
         %  should not be zero for comparison with freq data
-        dtime=data.time-data.time(1)+mean(diff(data.time)); 
+        dtime=data.time-data.time(1) + mean(diff(data.time)); 
         dtime=dtime(1:length(medianfreq)); % equalize the data vector lengths for plotting (v2.1)
         if verbose >= 2
             fprintf(1,'allan_overlap: End of timestamp data: %g sec.\n',dtime(end));
@@ -507,7 +507,7 @@ if verbose >= 1 % show all data
     hold on;
 
     fx = xlim;
-    % plot([fx(1) fx(2)],[s.median s.median],'-k');
+%     plot([fx(1) fx(2)],[s.median s.median],'-k');
     plot([fx(1) fx(2)],[0 0],':k');
     
     % show 5x Median Absolute deviation (MAD) values
@@ -518,8 +518,8 @@ if verbose >= 1 % show all data
     hf=plot(xlim,polyval(s.linear,xlim)-s.median,'-g');    
     title(['Data: ' name],'FontSize',FontSize+2,'FontName','Arial');
     
-    plot(xlim,polyval(s.linear,xlim)-3*MAD,'--m'); 
-    plot(xlim,polyval(s.linear,xlim)+3*MAD,'--m');
+    plot(xlim,polyval(s.linear,xlim)-s.median-3*MAD,'--m'); 
+    plot(xlim,polyval(s.linear,xlim)-s.median+3*MAD,'--m');
     
     %set(get(gca,'Title'),'Interpreter','none');
     xlabel('Time [sec]','FontSize',FontSize,'FontName',FontName);

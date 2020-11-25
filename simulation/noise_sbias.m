@@ -2,7 +2,7 @@ function [sbias_n] = noise_sbias (sbias, M)
 % noise_sbias: generates a random static bias error.
 %
 % INPUT
-%		sbias: static bias from [-sbias sbias].
+%		sbias: 1x1 static bias to define the interval [-sbias sbias] (rad)
 %		M: dimension of output vector.
 %
 % OUTPUT
@@ -28,7 +28,7 @@ function [sbias_n] = noise_sbias (sbias, M)
 %
 % Reference:
 %
-%		R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+%	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
 % simulation framework for low-cost integrated navigation systems,
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015. Sec. 2.2.
@@ -40,7 +40,10 @@ function [sbias_n] = noise_sbias (sbias, M)
 
 a = -sbias;
 b =  sbias;
+
+% Static biases are chosen randomly in the interval [-sbias sbias]
 ab_fix = (b' - a') .* rand(3,1) + a';
+
 o = ones(M,1);
 
-sbias_n = [ab_fix(1).* o   ab_fix(2).* o   ab_fix(3).* o];
+sbias_n = [ab_fix(1).* o , ab_fix(2).* o , ab_fix(3).* o];
