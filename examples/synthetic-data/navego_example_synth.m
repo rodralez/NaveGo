@@ -42,8 +42,8 @@
 % Revision D. October 2011.
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 %
-% Version: 018
-% Date:    2020/11/19
+% Version: 019
+% Date:    2020/11/25
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -156,7 +156,7 @@ ADIS16405.ab_dyn   = 0.2 .* ones(1,3);     % Acc dynamic biases [X Y Z] (mg)
 ADIS16405.gb_corr  = 100 .* ones(1,3);     % Gyro correlation times [X Y Z] (seconds)
 ADIS16405.ab_corr  = 100 .* ones(1,3);     % Acc correlation times [X Y Z] (seconds)
 ADIS16405.freq     = ref.freq;             % IMU operation frequency [X Y Z] (Hz)
-ADIS16405.m_psd     = 0.066 .* ones(1,3);  % Magnetometer noise density [X Y Z] (mgauss/root-Hz)
+ADIS16405.m_psd    = 0.066 .* ones(1,3);   % Magnetometer noise density [X Y Z] (mgauss/root-Hz)
 
 % ref time is used to simulate IMU sensors
 ADIS16405.t = ref.t;                       % IMU time vector
@@ -175,12 +175,12 @@ ADIS16488.vrw      = 0.029.* ones(1,3);     % Velocity random walks [X Y Z] (m/s
 ADIS16488.vrrw     = zeros(1,3);            % Velocity rate random walks [X Y Z] (deg/root-hour/s)
 ADIS16488.gb_sta   = 0.2  .* ones(1,3);     % Gyro static biases [X Y Z] (deg/s)
 ADIS16488.ab_sta   = 16   .* ones(1,3);     % Acc static biases [X Y Z] (mg)
-ADIS16488.gb_dyn   = 6.5/3600  .* ones(1,3);% Gyro dynamic biases [X Y Z] (deg/s)
+ADIS16488.gb_dyn   = 6.5/3600 .* ones(1,3); % Gyro dynamic biases [X Y Z] (deg/s)
 ADIS16488.ab_dyn   = 0.1  .* ones(1,3);     % Acc dynamic biases [X Y Z] (mg)
 ADIS16488.gb_corr  = 100  .* ones(1,3);     % Gyro correlation times [X Y Z] (seconds)
 ADIS16488.ab_corr  = 100  .* ones(1,3);     % Acc correlation times [X Y Z] (seconds)
 ADIS16488.freq     = ref.freq;              % IMU operation frequency [X Y Z] (Hz)
-ADIS16488.m_psd = 0.054 .* ones(1,3);       % Magnetometer noise density [X Y Z] (mgauss/root-Hz)
+ADIS16488.m_psd    = 0.054 .* ones(1,3);    % Magnetometer noise density [X Y Z] (mgauss/root-Hz)
 
 % ref time is used to simulate IMU sensors
 ADIS16488.t = ref.t;                        % IMU time vector
@@ -218,8 +218,8 @@ gnss.zupt_th = 0.5;   % ZUPT threshold (m/s).
 gnss.zupt_win = 4;    % ZUPT time window (seconds).
 
 % The following figure tries to show when the Kalman filter (KF) will be execute.
-% If a new element from GNSS time vector is available at the current INS time inside the window time
-% set by epsilon, the Kalman filter (KF) will be executed.
+% If a new element from GNSS time vector is available at the current INS time inside 
+% the window time [-eps eps] set by epsilon, the Kalman filter (KF) will be executed.
 %
 %                    I1  I2  I3  I4  I5  I6  I7  I8  I9  I10 I11 I12 I3
 % INS time vector:   |---|---|---|---|---|---|---|---|---|---|---|---|
@@ -242,7 +242,7 @@ if strcmp(GNSS_DATA, 'ON')      % If simulation of GNSS data is required...
     
     fprintf('NaveGo: generating GNSS synthetic data... \n')
     
-    gnss = gnss_err_profile(ref.lat(1), ref.h(1), gnss); % Transform GNSS manufacturer error units to SI units
+    gnss = gnss_err_profile(ref.lat(1), ref.h(1), gnss); % GNSS manufacturer error units to SI units
     
     gnss = gnss_gen(ref, gnss);  % Generation of GNSS dataset from reference dataset
     
@@ -418,7 +418,6 @@ if (strcmp(PLOT,'ON'))
     plot(ref.t, R2D.*ref.pitch, '--k', nav1_e.t, R2D.*nav1_e.pitch,'-b', nav2_e.t, R2D.*nav2_e.pitch,'-r');
     ylabel('[deg]')
     xlabel('Time [s]')
-    legend('REF', 'IMU1', 'IMU2');
     title('PITCH');
     grid
     
@@ -426,7 +425,6 @@ if (strcmp(PLOT,'ON'))
     plot(ref.t, R2D.* ref.yaw, '--k', nav1_e.t, R2D.*nav1_e.yaw,'-b', nav2_e.t, R2D.*nav2_e.yaw,'-r');
     ylabel('[deg]')
     xlabel('Time [s]')
-    legend('REF', 'IMU1', 'IMU2');
     title('YAW');
     grid
     
@@ -438,7 +436,7 @@ if (strcmp(PLOT,'ON'))
     plot (gnss.t, R2D.*sig3_rr(:,1), '--k', gnss.t, -R2D.*sig3_rr(:,1), '--k' )
     ylabel('[deg]')
     xlabel('Time [s]')
-    legend('IMU1', 'IMU2', '3\sigma');
+    legend('IMU1', 'IMU2', '3\sigma for IMU1');
     title('ROLL ERROR');
     grid
     
@@ -448,7 +446,6 @@ if (strcmp(PLOT,'ON'))
     plot (gnss.t, R2D.*sig3_rr(:,2), '--k', gnss.t, -R2D.*sig3_rr(:,2), '--k' )
     ylabel('[deg]')
     xlabel('Time [s]')
-    legend('IMU1', 'IMU2', '3\sigma');
     title('PITCH ERROR');
     grid
     
@@ -460,7 +457,6 @@ if (strcmp(PLOT,'ON'))
     plot (gnss.t, R2D.*sig3_rr(:,3), '--k', gnss.t, -R2D.*sig3_rr(:,3), '--k' )
     ylabel('[deg]')
     xlabel('Time [s]')
-    legend('IMU1', 'IMU2', '3\sigma');
     title('YAW ERROR');
     grid
     
@@ -478,7 +474,6 @@ if (strcmp(PLOT,'ON'))
     plot(ref.t, ref.vel(:,2), '--k', gnss.t, gnss.vel(:,2),'-c', nav1_e.t, nav1_e.vel(:,2),'-b', nav2_e.t, nav2_e.vel(:,2),'-r');
     xlabel('Time [s]')
     ylabel('[m/s]')
-    legend('REF', 'GNSS', 'IMU1', 'IMU2');
     title('EAST VELOCITY');
     grid
     
@@ -486,7 +481,6 @@ if (strcmp(PLOT,'ON'))
     plot(ref.t, ref.vel(:,3), '--k', gnss.t, gnss.vel(:,3),'-c', nav1_e.t, nav1_e.vel(:,3),'-b', nav2_e.t, nav2_e.vel(:,3),'-r');
     xlabel('Time [s]')
     ylabel('[m/s]')
-    legend('REF', 'GNSS', 'IMU1', 'IMU2');
     title('DOWN VELOCITY');
     grid
     
@@ -499,7 +493,7 @@ if (strcmp(PLOT,'ON'))
     plot (gnss.t, sig3_rr(:,4), '--k', gnss.t, -sig3_rr(:,4), '--k' )
     xlabel('Time [s]')
     ylabel('[m/s]')
-    legend('GNSS', 'IMU1', 'IMU2', '3\sigma');
+    legend('GNSS', 'IMU1', 'IMU2', '3\sigma for IMU1');
     title('VELOCITY NORTH ERROR');
     grid
     
@@ -510,7 +504,6 @@ if (strcmp(PLOT,'ON'))
     plot (gnss.t, sig3_rr(:,5), '--k', gnss.t, -sig3_rr(:,5), '--k' )
     xlabel('Time [s]')
     ylabel('[m/s]')
-    legend('GNSS', 'IMU1', 'IMU2', '3\sigma');
     title('VELOCITY EAST ERROR');
     grid
     
@@ -521,7 +514,6 @@ if (strcmp(PLOT,'ON'))
     plot (gnss.t, sig3_rr(:,6), '--k', gnss.t, -sig3_rr(:,6), '--k' )
     xlabel('Time [s]')
     ylabel('[m/s]')
-    legend('GNSS', 'IMU1', 'IMU2', '3\sigma');
     title('VELOCITY DOWN ERROR');
     grid
     
@@ -539,7 +531,6 @@ if (strcmp(PLOT,'ON'))
     plot(ref.t, ref.lon .*R2D, '--k', gnss.t, gnss.lon.*R2D, '-c', nav1_e.t, nav1_e.lon.*R2D, '-b', nav2_e.t, nav2_e.lon.*R2D, '-r');
     xlabel('Time [s]')
     ylabel('[deg]')
-    legend('REF', 'GNSS', 'IMU1', 'IMU2');
     title('LONGITUDE');
     grid
     
@@ -547,7 +538,6 @@ if (strcmp(PLOT,'ON'))
     plot(ref.t, ref.h, '--k', gnss.t, gnss.h, '-c', nav1_e.t, nav1_e.h, '-b', nav2_e.t, nav2_e.h, '-r');
     xlabel('Time [s]')
     ylabel('[m]')
-    legend('REF', 'GNSS', 'IMU1', 'IMU2');
     title('ALTITUDE');
     grid
     
@@ -577,7 +567,7 @@ if (strcmp(PLOT,'ON'))
     plot (gnss.t, LAT2M_G.*sig3_rr(:,7), '--k', gnss.t, -LAT2M_G.*sig3_rr(:,7), '--k' )
     xlabel('Time [s]')
     ylabel('[m]')
-    legend('GNSS', 'IMU1', 'IMU2', '3\sigma');
+    legend('GNSS', 'IMU1', 'IMU2', '3\sigma for IMU1');
     title('LATITUDE ERROR');
     grid
     
@@ -589,7 +579,6 @@ if (strcmp(PLOT,'ON'))
     plot(gnss.t, LON2M_G.*sig3_rr(:,8), '--k', gnss.t, -LON2M_G.*sig3_rr(:,8), '--k' )
     xlabel('Time [s]')
     ylabel('[m]')
-    legend('GNSS', 'IMU1', 'IMU2', '3\sigma');
     title('LONGITUDE ERROR');
     grid
     
@@ -601,7 +590,6 @@ if (strcmp(PLOT,'ON'))
     plot(gnss.t, sig3_rr(:,9), '--k', gnss.t, -sig3_rr(:,9), '--k' )
     xlabel('Time [s]')
     ylabel('[m]')
-    legend('GNSS', 'IMU1', 'IMU2', '3\sigma');
     title('ALTITUDE ERROR');
     grid
     
@@ -611,16 +599,20 @@ if (strcmp(PLOT,'ON'))
     plot(nav1_e.tg, nav1_e.b(:, 1).*R2D, '-.b');
     hold on
     plot(nav2_e.tg, nav2_e.b(:, 1).*R2D, '-.r');
+    plot(nav1_e.tg, sig3_rr(:,10).*R2D, '--k', nav1_e.tg, -sig3_rr(:,10).*R2D, '--k' )
+    hold off
     xlabel('Time [s]')
     ylabel('[deg]')
     title('KF BIAS GYRO X ESTIMATION');
-    legend('IMU1', 'IMU2');
+    legend('IMU1', 'IMU2', '3\sigma for IMU1');
     grid
     
     subplot(312)
     plot(nav1_e.tg, nav1_e.b(:, 2).*R2D, '-.b');
     hold on
     plot(nav2_e.tg, nav2_e.b(:, 2).*R2D, '-.r');
+    plot(nav1_e.tg, sig3_rr(:,11).*R2D, '--k', nav1_e.tg, -sig3_rr(:,11).*R2D, '--k' )
+    hold off
     xlabel('Time [s]')
     ylabel('[deg]')
     title('KF BIAS GYRO Y ESTIMATION');
@@ -630,6 +622,8 @@ if (strcmp(PLOT,'ON'))
     plot(nav1_e.tg, nav1_e.b(:, 3).*R2D, '-.b');
     hold on
     plot(nav2_e.tg, nav2_e.b(:, 3).*R2D, '-.r');
+    plot(nav1_e.tg, sig3_rr(:,12).*R2D, '--k', nav1_e.tg, -sig3_rr(:,12).*R2D, '--k' )
+    hold off
     xlabel('Time [s]')
     ylabel('[deg]')
     title('KF BIAS GYRO Z ESTIMATION');
@@ -640,16 +634,20 @@ if (strcmp(PLOT,'ON'))
     plot(nav1_e.tg, nav1_e.b(:, 4), '-.b');
     hold on
     plot(nav2_e.tg, nav2_e.b(:, 4), '-.r');
+    plot(nav1_e.tg, sig3_rr(:,13), '--k', nav1_e.tg, -sig3_rr(:,13), '--k' )
+    hold off
     xlabel('Time [s]')
     ylabel('[m/s^2]')
     title('KF BIAS ACCR X ESTIMATION');
-    legend('IMU1', 'IMU2');
+    legend('IMU1', 'IMU2', '3\sigma for IMU1');
     grid
     
     subplot(312)
     plot(nav1_e.tg, nav1_e.b(:, 5), '-.b');
     hold on
     plot(nav2_e.tg, nav2_e.b(:, 5), '-.r');
+    plot(nav1_e.tg, sig3_rr(:,14), '--k', nav1_e.tg, -sig3_rr(:,14), '--k' )
+    hold off
     xlabel('Time [s]')
     ylabel('[m/s^2]')
     title('KF BIAS ACCR Y ESTIMATION');
@@ -659,6 +657,8 @@ if (strcmp(PLOT,'ON'))
     plot(nav1_e.tg, nav1_e.b(:, 6), '-.b');
     hold on
     plot(nav2_e.tg, nav2_e.b(:, 6), '-.r');
+    plot(nav1_e.tg, sig3_rr(:,15), '--k', nav1_e.tg, -sig3_rr(:,15), '--k' )
+    hold off
     xlabel('Time [s]')
     ylabel('[m/s^2]')
     title('KF BIAS ACCR Z ESTIMATION');

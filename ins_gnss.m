@@ -107,7 +107,7 @@ if nargin < 3, att_mode  = 'quaternion'; end
 
 %% ZUPT detection algorithm
 
-zupt = false;
+zupt_flag = false;
 
 %% PREALLOCATION
 
@@ -131,7 +131,7 @@ yaw_e   = zeros (LI, 1);
 roll_e(1)  = imu.ini_align(1);
 pitch_e(1) = imu.ini_align(2);
 yaw_e(1)   = imu.ini_align(3);
-%     yawm_e(1)  = imu.ini_align(3);
+%  yawm_e(1)  = imu.ini_align(3);
 DCMnb = euler2dcm([roll_e(1); pitch_e(1); yaw_e(1);]);
 DCMbn = DCMnb';
 qua   = euler2qua([roll_e(1) pitch_e(1) yaw_e(1)]);
@@ -152,11 +152,11 @@ h_e(1)   = gnss.h(1);
 lat_e(1) = gnss.lat(1);
 lon_e(1) = gnss.lon(1);
 
-% Biases
+% Initial dynamic biases
 gb_dyn = imu.gb_dyn';
 ab_dyn = imu.ab_dyn';
 
-% Initialize Kalman filter matrices
+% Initialization of Kalman filter matrices
 
 % Prior estimates
 kf.xi = [ zeros(1,9), imu.gb_dyn, imu.ab_dyn ]';  % Error vector state
@@ -164,8 +164,8 @@ kf.Pi = diag([imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_dyn, imu.ab_dyn].^2
 
 kf.Q  = diag([imu.arw, imu.vrw, imu.gb_psd, imu.ab_psd].^2);
 
-fb_corrected = (imu.fb(1,:)' + ab_dyn );
-f_n = (DCMbn * fb_corrected);
+fb_corrected = imu.fb(1,:)' + ab_dyn;
+f_n = DCMbn * fb_corrected;
 
 % Vector to update matrix F
 upd = [gnss.vel(1,:) gnss.lat(1) gnss.h(1) f_n'];
@@ -178,7 +178,7 @@ Tpr = diag([(RM + gnss.h(1)), (RN + gnss.h(1)) * cos(gnss.lat(1)), -1]);  % radi
 
 % Update matrix H
 kf.H = [ O I O O O ;
-    O O Tpr O O ; ];
+         O O Tpr O O ; ];
 kf.R = diag([gnss.stdv gnss.stdm]).^2;
 kf.z = [ gnss.stdv, gnss.stdm ]';
 
@@ -244,9 +244,10 @@ for i = 2:LI
     lon_e(i) = pos_n(2);
     h_e(i)   = pos_n(3);
     
-    % Inertial sensors corrected with a posteriori KF biases estimation
-    wb_corrected = (imu.wb(i,:)' + gb_dyn );
-    fb_corrected = (imu.fb(i,:)' + ab_dyn );
+    % Inertial sensors corrected with a posteriori KF biases estimation and
+    % deterministic static biases
+    wb_corrected = imu.wb(i,:)' + gb_dyn - imu.gb_sta';
+    fb_corrected = imu.fb(i,:)' + ab_dyn - imu.ab_sta';
     
     % Turn-rates update with both updated velocity and position
     omega_ie_n = earthrate(lat_e(i));
@@ -285,14 +286,14 @@ for i = 2:LI
             lon_e(i) = mean (lon_e(i-idz:i , :));
             h_e(i)   = mean (h_e(i-idz:i , :));
             
-            zupt = true;
+            zupt_flag = true;
             
         end
     end
     
     %% KALMAN FILTER UPDATE
     
-    % Check if there is new GNSS measurement to process at current INS time
+    % Check if there is a new GNSS measurement to process at current INS time
     gdx =  find (gnss.t >= (imu.t(i) - gnss.eps) & gnss.t < (imu.t(i) + gnss.eps));
     
     if ( ~isempty(gdx) && gdx > 1)
@@ -301,7 +302,7 @@ for i = 2:LI
         
         %% MEASUREMENTS
         
-        % Update meridian and normal radii of curvature
+        % Meridian and normal radii of curvature update
         [RM,RN] = radius(lat_e(i));
         
         % Radians-to-meters matrix
@@ -311,7 +312,7 @@ for i = 2:LI
         zp = Tpr * ([lat_e(i); lon_e(i); h_e(i);] - [gnss.lat(gdx); gnss.lon(gdx); gnss.h(gdx);]) ...
             + (DCMbn * gnss.larm);
         
-        % Innovations for velocity with lever arm correction
+        % Measurements for velocity with lever arm correction
         zv = (vel_e(i,:) - gnss.vel(gdx,:) - ((omega_ie_n + omega_en_n) .* (DCMbn * gnss.larm))' ...
             + (DCMbn * skewm(wb_corrected) * gnss.larm )' )';
         
@@ -323,11 +324,11 @@ for i = 2:LI
         % Vector to update matrix F
         upd = [vel_e(i,:) lat_e(i) h_e(i) f_n'];
         
-        % Update matrices F and G
+        % Matrices F and G update
         [kf.F, kf.G] = F_update(upd, DCMbn, imu);
         
-        % Update matrix H
-        if(zupt == false)
+        % Matrix H update
+        if(zupt_flag == false)
             kf.H = [ O I O O O ;
                 O O Tpr O O ; ];
             kf.R = diag([gnss.stdv gnss.stdm]).^2;
@@ -338,8 +339,8 @@ for i = 2:LI
             kf.z = zv;
         end
         
-        % Execute the extended Kalman filter
-        kf.xp(1:9) = 0;              % states 1:9 are forced to be zero (error-state approach)
+        % Execution of the extended Kalman filter
+        kf.xp(1:9) = 0.0;           % states 1:9 are forced to be zero (error-state approach)
         kf = kalman(kf, dtg);
         
         %% OBSERVABILITY
@@ -391,12 +392,12 @@ for i = 2:LI
         Pi(gdx,:) = reshape(kf.Pi, 1, 225);
         Pp(gdx,:) = reshape(kf.Pp, 1, 225);
         
-        if(zupt == false)
+        if(zupt_flag == false)
             v(gdx,:)  = kf.v';
             K(gdx,:)  = reshape(kf.K, 1, 90);
             S(gdx,:)  = reshape(kf.S, 1, 36);
         else
-            zupt = false;
+            zupt_flag = false;
             v(gdx,:)  = [ kf.v' 0 0 0 ]';
             K(gdx,1:45)  = reshape(kf.K, 1, 45);
             S(gdx,1:9)  = reshape(kf.S, 1, 9);
@@ -428,7 +429,7 @@ nav_e.Pi    = Pi;       % A priori covariance matrices
 nav_e.Pp    = Pp;       % A posteriori covariance matrices
 nav_e.K     = K;        % Kalman gain matrices
 nav_e.S     = S;        % Innovation matrices
-nav_e.ob    = ob;       % Number of observable states at each GNSS data arriving
+nav_e.ob    = ob;       % Number of observable states after each GNSS data arriving
 
 fprintf('\n');
 

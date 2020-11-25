@@ -39,6 +39,15 @@ function  navego_plot (ref, gnss, nav_e, gnss_i, nav_i, ref_g, ref_n)
 % D2R = (pi/180);     % degrees to radians
 R2D = (180/pi);     % radians to degrees
 
+% Colors
+blue = [0, 0.4470, 0.7410];
+orange = [0.8500, 0.3250, 0.0980];
+% yellow = [0.9290, 0.6940, 0.1250];
+% light_blue = [0.3010, 0.7450, 0.9330];
+
+% Line propities
+lw = 1.5;
+
 % Standard deviation * 3 vector from navigation estimates
 sig3_v = abs(nav_e.Pp(:, 1:16:end).^(0.5)) .* 3; % Only take diagonal elements from Pp
 
@@ -46,7 +55,7 @@ sig3_v = abs(nav_e.Pp(:, 1:16:end).^(0.5)) .* 3; % Only take diagonal elements f
 figure;
 plot3(ref_n.lon.*R2D, ref_n.lat.*R2D, ref_n.h, '--k')
 hold on
-plot3(nav_i.lon.*R2D, nav_i.lat.*R2D, nav_i.h, '-ob')
+plot3(nav_i.lon.*R2D, nav_i.lat.*R2D, nav_i.h, '-o', 'Color', blue)
 plot3(ref_n.lon(1).*R2D, ref_n.lat(1).*R2D, ref_n.h(1), 'or', 'MarkerSize', 10, 'LineWidth', 2)
 hold off
 axis tight
@@ -61,7 +70,10 @@ grid
 % ATTITUDE
 figure;
 subplot(311)
-plot(ref.t, R2D.*ref.roll, '--k', nav_e.t, R2D.*nav_e.roll,'-.b');
+plot(ref.t, R2D.*ref.roll, '--k');
+hold on
+plot(nav_e.t, R2D.*nav_e.roll, '-.', 'Color', blue, 'Linewidth', lw)
+hold off
 ylabel('[deg]')
 xlabel('Time [s]')
 legend('REF', 'INS/GNSS');
@@ -69,7 +81,10 @@ title('ROLL');
 grid
 
 subplot(312)
-plot(ref.t, R2D.*ref.pitch, '--k', nav_e.t, R2D.*nav_e.pitch,'-.b');
+plot(ref.t, R2D.*ref.pitch, '--k');
+hold on
+plot(nav_e.t, R2D.*nav_e.pitch, '-.', 'Color', blue, 'Linewidth', lw)
+hold off
 ylabel('[deg]')
 xlabel('Time [s]')
 legend('REF', 'INS/GNSS')
@@ -77,7 +92,10 @@ title('PITCH');
 grid
 
 subplot(313)
-plot(ref.t, R2D.* ref.yaw, '--k', nav_e.t, R2D.*nav_e.yaw,'-.b');
+plot(ref.t, R2D.* ref.yaw, '--k');
+hold on
+plot(nav_e.t, R2D.*nav_e.yaw, '-.', 'Color', blue, 'Linewidth', lw)
+hold off
 ylabel('[deg]')
 xlabel('Time [s]')
 legend('REF', 'INS/GNSS')
@@ -87,7 +105,7 @@ grid
 % ATTITUDE ERRORS
 figure;
 subplot(311)
-plot(nav_i.t, (nav_i.roll - ref_n.roll).*R2D, '-.b' );
+plot(nav_i.t, (nav_i.roll - ref_n.roll).*R2D, '-.', 'Color', blue, 'Linewidth', lw)
 hold on
 plot (nav_e.tg, R2D.*sig3_v(:,1), '--k', nav_e.tg, -R2D.*sig3_v(:,1), '--k' )
 hold off
@@ -98,9 +116,9 @@ title('ROLL ERROR');
 grid
 
 subplot(312)
-plot(nav_i.t, (nav_i.pitch - ref_n.pitch).*R2D, '-.b' );
+plot(nav_i.t, R2D.*(nav_i.pitch - ref_n.pitch), '-.', 'Color', blue, 'Linewidth', lw)
 hold on
-plot (nav_e.tg, R2D.*sig3_v(:,2), '--k', nav_e.tg, -R2D.*sig3_v(:,2), '--k' )
+plot(nav_e.tg, R2D.*sig3_v(:,2), '--k', nav_e.tg, -R2D.*sig3_v(:,2), '--k' )
 hold off
 ylabel('[deg]')
 xlabel('Time [s]')
@@ -109,11 +127,10 @@ title('PITCH ERROR');
 grid
 
 subplot(313)
-
 yaw_err = correct_yaw(nav_i.yaw - ref_n.yaw);
-plot(nav_i.t, yaw_err.*R2D, '-.b' );
+plot(nav_i.t, R2D.*yaw_err, '-.', 'Color', blue, 'Linewidth', lw)
 hold on
-plot (nav_e.tg, R2D.*sig3_v(:,3), '--k', nav_e.tg, -R2D.*sig3_v(:,3), '--k' )
+plot(nav_e.tg, R2D.*sig3_v(:,3), '--k', nav_e.tg, -R2D.*sig3_v(:,3), '--k' )
 hold off
 ylabel('[deg]')
 xlabel('Time [s]')
@@ -124,7 +141,11 @@ grid
 % VELOCITIES
 figure;
 subplot(311)
-plot(ref.t, ref.vel(:,1), '--k', gnss.t, gnss.vel(:,1),'-c', nav_e.t, nav_e.vel(:,1),'-.b' );
+plot(ref.t, ref.vel(:,1), '--k')
+hold on
+plot(gnss.t, gnss.vel(:,1), 'Color', orange, 'Linewidth', lw)
+plot(nav_e.t, nav_e.vel(:,1), '-.', 'Color', blue, 'Linewidth', lw)
+hold off
 xlabel('Time [s]')
 ylabel('[m/s]')
 legend('REF', 'GNSS', 'INS/GNSS');
@@ -132,7 +153,11 @@ title('NORTH VELOCITY');
 grid
 
 subplot(312)
-plot(ref.t, ref.vel(:,2), '--k', gnss.t, gnss.vel(:,2),'-c', nav_e.t, nav_e.vel(:,2),'-.b' );
+plot(ref.t, ref.vel(:,2), '--k')
+hold on
+plot(gnss.t, gnss.vel(:,2), 'Color', orange, 'Linewidth', lw)
+plot(nav_e.t, nav_e.vel(:,2), '-.', 'Color', blue, 'Linewidth', lw)
+hold off
 xlabel('Time [s]')
 ylabel('[m/s]')
 legend('REF', 'GNSS', 'INS/GNSS');
@@ -140,7 +165,11 @@ title('EAST VELOCITY');
 grid
 
 subplot(313)
-plot(ref.t, ref.vel(:,3), '--k', gnss.t, gnss.vel(:,3),'-c', nav_e.t, nav_e.vel(:,3),'-.b' );
+plot(ref.t, ref.vel(:,3), '--k')
+hold on
+plot(gnss.t, gnss.vel(:,3), 'Color', orange, 'Linewidth', lw)
+plot(nav_e.t, nav_e.vel(:,3), '-.', 'Color', blue, 'Linewidth', lw)
+hold off
 xlabel('Time [s]')
 ylabel('[m/s]')
 legend('REF', 'GNSS', 'INS/GNSS');
@@ -150,10 +179,10 @@ grid
 % VELOCITIES ERRORS
 figure;
 subplot(311)
-plot(gnss_i.t, (gnss_i.vel(:,1) - ref_g.vel(:,1)), '-c');
+plot(gnss_i.t, (gnss_i.vel(:,1) - ref_g.vel(:,1)), 'Color', orange, 'Linewidth', lw)
 hold on
-plot(nav_i.t, (nav_i.vel(:,1) - ref_n.vel(:,1)), '-.b' );
-plot (nav_e.tg, sig3_v(:,4), '--k', nav_e.tg, -sig3_v(:,4), '--k' )
+plot(nav_i.t, (nav_i.vel(:,1) - ref_n.vel(:,1)), '-.', 'Color', blue, 'Linewidth', lw)
+plot(nav_e.tg, sig3_v(:,4), '--k', nav_e.tg, -sig3_v(:,4), '--k' )
 hold off
 xlabel('Time [s]')
 ylabel('[m/s]')
@@ -162,10 +191,10 @@ title('VELOCITY NORTH ERROR');
 grid
 
 subplot(312)
-plot(gnss_i.t, (gnss_i.vel(:,2) - ref_g.vel(:,2)), '-c');
+plot(gnss_i.t, (gnss_i.vel(:,2) - ref_g.vel(:,2)), 'Color', orange, 'Linewidth', lw)
 hold on
-plot(nav_i.t, (nav_i.vel(:,2) - ref_n.vel(:,2)), '-.b' );
-plot (nav_e.tg, sig3_v(:,5), '--k', nav_e.tg, -sig3_v(:,5), '--k' )
+plot(nav_i.t, (nav_i.vel(:,2) - ref_n.vel(:,2)), '-.', 'Color', blue, 'Linewidth', lw)
+plot(nav_e.tg, sig3_v(:,5), '--k', nav_e.tg, -sig3_v(:,5), '--k' )
 hold off
 xlabel('Time [s]')
 ylabel('[m/s]')
@@ -174,10 +203,10 @@ title('VELOCITY EAST ERROR');
 grid
 
 subplot(313)
-plot(gnss_i.t, (gnss_i.vel(:,3) - ref_g.vel(:,3)), '-c');
+plot(gnss_i.t, (gnss_i.vel(:,3) - ref_g.vel(:,3)), 'Color', orange, 'Linewidth', lw)
 hold on
-plot(nav_i.t, (nav_i.vel(:,3) - ref_n.vel(:,3)), '-.b' );
-plot (nav_e.tg, sig3_v(:,6), '--k', nav_e.tg, -sig3_v(:,6), '--k' )
+plot(nav_i.t, (nav_i.vel(:,3) - ref_n.vel(:,3)), '-.', 'Color', blue, 'Linewidth', lw)
+plot(nav_e.tg, sig3_v(:,6), '--k', nav_e.tg, -sig3_v(:,6), '--k' )
 hold off
 xlabel('Time [s]')
 ylabel('[m/s]')
@@ -188,7 +217,11 @@ grid
 % POSITION
 figure;
 subplot(311)
-plot(ref.t, ref.lat .*R2D, '--k', gnss.t, gnss.lat.*R2D, '-c', nav_e.t, nav_e.lat.*R2D, '-.b');
+plot(ref.t, R2D.*ref.lat, '--k')
+hold on
+plot(gnss.t, R2D.*gnss.lat, 'Color', orange, 'Linewidth', lw)
+plot(nav_e.t, R2D.*nav_e.lat, '-.', 'Color', blue, 'Linewidth', lw)
+hold off
 xlabel('Time [s]')
 ylabel('[deg]')
 legend('REF', 'GNSS', 'INS/GNSS' );
@@ -196,7 +229,11 @@ title('LATITUDE');
 grid
 
 subplot(312)
-plot(ref.t, ref.lon .*R2D, '--k', gnss.t, gnss.lon.*R2D, '-c', nav_e.t, nav_e.lon.*R2D, '-.b');
+plot(ref.t, R2D.*ref.lon, '--k')
+hold on
+plot(gnss.t, R2D.*gnss.lon, 'Color', orange, 'Linewidth', lw)
+plot(nav_e.t, R2D.*nav_e.lon, '-.', 'Color', blue, 'Linewidth', lw)
+hold off
 xlabel('Time [s]')
 ylabel('[deg]')
 legend('REF', 'GNSS', 'INS/GNSS' );
@@ -204,7 +241,10 @@ title('LONGITUDE');
 grid
 
 subplot(313)
-plot(ref.t, ref.h, '--k', gnss.t, gnss.h, '-c', nav_e.t, nav_e.h, '-.b')
+plot(ref.t, ref.h, '--k')
+hold on
+plot(gnss.t, gnss.h, 'Color', orange, 'Linewidth', lw)
+plot(nav_e.t, nav_e.h, '-.', 'Color', blue, 'Linewidth', lw)
 xlabel('Time [s]')
 ylabel('[m]')
 legend('REF', 'GNSS', 'INS/GNSS');
@@ -226,9 +266,9 @@ LON2M_I = (RE + gnss_i.h).*cos(gnss_i.lat);
 
 figure;
 subplot(311)
-plot(gnss_i.t, LAT2M_I.*(gnss_i.lat - ref_g.lat), '-c')
+plot(gnss_i.t,  LAT2M_I.*(gnss_i.lat - ref_g.lat), 'Color', orange, 'Linewidth', lw)
 hold on
-plot(nav_i.t, LAT2M_N.*(nav_i.lat - ref_n.lat), '-.b')
+plot(nav_i.t,   LAT2M_N.*(nav_i.lat - ref_n.lat), '-.', 'Color', blue, 'Linewidth', lw)
 plot (nav_e.tg, LAT2M_G.*sig3_v(:,7), '--k', nav_e.tg, -LAT2M_G.*sig3_v(:,7), '--k' )
 hold off
 xlabel('Time [s]')
@@ -238,9 +278,9 @@ title('LATITUDE ERROR');
 grid
 
 subplot(312)
-plot(gnss_i.t, LON2M_I.*(gnss_i.lon - ref_g.lon), '-c')
+plot(gnss_i.t, LON2M_I.*(gnss_i.lon - ref_g.lon), 'Color', orange, 'Linewidth', lw)
 hold on
-plot(nav_i.t, LON2M_N.*(nav_i.lon - ref_n.lon), '-.b')
+plot(nav_i.t,  LON2M_N.*(nav_i.lon - ref_n.lon), '-.', 'Color', blue, 'Linewidth', lw)
 plot(nav_e.tg, LON2M_G.*sig3_v(:,8), '--k', nav_e.tg, -LON2M_G.*sig3_v(:,8), '--k' )
 hold off
 xlabel('Time [s]')
@@ -250,9 +290,9 @@ title('LONGITUDE ERROR');
 grid
 
 subplot(313)
-plot(gnss_i.t, (gnss_i.h - ref_g.h), '-c')
+plot(gnss_i.t, (gnss_i.h - ref_g.h), 'Color', orange, 'Linewidth', lw)
 hold on
-plot(nav_i.t, (nav_i.h - ref_n.h), '-.b')
+plot(nav_i.t, (nav_i.h - ref_n.h), '-.', 'Color', blue, 'Linewidth', lw)
 plot(nav_e.tg, sig3_v(:,9), '--k', nav_e.tg, -sig3_v(:,9), '--k' )
 hold off
 xlabel('Time [s]')
@@ -266,7 +306,7 @@ figure;
 subplot(311)
 plot (nav_e.tg, R2D.*sig3_v(:,10), '--k', nav_e.tg, -R2D.*sig3_v(:,10), '--k' );
 hold on
-plot(nav_e.tg, nav_e.b(:, 1).*R2D, '-.b');
+plot(nav_e.tg, R2D.*nav_e.b(:, 1),  '-.', 'Color', blue, 'Linewidth', lw)
 hold off
 legend( {'3\sigma'} );
 xlabel('Time [s]')
@@ -277,7 +317,7 @@ grid
 subplot(312)
 plot (nav_e.tg, R2D.*sig3_v(:,11), '--k', nav_e.tg, -R2D.*sig3_v(:,11), '--k' );
 hold on
-plot(nav_e.tg, nav_e.b(:, 2).*R2D, '-.b');
+plot(nav_e.tg, R2D.*nav_e.b(:, 2), '-.', 'Color', blue, 'Linewidth', lw)
 hold off
 legend( {'3\sigma'} );
 xlabel('Time [s]')
@@ -288,7 +328,7 @@ grid
 subplot(313)
 plot (nav_e.tg, R2D.*sig3_v(:,12), '--k', nav_e.tg, -R2D.*sig3_v(:,12), '--k' );
 hold on
-plot(nav_e.tg, nav_e.b(:, 3).*R2D, '-.b');
+plot(nav_e.tg, R2D.*nav_e.b(:, 3), '-.', 'Color', blue, 'Linewidth', lw)
 hold off
 legend( {'3\sigma'} );
 xlabel('Time [s]')
@@ -300,7 +340,7 @@ figure;
 subplot(311)
 plot (nav_e.tg, sig3_v(:,13), '--k', nav_e.tg, -sig3_v(:,13), '--k' );
 hold on
-plot(nav_e.tg, nav_e.b(:, 4), '-.b');
+plot(nav_e.tg, nav_e.b(:, 4), '-.', 'Color', blue, 'Linewidth', lw)
 hold off
 legend( {'3\sigma'} );
 xlabel('Time [s]')
@@ -311,7 +351,7 @@ grid
 subplot(312)
 plot (nav_e.tg, sig3_v(:,14), '--k', nav_e.tg, -sig3_v(:,14), '--k' );
 hold on
-plot(nav_e.tg, nav_e.b(:, 5), '-.b');
+plot(nav_e.tg, nav_e.b(:, 5), '-.', 'Color', blue, 'Linewidth', lw)
 hold off
 legend( {'3\sigma'} );
 xlabel('Time [s]')
@@ -322,7 +362,7 @@ grid
 subplot(313)
 plot (nav_e.tg, sig3_v(:,15), '--k', nav_e.tg, -sig3_v(:,15), '--k' );
 hold on
-plot(nav_e.tg, nav_e.b(:, 6), '-.b');
+plot(nav_e.tg, nav_e.b(:, 6), '-.', 'Color', blue, 'Linewidth', lw)
 hold off
 legend( {'3\sigma'} );
 xlabel('Time [s]')
