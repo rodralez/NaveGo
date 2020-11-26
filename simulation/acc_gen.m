@@ -93,7 +93,7 @@ end
 % -------------------------------------------------------------------------
 % Simulation of static bias as a constant random variable
 
-[a_sbias] = noise_b_sta (imu.ab_sta, N);
+[ab_sta] = noise_b_sta (imu.ab_sta, N);
 
 % -------------------------------------------------------------------------
 % Simulation of white noise
@@ -110,7 +110,7 @@ end
 % Simulation of dynamic bias (bias instability) as a first-order Gauss-Markov model
 
 dt = 1/imu.freq; 
-[a_dbias] = noise_b_dyn (imu.ab_corr, imu.ab_dyn, dt, M);
+[ab_dyn] = noise_b_dyn (imu.ab_corr, imu.ab_dyn, dt, M);
 
 % -------------------------------------------------------------------------
 % Simulation of rate random walk
@@ -119,6 +119,6 @@ dt = 1/imu.freq;
 
 % -------------------------------------------------------------------------
 
-fb_sim = acc_b - cor_b + grav_b + a_wn + a_sbias + a_dbias + a_rrw;
+fb_sim = acc_b - cor_b + grav_b + a_wn + ab_sta + ab_dyn + a_rrw;
 
 end

@@ -1,13 +1,13 @@
-function [sbias_n] = noise_b_sta (sta_bias, M)
+function [b_sta_n] = noise_b_sta (b_sta, M)
 % noise_sbias: generates both a deterministic and a stochastic (run-to-run) 
 % static bias error.
 %
 % INPUT
-%		sbias: 1x1 static bias to define the interval [-sbias sbias] (rad)
+%		b_sta: 1x1 static bias to define the interval [-sbias sbias] (rad)
 %		M: dimension of output vector.
 %
 % OUTPUT
-%		sbias_n: Mx3 matrix with simulated static biases [X Y Z] (rad, rad, rad).
+%		b_sta_n: Mx3 matrix with simulated static biases [X Y Z] (rad, rad, rad).
 %
 %   Copyright (C) 2014, Rodrigo González, all rights reserved.
 %
@@ -41,14 +41,14 @@ function [sbias_n] = noise_b_sta (sta_bias, M)
 
 % It is considered that the stochastic static bias is a 10% of the
 % deterministic static bias
-a = -sta_bias * 0.1;
-b =  sta_bias * 0.1;
+a = -b_sta * 0.1;
+b =  b_sta * 0.1;
 
 % Static biases are chosen randomly in the interval [-sbias sbias]
 sta_bias_random = (b' - a') .* rand(3,1) + a';
 
 I = ones(M,1);
 
-sbias_n = [ sta_bias_random(1).* I + sta_bias(1), ... 
-            sta_bias_random(2).* I + sta_bias(2), ... 
-            sta_bias_random(3).* I + sta_bias(3)];
+b_sta_n = [ sta_bias_random(1).* I + b_sta(1), ... 
+            sta_bias_random(2).* I + b_sta(2), ... 
+            sta_bias_random(3).* I + b_sta(3)];
