@@ -14,7 +14,7 @@ function  navego_plot (ref, gnss, nav_e, gnss_i, nav_i, ref_g, ref_n)
 %   several figures.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
-%
+% a favor mio. 
 %   This file is part of NaveGo, an open-source MATLAB toolbox for
 %   simulation of integrated navigation systems.
 %

@@ -208,7 +208,7 @@ ob = zeros(LG, 1);         % Number of observable states at each GNSS data arriv
 % Initial matrices for Kalman filter performance analysis
 xp(1,:) = kf.xp';
 Pp(1,:) = reshape(kf.Pp, 1, 225);
-b(1,:)  = [imu.gb_sta, imu.ab_sta];
+b(1,:)  = [imu.gb_dyn, imu.ab_dyn];
 
 % INS (IMU) time is the master clock
 for i = 2:LI
