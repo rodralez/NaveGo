@@ -1,4 +1,4 @@
-function [dbias_n] = noise_b_dyn (b_corr, b_dyn, dt, M)
+function [b_dyn_n] = noise_b_dyn (b_corr, b_dyn, dt, M)
 % noise_dbias: generates a dynamic bias perturbation.
 %
 % INPUT
@@ -8,7 +8,7 @@ function [dbias_n] = noise_b_dyn (b_corr, b_dyn, dt, M)
 %	M: 1x2 dimension of output vector.
 %
 % OUTPUT
-%	dbias_n: M matrix with simulated dynamic biases [X Y Z] 
+%	b_dyb_n: M matrix with simulated dynamic biases [X Y Z] 
 %     (rad/s, rad/s, rad/s).
 %
 %   Copyright (C) 2014, Rodrigo González, all rights reserved.
@@ -34,8 +34,8 @@ function [dbias_n] = noise_b_dyn (b_corr, b_dyn, dt, M)
 %   Aggarwal, P. et al. MEMS-Based Integrated Navigation. Artech
 % House. 2010. Eq. 3.33, page 57.
 %
-% Version: 002
-% Date:    2020/11/24
+% Version: 003
+% Date:    2020/11/26
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -43,32 +43,30 @@ function [dbias_n] = noise_b_dyn (b_corr, b_dyn, dt, M)
 if (~isinf(b_corr))
 
     % First-order Gauss-Markov process
-    dbias_n = zeros(M);
-    N = M(1);
+    b_dyn_n = zeros(M);
+    N = M(1);           % Number of rows
 
     for i=1:3
 
         beta  = dt / ( b_corr(i) );
         sigma = b_dyn(i);
         a1 = exp(-beta);
-        % The system noise variance is modeled as an exponentially correlated
+        
+        % The dynamic bias noise variance is modeled as an exponentially correlated
         % fixed-variance first-order Markov process
         sigma_gm = sigma * sqrt(1 - exp(-2*beta) );
 
-        b_noise = sigma_gm .* randn(N,1); 
+        b_wn = sigma_gm .* randn(N,1); 
         
         for j=2:N
-%             dbias_n(j, i) = a1 * dbias_n(j-1, i) +  b_noise(j-1);
-            dbias_n(j, i) = a1 * dbias_n(j-1, i);
+            b_dyn_n(j, i) = a1 * b_dyn_n(j-1, i) +  b_wn(j-1);
         end
-        dbias_n(:, i) = dbias_n(:, i) +  b_noise;
     end
     
 % If not...
 else
     sigma = b_dyn;
-    b_noise = randn(M);
+    b_wn = randn(M);
     
-    dbias_n = [sigma(1).*b_noise(:,1) , sigma(2).*b_noise(:,2) , sigma(3).*b_noise(:,3)];
-    
+    b_dyn_n = [sigma(1).*b_wn(:,1) , sigma(2).*b_wn(:,2) , sigma(3).*b_wn(:,3)];    
 end

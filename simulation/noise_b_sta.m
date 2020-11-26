@@ -3,11 +3,11 @@ function [b_sta_n] = noise_b_sta (b_sta, M)
 % static bias error.
 %
 % INPUT
-%		b_sta: 1x1 static bias to define the interval [-sbias sbias] (rad)
+%		b_sta: 1x1 static bias to define the interval [-sbias sbias] 
 %		M: dimension of output vector.
 %
 % OUTPUT
-%		b_sta_n: Mx3 matrix with simulated static biases [X Y Z] (rad, rad, rad).
+%		b_sta_n: Mx3 matrix with simulated static biases [X Y Z]
 %
 %   Copyright (C) 2014, Rodrigo González, all rights reserved.
 %
@@ -44,11 +44,11 @@ function [b_sta_n] = noise_b_sta (b_sta, M)
 a = -b_sta * 0.1;
 b =  b_sta * 0.1;
 
-% Static biases are chosen randomly in the interval [-sbias sbias]
-sta_bias_random = (b' - a') .* rand(3,1) + a';
+% Stochastic static biases are chosen randomly within the interval [-b_sta b_sta]
+b_sta_stoc = a' + (b' - a') .* rand(3,1) ;
 
 I = ones(M,1);
 
-b_sta_n = [ sta_bias_random(1).* I + b_sta(1), ... 
-            sta_bias_random(2).* I + b_sta(2), ... 
-            sta_bias_random(3).* I + b_sta(3)];
+b_sta_n = [ b_sta_stoc(1).* I + b_sta(1), ... 
+            b_sta_stoc(2).* I + b_sta(2), ... 
+            b_sta_stoc(3).* I + b_sta(3)];
