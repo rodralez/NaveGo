@@ -1,5 +1,6 @@
-function [sbias_n] = noise_sbias (sbias, M)
-% noise_sbias: generates a random static bias error.
+function [sbias_n] = noise_b_sta (sta_bias, M)
+% noise_sbias: generates both a deterministic and a stochastic (run-to-run) 
+% static bias error.
 %
 % INPUT
 %		sbias: 1x1 static bias to define the interval [-sbias sbias] (rad)
@@ -33,17 +34,21 @@ function [sbias_n] = noise_sbias (sbias, M)
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015. Sec. 2.2.
 %
-% Version: 001
-% Date:    2017/07/27
+% Version: 002
+% Date:    2020/11/26
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-a = -sbias;
-b =  sbias;
+% It is considered that the stochastic static bias is a 10% of the
+% deterministic static bias
+a = -sta_bias * 0.1;
+b =  sta_bias * 0.1;
 
 % Static biases are chosen randomly in the interval [-sbias sbias]
-ab_fix = (b' - a') .* rand(3,1) + a';
+sta_bias_random = (b' - a') .* rand(3,1) + a';
 
-o = ones(M,1);
+I = ones(M,1);
 
-sbias_n = [ab_fix(1).* o , ab_fix(2).* o , ab_fix(3).* o];
+sbias_n = [ sta_bias_random(1).* I + sta_bias(1), ... 
+            sta_bias_random(2).* I + sta_bias(2), ... 
+            sta_bias_random(3).* I + sta_bias(3)];

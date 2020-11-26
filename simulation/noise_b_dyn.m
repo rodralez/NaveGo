@@ -1,4 +1,4 @@
-function [dbias_n] = noise_dbias (b_corr, b_dyn, dt, M)
+function [dbias_n] = noise_b_dyn (b_corr, b_dyn, dt, M)
 % noise_dbias: generates a dynamic bias perturbation.
 %
 % INPUT
