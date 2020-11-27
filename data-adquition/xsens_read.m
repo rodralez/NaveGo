@@ -1,4 +1,4 @@
-function [xsens_data, xsens ] = xsens_read(file, row_lines, columns_max)
+function [xsens , xsens_fields ] = xsens_read(file, row_lines, columns)
 % xsens_read: reads .cvs files created by Xsens software.
 %
 % INPUT
@@ -31,8 +31,8 @@ function [xsens_data, xsens ] = xsens_read(file, row_lines, columns_max)
 % Reference:
 %
 %
-% Version: 002
-% Date:    2020/10/30
+% Version: 003
+% Date:    2020/11/27
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -43,17 +43,19 @@ disp('xsens_read: processing data...')
 xsens_f = fopen(file, 'r');
 if xsens_f == -1
     error('xsens_read: ERROR: %s not found', file)
-else
-    fprintf('xsens_read: loading %s...\n', file)
+else   
+    fprintf('xsens_read: Loading %s...\n', file)
 end
+
+fprintf('xsens_read: %s has %d lines.\n', row_lines)
 
 %% HEADER
 
 header_rows = 13;
 
-xsens_h = cell(header_rows,1);
+xsens_header = cell(header_rows,1);
 for i = 1:header_rows
-    xsens_h{i,1} = fgets(xsens_f);
+    xsens_header{i,1} = fgets(xsens_f);
 end
 
 %% FIELDS
@@ -65,12 +67,14 @@ xsens_line = strrep(xsens_line,']','');     % Delete ']'
 xsens_fields = textscan(xsens_line, '%s', 'Delimiter', ',' , 'EmptyValue', 0);
 
 xsens_fields = xsens_fields{1};
+xsens_fields(83) = {'GNSSLongitude'};
+xsens_fields(84) = {'GNSSLatitude'};
 
-[columns,~] = size (xsens_fields);
+[N,~] = size (xsens_fields);
 
-xsens.fields = xsens_fields;
+fprintf('xsens_read: %s has %d columns.\n', file, N);
 
-fprintf('xsens_read: %s has %d columns. \n', file, columns);
+fprintf('xsens_read: only %d columns will be processed.\n', columns);
 
 %% GET DATA
 
@@ -78,70 +82,91 @@ fprintf('xsens_read: %s has %d columns. \n', file, columns);
 % fseek(xsens_f,0,'bof');
 
 % Pattern for textscan()
-formatSpec = repmat('%f ', 1, columns);
+formatSpec = repmat('%f ', 1, N);
 
 % Init data matrix
-xsens_data = zeros(row_lines, columns_max);
+row_lines = row_lines - header_rows;
+xsens_imu = zeros(row_lines, columns);
+xsens_gnss = zeros(floor(row_lines/2), columns);
 
-j = 1;  % index for reading data
+i = 1;  % index for reading IMU data
+h = 1;  % index for reading GNSS data
 
-m = 0;  % index for dividing data in several matrices
+rows_block = 75000;
 
-blockRows = 10000;
-
-while ~feof(xsens_f)
-    
-    fprintf('xsens_read: processing row %d...\n', j)
-    
-    data_c = textscan(xsens_f, formatSpec, blockRows, 'Delimiter',',','EmptyValue',0);
-    data = cell2mat(data_c);
-    
-    % Avoid rows where time is NaN
-    idl = isnan(data(:, 7));
-    data_vld = data( ~idl , :);
-    
-    % Avoid rows where acc is NaN
-    idl = ~isnan(data_vld(:, 18));
-    data_vld = data_vld(idl , :);    
-    
-    [M, ~]  = size( data_vld );
-    
-    k = j + M - 1;
-    xsens_data(j:k , :) = data_vld(: , 1:columns_max);
-    j = k + 1;
-    
-    clear data_c data data_vld idl    
+if rows_block > row_lines
+    rows_block = floor(row_lines / 5);
 end
 
-%% DATA TO STRUCTURE
+fprintf('xsens_read: processing %s...\n', file)
 
-% for i=1:columns_max
-%     xsens.(xsens_fields{i}) = xsens_data(:, i);
-% end
+while ~feof(xsens_f)
 
-%% DATA TO TABLE
+    fprintf('xsens_read: processing line %d...\n', i)
+        
+    data_c = textscan(xsens_f, formatSpec, rows_block, 'Delimiter',','); % ,'EmptyValue',0
+    data = cell2mat(data_c(1:columns));
+    
+    % Delete rows where date is NaN for IMU data
+    idl = ~isnan(data(: , 3));
+    data_imu = data(idl , :);
+    
+    % Delete rows where date is NaN for GNSS data
+    idl = ~isnan(data(: , 70));
+    data_gnss = data(idl , :);
+        
+    % Delete rows where the difference between two adjacent times is negative
+    idl = diff(data_imu(: , 2)) > 0;
+    idl = [true; idl];
+    data_imu = data_imu(idl , :);
+   
+    [M, ~] = size( data_imu );    
+    j = i + M - 1;
+    xsens_imu(i:j , :) = data_imu;
+    i = j + 1;
 
-% xsens_table = array2table(xsens_data, 'VariableNames', xsens_fields(1:66)) ;
+    [M, ~] = size( data_gnss );    
+    k = h + M - 1;
+    xsens_gnss(h:k , :) = data_gnss;
+    h = k + 1;
+    
+    clear data_c data data_vld idl
 
-%%
+end
 
-% Delete extra rows where time is zero
-idl = (xsens_data(:, 7)) == 0.0;
-xsens_data = xsens_data( ~idl , :);
+% Delete epmty rows
+idl = xsens_imu(: , 1) ~= 0.0 ;
+xsens_imu = xsens_imu(idl , :);
 
-% Frequency
-time = xsens_data( ~isnan(xsens_data(:, 7)) , 7);
-dt = median( diff(time) ) * 10e-10;
-xsens.freq = round(1/dt);
+idl = xsens_gnss(: , 1) ~= 0.0 ;
+xsens_gnss = xsens_gnss(idl , :);
+
+%% DATA IN STRUCTURE
+
+xsens = struct;
+
+for i=1:69
+    xsens.(xsens_fields{i}) = xsens_imu(:, i);
+end
+
+for i=70:columns
+    xsens.(xsens_fields{i}) = xsens_gnss(:, i);
+end
+
+xsens.GNSSSampleTimeFine = xsens_gnss(:, 2);
+ 
+% Frequencies
+dti = median(diff(xsens.UTC_Nano)) * 10e-10;
+xsens.freq_imu = (1/dti);
+
+dtg = median(diff(xsens.NUTimeOfWeek)) * 10e-4;
+xsens.freq_gnss = (1/dtg);
 
 % Header
-xsens.header = xsens_h;
-
-% Check and correct if gravity is negative in NED coordinates.
-% xsens = correct_gravity(xsens);
+xsens.header = xsens_header;
 
 fclose(xsens_f);
 
-disp('xsens_read: finishing processing.')
+disp('xsens_read: data is ready.')
 
 end

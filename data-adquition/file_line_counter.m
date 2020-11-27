@@ -6,7 +6,7 @@ function line_ctr = file_line_counter(filename)
 %   (string).
 %
 % OUTPUT
-%   line_ctr: number of lines (rows) in file.
+%   line_ctr: number of lines (rows) in the file.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
