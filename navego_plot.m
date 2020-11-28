@@ -31,8 +31,8 @@ function  navego_plot (ref, gnss, nav_e, gnss_i, nav_i, ref_g, ref_n)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% Version: 011
-% Date:    2020/11/24
+% Version: 012
+% Date:    2020/11/28
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -48,7 +48,7 @@ orange = [0.8500, 0.3250, 0.0980];
 % Line propities
 lw = 1.5;
 
-% Standard deviation * 3 vector from navigation estimates
+% Standard deviation * 3 vector from Kalman filter a posteriori covariance matrix
 sig3_v = abs(nav_e.Pp(:, 1:16:end).^(0.5)) .* 3; % Only take diagonal elements from Pp
 
 % 3D TRAJECTORY
