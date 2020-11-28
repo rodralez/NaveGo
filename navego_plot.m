@@ -45,7 +45,7 @@ orange = [0.8500, 0.3250, 0.0980];
 % yellow = [0.9290, 0.6940, 0.1250];
 % light_blue = [0.3010, 0.7450, 0.9330];
 
-% Line propities
+% Line width
 lw = 1.5;
 
 % Standard deviation * 3 vector from Kalman filter a posteriori covariance matrix
@@ -56,7 +56,7 @@ figure;
 plot3(ref_n.lon.*R2D, ref_n.lat.*R2D, ref_n.h, '--k')
 hold on
 plot3(nav_i.lon.*R2D, nav_i.lat.*R2D, nav_i.h, '-o', 'Color', blue)
-plot3(ref_n.lon(1).*R2D, ref_n.lat(1).*R2D, ref_n.h(1), 'or', 'MarkerSize', 10, 'LineWidth', 2)
+plot3(ref_n.lon(1).*R2D, ref_n.lat(1).*R2D, ref_n.h(1), 'or', 'MarkerSize', 10, 'LineWidth', lw)
 hold off
 axis tight
 title('3D TRAJECTORY')
@@ -72,7 +72,7 @@ figure;
 plot(ref.lon.*R2D, ref.lat.*R2D, '--k')
 hold on
 plot(nav_i.lon.*R2D, nav_i.lat.*R2D, 'Color', blue)
-plot(ref.lon(1).*R2D, ref.lat(1).*R2D, 'or', 'MarkerSize', 10, 'LineWidth', 2)
+plot(ref.lon(1).*R2D, ref.lat(1).*R2D, 'or', 'MarkerSize', 10, 'LineWidth', lw)
 axis tight
 title('2D TRAJECTORY')
 xlabel('Longitude [deg]')

@@ -1,5 +1,5 @@
 % navego_example_synth: Example of how to use NaveGo to generate
-% both IMU and GNSS synthetic (simulated) data. Then, synthetic data is 
+% both IMU and GNSS synthetic (simulated) data. Then, synthetic data is
 % fused.
 %
 % Main goal: to compare two INS/GNSS systems performances, one using a
@@ -42,8 +42,8 @@
 % Revision D. October 2011.
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 %
-% Version: 020
-% Date:    2020/11/27
+% Version: 021
+% Date:    2020/11/28
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -221,7 +221,7 @@ gnss.zupt_th = 0.5;   % ZUPT threshold (m/s).
 gnss.zupt_win = 4;    % ZUPT time window (seconds).
 
 % The following figure tries to show when the Kalman filter (KF) will be execute.
-% If a new element from GNSS time vector is available at the current INS time inside 
+% If a new element from GNSS time vector is available at the current INS time inside
 % the window time [-eps eps] set by epsilon, the Kalman filter (KF) will be executed.
 %
 %                    I1  I2  I3  I4  I5  I6  I7  I8  I9  I10 I11 I12 I3
@@ -381,7 +381,7 @@ print_rmse (nav2_i, gnss_i, ref_n2, ref_g, 'ADIS16488 INS/GNSS');
 
 %% Performance analysis of the Kalman filter
 
-fprintf('\nNaveGo: Kalman filter performance analysis...\n') 
+fprintf('\nNaveGo: Kalman filter performance analysis...\n')
 
 kf_analysis (nav2_e)
 
@@ -389,15 +389,24 @@ kf_analysis (nav2_e)
 
 if (strcmp(PLOT,'ON'))
     
+    % Colors
+    blue = [0, 0.4470, 0.7410];
+    orange = [0.8500, 0.3250, 0.0980];
+%     yellow = [0.9290, 0.6940, 0.1250];
+    gray= ones(1,3) * 0.75;
+    
+    % Line width
+    lw = 1.5;
+
     sig3_rr = abs(nav1_e.Pp(:, 1:16:end).^(0.5)) .* 3; % Only take diagonal elements from Pp
     
     % 3D TRAJECTORY
     figure;
     plot3(ref.lon.*R2D, ref.lat.*R2D, ref.h, '--k')
     hold on
-    plot3(nav1_e.lon.*R2D, nav1_e.lat.*R2D, nav1_e.h, 'b')
-    plot3(nav2_e.lon.*R2D, nav2_e.lat.*R2D, nav2_e.h, 'r')
-    plot3(ref.lon(1).*R2D, ref.lat(1).*R2D, ref.h(1), 'or', 'MarkerSize', 10, 'LineWidth', 2)
+    plot3(nav1_e.lon.*R2D, nav1_e.lat.*R2D, nav1_e.h, 'Color', blue)
+    plot3(nav2_e.lon.*R2D, nav2_e.lat.*R2D, nav2_e.h, 'Color', orange)
+    plot3(ref.lon(1).*R2D, ref.lat(1).*R2D, ref.h(1), 'or', 'MarkerSize', 10, 'LineWidth', lw)
     axis tight
     title('3D TRAJECTORY')
     xlabel('Longitude [deg]')
@@ -411,9 +420,9 @@ if (strcmp(PLOT,'ON'))
     figure;
     plot(ref.lon.*R2D, ref.lat.*R2D, '--k')
     hold on
-    plot(nav1_e.lon.*R2D, nav1_e.lat.*R2D, 'b')
-    plot(nav2_e.lon.*R2D, nav2_e.lat.*R2D, 'r')
-    plot(ref.lon(1).*R2D, ref.lat(1).*R2D, 'or', 'MarkerSize', 10, 'LineWidth', 2)
+    plot(nav1_e.lon.*R2D, nav1_e.lat.*R2D, 'Color', blue)
+    plot(nav2_e.lon.*R2D, nav2_e.lat.*R2D, 'Color', orange)
+    plot(ref.lon(1).*R2D, ref.lat(1).*R2D, 'or', 'MarkerSize', 10, 'LineWidth', lw)
     axis tight
     title('2D TRAJECTORY')
     xlabel('Longitude [deg]')
@@ -424,7 +433,10 @@ if (strcmp(PLOT,'ON'))
     % ATTITUDE
     figure;
     subplot(311)
-    plot(ref.t, R2D.*ref.roll, '--k', nav1_e.t, R2D.*nav1_e.roll,'-b', nav2_e.t, R2D.*nav2_e.roll,'-r');
+    plot(ref.t, R2D.*ref.roll, '--k')
+    hold on
+    plot(nav1_e.t, R2D.*nav1_e.roll,'Color', blue, 'LineWidth', lw)
+    plot(nav2_e.t, R2D.*nav2_e.roll,'Color', orange, 'LineWidth', lw)
     ylabel('[deg]')
     xlabel('Time [s]')
     legend('REF', 'IMU1', 'IMU2');
@@ -432,14 +444,20 @@ if (strcmp(PLOT,'ON'))
     grid
     
     subplot(312)
-    plot(ref.t, R2D.*ref.pitch, '--k', nav1_e.t, R2D.*nav1_e.pitch,'-b', nav2_e.t, R2D.*nav2_e.pitch,'-r');
+    plot(ref.t, R2D.*ref.pitch, '--k') 
+    hold on
+    plot(nav1_e.t, R2D.*nav1_e.pitch,'Color', blue, 'LineWidth', lw)
+    plot(nav2_e.t, R2D.*nav2_e.pitch,'Color', orange, 'LineWidth', lw)
     ylabel('[deg]')
     xlabel('Time [s]')
     title('PITCH');
     grid
     
     subplot(313)
-    plot(ref.t, R2D.* ref.yaw, '--k', nav1_e.t, R2D.*nav1_e.yaw,'-b', nav2_e.t, R2D.*nav2_e.yaw,'-r');
+    plot(ref.t, R2D.* ref.yaw, '--k') 
+    hold on
+    plot(nav1_e.t, R2D.*nav1_e.yaw,'Color', blue, 'LineWidth', lw)
+    plot(nav2_e.t, R2D.*nav2_e.yaw,'Color', orange, 'LineWidth', lw)
     ylabel('[deg]')
     xlabel('Time [s]')
     title('YAW');
@@ -448,8 +466,9 @@ if (strcmp(PLOT,'ON'))
     % ATTITUDE ERRORS
     figure;
     subplot(311)
-    plot(nav1_e.t, (nav1_i.roll - ref_n1.roll).*R2D, '-b', nav2_i.t, (nav2_i.roll - ref_n2.roll).*R2D, '-r');
+    plot(nav1_e.t, (nav1_i.roll - ref_n1.roll).*R2D, 'Color', blue, 'LineWidth', lw)
     hold on
+    plot( nav2_i.t, (nav2_i.roll - ref_n2.roll).*R2D, 'Color', orange, 'LineWidth', lw)
     plot (gnss.t, R2D.*sig3_rr(:,1), '--k', gnss.t, -R2D.*sig3_rr(:,1), '--k' )
     ylabel('[deg]')
     xlabel('Time [s]')
@@ -458,8 +477,9 @@ if (strcmp(PLOT,'ON'))
     grid
     
     subplot(312)
-    plot(nav1_e.t, (nav1_i.pitch - ref_n1.pitch).*R2D, '-b', nav2_i.t, (nav2_i.pitch - ref_n2.pitch).*R2D, '-r');
+    plot(nav1_e.t, (nav1_i.pitch - ref_n1.pitch).*R2D, 'Color', blue, 'LineWidth', lw) 
     hold on
+    plot(nav2_i.t, (nav2_i.pitch - ref_n2.pitch).*R2D, 'Color', orange, 'LineWidth', lw)
     plot (gnss.t, R2D.*sig3_rr(:,2), '--k', gnss.t, -R2D.*sig3_rr(:,2), '--k' )
     ylabel('[deg]')
     xlabel('Time [s]')
@@ -467,11 +487,10 @@ if (strcmp(PLOT,'ON'))
     grid
     
     subplot(313)
-    yaw1_err = correct_yaw(nav1_i.yaw - ref_n1.yaw);
-    yaw2_err = correct_yaw(nav2_i.yaw - ref_n2.yaw);
-    plot(nav1_e.t, (yaw1_err).*R2D, '-b', nav2_i.t, (yaw2_err).*R2D, '-r');
+    plot(nav1_e.t, (nav1_i.yaw).*R2D, 'Color', blue, 'LineWidth', lw)
     hold on
-    plot (gnss.t, R2D.*sig3_rr(:,3), '--k', gnss.t, -R2D.*sig3_rr(:,3), '--k' )
+    plot(nav2_i.t, (nav2_i.yaw).*R2D, 'Color', orange, 'LineWidth', lw)
+    plot(gnss.t, R2D.*sig3_rr(:,3), '--k', gnss.t, -R2D.*sig3_rr(:,3), '--k')
     ylabel('[deg]')
     xlabel('Time [s]')
     title('YAW ERROR');
@@ -480,7 +499,11 @@ if (strcmp(PLOT,'ON'))
     % VELOCITIES
     figure;
     subplot(311)
-    plot(ref.t, ref.vel(:,1), '--k', gnss.t, gnss.vel(:,1),'-c', nav1_e.t, nav1_e.vel(:,1),'-b', nav2_e.t, nav2_e.vel(:,1),'-r');
+    plot(ref.t, ref.vel(:,1), '--k') 
+    hold on
+    plot(gnss.t, gnss.vel(:,1), '.', 'Color', gray, 'LineWidth', lw)
+    plot(nav1_e.t, nav1_e.vel(:,1),'Color', blue, 'LineWidth', lw)
+    plot(nav2_e.t, nav2_e.vel(:,1),'Color', orange, 'LineWidth', lw)
     xlabel('Time [s]')
     ylabel('[m/s]')
     legend('REF', 'GNSS', 'IMU1', 'IMU2');
@@ -488,14 +511,22 @@ if (strcmp(PLOT,'ON'))
     grid
     
     subplot(312)
-    plot(ref.t, ref.vel(:,2), '--k', gnss.t, gnss.vel(:,2),'-c', nav1_e.t, nav1_e.vel(:,2),'-b', nav2_e.t, nav2_e.vel(:,2),'-r');
+    plot(ref.t, ref.vel(:,2), '--k') 
+    hold on
+    plot(gnss.t, gnss.vel(:,2), '.', 'Color', gray, 'LineWidth', lw)
+    plot(nav1_e.t, nav1_e.vel(:,2),'Color', blue, 'LineWidth', lw)
+    plot(nav2_e.t, nav2_e.vel(:,2),'Color', orange, 'LineWidth', lw)
     xlabel('Time [s]')
     ylabel('[m/s]')
     title('EAST VELOCITY');
     grid
     
     subplot(313)
-    plot(ref.t, ref.vel(:,3), '--k', gnss.t, gnss.vel(:,3),'-c', nav1_e.t, nav1_e.vel(:,3),'-b', nav2_e.t, nav2_e.vel(:,3),'-r');
+    plot(ref.t, ref.vel(:,3), '--k') 
+    hold on
+    plot(gnss.t, gnss.vel(:,3), '.', 'Color', gray, 'LineWidth', lw)
+    plot(nav1_e.t, nav1_e.vel(:,3),'Color', blue, 'LineWidth', lw)
+    plot(nav2_e.t, nav2_e.vel(:,3),'Color', orange, 'LineWidth', lw)
     xlabel('Time [s]')
     ylabel('[m/s]')
     title('DOWN VELOCITY');
@@ -504,10 +535,11 @@ if (strcmp(PLOT,'ON'))
     % VELOCITIES ERRORS
     figure;
     subplot(311)
-    plot(gnss_i.t, (gnss_i.vel(:,1) - ref_g.vel(:,1)), '-c');
+    plot(gnss_i.t, (gnss_i.vel(:,1) - ref_g.vel(:,1)), '.', 'Color', gray, 'LineWidth', lw)
     hold on
-    plot(nav1_i.t, (nav1_i.vel(:,1) - ref_n1.vel(:,1)), '-b', nav2_i.t, (nav2_i.vel(:,1) - ref_n2.vel(:,1)), '-r');
-    plot (gnss.t, sig3_rr(:,4), '--k', gnss.t, -sig3_rr(:,4), '--k' )
+    plot(nav1_i.t, (nav1_i.vel(:,1) - ref_n1.vel(:,1)), 'Color', blue, 'LineWidth', lw)
+    plot(nav2_i.t, (nav2_i.vel(:,1) - ref_n2.vel(:,1)), 'Color', orange, 'LineWidth', lw)
+    plot(gnss.t, sig3_rr(:,4), '--k', gnss.t, -sig3_rr(:,4), '--k')
     xlabel('Time [s]')
     ylabel('[m/s]')
     legend('GNSS', 'IMU1', 'IMU2', '3\sigma for IMU1');
@@ -515,20 +547,22 @@ if (strcmp(PLOT,'ON'))
     grid
     
     subplot(312)
-    plot(gnss_i.t, (gnss_i.vel(:,2) - ref_g.vel(:,2)), '-c');
+    plot(gnss_i.t, (gnss_i.vel(:,2) - ref_g.vel(:,2)), '.', 'Color', gray, 'LineWidth', lw)
     hold on
-    plot(nav1_i.t, (nav1_i.vel(:,2) - ref_n1.vel(:,2)), '-b', nav2_i.t, (nav2_i.vel(:,2) - ref_n2.vel(:,2)), '-r');
-    plot (gnss.t, sig3_rr(:,5), '--k', gnss.t, -sig3_rr(:,5), '--k' )
+    plot(nav1_i.t, (nav1_i.vel(:,2) - ref_n1.vel(:,2)), 'Color', blue, 'LineWidth', lw)
+    plot(nav2_i.t, (nav2_i.vel(:,2) - ref_n2.vel(:,2)), 'Color', orange, 'LineWidth', lw)
+    plot (gnss.t, sig3_rr(:,5), '--k', gnss.t, -sig3_rr(:,5), '--k')
     xlabel('Time [s]')
     ylabel('[m/s]')
     title('VELOCITY EAST ERROR');
     grid
     
     subplot(313)
-    plot(gnss_i.t, (gnss_i.vel(:,3) - ref_g.vel(:,3)), '-c');
+    plot(gnss_i.t, (gnss_i.vel(:,3) - ref_g.vel(:,3)), '.', 'Color', gray, 'LineWidth', lw)
     hold on
-    plot(nav1_i.t, (nav1_i.vel(:,3) - ref_n1.vel(:,3)), '-b', nav2_i.t, (nav2_i.vel(:,3) - ref_n2.vel(:,3)), '-r');
-    plot (gnss.t, sig3_rr(:,6), '--k', gnss.t, -sig3_rr(:,6), '--k' )
+    plot(nav1_i.t, (nav1_i.vel(:,3) - ref_n1.vel(:,3)), 'Color', blue, 'LineWidth', lw)
+    plot(nav2_i.t, (nav2_i.vel(:,3) - ref_n2.vel(:,3)), 'Color', orange, 'LineWidth', lw)
+    plot (gnss.t, sig3_rr(:,6), '--k', gnss.t, -sig3_rr(:,6), '--k')
     xlabel('Time [s]')
     ylabel('[m/s]')
     title('VELOCITY DOWN ERROR');
@@ -537,7 +571,11 @@ if (strcmp(PLOT,'ON'))
     % POSITION
     figure;
     subplot(311)
-    plot(ref.t, ref.lat .*R2D, '--k', gnss.t, gnss.lat.*R2D, '-c', nav1_e.t, nav1_e.lat.*R2D, '-b', nav2_e.t, nav2_e.lat.*R2D, '-r');
+    plot(ref.t, ref.lat .*R2D, '--k') 
+    hold on
+    plot(gnss.t, gnss.lat.*R2D, '.', 'Color', gray, 'LineWidth', lw)
+    plot(nav1_e.t, nav1_e.lat.*R2D, 'Color', blue, 'LineWidth', lw)
+    plot(nav2_e.t, nav2_e.lat.*R2D, 'Color', orange, 'LineWidth', lw)
     xlabel('Time [s]')
     ylabel('[deg]')
     legend('REF', 'GNSS', 'IMU1', 'IMU2');
@@ -545,14 +583,22 @@ if (strcmp(PLOT,'ON'))
     grid
     
     subplot(312)
-    plot(ref.t, ref.lon .*R2D, '--k', gnss.t, gnss.lon.*R2D, '-c', nav1_e.t, nav1_e.lon.*R2D, '-b', nav2_e.t, nav2_e.lon.*R2D, '-r');
+    plot(ref.t, ref.lon .*R2D, '--k') 
+    hold on
+    plot(gnss.t, gnss.lon.*R2D, '.', 'Color', gray, 'LineWidth', lw)
+    plot(nav1_e.t, nav1_e.lon.*R2D, 'Color', blue, 'LineWidth', lw)
+    plot(nav2_e.t, nav2_e.lon.*R2D, 'Color', orange, 'LineWidth', lw)
     xlabel('Time [s]')
     ylabel('[deg]')
     title('LONGITUDE');
     grid
     
     subplot(313)
-    plot(ref.t, ref.h, '--k', gnss.t, gnss.h, '-c', nav1_e.t, nav1_e.h, '-b', nav2_e.t, nav2_e.h, '-r');
+    plot(ref.t, ref.h, '--k') 
+    hold on
+    plot(gnss.t, gnss.h, '.', 'Color', gray, 'LineWidth', lw)
+    plot(nav1_e.t, nav1_e.h, 'Color', blue, 'LineWidth', lw)
+    plot(nav2_e.t, nav2_e.h, 'Color', orange, 'LineWidth', lw)
     xlabel('Time [s]')
     ylabel('[m]')
     title('ALTITUDE');
@@ -577,10 +623,10 @@ if (strcmp(PLOT,'ON'))
     
     figure;
     subplot(311)
-    plot(gnss_i.t,  LAT2M_GR.*(gnss_i.lat - ref_g.lat), '-c')
+    plot(gnss_i.t,  LAT2M_GR.*(gnss_i.lat - ref_g.lat), '.', 'Color', gray, 'LineWidth', lw)
     hold on
-    plot(nav1_i.t, LAT2M_1.*(nav1_i.lat - ref_n1.lat), '-b')
-    plot(nav2_i.t, LAT2M_2.*(nav2_i.lat - ref_n2.lat), '-r')
+    plot(nav1_i.t, LAT2M_1.*(nav1_i.lat - ref_n1.lat), 'Color', blue, 'LineWidth', lw)
+    plot(nav2_i.t, LAT2M_2.*(nav2_i.lat - ref_n2.lat), 'Color', orange, 'LineWidth', lw)
     plot (gnss.t, LAT2M_G.*sig3_rr(:,7), '--k', gnss.t, -LAT2M_G.*sig3_rr(:,7), '--k' )
     xlabel('Time [s]')
     ylabel('[m]')
@@ -589,10 +635,10 @@ if (strcmp(PLOT,'ON'))
     grid
     
     subplot(312)
-    plot(gnss_i.t, LON2M_GR.*(gnss_i.lon - ref_g.lon), '-c')
+    plot(gnss_i.t, LON2M_GR.*(gnss_i.lon - ref_g.lon), '.', 'Color', gray, 'LineWidth', lw)
     hold on
-    plot(nav1_i.t, LON2M_1.*(nav1_i.lon - ref_n1.lon), '-b')
-    plot(nav2_i.t, LON2M_2.*(nav2_i.lon - ref_n2.lon), '-r')
+    plot(nav1_i.t, LON2M_1.*(nav1_i.lon - ref_n1.lon), 'Color', blue, 'LineWidth', lw)
+    plot(nav2_i.t, LON2M_2.*(nav2_i.lon - ref_n2.lon), 'Color', orange, 'LineWidth', lw)
     plot(gnss.t, LON2M_G.*sig3_rr(:,8), '--k', gnss.t, -LON2M_G.*sig3_rr(:,8), '--k' )
     xlabel('Time [s]')
     ylabel('[m]')
@@ -600,10 +646,10 @@ if (strcmp(PLOT,'ON'))
     grid
     
     subplot(313)
-    plot(gnss_i.t, (gnss_i.h - ref_g.h), '-c')
+    plot(gnss_i.t, (gnss_i.h - ref_g.h), '.', 'Color', gray, 'LineWidth', lw)
     hold on
-    plot(nav1_i.t, (nav1_i.h - ref_n1.h), '-b')
-    plot(nav2_i.t, (nav2_i.h - ref_n2.h), '-r')
+    plot(nav1_i.t, (nav1_i.h - ref_n1.h), 'Color', blue, 'LineWidth', lw)
+    plot(nav2_i.t, (nav2_i.h - ref_n2.h), 'Color', orange, 'LineWidth', lw)
     plot(gnss.t, sig3_rr(:,9), '--k', gnss.t, -sig3_rr(:,9), '--k' )
     xlabel('Time [s]')
     ylabel('[m]')
@@ -613,9 +659,9 @@ if (strcmp(PLOT,'ON'))
     % BIAS ESTIMATION
     figure;
     subplot(311)
-    plot(nav1_e.tg, nav1_e.b(:, 1).*R2D, '-.b');
+    plot(nav1_e.tg, nav1_e.b(:, 1).*R2D, 'Color', blue, 'LineWidth', lw)
     hold on
-    plot(nav2_e.tg, nav2_e.b(:, 1).*R2D, '-.r');
+    plot(nav2_e.tg, nav2_e.b(:, 1).*R2D, 'Color', orange, 'LineWidth', lw)
     plot(nav1_e.tg, sig3_rr(:,10).*R2D, '--k', nav1_e.tg, -sig3_rr(:,10).*R2D, '--k' )
     hold off
     xlabel('Time [s]')
@@ -625,9 +671,9 @@ if (strcmp(PLOT,'ON'))
     grid
     
     subplot(312)
-    plot(nav1_e.tg, nav1_e.b(:, 2).*R2D, '-.b');
+    plot(nav1_e.tg, nav1_e.b(:, 2).*R2D, 'Color', blue, 'LineWidth', lw)
     hold on
-    plot(nav2_e.tg, nav2_e.b(:, 2).*R2D, '-.r');
+    plot(nav2_e.tg, nav2_e.b(:, 2).*R2D, 'Color', orange, 'LineWidth', lw)
     plot(nav1_e.tg, sig3_rr(:,11).*R2D, '--k', nav1_e.tg, -sig3_rr(:,11).*R2D, '--k' )
     hold off
     xlabel('Time [s]')
@@ -636,21 +682,21 @@ if (strcmp(PLOT,'ON'))
     grid
     
     subplot(313)
-    plot(nav1_e.tg, nav1_e.b(:, 3).*R2D, '-.b');
+    plot(nav1_e.tg, nav1_e.b(:, 3).*R2D, 'Color', blue, 'LineWidth', lw)
     hold on
-    plot(nav2_e.tg, nav2_e.b(:, 3).*R2D, '-.r');
+    plot(nav2_e.tg, nav2_e.b(:, 3).*R2D, 'Color', orange, 'LineWidth', lw)
     plot(nav1_e.tg, sig3_rr(:,12).*R2D, '--k', nav1_e.tg, -sig3_rr(:,12).*R2D, '--k' )
     hold off
     xlabel('Time [s]')
     ylabel('[deg]')
     title('KF BIAS GYRO Z ESTIMATION');
-    grid    
+    grid
     
     figure;
     subplot(311)
-    plot(nav1_e.tg, nav1_e.b(:, 4), '-.b');
+    plot(nav1_e.tg, nav1_e.b(:, 4), 'Color', blue, 'LineWidth', lw)
     hold on
-    plot(nav2_e.tg, nav2_e.b(:, 4), '-.r');
+    plot(nav2_e.tg, nav2_e.b(:, 4), 'Color', orange, 'LineWidth', lw)
     plot(nav1_e.tg, sig3_rr(:,13), '--k', nav1_e.tg, -sig3_rr(:,13), '--k' )
     hold off
     xlabel('Time [s]')
@@ -660,9 +706,9 @@ if (strcmp(PLOT,'ON'))
     grid
     
     subplot(312)
-    plot(nav1_e.tg, nav1_e.b(:, 5), '-.b');
+    plot(nav1_e.tg, nav1_e.b(:, 5), 'Color', blue, 'LineWidth', lw)
     hold on
-    plot(nav2_e.tg, nav2_e.b(:, 5), '-.r');
+    plot(nav2_e.tg, nav2_e.b(:, 5), 'Color', orange, 'LineWidth', lw)
     plot(nav1_e.tg, sig3_rr(:,14), '--k', nav1_e.tg, -sig3_rr(:,14), '--k' )
     hold off
     xlabel('Time [s]')
@@ -671,13 +717,13 @@ if (strcmp(PLOT,'ON'))
     grid
     
     subplot(313)
-    plot(nav1_e.tg, nav1_e.b(:, 6), '-.b');
+    plot(nav1_e.tg, nav1_e.b(:, 6), 'Color', blue, 'LineWidth', lw)
     hold on
-    plot(nav2_e.tg, nav2_e.b(:, 6), '-.r');
+    plot(nav2_e.tg, nav2_e.b(:, 6), 'Color', orange, 'LineWidth', lw)
     plot(nav1_e.tg, sig3_rr(:,15), '--k', nav1_e.tg, -sig3_rr(:,15), '--k' )
     hold off
     xlabel('Time [s]')
     ylabel('[m/s^2]')
     title('KF BIAS ACCR Z ESTIMATION');
-    grid  
+    grid
 end
