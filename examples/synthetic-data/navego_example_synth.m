@@ -42,13 +42,15 @@
 % Revision D. October 2011.
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 %
-% Version: 019
-% Date:    2020/11/25
+% Version: 020
+% Date:    2020/11/27
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
 % NOTE: NaveGo assumes that IMU is aligned with respect to body-frame as
 % X-forward, Y-right, and Z-down.
+%
+% NOTE: NaveGo assumes that yaw angle (heading) is positive clockwise.
 
 clc
 close all
@@ -58,6 +60,7 @@ matlabrc
 addpath ../../
 addpath ../../simulation/
 addpath ../../conversions/
+addpath ../../performance_analysis/
 
 versionstr = 'NaveGo, release v1.2';
 
@@ -388,7 +391,7 @@ if (strcmp(PLOT,'ON'))
     
     sig3_rr = abs(nav1_e.Pp(:, 1:16:end).^(0.5)) .* 3; % Only take diagonal elements from Pp
     
-    % TRAJECTORY
+    % 3D TRAJECTORY
     figure;
     plot3(ref.lon.*R2D, ref.lat.*R2D, ref.h, '--k')
     hold on
@@ -396,11 +399,25 @@ if (strcmp(PLOT,'ON'))
     plot3(nav2_e.lon.*R2D, nav2_e.lat.*R2D, nav2_e.h, 'r')
     plot3(ref.lon(1).*R2D, ref.lat(1).*R2D, ref.h(1), 'or', 'MarkerSize', 10, 'LineWidth', 2)
     axis tight
-    title('TRAJECTORY')
+    title('3D TRAJECTORY')
     xlabel('Longitude [deg]')
     ylabel('Latitude [deg]')
     zlabel('Altitude [m]')
-    view(-25,35)
+    view(-45,25)
+    legend('TRUE', 'IMU1', 'IMU2')
+    grid
+    
+    % 2D TRAJECTORY
+    figure;
+    plot(ref.lon.*R2D, ref.lat.*R2D, '--k')
+    hold on
+    plot(nav1_e.lon.*R2D, nav1_e.lat.*R2D, 'b')
+    plot(nav2_e.lon.*R2D, nav2_e.lat.*R2D, 'r')
+    plot(ref.lon(1).*R2D, ref.lat(1).*R2D, 'or', 'MarkerSize', 10, 'LineWidth', 2)
+    axis tight
+    title('2D TRAJECTORY')
+    xlabel('Longitude [deg]')
+    ylabel('Latitude [deg]')
     legend('TRUE', 'IMU1', 'IMU2')
     grid
     

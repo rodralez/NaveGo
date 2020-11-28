@@ -41,8 +41,10 @@
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-% NOTE: NaveGo assumes that IMU is aligned with respect to body-frame as 
+% NOTE: NaveGo assumes that IMU is aligned with respect to body-frame as
 % X-forward, Y-right, and Z-down.
+%
+% NOTE: NaveGo assumes that yaw angle (heading) is positive clockwise.
 
 clc
 close all
