@@ -51,8 +51,8 @@ close all
 clear
 matlabrc
 
-addpath ../../.
-addpath ../../simulation/
+addpath ../../ins/
+addpath ../../ins-gnss/
 addpath ../../conversions/
 addpath ../../performance_analysis/
 

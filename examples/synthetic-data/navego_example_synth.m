@@ -57,7 +57,8 @@ close all
 clear
 matlabrc
 
-addpath ../../
+addpath ../../ins/
+addpath ../../ins-gnss/
 addpath ../../simulation/
 addpath ../../conversions/
 addpath ../../performance_analysis/
@@ -487,9 +488,9 @@ if (strcmp(PLOT,'ON'))
     grid
     
     subplot(313)
-    plot(nav1_e.t, (nav1_i.yaw).*R2D, 'Color', blue, 'LineWidth', lw)
+    plot(nav1_e.t, (nav1_i.yaw - ref_n1.yaw).*R2D, 'Color', blue, 'LineWidth', lw)
     hold on
-    plot(nav2_i.t, (nav2_i.yaw).*R2D, 'Color', orange, 'LineWidth', lw)
+    plot(nav2_i.t, (nav2_i.yaw - ref_n2.yaw).*R2D, 'Color', orange, 'LineWidth', lw)
     plot(gnss.t, R2D.*sig3_rr(:,3), '--k', gnss.t, -R2D.*sig3_rr(:,3), '--k')
     ylabel('[deg]')
     xlabel('Time [s]')
