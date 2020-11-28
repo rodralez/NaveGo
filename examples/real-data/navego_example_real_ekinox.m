@@ -4,7 +4,7 @@
 % Main goal: to integrate IMU and GNSS measurements from Ekinox-D sensor 
 % which includes both IMU and GNSS sensors.
 %
-% Sensors dataset was generated driving a vehicle through the streets of 
+% Sensors dataset was generated driving a car through the streets of 
 % Turin city (Italy).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -25,7 +25,7 @@
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% Reference:
+% References:
 %
 %   SBG Systems. SBG Ekinox-D High Accuracy Inertial System Brochure, 
 % Tactical grade MEMS Inertial Systems, v1.0. February 2014. 
@@ -49,6 +49,7 @@ close all
 clear
 matlabrc
 
+addpath .
 addpath ../../ins/
 addpath ../../ins-gnss/
 addpath ../../conversions/

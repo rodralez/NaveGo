@@ -25,6 +25,7 @@
 %   <http://www.gnu.org/licenses/>.
 %
 % References:
+%
 %   R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
 % simulation framework for low-cost integrated navigation systems,`
 % Journal of Control Engineering and Applied Informatics, vol. 17,
@@ -54,9 +55,10 @@
 
 clc
 close all
-clear
-matlabrc
+clearaddpath .
+matlabrcaddpath .
 
+addpath .
 addpath ../../ins/
 addpath ../../ins-gnss/
 addpath ../../simulation/

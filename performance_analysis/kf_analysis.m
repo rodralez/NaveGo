@@ -2,7 +2,7 @@ function  kf_analysis (nav_e)
 % kf_analysis: evaluates Kalman filter performance.
 %
 % INPUT
-%   nav,  INS/GNSS estimations.
+%   nav, INS/GNSS estimations.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -23,8 +23,9 @@ function  kf_analysis (nav_e)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference:
+%
 %   Kalman filter tuning and consistency. ChM015x Sensor Fusion and Non-linear
-%   Filtering for Automotive Systems, section 4.3, course at www.edx.org.
+% Filtering for Automotive Systems, section 4.3, course at www.edx.org.
 %
 % Version: 002
 % Date:    2020/11/19
@@ -53,29 +54,11 @@ chi_t = [chi; -chi];
 [pd, hk, ~] = normality_test (chi_t);
 
 if ~( hk )
-    fprintf('kf_analysis: innovations comes from a normal distribution.\n' );    
+    fprintf('kf_analysis: innovations comes from a normal distribution.\n' );
 else
-    fprintf('kf_analysis: innovations does not come from a normal distribution.\n' );    
+    fprintf('kf_analysis: innovations does not come from a normal distribution.\n' );
 end
 
 plot_histogram ( chi_t, pd, 'Innovations' );
-
-% variable = { 'vel N', 'vel E', 'vel D', 'latitude', 'longitude', 'altitude' };
-% 
-% for i=1:6
-%     
-%     [pd, ha] = normality_test ( nav_e.v (:, i) );
-%     
-%     figure(i+9)
-%     plot_histogram (nav_e.v (:, i), pd, variable{i} )
-%     
-%     if ~( ha )
-%         fprintf('kf_analysis: innovations for %s comes from a normal distribution.\n', variable{i});
-%         
-%     else
-%         fprintf('kf_analysis: innovations for %s does not come from a normal distribution.\n', variable{i});
-%         
-%     end
-% end
 
 end
