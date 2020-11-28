@@ -14,7 +14,7 @@ function  navego_plot (ref, gnss, nav_e, gnss_i, nav_i, ref_g, ref_n)
 %   several figures.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
-% a favor mio. 
+% a favor mio.
 %   This file is part of NaveGo, an open-source MATLAB toolbox for
 %   simulation of integrated navigation systems.
 %
@@ -51,7 +51,7 @@ lw = 1.5;
 % Standard deviation * 3 vector from navigation estimates
 sig3_v = abs(nav_e.Pp(:, 1:16:end).^(0.5)) .* 3; % Only take diagonal elements from Pp
 
-% TRAJECTORY
+% 3D TRAJECTORY
 figure;
 plot3(ref_n.lon.*R2D, ref_n.lat.*R2D, ref_n.h, '--k')
 hold on
@@ -59,11 +59,24 @@ plot3(nav_i.lon.*R2D, nav_i.lat.*R2D, nav_i.h, '-o', 'Color', blue)
 plot3(ref_n.lon(1).*R2D, ref_n.lat(1).*R2D, ref_n.h(1), 'or', 'MarkerSize', 10, 'LineWidth', 2)
 hold off
 axis tight
-title('TRAJECTORY')
+title('3D TRAJECTORY')
 xlabel('Longitude [deg]')
 ylabel('Latitude [deg]')
 zlabel('Altitude [m]')
-view(0, 90)
+view(45, 45)
+legend('REF', 'INS/GNSS', 'Starting point', 'Location', 'Best');
+grid
+
+% 2D TRAJECTORY
+figure;
+plot(ref.lon.*R2D, ref.lat.*R2D, '--k')
+hold on
+plot(nav_i.lon.*R2D, nav_i.lat.*R2D, 'Color', blue)
+plot(ref.lon(1).*R2D, ref.lat(1).*R2D, 'or', 'MarkerSize', 10, 'LineWidth', 2)
+axis tight
+title('2D TRAJECTORY')
+xlabel('Longitude [deg]')
+ylabel('Latitude [deg]')
 legend('REF', 'INS/GNSS', 'Starting point', 'Location', 'Best');
 grid
 
