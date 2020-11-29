@@ -7,7 +7,6 @@ function yaw_new = correct_yaw (yaw)
 % OUTPUT:
 %   yaw_new, Nx1 vector (radians).
 %
-%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
 %   This file is part of NaveGo, an open-source MATLAB toolbox for
@@ -26,7 +25,8 @@ function yaw_new = correct_yaw (yaw)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% References:
+% Reference:
+%
 %
 % Version: 001
 % Date:    2019/01/09

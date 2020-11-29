@@ -27,7 +27,7 @@ function qua = euler2qua(euler)
 %
 % Reference:
 %
-%	  Crassidis, J.L. and Junkins, J.L. (2011). Optimal Esti-
+%   Crassidis, J.L. and Junkins, J.L. (2011). Optimal Esti-
 % mation of Dynamic Systems, 2nd Ed. Chapman and Hall/CRC, USA.
 % Eq. 7.39, p. 458.
 %

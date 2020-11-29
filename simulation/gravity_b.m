@@ -31,7 +31,7 @@ function g_b = gravity_b(lat, h, DCMnb_m)
 %
 % Reference:
 %
-%		R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+%	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
 % simulation framework for low-cost integrated navigation systems,
 % Journal of Control Engineering and Applied Informatics}, vol. 17,
 % issue 2, pp. 110-120, 2015. Eq. 12.

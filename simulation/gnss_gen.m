@@ -29,7 +29,7 @@ function [gnss, gnss_r] = gnss_gen(ref, gnss)
 %
 % References:
 %
-%	  R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
+%   R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
 % simulation framework for low-cost integrated navigation systems, 
 % Journal of Control Engineering and Applied Informatics}, vol. 17, 
 % issue 2, pp. 110-120, 2015. Sec. 2.3.

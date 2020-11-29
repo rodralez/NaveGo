@@ -1,8 +1,8 @@
 % navego_example_real_gnss_outrage: post-processing integration of MPU-6000 
 % IMU and Ekinox GNSS data. Two GNSS outrage paths are forced.
 %
-% Main goal: to integrate MPU-6000 IMU and Ekinox-D GNSS measurements and 
-% test INS/GNSS systems performance under two GNSS outrage.
+% The main goal is to integrate MPU-6000 IMU and Ekinox-D GNSS measurements  
+% and test INS/GNSS systems performance under two GNSS outrage.
 %
 % Sensors dataset was generated driving a car through the streets of
 % Turin city (Italy).
@@ -49,7 +49,6 @@ close all
 clear
 matlabrc
 
-addpath .
 addpath ../../ins/
 addpath ../../ins-gnss/
 addpath ../../conversions/

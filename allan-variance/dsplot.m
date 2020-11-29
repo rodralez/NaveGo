@@ -1,5 +1,4 @@
 function hL = dsplot(x, y, numPoints)
-
 %DSPLOT Create down sampled plot.
 %   This function creates a down sampled plot to improve the speed of
 %   exploration (zoom, pan).

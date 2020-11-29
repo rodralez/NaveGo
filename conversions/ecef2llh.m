@@ -29,7 +29,7 @@ function [lat, lon, h] = ecef2llh(ecef)
 %   <http://www.gnu.org/licenses/>.
 %
 % References:
-%		H. Vermeille. Direct transformation from geocentric
+%	H. Vermeille. Direct transformation from geocentric
 % coordinates to geodetic coordinates. Journal of Geodesy, 2002.
 %
 %  	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a

@@ -6,7 +6,7 @@ function rmserr = rmse (estimate, true)
 %   true:     Nx1 true values, reference.
 %
 % OUTPUT:
-%    rmserr: rooted mean squarred error.
+%   rmserr: rooted mean squarred error.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
@@ -26,19 +26,23 @@ function rmserr = rmse (estimate, true)
 %   License along with this program. If not, see 
 %   <http://www.gnu.org/licenses/>.
 %
-% Version: 003
-% Date:    2019/04/03
+% Version: 004
+% Date:    2020/11/28
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
-if( any(isnan(estimate)) || any(isnan(true)) )
-    error('rmse: input vector with at least one NaN value');
+if( any(isnan(true)) )
+    error('rmse: true vector with at least one NaN value.');
+end
+
+if( any(isnan(estimate)) )
+    error('rmse: estimate vector with at least one NaN value.');
 end
 
 if ( length (estimate) ~= length (true) )   
-    error('rmse: vectors must have the same length')
+    error('rmse: vectors must have the same length.')
 end
 
-rmserr =  sqrt ( mean ( ( estimate - true).^2 ) ) ;
+rmserr =  sqrt ( mean ( ( estimate - true ).^2 ) ) ;
 
 end

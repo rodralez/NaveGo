@@ -17,13 +17,7 @@ function gnss_data = rtkpos_read(fname)
 %     header: header of RTKPOS file.
 %     freq:   GNSS frequency update (Hz).
 %
-%     sdn (m).  
-%     sde (m).  
-%     sdu (m). 
-%     sdne (m). 
-%     sdeu (m). 
-%     sdun (m).
-%
+%     sdn (m), sde (m), sdu (m), sdne (m), sdeu (m), sdun (m):
 %       The estimated standard deviations of the solution assuming a priori 
 %       error model and error parameters by the positioning options. The 
 %       sdn, sde or sdu means N (north), E (east) or U (up) component of 
@@ -33,14 +27,10 @@ function gnss_data = rtkpos_read(fname)
 %       the sign of the covariance. With all of the values, user can 
 %       reconstruct the full covariance matrix. 
 %
-%     age (s). 
-%
-%       Age of differential. The time difference between the 
+%     age (s): Age of differential. The time difference between the 
 %       observation data epochs of the rover receiver and the base station. 
 %
-%     ratio:  ratio factor. 
-%       
-%       The ratio factor of ʺratio‐testʺ for standard 
+%     ratio: The ratio factor of ʺratio‐testʺ for standard 
 %       integer ambiguity validation strategy. The value means the ratio of 
 %       the squared sum of the residuals with the second best integer vector 
 %       to with the best integer vector. 
@@ -73,7 +63,8 @@ function gnss_data = rtkpos_read(fname)
 % URL:     https://github.com/rodralez/navego
 
 % RTKPOS format
-% WWWW, GPST, latitude (deg), longitude (deg), height (m),  Q, ns,  sdn(m),  sde(m),  sdu(m), sdne(m), sdeu(m), sdun(m),age(s), ratio
+% WWWW, GPST, latitude (deg), longitude (deg), height (m),  Q, ns,  sdn(m),  
+% sde(m),  sdu(m), sdne(m), sdeu(m), sdun(m),age(s), ratio
 
 D2R = pi/180;
 

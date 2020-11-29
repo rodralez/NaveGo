@@ -85,6 +85,7 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %   <http://www.gnu.org/licenses/>.
 %
 % References:
+%
 %   R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
 % simulation framework for low-cost integrated navigation systems,
 % Journal of Control Engineering and Applied Informatics, vol. 17,

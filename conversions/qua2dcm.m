@@ -26,6 +26,7 @@ function DCMbn = qua2dcm(qua)
 %   <http://www.gnu.org/licenses/>.
 %
 % References:
+%
 %	Titterton, D.H. and Weston, J.L. (2004). Strapdown
 % Inertial Navigation Technology (2nd Ed.). Institution
 % of Engineering and Technology, USA. Eq. 3.63.

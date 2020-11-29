@@ -29,6 +29,7 @@ function [distance, delta_pos] = gnss_distance (lat, lon)
 %   <http://www.gnu.org/licenses/>.
 %
 % References:
+%
 %	Ritchie Smith. Harversine function in Mathworks File Exchange. 
 % URL: https://www.mathworks.com/matlabcentral/fileexchange/32883-haversine
 %

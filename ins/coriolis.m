@@ -9,7 +9,6 @@ function cor_n = coriolis(lat, vel, h)
 % OUTPUT:
 %		cor_n: Mx1 Coriolis forces vector in the nav-frame (m/s^2).
 %
-%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
 %   This file is part of NaveGo, an open-source MATLAB toolbox for 
@@ -29,7 +28,8 @@ function cor_n = coriolis(lat, vel, h)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference: 
-%			R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
+%
+%	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
 % simulation framework for low-cost integrated navigation systems, 
 % Journal of Control Engineering and Applied Informatics}, vol. 17, 
 % issue 2, pp. 110-120, 2015. Eq. 11.

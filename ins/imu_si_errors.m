@@ -50,6 +50,7 @@ function imu_si = imu_si_errors(imu, dt)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference: 
+%
 %	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
 % simulation framework for low-cost integrated navigation systems, 
 % Journal of Control Engineering and Applied Informatics, vol. 17, 

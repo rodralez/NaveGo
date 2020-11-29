@@ -2,8 +2,8 @@
 % both IMU and GNSS synthetic (simulated) data. Then, synthetic data is
 % fused.
 %
-% Main goal: to compare two INS/GNSS systems performances, one using a
-% synthetic ADIS16405 IMU and synthetic GNSS, and another using a
+% The main goal is to compare two INS/GNSS systems performances, one using 
+% a synthetic ADIS16405 IMU and synthetic GNSS, and another using a
 % synthetic ADIS16488 IMU and the same synthetic GNSS.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -55,10 +55,9 @@
 
 clc
 close all
-clearaddpath .
-matlabrcaddpath .
+clear
+matlabrc
 
-addpath .
 addpath ../../ins/
 addpath ../../ins-gnss/
 addpath ../../simulation/

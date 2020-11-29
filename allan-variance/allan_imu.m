@@ -92,7 +92,7 @@ function imu = allan_imu (imu_sta, verbose)
 % Report. ISSN 1476-2986. University of Cambridge, Computer Laboratory.
 % August 2007.
 %
-%	  M.A. Hopcroft. Allan overlap MATLAB function v2.24.
+%   M.A. Hopcroft. Allan overlap MATLAB function v2.24.
 % https://www.mathworks.com/matlabcentral/fileexchange/13246-allan
 %
 % Version: 007

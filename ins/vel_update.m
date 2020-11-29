@@ -31,11 +31,12 @@ function vel_n = vel_update(fn, vel_n, omega_ie_n, omega_en_n, g, dt)
 %   <http://www.gnu.org/licenses/>.
 %
 % References:
-%			Titterton, D.H. and Weston, J.L. (2004). Strapdown
+%
+%	Titterton, D.H. and Weston, J.L. (2004). Strapdown
 % Inertial Navigation Technology (2nd Ed.). Institution
 % of Engineering and Technology, USA. Eq 3.69.
 %
-%  			R. Gonzalez, J. Giribet, and H. Patiño. An approach to
+%	R. Gonzalez, J. Giribet, and H. Patiño. An approach to
 % benchmarking of loosely coupled low-cost navigation systems,
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 17.

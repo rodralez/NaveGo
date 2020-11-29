@@ -4,7 +4,7 @@ function [b_dyn, t_corr] = allan_get_b_dyn (tau, allan)
 % INPUT
 %   tau: Nx1 Allan variance time vector in seconds.
 %   allan: Nx1 Allan variance vector.
-% 
+%
 % OUTPUT
 %   b_dyn: dynamic bias values.
 %   t_corr: correlation time values.
@@ -28,15 +28,15 @@ function [b_dyn, t_corr] = allan_get_b_dyn (tau, allan)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference:
-%			
+%
 %
 % Version: 001
 % Date:    2016/11/02
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-idx = find (allan == min(allan));   % Index for minimun value of AV.   
+idx = find (allan == min(allan));   % Index for minimun value of AV.
 
-b_dyn = allan(idx) ;              % BI. For gyro, rad-per-sec.
-                                    % BI. For acc,  meters-per-sec^2.
-t_corr = tau(idx)  ;               % BI, correlation time, in seconds.  
+b_dyn = allan(idx) ;                % BI. For gyro, rad-per-sec.
+% BI. For acc,  meters-per-sec^2.
+t_corr = tau(idx)  ;                % BI, correlation time, in seconds.

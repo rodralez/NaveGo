@@ -27,7 +27,7 @@ function ned = ecef2ned(ecef, llh_org)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference: 
-%		R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
+%	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
 % simulation framework for low-cost integrated navigation systems, 
 % Journal of Control Engineering and Applied Informatics}, vol. 17, 
 % issue 2, pp. 110-120, 2015. Inverse process of Eq. 15.

@@ -1,8 +1,8 @@
 % navego_example_real_ekinox: post-processing integration of both Ekinox 
 % IMU and Ekinox GNSS data.
 %
-% Main goal: to integrate IMU and GNSS measurements from Ekinox-D sensor 
-% which includes both IMU and GNSS sensors.
+% The main goal is to integrate IMU and GNSS measurements from Ekinox-D 
+% sensor which includes both IMU and GNSS sensors.
 %
 % Sensors dataset was generated driving a car through the streets of 
 % Turin city (Italy).
@@ -49,7 +49,6 @@ close all
 clear
 matlabrc
 
-addpath .
 addpath ../../ins/
 addpath ../../ins-gnss/
 addpath ../../conversions/

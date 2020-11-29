@@ -27,8 +27,9 @@ function ecef = llh2ecef(llh)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference:
+%
 %   Guowei Cai et al. Unmanned Rotorcraft Systems. Springer. 2011. 
-%   Eq. 2.22, p. 31.
+% Eq. 2.22, p. 31.
 %
 % Version: 001
 % Date:    2019/01/16

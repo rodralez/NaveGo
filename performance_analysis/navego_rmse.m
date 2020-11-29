@@ -67,8 +67,8 @@ end
 %% INS/GNSS position RMSE
 
 [RM,RN] = radius(ref_n.lat);
-LAT2M = (RM + ref_n.h);                 % Coefficient for lat, radians to meters
-LON2M = (RN + ref_n.h) .* cos(ref_n.lat); % Coefficient for lon, radians to meters
+LAT2M = (RM + ref_n.h);                     % Coefficient for lat, radians to meters
+LON2M = (RN + ref_n.h) .* cos(ref_n.lat);   % Coefficient for lon, radians to meters
 
 RMSE_lat = rmse (nav.lat.* LAT2M, ref_n.lat.* LAT2M) ;
 RMSE_lon = rmse (nav.lon.* LON2M, ref_n.lon.* LON2M) ;
@@ -89,8 +89,8 @@ end
 %% GNSS position RMSE
 
 [RMg,RNg] = radius(ref_g.lat);
-LAT2Mg = (RMg + ref_g.h);                    % Coefficient for lat, radians to meters
-LON2Mg = (RNg + ref_g.h) .* cos(ref_g.lat);   % Coefficient for lon, radians to meters
+LAT2Mg = (RMg + ref_g.h);                   % Coefficient for lat, radians to meters
+LON2Mg = (RNg + ref_g.h) .* cos(ref_g.lat); % Coefficient for lon, radians to meters
 
 RMSE_lat_g = rmse (gnss.lat.* LAT2Mg, ref_g.lat.* LAT2Mg) ;
 RMSE_lon_g = rmse (gnss.lon.* LON2Mg, ref_g.lon.* LON2Mg) ;

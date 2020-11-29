@@ -1,7 +1,7 @@
 % navego_example_real_ekinox: post-processing integration of MPU-6000 
 % IMU and Ekinox GNSS data.
 %
-% Main goal: to integrate MPU-6000 IMU and Ekinox-D GNSS measurements.
+% The main goal is to integrate MPU-6000 IMU and Ekinox-D GNSS measurements.
 %
 % Sensors dataset was generated driving a car through the streets of 
 % Turin city (Italy).
@@ -51,7 +51,6 @@ close all
 clear
 matlabrc
 
-addpath .
 addpath ../../ins/
 addpath ../../ins-gnss/
 addpath ../../conversions/

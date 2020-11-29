@@ -30,7 +30,7 @@ function euler = dcm2euler(DCMbn)
 % Inertial Navigation Technology (2nd Ed.). Institution
 % of Engineering and Technology, USA. Eq. 11.4. Eq. 3.66, p. 46.
 %
-%		R. Gonzalez, J. Giribet, and H.D. Patiño,. An approach to
+%   R. Gonzalez, J. Giribet, and H.D. Patiño,. An approach to
 % benchmarking of loosely coupled low-cost navigation systems,
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 2, pp. 272-287. Eq. 15.

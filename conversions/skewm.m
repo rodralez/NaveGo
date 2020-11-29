@@ -26,6 +26,7 @@ function S = skewm(v)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference:
+%
 %   Farrell, J. (2008). Aided Navigation: GPS With High Rate
 % Sensors. McGraw-Hill Professional, USA. Eq. B.15, p. 463.
 %

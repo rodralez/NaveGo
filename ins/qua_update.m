@@ -28,12 +28,13 @@ function qua_n = qua_update(qua, wb_n, dt)
 %   <http://www.gnu.org/licenses/>.
 
 % References:
-%  			R. Gonzalez, J. Giribet, and H. Patiño. An approach to
+%
+%	R. Gonzalez, J. Giribet, and H. Patiño. An approach to
 % benchmarking of loosely coupled low-cost navigation systems,
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 13.
 %
-%			Crassidis, J.L. and Junkins, J.L. (2011). Optimal Esti-
+%   Crassidis, J.L. and Junkins, J.L. (2011). Optimal Esti-
 % mation of Dynamic Systems, 2nd Ed. Chapman and Hall/CRC, USA.
 % Eq. 7.39 and 7.40, p. 458.
 %
@@ -44,7 +45,7 @@ function qua_n = qua_update(qua, wb_n, dt)
 
 wnorm = norm(wb_n);
 
-if wnorm == 0,
+if wnorm == 0
     
     qua_n = qua;
 else

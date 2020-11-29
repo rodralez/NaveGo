@@ -20,9 +20,10 @@ function yawm = hd_update( mag, roll, pitch, D)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference: 
-%		M.J. Caruso. Applications of magnetic sensors for low cost 
-%		compass systems. In Position Location and Navigation Symposium, 
-%		IEEE 2000 (pp. 177-184).
+%
+%   M.J. Caruso. Applications of magnetic sensors for low cost 
+% compass systems. In Position Location and Navigation Symposium, 
+% IEEE 2000 (pp. 177-184).
 %
 % Version: 001
 % Date:    2016/08/03

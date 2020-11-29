@@ -9,7 +9,6 @@ function pos_n = pos_update(pos, vel, dt)
 % OUTPUT:
 %   pos,    3x1 updated position vector [lat lon h] (rad, rad, m).
 %
-%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
 %   This file is part of NaveGo, an open-source MATLAB toolbox for 
@@ -29,11 +28,12 @@ function pos_n = pos_update(pos, vel, dt)
 %   <http://www.gnu.org/licenses/>.
 %
 % References: 
-%			Titterton, D.H. and Weston, J.L. (2004). Strapdown
+%
+%	Titterton, D.H. and Weston, J.L. (2004). Strapdown
 % Inertial Navigation Technology (2nd Ed.). Institution
 % of Engineering and Technology, USA. Eq. 3.79-3.81.
 %
-%			R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
+%	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
 % simulation framework for low-cost integrated navigation systems, 
 % Journal of Control Engineering and Applied Informatics, vol. 17, 
 % issue 2, pp. 110-120, 2015. Eq. 18.

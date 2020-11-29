@@ -13,7 +13,6 @@ function  [F, G] = F_update(upd, DCMbn, imu)
 %   Output values preserve the precision of latitude, single or double 
 %   precision.
 %
-%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
 %   This file is part of NaveGo, an open-source MATLAB toolbox for
@@ -33,6 +32,7 @@ function  [F, G] = F_update(upd, DCMbn, imu)
 %   <http://www.gnu.org/licenses/>.
 %
 % References:
+%
 %	Titterton, D.H. and Weston, J.L. (2004). Strapdown
 % Inertial Navigation Technology (2nd Ed.). Institution
 % of Engineering and Technology, USA. Eq. 12.18, p. 345, matrix F.

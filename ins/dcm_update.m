@@ -27,6 +27,7 @@ function DCMbn_n = dcm_update(DCMbn, euler)
 %   <http://www.gnu.org/licenses/>.
 %
 % Reference:
+%
 %	Titterton, D.H. and Weston, J.L. (2004). Strapdown
 % Inertial Navigation Technology (2nd Ed.). Institution
 % of Engineering and Technology, USA. Eq. 11.4 and 11.10.

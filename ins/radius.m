@@ -30,6 +30,7 @@ function [RM,RN] = radius(lat)
 %   <http://www.gnu.org/licenses/>.
 %
 % References:
+%
 %	Titterton, D.H. and Weston, J.L. (2004). Strapdown
 % Inertial Navigation Technology (2nd Ed.). Institution
 % of Engineering and Technology, USA. Eq. 2.6 and 2.7.
