@@ -299,7 +299,7 @@ for i = 2:LI
     
     if ( ~isempty(gdx) && gdx > 1)
         
-        %         gdx   % DEBUG
+%         gdx   % DEBUG
         
         %% MEASUREMENTS
         

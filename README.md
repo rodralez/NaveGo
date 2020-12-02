@@ -47,15 +47,15 @@ NaveGo has been validated by processing real-world data from a real trajectory a
 
 Future features of NaveGo will be:
 
-* Tightly-coupled INS/GNSS.
+* Compass heading using magnetometers.
+
+* Barometer as aiding sensor for altitude.
+
+* Tightly-coupled INS/GNSS integration.
 
 * RTS smoother.
 
 * Adaptive Kalman filter.
-
-* Unscented Kalman filter.
-
-* KML file generator.
 
 
 # Please, cite our work!
@@ -71,6 +71,7 @@ An URL to NaveGo should be provided as the following cite:
 R. Gonzalez, C. Catania, and P. Dabove. NaveGo: An Open-Source MATLAB/GNU-Octave Toolbox for Processing Integrated Navigation Systems and Performing Inertial Sensors Profiling Analysis. Version 1.2. URL: https://github.com/rodralez/NaveGo. DOI: 10.5281/zenodo.2536950. January 2019.
 
 
+
 # Donations
 
 Your donation helps us to improve NaveGo. You can make a donation to support our work using:
@@ -80,6 +81,7 @@ Your donation helps us to improve NaveGo. You can make a donation to support our
 * BITCOIN public key: bc1qdcf4c5t0t2a0uhqluae67yzuj5uerj8hgrxwwf .
 
 * ETHEREUM (or DAI) public key: 0x92EC236bD4C5CAD90CB2F7B2BA327047e853A6cE .
+
 
 
 # Contributions
@@ -96,6 +98,7 @@ You can contribute in many ways:
 If you are interested in joining NaveGo, please feel free to contact Dr. Rodrigo Gonzalez at rodralez [at] frm [dot] utn [dot] edu [dot] ar.
 
 
+
 # Examples
 
 The `example` folder contains several types of examples which try to be a kind of user manual for NaveGo.
@@ -103,6 +106,7 @@ The `example` folder contains several types of examples which try to be a kind o
 ## Allan variance example
 
 This example can be analyzed by just executing the file `navego_example_allan.m`. Firstly, Allan variance is applied to 2-hours of real static measurements from a Sensonor STIM300 IMU. Then, almost 5 hours of synthetic inertial data are created and Allan variance is run on these simulated data.
+
 
 
 ## INS/GNSS integration example using synthetic (simulated) data
@@ -142,7 +146,7 @@ These two real examples are part of the data collection used in the article (Gon
 
 # Researchers who are using NaveGo
 
-The following 11 papers have expressed the use of NaveGo within their research:
+The following 11 papers have expressed the use of NaveGo for research:
 
 1. Benjamin Noack, Christopher Funk, Susanne Radtke,and Uwe D. Hanebeck. State Estimation with Event-Based InputsUsing Stochastic Triggers. 1st Virtual IFAC World Congress (IFAC-V 2020). Germany, July 11-17, 2020 [Link](https://isas.iar.kit.edu/pdf/IFAC20_Noack.pdf).
 
