@@ -1,11 +1,11 @@
-function euler = qua2euler_m(qin)
-% qua2euler: transforms a quaternion matrix to Euler angles matrix.
+function euler_m = qua2euler_m(qin)
+% qua2euler: transforms a quaternion matrix to an Euler angles matrix.
 %
 % INPUT
 %   qin: Nx4 quaternions ordered by column.
 %
 % OUTPUT
-%   euler: Nx3 Euler angles ordered by column, [roll pitch yaw] (rad, rad, rad).
+%   euler_m: Nx3 Euler angles ordered by column, [roll pitch yaw] (rad, rad, rad).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -31,8 +31,8 @@ function euler = qua2euler_m(qin)
 % mation of Dynamic Systems, 2nd Ed. Chapman and Hall/CRC, USA.
 % Eq. 7.39, p. 458.
 %
-% Version: 004
-% Date:    2017/09/13
+% Version: 005
+% Date:    2020/12/17
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -65,6 +65,6 @@ psi = atan2( c1, c2 );  % yaw
 theta = asin( c3 );     % pitch
 phi = atan2( c4, c5 );  % roll
 
-euler = [phi theta psi];
+euler_m = [phi theta psi];
 
 end
