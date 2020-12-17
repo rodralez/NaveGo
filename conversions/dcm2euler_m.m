@@ -1,5 +1,5 @@
 function euler_m = dcm2euler_m(DCMnb_m)
-% dcm2euler_m: transforms a body-to-nav DCM matrix to an Euler angles matrix.
+% dcm2euler_m: transforms a nav-to-body DCM matrix to an Euler angles matrix.
 %
 % INPUT
 %   DCMnb_m: Nx9 matrix with nav-to-body direct cosine matrices (DCM).
@@ -44,9 +44,9 @@ function euler_m = dcm2euler_m(DCMnb_m)
 
 [N,~] = size (DCMnb_m);
 
-phi = zeros(N,1);
+phi   = zeros(N,1);
 theta = zeros(N,1);
-psi = zeros(N,1);
+psi   = zeros(N,1);
 
 for i=1:N
     
