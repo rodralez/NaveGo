@@ -44,21 +44,14 @@ function euler_m = dcm2euler_m(DCMnb_m)
 
 [N,~] = size (DCMnb_m);
 
-phi   = zeros(N,1);
-theta = zeros(N,1);
-psi   = zeros(N,1);
+euler_m = zeros(N,3);
 
 for i=1:N
     
-    dcmnb = reshape(DCMnb_m (i,:), 3, 3);
-    dcmbn = dcmnb';                               % nav-to-body > body-to-nav
+    DCMnb = reshape(DCMnb_m (i,:), 3, 3);
+    DCMbn = DCMnb';                         % nav-to-body > body-to-nav
     
-    phi(i)   =  atan( dcmbn(3,2) ./ dcmbn(3,3) ); % roll
-    theta(i) = -asin( dcmbn(3,1) );               % pitch
-    psi(i)   =  atan2( dcmbn(2,1), dcmbn(1,1) );  % yaw
-
+    euler_m (i,:) = dcm2euler(DCMbn);       % phi theta psi
 end
-
-euler_m = [phi theta psi];
 
 end
