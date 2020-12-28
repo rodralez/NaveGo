@@ -71,17 +71,13 @@ An URL to NaveGo should be provided as the following cite:
 R. Gonzalez, C. Catania, and P. Dabove. NaveGo: An Open-Source MATLAB/GNU-Octave Toolbox for Processing Integrated Navigation Systems and Performing Inertial Sensors Profiling Analysis. Version 1.2. URL: https://github.com/rodralez/NaveGo. DOI: 10.5281/zenodo.2536950. January 2019.
 
 
-
 # Donations
 
 Your donation helps us to improve NaveGo. You can make a donation to support our work using:
 
 * PAYPAL: [paypal.me/supportnavego](https://www.paypal.com/paypalme/supportnavego).
 
-* BITCOIN public key: bc1qdcf4c5t0t2a0uhqluae67yzuj5uerj8hgrxwwf .
-
-* ETHEREUM (or DAI) public key: 0x92EC236bD4C5CAD90CB2F7B2BA327047e853A6cE .
-
+* BITCOIN public key: 13fgM1MmyPc1nnVj5HTdvj2x7J1BoZTdvx	
 
 
 # Contributions
@@ -96,7 +92,6 @@ You can contribute in many ways:
 * Suggesting new features.
 
 If you are interested in joining NaveGo, please feel free to contact Dr. Rodrigo Gonzalez at rodralez [at] frm [dot] utn [dot] edu [dot] ar.
-
 
 
 # Examples
