@@ -10,6 +10,13 @@ NaveGo's motto is "to bring integrated navigation to the masses".
 
 NaveGo is supported at the moment by three academic research groups: GridTics at the National University of Technology (Argentina), Engineering School at the National University of Cuyo (Argentina), and DIATI at the Politecnico di Torino (Italy).
 
+## Attention!
+
+Please, if you find a bug or error in NaveGo's code, you should open a new [issue](https://github.com/rodralez/NaveGo/issues). 
+
+But, if you have any questiona of any kind or you want to share some feedback about NaveGo, you have to use NaveGo's [discussion forum](https://github.com/rodralez/NaveGo/discussions).  
+
+
 ## Features
 
 Main features of NaveGo are:
