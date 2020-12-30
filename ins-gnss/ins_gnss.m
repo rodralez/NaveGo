@@ -179,7 +179,7 @@ Tpr = diag([(RM + gnss.h(1)), (RN + gnss.h(1)) * cos(gnss.lat(1)), -1]);  % radi
 
 % Update matrix H
 kf.H = [ O I O O O ;
-         O O Tpr O O ; ];
+    O O Tpr O O ; ];
 kf.R = diag([gnss.stdv gnss.stdm]).^2;
 kf.z = [ gnss.stdv, gnss.stdm ]';
 
@@ -270,22 +270,31 @@ for i = 2:LI
     
     if ( i > idz )
         
+        % Mean velocity value for the ZUPT window time
         vel_m = mean (vel_e(i-idz:i , :));
         
-        if (abs(vel_m) <= gnss.zupt_th)
+        % If mean velocity value is under the ZUPT threshold velocity...
+        if (abs(vel_m) < gnss.zupt_th)
             
-            % Alternative attitude ZUPT correction
-            % roll_e(i) = (roll_e(i-idz , :));
-            % pitch_e(i)= (pitch_e(i-idz , :));
-            % yaw_e(i)  = (yaw_e(i-idz, :));
+            % Current attitude is equal to the mean of previous attitudes
+            % inside the ZUPT window time
+            roll_e(i)  = mean (roll_e(i-idz:i , :));
+            pitch_e(i) = mean (pitch_e(i-idz:i , :));
+            yaw_e(i)   = mean (yaw_e(i-idz:i , :));
             
-            roll_e(i) = mean (roll_e(i-idz:i , :));
-            pitch_e(i)= mean (pitch_e(i-idz:i , :));
-            yaw_e(i)  = mean (yaw_e(i-idz:i , :));
-            
+            % Current position is equal to the mean of previous positions
+            % inside the ZUPT window time
             lat_e(i) = mean (lat_e(i-idz:i , :));
             lon_e(i) = mean (lon_e(i-idz:i , :));
             h_e(i)   = mean (h_e(i-idz:i , :));
+            
+            % Alternative attitude ZUPT correction
+            % roll_e(i)  = (roll_e(i-idz , :));
+            % pitch_e(i) = (pitch_e(i-idz , :));
+            % yaw_e(i)   = (yaw_e(i-idz, :));
+            % lat_e(i) = (lat_e(i-idz:i , :));
+            % lon_e(i) = (lon_e(i-idz:i , :));
+            % h_e(i)   = (h_e(i-idz:i , :));
             
             zupt_flag = true;
             
@@ -299,7 +308,7 @@ for i = 2:LI
     
     if ( ~isempty(gdx) && gdx > 1)
         
-%         gdx   % DEBUG
+        %         gdx   % DEBUG
         
         %% MEASUREMENTS
         
