@@ -14,7 +14,7 @@ NaveGo is supported at the moment by three academic research groups: GridTics at
 
 Please, if you find a bug or error in NaveGo's code, you should open a new [issue](https://github.com/rodralez/NaveGo/issues). 
 
-But, if you have any questiona of any kind or you want to share some feedback about NaveGo, you have to use NaveGo's [discussion forum](https://github.com/rodralez/NaveGo/discussions).  
+But, if you have any question of any kind or you want to share some feedback about NaveGo, you have to use NaveGo's [discussion forum](https://github.com/rodralez/NaveGo/discussions).  
 
 
 ## Features
