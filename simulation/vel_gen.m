@@ -45,13 +45,13 @@ if any(idl)
     warning('vel_gen: negative altitude.')
 end
 
-vd = - diff_central(t, h);
+vd = - diff(t, h);
 
 %% North Velocity 
 
 [RM, ~] = radius(lat(2:end-1));
 
-vn_c = diff_central(t, lat);
+vn_c = diff(t, lat);
 vn = vn_c .* (RM + h(2:end-1));
 
 %% East Velocity 
