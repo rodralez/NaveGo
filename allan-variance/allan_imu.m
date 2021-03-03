@@ -169,13 +169,15 @@ idl = dd ~= 0;
 idl = [idl true];
 tau_v = tau_v(idl);
 
-fprintf('allan_imu: length of time is %02.3d hours or %.2f minutes or %.2f seconds. \n\n', (T/60/60), (T/60), T)
+fprintf('allan_imu: length of time is %02.3d hours or %.2f minutes or %.2f seconds. \n', (T/60/60), (T/60), T)
 
 %% ACCELEROMETERS
 
 for i=1:3
     
-    fprintf('\nallan_imu: Allan variance for FB %d \n', i)   
+    fprintf('\n')
+    
+    fprintf('allan_imu: Allan variance for FB %d \n', i)   
     
     data.freq = imu_sta.fb(:,i);
     
@@ -214,11 +216,15 @@ legend('ACC X','ACC Y', 'ACC Z' )
 
 for i=1:3
     
-    fprintf('\nallan_imu: Allan variance for WB %d \n', i)
+    fprintf('\n')
+    
+    fprintf('allan_imu: Allan variance for WB %d \n', i)
     
     data.freq = imu_sta.wb(:,i);
     
     [allan_o, s, error, tau] = allan_overlap(data, tau_v ,'allan_overlap', verbose);
+    
+    
     
     imu.wb_tau  (:,i) = tau;
     imu.wb_allan(:,i) = allan_o;

@@ -1,4 +1,4 @@
-function plot_histogram (samples, pd, x_label)
+function plot_histogram (samples, pd, x_label, x_title)
 % plot_histogram: plots histogram from samples (empirical PDF)  and 
 % compares to inferred probability density function (reference PDF). It 
 % also plots mean and median.
@@ -6,7 +6,8 @@ function plot_histogram (samples, pd, x_label)
 % INPUT
 %   samples: Nx1 samples.
 %   pd: probality distribution object from ProbabilityDistribution class.
-%   x_label: label for X axis.
+%   x_label: label for X axis (string).
+%   x_title: title for the figure (string).
 %
 % OUTPUT
 %   figure with histogram, reference PDF, mean and median.
@@ -32,8 +33,8 @@ function plot_histogram (samples, pd, x_label)
 % Reference:
 %
 %
-% Version: 003
-% Date:    2020/10/23
+% Version: 004
+% Date:    2021/03/02
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -95,7 +96,7 @@ legend([p0, l1, l2], 'Reference PDF', 'Mean', 'Median')
 
 xlabel(x_label);
 % ylabel('Probability density function (PDF)');
-title('INNOVATIONS HISTOGRAM')
+title(x_title)
 
 grid on
 hold off

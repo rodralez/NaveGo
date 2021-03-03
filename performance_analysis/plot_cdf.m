@@ -1,11 +1,12 @@
-function rmse_err = plot_cdf (data, pd, x_label)
+function rmse_err = plot_cdf (data, pd, x_label, x_title)
 % plot_cdf: plots cumulative distribution function (CDF) from samples 
 % (empirical CDF) and compares to inferred CDF (reference CDF)
 %
 % INPUT
 %   samples: Nx1 samples.
 %   pd: probality distribution object from ProbabilityDistribution class.
-%   x_label: label for X axis.
+%   x_label: label for X axis (string).
+%   x_title: title for the figure (string).
 %
 % OUTPUT
 %   rmse_err: RMSE between the two curves.
@@ -32,8 +33,8 @@ function rmse_err = plot_cdf (data, pd, x_label)
 % Reference:
 %
 %
-% Version: 002
-% Date:    2020/10/22
+% Version: 003
+% Date:    2021/03/02
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -58,14 +59,16 @@ rmse_err = rmse(ref_cdf, emp_cdf);
 blue_new = [0 0.4470 0.7410];
 orange_new = [0.8500 0.3250 0.0980];
 
+figure 
+
 p1 = plot(x, ref_cdf, '-.',  'LineWidth', 2, 'Color', orange_new);
 hold on
-
 p2 = stairs(x_sort, emp_cdf,'-', 'LineWidth', 2, 'Color', blue_new);
 
 xlabel(x_label);
 ylabel('Cumulative probability (CDF)');
 legend([p1, p2], 'Reference CDF', 'Empirical CDF' )
+title(x_title)
 
 grid
 hold off

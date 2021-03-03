@@ -30,42 +30,43 @@ function rw = allan_get_rw (tau, allan, dt)
 % Reference:
 %
 %
-% Version: 001
-% Date:    2016/11/02
+% Version: 002
+% Date:    2021/03/01
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-fprintf('allan_get_rw: Random angle parameter is valid ONLY if Allan variance curve presents a -0.5 slope.\n')
+fprintf('allan_get_rw: Random angle value is valid ONLY if Allan variance curve presents a -0.5 slope\n')
 
 idx = find ( tau == 1 );    % Index for tau = 1 s
 
 if ( ~isempty(idx) )        % if there is a precise value for tau = 1 s...
     
-    rw =  (allan(idx));
+    rw =  allan(idx);
     
 else                        % if not...
     
     % Upsample values between 0.5 < tau < 1.5
-    idx = find ( tau >= 0.5 & tau <= 1.5 );
+    idx = find ( tau >= 0.5 & tau <= 2);
     
     if ( isempty(idx) )
-        error('allan_get_rw: ERROR, idx is empty')
+        error('allan_get_rw: ERROR, idx is empty\n')
     end
     
-    tau_d = tau(idx);
-    allan_d = allan(idx);
+    tau_o = tau(idx);
+    allan_o = allan(idx);
     
     % Upsampled time vector
-    tau_up = tau(idx(1)):dt:tau(end);
+    tau_us = tau(idx(1)):dt:tau(idx(end));
     
     % Upsampled allan var. vector
-    allan_up = interp1(tau_d, allan_d, tau_up, 'linear');
+    allan_us = interp1(tau_o, allan_o, tau_us, 'linear');
     
-    jdx = find (tau_up == 1); % Index of tau = 1 s
+    jdx = find (tau_us == 1); % Index of tau = 1 s
+    
     if ( isempty(jdx) )
-        error('allan_get_rw: ERROR, jdx is empty')
+        error('allan_get_rw: ERROR, jdx is empty\n')
     end
     
-    rw =  allan_up(jdx);
+    rw =  allan_us(jdx);
     
 end
