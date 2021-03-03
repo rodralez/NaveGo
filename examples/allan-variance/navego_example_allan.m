@@ -93,12 +93,12 @@ fprintf('NaveGo: Allan variance analysis from synthetic data based on Microstrai
 
 %% SYNTHETIC STATIC DATA
 
-N = 24 * 60 * 60;   % 12 hours of simulation
+N = 24 * 60 * 60;   % 24 hours of simulation
 M = [N, 3];
 
 ref.freq = 100;
 
-ref.t = ((0:N-1)/ref.freq)';   % Simulated time vector is about 5.3275 hours
+ref.t = ((0:N-1)/ref.freq)';   
 to = (ref.t(end) - ref.t(1));
 fprintf('NaveGo: dataset time span is %.2f hours or %.2f minutes or %.2f seconds. \n', (to/60/60), (to/60), to)
 

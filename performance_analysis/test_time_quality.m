@@ -38,19 +38,27 @@ function [hk, pk, rmse_err ] = test_time_quality(time_v)
 
 %% Statistics
 
-time_d = diff(time_v);
+time_d = diff(time_v);  % time vector difference
 
 dt1 = mean(time_d);
 dt2 = median(time_d);
 dt3 = mode(time_d);
 
-fprintf('test_normality: time vector differences mean is   %.4f. \n', dt1)
-fprintf('test_normality: time vector differences median is %.4f. \n', dt2)
-fprintf('test_normality: time vector differences mode is   %.4f. \n', dt3)
-fprintf('test_normality: time vector differences min is    %.4f. \n', min(time_d))
-fprintf('test_normality: time vector differences max is    %.4f. \n', max(time_d))
+dt = dt2;               % sampling time is taken from median
+    
+ln = time_d < 0.0;
+neg_n = sum(ln);
 
-dt = dt2;
+lp = time_d > dt;
+pos_numbers = sum(lp);
+
+fprintf('test_time_quality: time vector difference mean is   %.8f. \n', dt1)
+fprintf('test_time_quality: time vector difference median is %.8f. \n', dt2)
+fprintf('test_time_quality: time vector difference mode is   %.8f. \n', dt3)
+fprintf('test_time_quality: time vector difference min is    %.4f. \n', min(time_d))
+fprintf('test_time_quality: time vector difference max is    %.4f. \n', max(time_d))
+fprintf('test_time_quality: time vector difference has %d negative numbers. \n', neg_n)
+fprintf('test_time_quality: time vector difference has %d numbers greater than %.8f \n', pos_numbers, dt)
 
 % Histogram
 bins = 10;
@@ -62,14 +70,14 @@ title('TIME DIFFERENCES HISTOGRAM')
 
 freq = 1 / dt;
 
-fprintf('test_normality: time vector frequency is %.2f. \n', freq)
+fprintf('test_time_quality: time vector frequency is %.2f. \n', freq)
 
 %% Test if there are repeated times
 
 if (any(time_d))
-    fprintf('test_normality: there are no repeated elements in time vector. \n')
+    fprintf('test_time_quality: all contiguous elements in time vector are different. \n')
 else
-    fprintf('test_normality: there are repeated elements in time vector. \n')
+    fprintf('test_time_quality: not all contiguous elements in time vector are different. \n')
 end
 
 tu = unique(time_v);
@@ -77,9 +85,9 @@ tu = unique(time_v);
 [n, m] = size(time_v);
 
 if (n == nu && m == mu)
-    fprintf('test_normality: all elements in time vector are unique. \n')
+    fprintf('test_time_quality: all elements in time vector are unique. \n')
 else
-    fprintf('test_normality: all elements in time vector are not unique. \n')
+    fprintf('test_time_quality: all elements in time vector are not unique. \n')
 end
 
 %% Check if size of time vector is coherence 
@@ -91,13 +99,13 @@ else
 end
 
 % Hypotetical time
-th = dt * dim; % sampling time times the number of elements 
+th = dt * dim; % sampling time times the number of elementest_normalityts 
 
-fprintf('test_normality: vector time should be %.2f hours or %.2f minutes or %.2f seconds. \n', (th/60/60), (th/60), th)
+fprintf('test_time_quality: vector time should be %.2f hours or %.2f minutes or %.2f seconds. \n', (th/60/60), (th/60), th)
 
 to = (time_v(end) - time_v(1));
 
-fprintf('test_normality: vector time is %.2f hours or %.2f minutes or %.2f seconds. \n', (to/60/60), (to/60), to)
+fprintf('test_time_quality: vector time is %.2f hours or %.2f minutes or %.2f seconds. \n', (to/60/60), (to/60), to)
 
 %% Plots
 
@@ -105,14 +113,8 @@ orange_new = [0.8500 0.3250 0.0980];
 
 time_d_s = sort(time_d);
 
-figurefigure
+figure
 
-for i = 2:n
-    
-    plot (time_v(i), time_d_s(i), 'o-', 'color', orange_new)
-    hold on
-    
-end
 plot (time_v(2:end), time_d_s, 'o-')
 hold on
 line ( [time_v(2), time_v(end)], [dt, dt] , 'color', orange_new, 'linewidth', 2, 'LineStyle','--')
