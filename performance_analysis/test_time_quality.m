@@ -43,28 +43,29 @@ time_d = diff(time_v);  % time vector difference
 dt1 = mean(time_d);
 dt2 = median(time_d);
 dt3 = mode(time_d);
+sd = std(time_d);
 
-dt = dt2;               % sampling time is taken from median
+dt = dt2;                   % sampling time is taken from median
     
 ln = time_d < 0.0;
 neg_n = sum(ln);
 
-lp = time_d > dt;
+lp = time_d > 2 * dt2;     % Outliers greater than 2 times the median.
 pos_numbers = sum(lp);
-
-fprintf('test_time_quality: time vector difference mean is   %.8f. \n', dt1)
-fprintf('test_time_quality: time vector difference median is %.8f. \n', dt2)
-fprintf('test_time_quality: time vector difference mode is   %.8f. \n', dt3)
-fprintf('test_time_quality: time vector difference min is    %.4f. \n', min(time_d))
-fprintf('test_time_quality: time vector difference max is    %.4f. \n', max(time_d))
+ 
+fprintf('test_time_quality: time vector difference mean is %e. \n', dt1)
+fprintf('test_time_quality: time vector difference median is %e. \n', dt2)
+fprintf('test_time_quality: time vector difference mode is %e. \n', dt3)
+fprintf('test_time_quality: time vector difference min is %e. \n', min(time_d))
+fprintf('test_time_quality: time vector difference max is %e. \n', max(time_d))
+fprintf('test_time_quality: time vector difference \x03C3 is %e. \n', sd)
 fprintf('test_time_quality: time vector difference has %d negative numbers. \n', neg_n)
-fprintf('test_time_quality: time vector difference has %d numbers greater than %.8f \n', pos_numbers, dt)
+fprintf('test_time_quality: time vector difference has %d numbers greater than 2 \x002A median. \n', pos_numbers)
 
 % Histogram
-bins = 10;
 figure
-histogram(time_d, bins, 'Normalization', 'count', 'FaceColor', [.9 .9 .9]); 
-title('TIME DIFFERENCES HISTOGRAM')
+histogram(time_d, 'BinMethod', 'sturges', 'Normalization', 'count', 'FaceColor', [.9 .9 .9]); 
+title('TIME DIFFERENCE HISTOGRAM')
 
 %% Frequency
 
@@ -74,7 +75,7 @@ fprintf('test_time_quality: time vector frequency is %.2f. \n', freq)
 
 %% Test if there are repeated times
 
-if (any(time_d))
+if (all(time_d))
     fprintf('test_time_quality: all contiguous elements in time vector are different. \n')
 else
     fprintf('test_time_quality: not all contiguous elements in time vector are different. \n')
