@@ -540,27 +540,27 @@ if verbose >= 2 % show analysis results
 
     % plot Allan deviation results
     if ~isempty(sm)
-        figure
-
-        % Choose loglog or semilogx plot here    #PLOTLOG
-        %semilogx(tau,sm,'.-b','LineWidth',plotlinewidth,'MarkerSize',24);
-        loglog(tau,sm,'.-b','LineWidth',plotlinewidth,'MarkerSize',24);
-
-        % in R14SP3, there is a bug that screws up the error bars on a semilog plot.
-        %  When this is fixed, uncomment below to use normal errorbars
-        errorbar(tau,sm,sme,'.-b'); set(gca,'XScale','log');
-        % this is a hack to approximate the error bars
-%         hold on; plot([tau; tau],[sm+sme; sm-sme],'-k','LineWidth',max(plotlinewidth-1,2));
-
-        grid on;
-        title(['Overlapping Allan Deviation: ' name],'FontSize',FontSize+2,'FontName',FontName);
-        %set(get(gca,'Title'),'Interpreter','none');
-        xlabel('\tau [sec]','FontSize',FontSize,'FontName','Arial');
-        ylabel(' Overlapping \sigma_y(\tau)','FontSize',FontSize,'FontName',FontName);
-        set(gca,'FontSize',FontSize,'FontName',FontName);
-        % expand the x axis a little bit so that the errors bars look nice
-        adax = axis;
-        axis([adax(1)*0.9 adax(2)*1.1 adax(3) adax(4)]);
+%         figure
+% 
+%         % Choose loglog or semilogx plot here    #PLOTLOG
+%         %semilogx(tau,sm,'.-b','LineWidth',plotlinewidth,'MarkerSize',24);
+%         loglog(tau,sm,'.-b','LineWidth',plotlinewidth,'MarkerSize',24);
+% 
+%         % in R14SP3, there is a bug that screws up the error bars on a semilog plot.
+%         %  When this is fixed, uncomment below to use normal errorbars
+%         errorbar(tau,sm,sme,'.-b'); set(gca,'XScale','log');
+%         % this is a hack to approximate the error bars
+% %         hold on; plot([tau; tau],[sm+sme; sm-sme],'-k','LineWidth',max(plotlinewidth-1,2));
+% 
+%         grid on;
+%         title(['Overlapping Allan Deviation: ' name],'FontSize',FontSize+2,'FontName',FontName);
+%         %set(get(gca,'Title'),'Interpreter','none');
+%         xlabel('\tau [sec]','FontSize',FontSize,'FontName','Arial');
+%         ylabel(' Overlapping \sigma_y(\tau)','FontSize',FontSize,'FontName',FontName);
+%         set(gca,'FontSize',FontSize,'FontName',FontName);
+%         % expand the x axis a little bit so that the errors bars look nice
+%         adax = axis;
+%         axis([adax(1)*0.9 adax(2)*1.1 adax(3) adax(4)]);
         
         % display the minimum value
         fprintf(1,'allan: Minimum overlapping ADEV value: %g at tau = %g seconds\n',min(sm),tau(sm==min(sm)));        
