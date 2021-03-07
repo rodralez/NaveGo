@@ -34,6 +34,10 @@ function imu = allan_imu (imu_sta, verbose)
 %   ab_dyn: 1x3 accrs bias instability in m/s^2. Value is taken
 %       from the plot at the minimun value.
 %
+%   ab_psd:
+%
+%   ab_psd:
+%
 %   gb_corr: 1x3 gyros correlation times (s).
 %   ab_corr: 1x3 accrs correlation times (s).
 %
@@ -95,8 +99,8 @@ function imu = allan_imu (imu_sta, verbose)
 %   M.A. Hopcroft. Allan overlap MATLAB function v2.24.
 % https://www.mathworks.com/matlabcentral/fileexchange/13246-allan
 %
-% Version: 007
-% Date:    2019/02/18
+% Version: 008
+% Date:    2021/03/07
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -224,8 +228,6 @@ for i=1:3
     
     [allan_o, s, error, tau] = allan_overlap(data, tau_v ,'allan_overlap', verbose);
     
-    
-    
     imu.wb_tau  (:,i) = tau;
     imu.wb_allan(:,i) = allan_o;
     imu.wb_error(:,i) = error;
@@ -248,13 +250,20 @@ for i=1:3
     imu.g_linear(i,:) = s.linear;
 end
 
-imu.freq = data.rate;
-
 % Plot GYROS
 figure
 loglog(imu.wb_tau, imu.wb_allan, '-o');
 grid on
 title('GYROS ALLAN VARIANCES')
 legend('GYRO X','GYRO Y', 'GYRO Z' )
+
+%% Extra data
+
+% Sampling frequency
+imu.freq = data.rate;
+
+% Dynamic bias PSD
+imu.ab_psd = imu.ab_dyn .* sqrt(imu.ab_corr) / 2;  % rad/s/root-Hz;navigation
+imu.gb_psd = imu.gb_dyn .* sqrt(imu.gb_corr) / 2;  % rad/s/root-Hz;
 
 end
