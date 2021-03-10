@@ -247,7 +247,7 @@ if strcmp(GNSS_DATA, 'ON')      % If simulation of GNSS data is required...
     
     fprintf('NaveGo: generating GNSS synthetic data... \n')
     
-    gnss = gnss_err_profile(ref.lat(1), ref.h(1), gnss); % GNSS manufacturer error units to SI units
+    gnss = gnss_m2r(ref.lat(1), ref.h(1), gnss); % GNSS manufacturer error units to SI units
     
     gnss = gnss_gen(ref, gnss);  % Generation of GNSS dataset from reference dataset
     

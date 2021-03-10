@@ -2,11 +2,11 @@ function g_n = gravity(lat, h)
 % gravity: calculates gravity vector in the navigation frame.
 %
 % INPUT:
-%       lat: Mx1 latitude (radians).
-%         h: Mx1 altitude (m).
+%       lat, Mx1 latitude (radians).
+%         h, Mx1 altitude (m).
 %
 % OUTPUT:
-%		g_n: Mx1 gravity vector in the nav-frame (m/s^2).
+%		g_n, Mx3 gravity vector in the nav-frame (m/s^2).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %

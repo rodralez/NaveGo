@@ -140,24 +140,27 @@ qua   = euler2qua([roll_e(1) pitch_e(1) yaw_e(1)]);
 % Preallocation of velocity vector
 vel_e   = zeros (LI, 3);
 
+% Preallocation of gravity vector
+gn_e   = zeros (LI, 3);
+
 % Initial velocity at INS time = 1
 vel_e(1,:) = gnss.vel(1,:);
 
 % Preallocation of position vectors
-lat_e    = zeros (LI,1);
-lon_e    = zeros (LI,1);
+lat_e    = zeros (LI, 1);
+lon_e    = zeros (LI, 1);
 h_e      = zeros (LI, 1);
 
 % Initial position at INS time = 1
-h_e(1)   = gnss.h(1);
 lat_e(1) = gnss.lat(1);
 lon_e(1) = gnss.lon(1);
+h_e(1)   = gnss.h(1);
 
 % Initial dynamic biases
 gb_dyn = imu.gb_dyn';
 ab_dyn = imu.ab_dyn';
 
-% Initialization of Kalman filter matrices
+%% Initialization of Kalman filter matrices
 
 % Prior estimates
 kf.xi = [ zeros(1,9), imu.gb_dyn, imu.ab_dyn ]';  % Error vector state
@@ -232,11 +235,11 @@ for i = 2:LI
     omega_en_n = transportrate(lat_e(i-1), vel_e(i-1,1), vel_e(i-1,2), h_e(i-1));
     
     % Gravity update
-    g_n = gravity(lat_e(i-1), h_e(i-1));
+    gn_e(i,:) = gravity(lat_e(i-1), h_e(i-1));
     
     % Velocity update
     f_n = (DCMbn * fb_corrected);
-    vel_n = vel_update(f_n, vel_e(i-1,:), omega_ie_n, omega_en_n, g_n', dti);
+    vel_n = vel_update(f_n, vel_e(i-1,:), omega_ie_n, omega_en_n, gn_e(i,:)', dti);
     vel_e (i,:) = vel_n;
     
     % Position update
@@ -308,7 +311,7 @@ for i = 2:LI
     
     if ( ~isempty(gdx) && gdx > 1)
         
-        %         gdx   % DEBUG
+%                 gdx   % DEBUG
         
         %% MEASUREMENTS
         
@@ -427,6 +430,7 @@ nav_e.vel   = vel_e(1:i, :);    % NED velocities
 nav_e.lat   = lat_e(1:i, :);    % Latitude
 nav_e.lon   = lon_e(1:i, :);    % Longitude
 nav_e.h     = h_e(1:i, :);      % Altitude
+nav_e.gn    = gn_e(1:i, :);     % Gravity
 
 nav_e.xi    = xi;       % A priori states
 nav_e.xp    = xp;       % A posteriori states

@@ -105,7 +105,7 @@ fprintf('NaveGo: loading Ekinox GNSS data... \n')
 
 load ekinox_gnss
 
-% ekinox_gnss.eps = mean(diff(ekinox_imu.t)) / 2; %  A rule of thumb for choosing eps.
+% ekinox_gnss.eps = mean(diff(ekinox_imu.t)) / 2; %  A rule of thumb for choosing eps
 
 %% Print navigation time
 

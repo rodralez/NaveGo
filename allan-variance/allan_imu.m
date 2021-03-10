@@ -144,7 +144,7 @@ imu.g_linear = zeros(3,2);
 
 %% TIME VECTOR FOR ALLAN VARIANCE
 
-% Find the sampling time and data frequency
+% Sampling time and data frequency
 dt = median(diff(imu_sta.t));
 
 % Frequency must be rounded to an integer number for allan_overlap function
@@ -167,13 +167,13 @@ for i = 1:length(TAU)-1
     tau_v = [tau_v TAU(i):TAU(i):TAU(i+1) ];
 end
 
-% Delete repeated elements
+% Deleting repeated elements
 dd = diff (tau_v);
 idl = dd ~= 0;
 idl = [idl true];
 tau_v = tau_v(idl);
 
-fprintf('allan_imu: length of time is %02.3d hours or %.2f minutes or %.2f seconds. \n', (T/60/60), (T/60), T)
+fprintf('allan_imu: length of time vector is %02.3d hours or %.2f minutes or %.2f seconds. \n', (T/60/60), (T/60), T)
 
 %% ACCELEROMETERS
 
@@ -195,7 +195,7 @@ for i=1:3
     imu.vrw(i) = vrw;
     
     [b_dyn, t_corr] = allan_get_b_dyn (tau, allan_o);
-    imu.ab_dyn(i) = b_dyn;
+    imu.ab_dyn(i)   = b_dyn;
     imu.ab_corr(i)  = t_corr;
     
     imu.ab_sta(i)    = s.mean; 
@@ -236,8 +236,8 @@ for i=1:3
     imu.arw(i) = arw;
     
     [b_dyn, t_corr] = allan_get_b_dyn (tau, allan_o);
-    imu.gb_dyn(i) = b_dyn;
-    imu.gb_corr(i) = t_corr;
+    imu.gb_dyn(i)   = b_dyn;
+    imu.gb_corr(i)  = t_corr;
     
     imu.gb_sta(i) = s.mean;
     

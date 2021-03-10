@@ -3,7 +3,7 @@ function pos_n = pos_update(pos, vel, dt)
 %
 % INPUT:
 %   pos,    3x1 position vector [lat lon h] (rad, rad, m).
-%   vel,    3x1 NED velocities (m/s).
+%   vel,    3x1 NED velocities [n e d] (m/s).
 %   dt,     sampling interval.
 %
 % OUTPUT:
