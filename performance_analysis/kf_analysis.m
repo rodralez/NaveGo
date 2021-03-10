@@ -51,7 +51,7 @@ end
 % Guassian distribution
 chi_t = [chi; -chi];
 
-[pd, hk, ~] = normality_test (chi_t);
+[pd, hk, ~] = test_normality (chi_t);
 
 if ~( hk )
     fprintf('kf_analysis: innovations comes from a normal distribution.\n' );
@@ -59,6 +59,9 @@ else
     fprintf('kf_analysis: innovations does not come from a normal distribution.\n' );
 end
 
-plot_histogram ( chi_t, pd, 'Innovations' );
+x_label = 'INNOVATIONS';
+x_title = 'INNOVATION HISTOGRAM';
+
+plot_histogram ( chi_t, pd, x_label, x_title);
 
 end
