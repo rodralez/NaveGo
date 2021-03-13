@@ -10,8 +10,8 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %        wb: Ix3 turn rates vector in body frame XYZ (radians/s).
 %       arw: 1x3 angle random walks (rad/s/root-Hz).
 %       vrw: 1x3 velocity random walks (m/s^2/root-Hz).
-%      gstd: 1x3 gyros standard deviations (radians/s).
-%      astd: 1x3 accrs standard deviations (m/s^2).
+%     g_std: 1x3 gyros standard deviations (radians/s).
+%     a_std: 1x3 accrs standard deviations (m/s^2).
 %    gb_sta: 1x3 gyros static biases or turn-on biases (radians/s).
 %    ab_sta: 1x3 accrs static biases or turn-on biases (m/s^2).
 %    gb_dyn: 1x3 gyros dynamic biases or bias instabilities (radians/s).
@@ -189,10 +189,6 @@ kf.z = [ gnss.stdv, gnss.stdm ]';
 % Propagate prior estimates to get xp(1) and Pp(1)
 kf = kf_update( kf );
 
-% PENDING: UD filter matrices
-% [Up, Dp] = myUD(S.P);
-% dp = diag(Dp);
-
 % DEC = 0.5 * 180/pi;             % Magnetic declination (radians)
 
 % Preallocation of Kalman filter matrices for later performance analysis
@@ -237,34 +233,33 @@ for i = 2:LI
     % Gravity update
     gn_e(i,:) = gravity(lat_e(i-1), h_e(i-1));
     
+    % Inertial sensors corrected with a posteriori KF biases estimation and
+    % deterministic static biases
+    wb_corrected = imu.wb(i,:)' + gb_dyn - imu.gb_sta';
+    fb_corrected = imu.fb(i,:)' + ab_dyn - imu.ab_sta';
+    
+    % Attitude update
+    [qua, DCMbn, euler] = att_update(wb_corrected, DCMbn, qua, ...
+        omega_ie_n, omega_en_n, dti, att_mode);
+    roll_e(i) = euler(1);
+    pitch_e(i)= euler(2);
+    yaw_e(i)  = euler(3);
+
     % Velocity update
-    f_n = (DCMbn * fb_corrected);
+    f_n = DCMbn * fb_corrected; % (5.47)
     vel_n = vel_update(f_n, vel_e(i-1,:), omega_ie_n, omega_en_n, gn_e(i,:)', dti);
     vel_e (i,:) = vel_n;
-    
+     
     % Position update
     pos_n = pos_update([lat_e(i-1) lon_e(i-1) h_e(i-1)], vel_e(i,:), dti);
     lat_e(i) = pos_n(1);
     lon_e(i) = pos_n(2);
     h_e(i)   = pos_n(3);
     
-    % Inertial sensors corrected with a posteriori KF biases estimation and
-    % deterministic static biases
-    wb_corrected = imu.wb(i,:)' + gb_dyn - imu.gb_sta';
-    fb_corrected = imu.fb(i,:)' + ab_dyn - imu.ab_sta';
-    
     % Turn-rates update with both updated velocity and position
     omega_ie_n = earthrate(lat_e(i));
     omega_en_n = transportrate(lat_e(i), vel_e(i,1), vel_e(i,2), h_e(i));
-    
-    % Attitude update
-    [qua_n, DCMbn, euler] = att_update(wb_corrected, DCMbn, qua, ...
-        omega_ie_n, omega_en_n, dti, att_mode);
-    roll_e(i) = euler(1);
-    pitch_e(i)= euler(2);
-    yaw_e(i)  = euler(3);
-    qua = qua_n;
-    
+       
     % PENDING. Magnetic heading update
     %         yawm_e(i) = hd_update (imu.mb(i,:), roll_e(i),  pitch_e(i), D);
     
@@ -301,6 +296,7 @@ for i = 2:LI
             
             zupt_flag = true;
             
+%             fprintf(' z\n')       % DEBUG
         end
     end
     
@@ -365,28 +361,28 @@ for i = 2:LI
         
         % Quaternion corrections
         % Crassidis. Eq. 7.34 and A.174a.
-        antm = [0 qua_n(3) -qua_n(2); -qua_n(3) 0 qua_n(1); qua_n(2) -qua_n(1) 0];
-        qua = qua_n + 0.5 .* [qua_n(4)*eye(3) + antm; -1.*[qua_n(1) qua_n(2) qua_n(3)]] * kf.xp(1:3);
+        antm = [0 qua(3) -qua(2); -qua(3) 0 qua(1); qua(2) -qua(1) 0];
+        qua = qua + 0.5 .* [qua(4)*eye(3) + antm; -1.*[qua(1) qua(2) qua(3)]] * kf.xp(1:3);
         qua = qua / norm(qua);       % Brute-force normalization
         
         % DCM correction
         DCMbn = qua2dcm(qua);
         
-        % Another possible attitude correction algorithm
-        %     euler = qua2euler(qua);
-        %     roll_e(i) = euler(1);
-        %     pitch_e(i)= euler(2);
-        %     yaw_e(i)  = euler(3);
+        % Attitude correction, method 1
+%         euler = qua2euler(qua);
+%         roll_e(i) = euler(1);
+%         pitch_e(i)= euler(2);
+%         yaw_e(i)  = euler(3);
         
-        % Attitude correction
+        % Attitude correction, method 2
         roll_e(i)  = roll_e(i)  - kf.xp(1);
         pitch_e(i) = pitch_e(i) - kf.xp(2);
         yaw_e(i)   = yaw_e(i)   - kf.xp(3);
         
         % Velocity correction
-        vel_e (i,1) = vel_e (i,1) - kf.xp(4);
-        vel_e (i,2) = vel_e (i,2) - kf.xp(5);
-        vel_e (i,3) = vel_e (i,3) - kf.xp(6);
+        vel_e(i,1) = vel_e(i,1) - kf.xp(4);
+        vel_e(i,2) = vel_e(i,2) - kf.xp(5);
+        vel_e(i,3) = vel_e(i,3) - kf.xp(6);
         
         % Position correction
         lat_e(i) = lat_e(i) - kf.xp(7);

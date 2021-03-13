@@ -1,8 +1,8 @@
-function gnss_data = rtkpos_read(fname)
-% rtkpos_read: reads RTKPOS output file and transforms it to NaveGo format.
+function gnss_data = rtkpost_read(fname)
+% rtkpost_read: reads .pos output file from RTKPOST and transforms it to NaveGo format.
 %
 % INPUT
-%   fname: file name (string).
+%   fname: .pos file name (string).
 %
 % OUTPUT
 %   gnss_data: data structure with the following format:
@@ -72,14 +72,13 @@ D2R = pi/180;
 
 fid = fopen(fname, 'r');
 if fid == -1
-    error('rtkpos_read: %s file not found', fname)
+    error('rtkpost_read: %s file not found', fname)
 end
-
 
 %% TOTAL NUMBER OF LINES
 
 lines = nnz(fread(fid) == 10);
-fprintf('rtkpos_read: %s file has %d lines. \n', fname, lines);
+fprintf('rtkpost_read: %s file has %d lines. \n', fname, lines);
 
 % Set pointer back to the beginning
 fseek(fid,0,'bof');
@@ -101,9 +100,9 @@ end
 % Set pointer back to the beginning
 fseek(fid,0,'bof');
 
-fprintf('rtkpos_read: %s has %d headerlines. \n', fname, hdlines);
+fprintf('rtkpost_read: %s has %d headerlines. \n', fname, hdlines);
 
-%% GNSS DATA
+%% DATA READING
 
 % Create pattern for textscan()
 str = [];
@@ -114,6 +113,12 @@ end
 
 % Load data in cell
 data_cell = textscan(fid, str, 'Headerlines', hdlines);
+
+fclose (fid);
+
+fprintf('rtkpost_read: end of file. \n');
+
+%% DATA SAVING
 
 data_m = cell2mat (data_cell);
 
@@ -138,6 +143,6 @@ gnss_data.freq = 1/dtg;
 
 gnss_data.header =  header;
 
-fclose(fid);
+
 
 end

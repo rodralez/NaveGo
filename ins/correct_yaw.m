@@ -1,5 +1,5 @@
 function yaw_new = correct_yaw (yaw)
-% correct_yaw: guarantee that yaw angle is between -pi and pi.
+% correct_yaw: guarantees that yaw angle is between -pi and pi.
 %
 % INPUT:
 %   yaw, Nx1 vector (radians).

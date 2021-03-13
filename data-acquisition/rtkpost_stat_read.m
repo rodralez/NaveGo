@@ -1,5 +1,5 @@
-function gnss = rtknavi_read (fname)
-% rtknavi_read: reads RTKAVI output file and transforms it to NaveGo format.
+function gnss = rtkpost_stat_read (fname)
+% rtkpost_stat_read: reads .sta output file form RTKPOST and transforms it to NaveGo format.
 %
 % INPUT
 %   fname: file name (string).
@@ -46,13 +46,13 @@ function gnss = rtknavi_read (fname)
 
 fid = fopen(fname, 'r');
 if fid == -1
-    error('rtknavi_read: %s file not found', fid)
+    error('rtkpost_stat_read: %s file not found', fid)
 end
 
 %% TOTAL NUMBER OF LINES
 
 lines = nnz(fread(fid) == 10);
-fprintf('rtknavi_read: %s file has %d lines. \n', fname, lines);
+fprintf('rtkpost_stat_read: %s file has %d lines. \n', fname, lines);
 
 % Set pointer back to the beginning
 fseek(fid,0,'bof');
@@ -99,7 +99,7 @@ out_cnt = 0;
 slip_cnt = 0;
 rejc_cnt = 0;
 
-%% PROCESS FILE
+%% DATA READING
 
 TOW = 2;
 
@@ -134,7 +134,7 @@ while ~feof(fid)
             
         otherwise
             
-            warning('rtknavi_read: unknown type of line. \n');
+            warning('rtkpost_stat_read: unknown type of line. \n');
             vld_flag = 0;            
     end
 
@@ -156,9 +156,10 @@ end
 
 fclose (fid);
 
-fprintf('rtknavi_read: end of file. \n');
+fprintf('rtkpost_stat_read: end of file. \n');
     
-%% TOW DATA
+%% DATA SAVING
+
 % GPS time of week
 tow = gnss_data(:, TOW);                                 
 

@@ -48,9 +48,10 @@ R2D = (180/pi);     % radians to degrees
 RMSE_roll  = rmse (nav.roll , ref_n.roll)  .* R2D;
 RMSE_pitch = rmse (nav.pitch, ref_n.pitch) .* R2D;
 
-% Avoid difference greater than 100 deg when comparing yaw angles.
+% Difference greater than 100 deg when comparing yaw angles are avoided.
+nav.yaw = correct_yaw(nav.yaw);
 idx = ( abs(nav.yaw - ref_n.yaw) < (100 * D2R) );
-RMSE_yaw = rmse ( nav.yaw(idx),ref_n.yaw(idx) ) .* R2D;
+RMSE_yaw = rmse ( nav.yaw(idx), ref_n.yaw(idx) ) .* R2D;
 
 %% INS/GNSS velocity RMSE
 
