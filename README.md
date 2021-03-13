@@ -58,6 +58,8 @@ Future features of NaveGo will be:
 
 * Barometer as aiding sensor for altitude.
 
+* G-sensitivity correction for gyroscopes.
+
 * Tightly-coupled INS/GNSS integration.
 
 * RTS smoother.
