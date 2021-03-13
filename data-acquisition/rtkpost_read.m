@@ -143,6 +143,4 @@ gnss_data.freq = 1/dtg;
 
 gnss_data.header =  header;
 
-
-
 end

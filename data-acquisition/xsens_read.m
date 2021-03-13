@@ -3,7 +3,7 @@ function [xsens , xsens_fields ] = xsens_read(file, row_lines, columns)
 %
 % INPUT
 %   fname: .cvs file name (string).
-%   blockMatrix:
+%   row_lines: number of rows in file.
 %   columns: maximum column to be read.
 %
 % OUTPUT
@@ -109,7 +109,7 @@ i = 1;  % index for reading ATTITUDE data
 k = 1;  % index for reading BARO data
 % l
 
-rows_block = 75000;
+rows_block = 75000;		% Default vauel for rows_block
 
 if rows_block > row_lines
     rows_block = floor(row_lines / 5);
@@ -126,7 +126,7 @@ while ~feof(xsens_f)
     loop_ctr = loop_ctr + 1;
     loop_line = loop_ctr * rows_block;
     
-    data_c = textscan(xsens_f, formatSpec, rows_block, 'Delimiter',','); % ,'EmptyValue',0
+    data_c = textscan(xsens_f, formatSpec, rows_block, 'Delimiter',',');
     data = cell2mat(data_c(1:columns));
     
     % Delete rows where date is NaN for IMU data
@@ -192,6 +192,8 @@ while ~feof(xsens_f)
     
 end
 
+fclose(xsens_f);
+
 % Delete epmty rows
 idl = xsens_imu(: , 1) ~= 0.0 ;
 xsens_imu = xsens_imu(idl , :);
@@ -211,7 +213,7 @@ xsens_att = xsens_att(idl , :);
 idl = xsens_baro(: , 1) ~= 0.0 ;
 xsens_baro = xsens_baro(idl , :);
 
-%% DATA IN STRUCTURE
+%% MATRIX TO STRUCTURE
 
 xsens = struct;
 
@@ -259,11 +261,11 @@ for a=70:columns
     xsens.(xsens_fields{a}) = xsens_gnss(:, a);
 end
 
-xsens.SampleTimeFine        = xsens_imu(:, 2);      % SampleTimeFine
-xsens.AHRSSampleTimeFine    = xsens_ahrs(:, 2);     % SampleTimeFine
-xsens.MagSampleTimeFine     = xsens_mag(:, 2);      % SampleTimeFine
-xsens.AttitudeSampleTimeFine = xsens_att(:, 2);     % SampleTimeFine
-xsens.BaroSampleTimeFine    = xsens_baro(:, 2);     % SampleTimeFine
+xsens.SampleTimeFine        = xsens_imu(:, 2);      
+xsens.AHRSSampleTimeFine    = xsens_ahrs(:, 2);     
+xsens.MagSampleTimeFine     = xsens_mag(:, 2);     
+xsens.AttitudeSampleTimeFine = xsens_att(:, 2);    
+xsens.BaroSampleTimeFine    = xsens_baro(:, 2);    
 xsens.GNSSSampleTimeFine    = xsens_gnss(:, 2);
 
 % FREQUENCIES
@@ -287,8 +289,6 @@ xsens.freq_gnss = (1/dtg);
 
 % Header
 xsens.header = xsens_header;
-
-fclose(xsens_f);
 
 disp('xsens_read: data is ready.')
 
