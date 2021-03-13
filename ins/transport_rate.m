@@ -1,5 +1,5 @@
-function omega_en_n = transportrate(lat, Vn, Ve, h)
-% transportrate: calculates the transport rate in the navigation frame.
+function omega_en_n = transport_rate(lat, Vn, Ve, h)
+% transport_rate: calculates the transport rate in the navigation frame.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     

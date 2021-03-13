@@ -1,5 +1,5 @@
-function omega_ie_n = earthrate(lat, precision)
-% earthrate: turn rate of the Earth in the navigation frame.
+function omega_ie_n = earth_rate(lat, precision)
+% earth_rate: turn rate of the Earth in the navigation frame.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
