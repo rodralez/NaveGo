@@ -250,8 +250,7 @@ if strcmp(GNSS_DATA, 'ON')      % If simulation of GNSS data is required...
     
     gnss = gnss_gen(ref, gnss);  % Generation of GNSS dataset from reference dataset
     
-    save gnss.mat gnss
-    
+    save gnss.mat gnss    
 else
     
     fprintf('NaveGo: loading GNSS synthetic data... \n')
@@ -277,9 +276,9 @@ if strcmp(IMU1_DATA, 'ON')      % If simulation of IMU1 data is required...
     
     save imu1.mat imu1
     
-    clear wb fb;
-    
+    clear wb fb;    
 else
+    
     fprintf('NaveGo: loading IMU1 synthetic data... \n')
     
     load imu1.mat
@@ -303,9 +302,9 @@ if strcmp(IMU2_DATA, 'ON')      % If simulation of IMU2 data is required ...
     
     save imu2.mat imu2
     
-    clear wb fb;
-    
+    clear wb fb;    
 else
+    
     fprintf('NaveGo: loading IMU2 synthetic data... \n')
     
     load imu2.mat
@@ -321,18 +320,17 @@ fprintf('NaveGo: navigation time is %.2f minutes or %.2f seconds. \n', (to/60), 
 
 if strcmp(IMU1_INS, 'ON')
     
-    fprintf('NaveGo: processing INS/GNSS navigation estimates for IMU1... \n')
+    fprintf('NaveGo: processing INS/GNSS integration for IMU1... \n')
     
     % INS/GNSS integration
     % ---------------------------------------------------------------------
     nav1_e = ins_gnss(imu1, gnss, 'dcm');           % Attitude will be estimated by the DCM equations
     % ---------------------------------------------------------------------
     
-    save nav1_e.mat nav1_e
-    
+    save nav1_e.mat nav1_e    
 else
     
-    fprintf('NaveGo: loading INS/GNSS navigation estimates for IMU1... \n')
+    fprintf('NaveGo: loading INS/GNSS integration for IMU1... \n')
     
     load nav1_e.mat
 end
@@ -341,18 +339,17 @@ end
 
 if strcmp(IMU2_INS, 'ON')
     
-    fprintf('NaveGo: processing INS/GNSS navigation estimates for IMU2... \n')
+    fprintf('NaveGo: processing INS/GNSS integration for IMU2... \n')
     
     % INS/GNSS integration
     % ---------------------------------------------------------------------
     nav2_e = ins_gnss(imu2, gnss, 'quaternion');    % Attitude will be estimated by quaternion equations
     % ---------------------------------------------------------------------
     
-    save nav2_e.mat nav2_e
-    
+    save nav2_e.mat nav2_e    
 else
     
-    fprintf('NaveGo: loading INS/GNSS navigation estimates for IMU2... \n')
+    fprintf('NaveGo: loading INS/GNSS integration for IMU2... \n')
     
     load nav2_e.mat
 end

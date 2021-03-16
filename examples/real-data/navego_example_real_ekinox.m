@@ -117,7 +117,7 @@ fprintf('NaveGo: navigation time is %.2f minutes or %.2f seconds. \n', (to/60), 
 
 if strcmp(INS_GNSS, 'ON')
     
-    fprintf('NaveGo: INS/GNSS integration... \n')
+    fprintf('NaveGo: processing INS/GNSS integration... \n')
     
     % Execute INS/GNSS integration
     % ---------------------------------------------------------------------

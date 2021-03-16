@@ -2,13 +2,13 @@ function [distance, delta_pos] = gnss_distance (lat, lon)
 % gnss_distance: provides the distance distance traveled by a vehicle based 
 % on haversine function.
 %
-% INPUT:
-%   lat: Mx1 latitudes (radians).
-%   lon: Mx1 longitudes (radians).
+% INPUT
+%   lat, Mx1 latitudes (radians).
+%   lon, Mx1 longitudes (radians).
 %
-% OUTPUT:
-%	distance: total distance (meters).
-%   delta_pos: Mx1 incremental distances between near points (meters).
+% OUTPUT
+%	distance, total distance (meters).
+%   delta_pos, Mx1 incremental distances between near points (meters).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -38,7 +38,7 @@ function [distance, delta_pos] = gnss_distance (lat, lon)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-R = 6.3781 * 10^6;              % Earth's radius in m
+R = 6.3781 * 10^6;              % Earth's radius in meters
 
 delta_lat = [ 0; diff(lat) ];
 

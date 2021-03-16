@@ -170,9 +170,9 @@ fprintf('NaveGo: navigation time under analysis is %.2f minutes or %.2f seconds.
 
 if strcmp(INS_GNSS, 'ON')
     
-    fprintf('NaveGo: INS/GNSS integration... \n')
+    fprintf('NaveGo: processing INS/GNSS integration... \n')
     
-    % Execute INS/GPS integration
+    % Execute INS/GNSS integration
     % ---------------------------------------------------------------------
     nav_or = ins_gnss(mpu6000_imu, gnss, 'quaternion'); %
     % ---------------------------------------------------------------------
