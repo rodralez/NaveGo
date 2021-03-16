@@ -1,4 +1,4 @@
-% navego_example_real_ekinox: post-processing integration of MPU-6000 
+% navego_example_real_mpu6000: post-processing integration of MPU-6000 
 % IMU and Ekinox GNSS data.
 %
 % The main goal is to integrate MPU-6000 IMU and Ekinox-D GNSS measurements.
@@ -84,7 +84,7 @@ R2D = (180/pi);     % radians to degrees
 KT2MS = 0.514444;   % knot to m/s
 MS2KMH = 3.6;       % m/s to km/h
 
-%% LOAD REF DATA
+%% REF DATA
 
 % Reference dataset was obtained by processing Ekinox IMU and Ekinox GNSS 
 % with tighly-coupled integration by Inertial Explorer software package.
@@ -109,13 +109,13 @@ load ekinox_gnss
 
 % ekinox_gnss.eps = mean(diff(mpu6000_imu.t)) / 2; %  A rule of thumb for choosing eps.
 
-%% Print navigation time
+%% NAVIGATION TIME
 
 to = (ref.t(end) - ref.t(1));
 
 fprintf('NaveGo: navigation time is %.2f minutes or %.2f seconds. \n', (to/60), to)
 
-%% INS/GNSS integration
+%% INS/GNSS INTEGRATION
 
 if strcmp(INS_GNSS, 'ON')
     
@@ -132,7 +132,7 @@ else
     load nav_mpu6000
 end
 
-%% Printing traveled distance
+%% TRAVELED DISTANCE
 
 distance = gnss_distance (nav_mpu6000.lat, nav_mpu6000.lon);
 
@@ -159,7 +159,7 @@ ref.lon     = ref.lon  (idx:fdx);
 ref.h       = ref.h    (idx:fdx);
 ref.vel     = ref.vel  (idx:fdx, :);
 
-%% Interpolation of INS/GNSS dataset 
+%% INTERPOLATION OF INS/GNSS DATASET
 
 % INS/GNSS estimates and GNSS data are interpolated according to the
 % reference dataset.
@@ -167,22 +167,22 @@ ref.vel     = ref.vel  (idx:fdx, :);
 [nav_i,  ref_n] = navego_interpolation (nav_mpu6000, ref);
 [gnss_i, ref_g] = navego_interpolation (ekinox_gnss, ref);
 
-%% Print RMSE from INS/GNSS data
+%% NAVIGATION RMSE 
 
 rmse_v = print_rmse (nav_i, gnss_i, ref_n, ref_g, 'MPU-6000 INS/GNSS');
 
-%% Saving RMSE to CVS file
+%% RMSE TO CVS FILE
 
 csvwrite('ekinox.csv', rmse_v);
 
-%% PLOT
+%% PLOTS
 
 if (strcmp(PLOT,'ON'))
     
-   navego_plot (ref, ekinox_gnss, nav_mpu6000, gnss_i, nav_i, ref_g, ref_n)
+   navego_plot_main (ref, ekinox_gnss, nav_mpu6000, gnss_i, nav_i, ref_g, ref_n)
 end
 
-%% Performance analysis of the Kalman filter
+%% PERFORMANCE ANAYSYS OF THE KALMAN FILTER
 
 fprintf('\nNaveGo: Kalman filter performance analysis...\n') 
 

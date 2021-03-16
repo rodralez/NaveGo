@@ -35,27 +35,33 @@ function rmse_v = navego_rmse (nav, gnss, ref_n, ref_g)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% Version: 005
-% Date:    2019/04/05
+% Version: 006
+% Date:    2021/03/16
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
 D2R = (pi/180);     % degrees to radians
 R2D = (180/pi);     % radians to degrees
 
-%% INS/GNSS attitude RMSE
+%% INS/GNSS ATTITUDE RMSE
 
 RMSE_roll  = rmse (nav.roll , ref_n.roll)  .* R2D;
 RMSE_pitch = rmse (nav.pitch, ref_n.pitch) .* R2D;
 
-% Difference greater than 100 deg when comparing yaw angles are avoided.
+% Differences greater than 300 deg are avoided when comparing yaw angles.
+% The idea is to avoid to compare values of yaw angles when, for example, the 
+% reference yaw is near pi and the nav yaw is near -pi. Both yaw angles, pi
+% and -pi, represent the same heading angle (moving South).
+
 nav.yaw = correct_yaw(nav.yaw);
-idx = ( abs(nav.yaw - ref_n.yaw) < (100 * D2R) );
+ref_n.yaw = correct_yaw(ref_n.yaw);
+
+idx = ( abs(nav.yaw - ref_n.yaw) < (300 * D2R) );
 RMSE_yaw = rmse ( nav.yaw(idx), ref_n.yaw(idx) ) .* R2D;
 
-%% INS/GNSS velocity RMSE
+%% INS/GNSS VELOCITY RMSE
 
-if (isfield(nav, 'vel') && isfield( ref_n, 'vel'))
+if (isfield(nav, 'vel') && isfield(ref_n, 'vel'))
     RMSE_vn = rmse (nav.vel(:,1),  ref_n.vel(:,1));
     RMSE_ve = rmse (nav.vel(:,2),  ref_n.vel(:,2));
     RMSE_vd = rmse (nav.vel(:,3),  ref_n.vel(:,3));
@@ -63,9 +69,10 @@ else
     RMSE_vn = NaN;
     RMSE_ve = NaN;
     RMSE_vd = NaN;
+    warning('navego_rmse: no NED velocity field was found in INS/GNSS data.');
 end
 
-%% INS/GNSS position RMSE
+%% INS/GNSS POSITION RMSE
 
 [RM,RN] = radius(ref_n.lat);
 LAT2M = (RM + ref_n.h);                     % Coefficient for lat, radians to meters
@@ -73,9 +80,9 @@ LON2M = (RN + ref_n.h) .* cos(ref_n.lat);   % Coefficient for lon, radians to me
 
 RMSE_lat = rmse (nav.lat.* LAT2M, ref_n.lat.* LAT2M) ;
 RMSE_lon = rmse (nav.lon.* LON2M, ref_n.lon.* LON2M) ;
-RMSE_h   = rmse (nav.h,   ref_n.h);
+RMSE_h   = rmse (nav.h, ref_n.h);
 
-%% GNSS velocity RMSE
+%% GNSS VELOCITY RMSE
 
 if (isfield(gnss, 'vel') && isfield( ref_g, 'vel'))
     RMSE_vn_g = rmse (gnss.vel(:,1), ref_g.vel(:,1));
@@ -85,9 +92,10 @@ else
     RMSE_vn_g = NaN;
     RMSE_ve_g = NaN;
     RMSE_vd_g = NaN;
+    warning('navego_rmse: no NED velocity field was found in GNSS data.');
 end
 
-%% GNSS position RMSE
+%% GNSS POSITION RMSE
 
 [RMg,RNg] = radius(ref_g.lat);
 LAT2Mg = (RMg + ref_g.h);                   % Coefficient for lat, radians to meters
@@ -96,6 +104,8 @@ LON2Mg = (RNg + ref_g.h) .* cos(ref_g.lat); % Coefficient for lon, radians to me
 RMSE_lat_g = rmse (gnss.lat.* LAT2Mg, ref_g.lat.* LAT2Mg) ;
 RMSE_lon_g = rmse (gnss.lon.* LON2Mg, ref_g.lon.* LON2Mg) ;
 RMSE_h_g   = rmse (gnss.h, ref_g.h);
+
+%%
 
 rmse_v = [  RMSE_roll;  RMSE_pitch; RMSE_yaw;    
             RMSE_vn;    RMSE_ve;    RMSE_vd;

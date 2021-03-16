@@ -1,13 +1,13 @@
 function cor_n = coriolis(lat, vel, h)
 % coriolis: calculates Coriolis forces in the navigation frame.
 %
-% INPUT:
-%       lat: Mx1 latitude (radians).
-%       vel: Mx3 NED velocities (m/s).
-%         h: Mx1 altitude (m).
+% INPUT
+%       lat, Mx1 latitude (radians).
+%       vel, Mx3 NED velocities (m/s).
+%         h, Mx1 altitude (m).
 %
-% OUTPUT:
-%		cor_n: Mx1 Coriolis forces vector in the nav-frame (m/s^2).
+% OUTPUT
+%		cor_n, Mx1 Coriolis forces vector in the nav-frame (m/s^2).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
@@ -45,9 +45,9 @@ cor_n = zeros(M, 3);
 
 for i = 1:M
    
-    omega_en_N = transportrate(lat(i), vel(i,1), vel(i,2), h(i));
-    omega_ie_N = earthrate(lat(i));
+    omega_en_n = transport_rate(lat(i), vel(i,1), vel(i,2), h(i));
+    omega_ie_n = earth_rate(lat(i));
 
     S = skewm(vel(i,:));
-    cor_n(i,:) = (S * (omega_en_N + 2*omega_ie_N))'; 
+    cor_n(i,:) = (S * (omega_en_n + 2*omega_ie_n))'; 
 end

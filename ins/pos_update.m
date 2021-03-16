@@ -1,10 +1,10 @@
-function pos_n = pos_update(pos, vel, dt)
+function pos = pos_update(pos_o, vel_o, dt)
 % pos_update: updates position in the navigation frame (lat, lon, h).
 %
 % INPUT:
-%   pos,    3x1 position vector [lat lon h] (rad, rad, m).
-%   vel,    3x1 NED velocities [n e d] (m/s).
-%   dt,     sampling interval.
+%   pos_o,    3x1 position vector [lat lon h] (rad, rad, m).
+%   vel_o,    3x1 NED velocities [n e d] (m/s).
+%   dt,     sampling interval (s).
 %
 % OUTPUT:
 %   pos,    3x1 updated position vector [lat lon h] (rad, rad, m).
@@ -43,19 +43,19 @@ function pos_n = pos_update(pos, vel, dt)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
-lat = pos(1); 
-lon = pos(2); 
-h   = pos(3);
-vn  = vel(1);
-ve  = vel(2);
-vd  = vel(3);
+lat = pos_o(1); 
+lon = pos_o(2); 
+h   = pos_o(3);
+vn  = vel_o(1);
+ve  = vel_o(2);
+vd  = vel_o(3);
 
 %% Altitude
 
-h_n  = h - (vd) * dt;
+h  = h - (vd) * dt;
 
-if h_n < 0
-    h_n = abs(h);
+if h < 0
+    h = abs(h);
     warning('pos_update: altitude is negative.')
 end
 
@@ -63,20 +63,20 @@ end
 
 [RM,~] = radius(lat);
 
-vn_c = vn / (RM + h_n);
+vn = vn / (RM + h);
 
-lat_n = lat + (vn_c) * dt;
+lat = lat + (vn) * dt;
 
 %% Longitude
 
-[~, RN] = radius(lat_n);
+[~, RN] = radius(lat);
 
-ve_c  = ve / ((RN + h_n) * cos (lat_n));
+ve  = ve / ((RN + h) * cos (lat));
 
-lon_n = lon + (ve_c) * dt;
+lon = lon + (ve) * dt;
 
 %% Position update
 
-pos_n = [lat_n lon_n h_n];
+pos = [lat lon h];
 
 end

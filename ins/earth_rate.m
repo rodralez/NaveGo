@@ -1,6 +1,13 @@
 function omega_ie_n = earth_rate(lat, precision)
 % earth_rate: turn rate of the Earth in the navigation frame.
 %
+% INPUT
+%	lat, 1x1 latitude (rad).
+%	precision, 'double' (default) or 'single' (string).
+%
+% OUTPUT
+%	omega_ie_n, earth rate (rad/s).
+%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
 %   This file is part of NaveGo, an open-source MATLAB toolbox for 

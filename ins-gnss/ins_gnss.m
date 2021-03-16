@@ -126,9 +126,36 @@ LG = length(gnss.t);
 roll_e  = zeros (LI, 1);
 pitch_e = zeros (LI, 1);
 yaw_e   = zeros (LI, 1);
-%  yawm_e  = zeros (Mi, 1);
+yawm_e  = zeros (LI, 1);
 
-% Initial attitude at INS time = 1
+% Preallocation of velocity vector
+vel_e   = zeros (LI, 3);
+
+% Preallocation of gravity vector
+gn_e   = zeros (LI, 3);
+
+% Preallocation of position vectors
+lat_e    = zeros (LI, 1);
+lon_e    = zeros (LI, 1);
+h_e      = zeros (LI, 1);
+
+% Preallocation of Kalman filter matrices for later performance analysis
+xi = zeros(LG, 15);        % Evolution of Kalman filter a priori states, xi
+xp = zeros(LG, 15);        % Evolution of Kalman filter a posteriori states, xp
+z = zeros(LG, 6);          % INS/GNSS measurements
+v = zeros(LG, 6);          % Kalman filter innovations
+b = zeros(LG, 6);          % Biases compensantions after Kalman filter correction
+
+A  = zeros(LG, 225);       % Transition-state matrices, A
+Pi = zeros(LG, 225);       % A priori covariance matrices, Pi
+Pp = zeros(LG, 225);       % A posteriori covariance matrices, Pp
+K  = zeros(LG, 90);        % Kalman gain matrices, K
+S  = zeros(LG, 36);        % Innovation matrices, S
+ob = zeros(LG, 1);         % Number of observable states at each GNSS data arriving
+
+%% INITIAL VALUES AT INS TIME = 1
+
+% Initial attitude
 roll_e(1)  = imu.ini_align(1);
 pitch_e(1) = imu.ini_align(2);
 yaw_e(1)   = imu.ini_align(3);
@@ -137,21 +164,12 @@ DCMnb = euler2dcm([roll_e(1); pitch_e(1); yaw_e(1);]);
 DCMbn = DCMnb';
 qua   = euler2qua([roll_e(1) pitch_e(1) yaw_e(1)]);
 
-% Preallocation of velocity vector
-vel_e   = zeros (LI, 3);
+% DEC = 0.5 * 180/pi;             % Magnetic declination (radians)
 
-% Preallocation of gravity vector
-gn_e   = zeros (LI, 3);
-
-% Initial velocity at INS time = 1
+% Initial velocity
 vel_e(1,:) = gnss.vel(1,:);
 
-% Preallocation of position vectors
-lat_e    = zeros (LI, 1);
-lon_e    = zeros (LI, 1);
-h_e      = zeros (LI, 1);
-
-% Initial position at INS time = 1
+% Initial position
 lat_e(1) = gnss.lat(1);
 lon_e(1) = gnss.lon(1);
 h_e(1)   = gnss.h(1);
@@ -168,11 +186,11 @@ kf.Pi = diag([imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_dyn, imu.ab_dyn].^2
 
 kf.Q  = diag([imu.arw, imu.vrw, imu.gb_psd, imu.ab_psd].^2);
 
-fb_corrected = imu.fb(1,:)' + ab_dyn;
-f_n = DCMbn * fb_corrected;
+fb_corrected = imu.fb(1,:)' + ab_dyn - imu.ab_sta';
+fn = DCMbn * fb_corrected;
 
 % Vector to update matrix F
-upd = [gnss.vel(1,:) gnss.lat(1) gnss.h(1) f_n'];
+upd = [gnss.vel(1,:) gnss.lat(1) gnss.h(1) fn'];
 
 % Update matrices F and G
 [kf.F, kf.G] = F_update(upd, DCMbn, imu);
@@ -189,28 +207,19 @@ kf.z = [ gnss.stdv, gnss.stdm ]';
 % Propagate prior estimates to get xp(1) and Pp(1)
 kf = kf_update( kf );
 
-% DEC = 0.5 * 180/pi;             % Magnetic declination (radians)
-
-% Preallocation of Kalman filter matrices for later performance analysis
-xi = zeros(LG, 15);        % Evolution of Kalman filter a priori states, xi
-xp = zeros(LG, 15);        % Evolution of Kalman filter a posteriori states, xp
-z = zeros(LG, 6);          % INS/GNSS measurements
-v = zeros(LG, 6);          % Kalman filter innovations
-b = zeros(LG, 6);          % Biases compensantions after Kalman filter correction
-
-A  = zeros(LG, 225);       % Transition-state matrices, A
-Pi = zeros(LG, 225);       % A priori covariance matrices, Pi
-Pp = zeros(LG, 225);       % A posteriori covariance matrices, Pp
-K  = zeros(LG, 90);        % Kalman gain matrices, K
-S  = zeros(LG, 36);        % Innovation matrices, S
-ob = zeros(LG, 1);         % Number of observable states at each GNSS data arriving
-
 % Initial matrices for Kalman filter performance analysis
+xi(1,:) = kf.xi';
 xp(1,:) = kf.xp';
+Pi(1,:) = reshape(kf.Pi, 1, 225);
 Pp(1,:) = reshape(kf.Pp, 1, 225);
+K(1,:)  = reshape(kf.K, 1, 90);
+S(1,:)  = reshape(kf.S, 1, 36);
 b(1,:)  = [imu.gb_dyn, imu.ab_dyn];
+v(1,:)  = kf.v';
+z(1,:)  = kf.z';
+b(1,:) = [gb_dyn', ab_dyn'];
 
-% INS (IMU) time is the master clock
+%% INS (IMU) time is the master clock
 for i = 2:LI
     
     %% INERTIAL NAVIGATION SYSTEM (INS)
@@ -227,16 +236,16 @@ for i = 2:LI
     dti = imu.t(i) - imu.t(i-1);
     
     % Turn-rates update
-    omega_ie_n = earthrate(lat_e(i-1));
-    omega_en_n = transportrate(lat_e(i-1), vel_e(i-1,1), vel_e(i-1,2), h_e(i-1));
+    omega_ie_n = earth_rate(lat_e(i-1));
+    omega_en_n = transport_rate(lat_e(i-1), vel_e(i-1,1), vel_e(i-1,2), h_e(i-1));
     
     % Gravity update
     gn_e(i,:) = gravity(lat_e(i-1), h_e(i-1));
     
     % Inertial sensors corrected with a posteriori KF biases estimation and
     % deterministic static biases
-    wb_corrected = imu.wb(i,:)' + gb_dyn - imu.gb_sta';
-    fb_corrected = imu.fb(i,:)' + ab_dyn - imu.ab_sta';
+    wb_corrected = imu.wb(i,:)' - gb_dyn - imu.gb_sta';
+    fb_corrected = imu.fb(i,:)' - ab_dyn - imu.ab_sta';
     
     % Attitude update
     [qua, DCMbn, euler] = att_update(wb_corrected, DCMbn, qua, ...
@@ -246,23 +255,20 @@ for i = 2:LI
     yaw_e(i)  = euler(3);
 
     % Velocity update
-    f_n = DCMbn * fb_corrected; % (5.47)
-    vel_n = vel_update(f_n, vel_e(i-1,:), omega_ie_n, omega_en_n, gn_e(i,:)', dti);
-    vel_e (i,:) = vel_n;
+    fn = DCMbn * fb_corrected;
+    vel = vel_update(fn, vel_e(i-1,:), omega_ie_n, omega_en_n, gn_e(i,:)', dti);
+    vel_e (i,:) = vel;
      
     % Position update
-    pos_n = pos_update([lat_e(i-1) lon_e(i-1) h_e(i-1)], vel_e(i,:), dti);
-    lat_e(i) = pos_n(1);
-    lon_e(i) = pos_n(2);
-    h_e(i)   = pos_n(3);
+    pos = pos_update([lat_e(i-1) lon_e(i-1) h_e(i-1)], vel_e(i,:), dti);
+    lat_e(i) = pos(1);
+    lon_e(i) = pos(2);
+    h_e(i)   = pos(3);
     
     % Turn-rates update with both updated velocity and position
-    omega_ie_n = earthrate(lat_e(i));
-    omega_en_n = transportrate(lat_e(i), vel_e(i,1), vel_e(i,2), h_e(i));
+    omega_ie_n = earth_rate(lat_e(i));
+    omega_en_n = transport_rate(lat_e(i), vel_e(i,1), vel_e(i,2), h_e(i));
        
-    % PENDING. Magnetic heading update
-    %         yawm_e(i) = hd_update (imu.mb(i,:), roll_e(i),  pitch_e(i), D);
-    
     % ZUPT detection algorithm
     idz = floor( gnss.zupt_win / dti ); % Index to set ZUPT window time
     
@@ -331,7 +337,7 @@ for i = 2:LI
         dtg = gnss.t(gdx) - gnss.t(gdx-1);
         
         % Vector to update matrix F
-        upd = [vel_e(i,:) lat_e(i) h_e(i) f_n'];
+        upd = [vel_e(i,:) lat_e(i) h_e(i) fn'];
         
         % Matrices F and G update
         [kf.F, kf.G] = F_update(upd, DCMbn, imu);
@@ -390,8 +396,8 @@ for i = 2:LI
         h_e(i)   = h_e(i)   - kf.xp(9);
         
         % Biases estimation
-        gb_dyn   = kf.xp(10:12);
-        ab_dyn   = kf.xp(13:15);
+        gb_dyn   = -kf.xp(10:12);
+        ab_dyn   = -kf.xp(13:15);
         
         % Matrices for later Kalman filter performance analysis
         xi(gdx,:) = kf.xi';
@@ -402,11 +408,13 @@ for i = 2:LI
         Pp(gdx,:) = reshape(kf.Pp, 1, 225);
         
         if(zupt_flag == false)
+            z(gdx,:)  = kf.z';
             v(gdx,:)  = kf.v';
             K(gdx,:)  = reshape(kf.K, 1, 90);
             S(gdx,:)  = reshape(kf.S, 1, 36);
         else
             zupt_flag = false;
+            z(gdx,:)  = [ kf.z' 0 0 0 ]';
             v(gdx,:)  = [ kf.v' 0 0 0 ]';
             K(gdx,1:45)  = reshape(kf.K, 1, 45);
             S(gdx,1:9)  = reshape(kf.S, 1, 9);
@@ -421,16 +429,16 @@ nav_e.tg    = gnss.t;           % GNSS time vector, which is the time vector whe
 nav_e.roll  = roll_e(1:i, :);   % Roll
 nav_e.pitch = pitch_e(1:i, :);  % Pitch
 nav_e.yaw   = yaw_e(1:i, :);    % Yaw
-% nav_e.yawm  = yawm_e(1:i, :);    % Magnetic heading
+nav_e.yawm  = yawm_e(1:i, :);   % Magnetic heading
 nav_e.vel   = vel_e(1:i, :);    % NED velocities
 nav_e.lat   = lat_e(1:i, :);    % Latitude
 nav_e.lon   = lon_e(1:i, :);    % Longitude
 nav_e.h     = h_e(1:i, :);      % Altitude
-nav_e.gn    = gn_e(1:i, :);     % Gravity
+nav_e.gn    = gn_e(1:i, :);     % Gravity estimation in the nav-frame.
 
 nav_e.xi    = xi;       % A priori states
 nav_e.xp    = xp;       % A posteriori states
-nav_e.m     = z;        % INS/GNSS measurements
+nav_e.z     = z;        % INS/GNSS measurements
 nav_e.v     = v;        % Kalman filter innovations
 nav_e.b     = b;        % Biases compensations
 

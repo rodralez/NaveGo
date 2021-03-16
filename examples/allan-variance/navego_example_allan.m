@@ -1,4 +1,4 @@
-% navego_allan_example: example of how to implement the Allan variance 
+% navego_example_allan: example of how to implement the Allan variance 
 % procedure with NaveGo functions.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -118,7 +118,7 @@ ref.DCMnb_m(:,1) = ones(N,1);
 ref.DCMnb_m(:,5) = ones(N,1);
 ref.DCMnb_m(:,9) = ones(N,1);
 
-%% Microstrain 3DM-GX3-35 IMU
+%% MICROSTRAIN 3DM-GX3-35 IMU
 
 % IMU data structure:
 %         t: Ix1 time vector (seconds).

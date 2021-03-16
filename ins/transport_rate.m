@@ -1,6 +1,15 @@
 function omega_en_n = transport_rate(lat, Vn, Ve, h)
 % transport_rate: calculates the transport rate in the navigation frame.
 %
+% INPUT
+%	lat, 1x1 latitude (rad).
+%	Vn, 1x1 North velocity (m/s).
+%   Ve, 1x1 East velocity (m/s).
+%   h, altitude (m)
+%
+% OUTPUT
+%	omega_en_n, transport rate (rad/s).
+%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
 %   This file is part of NaveGo, an open-source MATLAB toolbox for 
@@ -41,15 +50,15 @@ if (isa(Vn,'single'))
     
     [RM,RN] = radius(lat, 'single');
 
-    omega_en_n(1,1) = single(Ve /(RN + h));                 % North 
-    omega_en_n(2,1) = single(-(Vn /(RM + h)));              % East
+    omega_en_n(1,1) = single(  Ve / (RN + h));              % North 
+    omega_en_n(2,1) = single(-(Vn / (RM + h)));             % East
     omega_en_n(3,1) = single(-(Ve * tan(lat) / (RN + h)));  % Down
 else
     
     [RM,RN] = radius(lat);
 
-    omega_en_n(1,1) = (Ve /(RN + h));                 % North 
-    omega_en_n(2,1) = (-(Vn /(RM + h)));              % East
+    omega_en_n(1,1) = (  Ve / (RN + h));              % North 
+    omega_en_n(2,1) = (-(Vn / (RM + h)));             % East
     omega_en_n(3,1) = (-(Ve * tan(lat) / (RN + h)));  % Down
 end                               
 

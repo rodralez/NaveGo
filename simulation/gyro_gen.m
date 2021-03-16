@@ -3,11 +3,11 @@ function wb_sim = gyro_gen (ref, imu)
 %          IMU error profile.
 %
 % INPUT
-%	ref: data structure with true trajectory.
-%	imu: data structure with IMU error profile.
+%	ref, data structure with true trajectory.
+%	imu, data structure with IMU error profile.
 %
 % OUTPUT
-%	wb_sim: Nx3 matrix with simulated gryos in the body frame [X Y Z] 
+%	wb_sim, Nx3 matrix with simulated gryos in the body frame [X Y Z] 
 %     (rad, rad, rad).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -68,8 +68,8 @@ g_err_b = zeros(M);
 for i = 1:N
     
     dcmnb = reshape(ref.DCMnb_m(i,:), 3, 3);
-    omega_ie_n = earthrate(ref.lat(i));
-    omega_en_n = transportrate(ref.lat(i), ref.vel(i,1), ref.vel(i,2), ref.h(i));
+    omega_ie_n = earth_rate(ref.lat(i));
+    omega_en_n = transport_rate(ref.lat(i), ref.vel(i,1), ref.vel(i,2), ref.h(i));
     omega_in_b = dcmnb * (omega_en_n + omega_ie_n );
     g_err_b(i,:) = ( omega_in_b )';
 end

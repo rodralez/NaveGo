@@ -1,7 +1,7 @@
 function imu_si = imu_si_errors(imu, dt)
 % imu_err_profile: converts IMU errors manufacturer units to SI units.
 %
-% INPUT:
+% INPUT
 %	imu, data structure with IMU error profile in manufacturer units.
 %       imu.arw:      angle random walks [X Y Z] (deg/root-hour)
 %       imu.arrw:     angle rate random walks [X Y Z] (deg/root-hour/s)
@@ -16,7 +16,7 @@ function imu_si = imu_si_errors(imu, dt)
 %       imu.m_psd:    magnetometer noise density [X Y Z] (mgauss/root-Hz)
 %		dt:           IMU sampling interval (seconds).
 %
-% OUTPUT:
+% OUTPUT
 %	imu_si: data structure with IMU error profile in SI units.
 %       imu_si.arw:      angle random walks [X Y Z] (rad/s/root-Hz)
 %       imu_si.arrw:     angle rate random walks [X Y Z] (rad/s^2/root-Hz)

@@ -1,8 +1,8 @@
 % navego_example_real_gnss_outrage: post-processing integration of MPU-6000 
-% IMU and Ekinox GNSS data. Two GNSS outrage paths are forced.
+% IMU and Ekinox GNSS data. Two GNSS outrages are forced.
 %
 % The main goal is to integrate MPU-6000 IMU and Ekinox-D GNSS measurements  
-% and test INS/GNSS systems performance under two GNSS outrage.
+% and test INS/GNSS systems performance under two GNSS outrages.
 %
 % Sensors dataset was generated driving a car through the streets of
 % Turin city (Italy).
@@ -84,7 +84,7 @@ R2D = (180/pi);     % radians to degrees
 KT2MS = 0.514444;   % knot to m/s
 MS2KMH = 3.6;       % m/s to km/h
 
-%% LOAD REF DATA
+%% REF DATA
 
 % Reference dataset was obtained by processing Ekinox IMU and Ekinox GNSS
 % with tighly-coupled integration by Inertial Explorer software package.
@@ -111,7 +111,7 @@ fprintf('NaveGo: loading MPU-6000 IMU data... \n')
 
 load mpu6000_imu
 
-ekinox_imu.ab_sta = ekinox_imu.ab_sta - [0 0 G];
+mpu6000_imu.ab_sta = mpu6000_imu.ab_sta - [0 0 G];
 
 imu = mpu6000_imu;
 
@@ -127,11 +127,11 @@ gnss.eps = mean(diff(imu.t)) / 2; %  A rule of thumb for choosing eps.
 
 % Force two GNSS outrage paths
 
-% GNSS OUTRAGE TIME INTERVAL 1
+% GNSS OUTRAGE 1, TIME INTERVAL
 tor1_start  = 138906;          % (seconds)
 tor1_finish = 138906 + 32;     % (seconds)
 
-% GNSS OUTRAGE TIME INTERVAL 2
+% GNSS OUTRAGE 2, TIME INTERVAL
 tor2_start  = 139170;          % (seconds)
 tor2_finish = 139170 + 32;     % (seconds)
 
@@ -160,13 +160,13 @@ if (strcmp(GNSS_OUTRAGE, 'ON'))
     gnss.vel(idx:fdx, :) = [];
 end
 
-%% Printing navigation time
+%% NAVIGATION TIME
 
 to = (ref.t(end) - ref.t(1));
 
 fprintf('NaveGo: navigation time under analysis is %.2f minutes or %.2f seconds. \n', (to/60), to)
 
-%% INS/GNSS integration
+%% INS/GNSS INTEGRATION
 
 if strcmp(INS_GNSS, 'ON')
     
@@ -184,7 +184,7 @@ else
     load nav_or
 end
 
-%% Printing traveled distance
+%% TRAVELED DISTANCE
 
 distance = gnss_distance (nav_or.lat, nav_or.lon);
 
@@ -212,7 +212,7 @@ ref.lon     = ref.lon  (idx:fdx);
 ref.h       = ref.h    (idx:fdx);
 ref.vel     = ref.vel  (idx:fdx, :);
 
-%% Interpolation of INS/GNSS dataset
+%% INTERPOLATION OF INS/GNSS DATASET
 
 % INS/GNSS estimates and GNSS data are interpolated according to the
 % reference dataset.
@@ -220,17 +220,17 @@ ref.vel     = ref.vel  (idx:fdx, :);
 [nav_i,  ref_n] = navego_interpolation (nav_or, ref);
 [gnss_i, ref_g] = navego_interpolation (gnss,  ref);
 
-%% Printing RMSE from INS/GNSS data
+%% NAVIGATION RMSE 
 
 rmse_v = print_rmse (nav_i, gnss_i, ref_n, ref_g, 'Ekinox IMU/GNSS');
 
-%% Saving RMSE to CVS file
+%% RMSE TO CVS FILE
 
 csvwrite('nav_ekinox_or.csv', rmse_v);
 
-%% PLOT
+%% PLOTS
 
 if (strcmp(PLOT,'ON'))
     
-    navego_plot (ref, gnss, nav_or, gnss_i, nav_i, ref_g, ref_n)
+    navego_plot_main (ref, gnss, nav_or, gnss_i, nav_i, ref_g, ref_n)
 end

@@ -1,12 +1,12 @@
-function DCMbn_n = dcm_update(DCMbn, euler)
+function DCMbn = dcm_update(DCMbn, euler)
 % dcm_update: updates  body-to-nav DCM.
 %
 % INPUT:
 %   DCMbn,	3x3 body-to-nav DCM.
-%   euler,	3x1 Euler angles (rad).
+%   euler,	3x1 Euler angles [roll pitch yaw] (rad).
 %
 % OUTPUT:
-%   DCMbn_n,    3x3 updated DCM body-to-nav.
+%   DCMbn,  3x3 updated DCM body-to-nav.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -56,4 +56,4 @@ else
 end
 
 % Titterton, Eq. 11.4, p. 311.
-DCMbn_n = DCMbn * A;
+DCMbn = DCMbn * A;

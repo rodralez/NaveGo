@@ -1,11 +1,11 @@
 function DCMbn = qua2dcm(qua)
-% qua2dcm: transforms quaternion to body-to-nav DCM.
+% qua2dcm: transforms quaternion to DCM body-to-nav.
 %
 % INPUT
-%   qua: 4x1 quaternion.
+%   qua, 4x1 quaternion.
 %
 % OUTPUT
-%   DCMbn: 3x3 body-to-nav DCM.
+%   DCMbn, 3x3 DCM body-to-nav.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
