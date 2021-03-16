@@ -99,8 +99,8 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %
 %   ins_gps.m, ins_gnss function is based on that previous NaveGo function.
 %
-% Version: 008
-% Date:    2020/11/23
+% Version: 009
+% Date:    2021/03/16
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -126,7 +126,6 @@ LG = length(gnss.t);
 roll_e  = zeros (LI, 1);
 pitch_e = zeros (LI, 1);
 yaw_e   = zeros (LI, 1);
-yawm_e  = zeros (LI, 1);
 
 % Preallocation of velocity vector
 vel_e   = zeros (LI, 3);
@@ -159,7 +158,6 @@ ob = zeros(LG, 1);         % Number of observable states at each GNSS data arriv
 roll_e(1)  = imu.ini_align(1);
 pitch_e(1) = imu.ini_align(2);
 yaw_e(1)   = imu.ini_align(3);
-%  yawm_e(1)  = imu.ini_align(3);
 DCMnb = euler2dcm([roll_e(1); pitch_e(1); yaw_e(1);]);
 DCMbn = DCMnb';
 qua   = euler2qua([roll_e(1) pitch_e(1) yaw_e(1)]);
@@ -429,7 +427,6 @@ nav_e.tg    = gnss.t;           % GNSS time vector, which is the time vector whe
 nav_e.roll  = roll_e(1:i, :);   % Roll
 nav_e.pitch = pitch_e(1:i, :);  % Pitch
 nav_e.yaw   = yaw_e(1:i, :);    % Yaw
-nav_e.yawm  = yawm_e(1:i, :);   % Magnetic heading
 nav_e.vel   = vel_e(1:i, :);    % NED velocities
 nav_e.lat   = lat_e(1:i, :);    % Latitude
 nav_e.lon   = lon_e(1:i, :);    % Longitude
