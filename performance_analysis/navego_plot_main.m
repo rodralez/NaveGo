@@ -136,15 +136,15 @@ figure;
 
 subplot(311)
 cell_s = {'NORTH VELOCITY', 'Time [s]', '[m/s]', 'REF', 'GNSS', 'INS/GNSS'};
-navego_plot(cell_s, 'NORMAL', ref.t, ref.vel(:,1), gnss.t, gnss.vel(:,1), nav_e.t, nav_e.vel(:,1));
+navego_plot(cell_s, 'NORMAL', ref.t, ref.vel(:,1), nav_e.t, nav_e.vel(:,1), gnss.t, gnss.vel(:,1));
 
 subplot(312)
 cell_s = {'EAST VELOCITY', 'Time [s]', '[m/s]', 'REF', 'GNSS', 'INS/GNSS'};
-navego_plot(cell_s, 'NORMAL', ref.t, ref.vel(:,2), gnss.t, gnss.vel(:,2), nav_e.t, nav_e.vel(:,2));
+navego_plot(cell_s, 'NORMAL', ref.t, ref.vel(:,2), nav_e.t, nav_e.vel(:,2), gnss.t, gnss.vel(:,2));
 
 subplot(313)
 cell_s = {'DOWN VELOCITY', 'Time [s]', '[m/s]', 'REF', 'GNSS', 'INS/GNSS'};
-navego_plot(cell_s, 'NORMAL', ref.t, ref.vel(:,3), gnss.t, gnss.vel(:,3), nav_e.t, nav_e.vel(:,3));
+navego_plot(cell_s, 'NORMAL', ref.t, ref.vel(:,3), nav_e.t, nav_e.vel(:,3), gnss.t, gnss.vel(:,3));
 
 % VELOCITIES ERRORS
 figure;
@@ -152,32 +152,35 @@ figure;
 subplot(311)
 cell_s = {'VELOCITY NORTH ERROR', 'Time [s]', '[m/s]', '3\sigma', 'GNSS', 'INS/GNSS'};
 navego_plot(cell_s, 'ERROR', nav_e.tg, sig3_v(:,4), ...
-    gnss_i.t, (gnss_i.vel(:,1) - ref_g.vel(:,1)), nav_i.t, (nav_i.vel(:,1) - ref_n.vel(:,1)));
-
+    nav_i.t, (nav_i.vel(:,1) - ref_n.vel(:,1)), ...
+    gnss_i.t, (gnss_i.vel(:,1) - ref_g.vel(:,1)) ) ;
+    
 subplot(312)
 cell_s = {'VELOCITY EAST ERROR', 'Time [s]', '[m/s]', '3\sigma', 'GNSS', 'INS/GNSS'};
 navego_plot(cell_s, 'ERROR', nav_e.tg, sig3_v(:,5), ...
-    gnss_i.t, (gnss_i.vel(:,2) - ref_g.vel(:,2)), nav_i.t, (nav_i.vel(:,2) - ref_n.vel(:,2)));
+    nav_i.t, (nav_i.vel(:,2) - ref_n.vel(:,2)), ...
+    gnss_i.t, (gnss_i.vel(:,2) - ref_g.vel(:,2)) ) ;
 
 subplot(313)
 cell_s = {'VELOCITY DOWN ERROR', 'Time [s]', '[m/s]', '3\sigma', 'GNSS', 'INS/GNSS'};
 navego_plot(cell_s, 'ERROR', nav_e.tg, sig3_v(:,6), ...
-    gnss_i.t, (gnss_i.vel(:,3) - ref_g.vel(:,3)), nav_i.t, (nav_i.vel(:,3) - ref_n.vel(:,3)));
+        nav_i.t, (nav_i.vel(:,3) - ref_n.vel(:,3)), ...
+    gnss_i.t, (gnss_i.vel(:,3) - ref_g.vel(:,3)) ) ;
 
 % POSITION
 figure;
 
 subplot(311)
 cell_s = {'LATITUDE', 'Time [s]', '[deg]', 'REF', 'GNSS', 'INS/GNSS'};
-navego_plot(cell_s, 'NORMAL', ref.t, R2D.*ref.lat, gnss.t, R2D.*gnss.lat, nav_e.t, R2D.*nav_e.lat);
+navego_plot(cell_s, 'NORMAL', ref.t, R2D.*ref.lat, nav_e.t, R2D.*nav_e.lat, gnss.t, R2D.*gnss.lat);
 
 subplot(312)
 cell_s = {'LONGITUDE', 'Time [s]', '[deg]', 'REF', 'GNSS', 'INS/GNSS'};
-navego_plot(cell_s, 'NORMAL', ref.t, R2D.*ref.lon, gnss.t, R2D.*gnss.lon, nav_e.t, R2D.*nav_e.lon);
+navego_plot(cell_s, 'NORMAL', ref.t, R2D.*ref.lon, nav_e.t, R2D.*nav_e.lon, gnss.t, R2D.*gnss.lon);
 
 subplot(313)
 cell_s = {'ALTITUDE', 'Time [s]', '[deg]', 'REF', 'GNSS', 'INS/GNSS'};
-navego_plot(cell_s, 'NORMAL', ref.t, ref.h, gnss.t, gnss.h, nav_e.t, nav_e.h);
+navego_plot(cell_s, 'NORMAL', ref.t, ref.h, nav_e.t, nav_e.h, gnss.t, gnss.h);
 
 % POSITION ERRORS
 [RN,RE]  = radius(nav_i.lat);
@@ -197,20 +200,20 @@ figure;
 subplot(311)
 cell_s = {'LATITUDE ERROR', 'Time [s]', '[m]', '3\sigma', 'GNSS', 'INS/GNSS'};
 navego_plot(cell_s, 'ERROR', nav_e.tg, LAT2M_G .* sig3_v(:,7), ...
-                             gnss_i.t, LAT2M_I .* (gnss_i.lat - ref_g.lat), ...
-                             nav_i.t,  LAT2M_N .* (nav_i.lat - ref_n.lat) );
+                             nav_i.t,  LAT2M_N .* (nav_i.lat - ref_n.lat), ... 
+                             gnss_i.t, LAT2M_I .* (gnss_i.lat - ref_g.lat) );
 
 subplot(312)
 cell_s = {'LONGITUDE ERROR', 'Time [s]', '[m]', '3\sigma', 'GNSS', 'INS/GNSS'};
 navego_plot(cell_s, 'ERROR', nav_e.tg, LON2M_G .* sig3_v(:,8), ...
-                             gnss_i.t, LON2M_I .* (gnss_i.lon - ref_g.lon), ...
-                             nav_i.t,  LON2M_N .* (nav_i.lon - ref_n.lon) );
+                             nav_i.t,  LON2M_N .* (nav_i.lon - ref_n.lon) , ...
+                             gnss_i.t, LON2M_I .* (gnss_i.lon - ref_g.lon) );
 
 subplot(313)
 cell_s = {'ALTITUDE ERROR', 'Time [s]', '[m]', '3\sigma', 'GNSS', 'INS/GNSS'};
 navego_plot(cell_s, 'ERROR', nav_e.tg, sig3_v(:,9), ...
-                             gnss_i.t, (gnss_i.h - ref_g.h), ...
-                             nav_i.t,  (nav_i.h - ref_n.h) );
+                             nav_i.t, (nav_i.h - ref_n.h) , ...
+                             gnss_i.t, (gnss_i.h - ref_g.h) );
 
 % BIAS ESTIMATION
 figure;

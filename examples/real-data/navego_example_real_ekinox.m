@@ -97,8 +97,6 @@ fprintf('NaveGo: loading Ekinox IMU data... \n')
 
 load ekinox_imu
 
-ekinox_imu.ab_sta = ekinox_imu.ab_sta - [0 0 G];
-
 %% EKINOX GNSS 
 
 fprintf('NaveGo: loading Ekinox GNSS data... \n')

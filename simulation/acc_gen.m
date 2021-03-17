@@ -38,8 +38,11 @@ function [fb_sim] = acc_gen (ref, imu)
 %   Aggarwal, P. et al. MEMS-Based Integrated Navigation. Artech
 % House. 2010.
 %
-% Version: 008
-% Date:    2020/11/03
+%   Thinking about accelerometers and gravity by Dave Redell
+% http://www.lunar.org/docs/LUNARclips/v5/v5n1/Accelerometers.html
+%
+% Version: 009
+% Date:    2021/03/16
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -74,7 +77,8 @@ end
 %% SIMULATION OF GRAVITY AND CORIOLIS
 
 % Gravity and Coriolis in nav-ref
-grav_n = gravity(ref.lat, ref.h);
+grav_n = -gravity(ref.lat, ref.h);              % Accelerometers senses an 
+                                                % acceleration of 1.0 G straight up.
 cor_n  = coriolis(ref.lat, ref.vel, ref.h);
 
 % Gravity and Coriolis from nav-ref to body-ref

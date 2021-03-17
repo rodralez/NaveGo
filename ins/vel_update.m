@@ -41,8 +41,8 @@ function vel = vel_update(fn, vel_o, omega_ie_n, omega_en_n, gn, dt)
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 17.
 %
-% Version: 003
-% Date:    2020/10/05
+% Version: 004
+% Date:    2021/03/16
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -50,7 +50,7 @@ S = skewm(vel_o);                               % Skew matrix with velocities
  
 coriolis = S * (omega_en_n + 2 * omega_ie_n);   % Coriolis 
 
-fn_c = fn - coriolis - gn;                      % Corrected specific force in nav-frame
+fn_c = fn - coriolis + gn;                      % Corrected specific force in nav-frame
 
 vel = vel_o + (fn_c' * dt);
 

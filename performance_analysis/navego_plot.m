@@ -48,14 +48,14 @@ orange  = [0.8500, 0.3250, 0.0980];
 % light_blue = [0.3010, 0.7450, 0.9330];
 
 % Text size
-font_title  = 50;
-font_label  = 25;
-font_tick   = 15;
-font_legend = 15;
-% font_title  = 25;
-% font_label  = 15;
-% font_tick   = 10;
-% font_legend = 10;
+% font_title  = 50;
+% font_label  = 25;
+% font_tick   = 15;
+% font_legend = 15;
+font_title  = 25;
+font_label  = 15;
+font_tick   = 10;
+font_legend = 10;
 
 % Line width
 lw = 2;

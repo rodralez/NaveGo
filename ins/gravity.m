@@ -1,11 +1,11 @@
-function g_n = gravity(lat, h)
+function gn = gravity(lat, h)
 % gravity: calculates gravity vector in the navigation frame.
 %
-% INPUT:
+% INPUT
 %       lat, Mx1 latitude (radians).
 %         h, Mx1 altitude (m).
 %
-% OUTPUT:
+% OUTPUT
 %		g_n, Mx3 gravity vector in the nav-frame (m/s^2).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -47,21 +47,46 @@ function g_n = gravity(lat, h)
 % b = 9.81 * 0.1;
 % g_noise = (b-a).*rand(1) + a;
 
-h = abs(h);
-sin1 = sin(lat);
-sin2 = sin(2.*lat);
+% h = abs(h);
+% sin1 = sin(lat);
+% sin2 = sin(2.*lat);
+% 
+% g0 = 9.780318 * ( 1 + 5.3024e-03.*(sin1).^2 - 5.9e-06.*(sin2).^2 );
+% 
+% [RM,RN] = radius(lat);
+% 
+% Ro = sqrt(RN .* RM);
+% 
+% g = (g0 ./ (1 + (h ./ Ro)).^2);
+% 
+% Z = zeros(size(lat));
+% 
+% g_n = [Z Z g];
 
-g0 = 9.780318 * ( 1 + 5.3024e-03.*(sin1).^2 - 5.9e-06.*(sin2).^2 );
+% Parameters
+R_0 = 6378137; %WGS84 Equatorial radius in meters
+R_P = 6356752.31425; %WGS84 Polar radius in meters
+e = 0.0818191908425; %WGS84 eccentricity
+f = 1 / 298.257223563; %WGS84 flattening
+mu = 3.986004418E14; %WGS84 Earth gravitational constant (m^3 s^-2)
+omega_ie = 7.292115E-5;  % Earth rotation rate (rad/s)
 
-[RM,RN] = radius(lat);
+% Begins
 
-Ro = sqrt(RN .* RM);
+% Calculate surface gravity using the Somigliana model, (2.134)
+sinsqL = sin(lat)^2;
+g_0 = 9.7803253359 * (1 + 0.001931853 * sinsqL) / sqrt(1 - e^2 * sinsqL);
 
-g = (g0 ./ (1 + (h ./ Ro)).^2);
+% Calculate north gravity using (2.140)
+gn(1,1) = -8.08E-9 * h * sin(2 * lat);
 
-Z = zeros(size(lat));
+% East gravity is zero
+gn(2,1) = 0;
 
-g_n = [Z Z g];
+% Calculate down gravity using (2.139)
+gn(3,1) = g_0 * (1 - (2 / R_0) * (1 + f * (1 - 2 * sinsqL) +...
+    (omega_ie^2 * R_0^2 * R_P / mu)) * h + (3 * h^2 / R_0^2));
+
 
 end
 
