@@ -25,11 +25,11 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 % ini_align_err: 1x3 initial attitude errors at t(1).
 %
 %	gnss, GNSS data structure.
-%         t: Mx1 time vector (seconds).
-%       lat: Mx1 latitude (radians).
-%       lon: Mx1 longitude (radians).
-%         h: Mx1 altitude (m).
-%       vel: Mx3 NED velocities (m/s).
+%         t: Gx1 time vector (seconds).
+%       lat: Gx1 latitude (radians).
+%       lon: Gx1 longitude (radians).
+%         h: Gx1 altitude (m).
+%       vel: Gx3 NED velocities (m/s).
 %       std: 1x3 position standard deviations (rad, rad, m).
 %      stdm: 1x3 position standard deviations (m, m, m).
 %      stdv: 1x3 velocity standard deviations (m/s).
@@ -46,7 +46,7 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 % OUTPUT
 %   nav_e, INS/GNSS navigation estimates data structure.
 %         t: Ix1 INS time vector (seconds).
-%        tg: Mx1 GNSS time vector, when Kalman filter was executed (seconds).
+%        tg: Gx1 GNSS time vector, when Kalman filter was executed (seconds).
 %      roll: Ix1 roll (radians).
 %     pitch: Ix1 pitch (radians).
 %       yaw: Ix1 yaw (radians).
@@ -54,17 +54,20 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %       lat: Ix1 latitude (radians).
 %       lon: Ix1 longitude (radians).
 %         h: Ix1 altitude (m).
-%        xi: Mx15 Kalman filter a priori states.
-%        xp: Mx15 Kalman filter a posteriori states.
-%         z: Mx6  INS/GNSS measurements
-%         v: Mx6  Kalman filter innovations.
-%         b: Mx6 Kalman filter biases compensations, [gb_dyn ab_dyn].
-%         A: Mx225 Kalman filter transition-state matrices, one matrix per
+%        xi: Gx15 Kalman filter a priori states.
+%        xp: Gx15 Kalman filter a posteriori states.
+%         z: Gx6  INS/GNSS measurements
+%         v: Gx6  Kalman filter innovations.
+%         b: Gx6 Kalman filter biases compensations, [gb_dyn ab_dyn].
+%         A: Gx225 Kalman filter transition-state matrices, one matrix per
 %          row ordered by columns.
-%        Pp: Mx225 Kalman filter a posteriori covariance matrices, one
+%        Pp: Gx225 Kalman filter a posteriori covariance matrices, one
 %         matrix per row ordered by columns.
-%        Pi: Mx225 Kalman filter a priori covariance matrices, one matrix
+%        Pi: Gx225 Kalman filter a priori covariance matrices, one matrix
 %         per row ordered by columns.
+%         K: Gx90 Kalman gain matrices
+%         S: Gx36 Innovation matrices
+%        ob: Gx1 Number of observable states after each GNSS data arriving
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %

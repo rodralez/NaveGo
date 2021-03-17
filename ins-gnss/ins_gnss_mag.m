@@ -52,25 +52,29 @@ function [nav_e] = ins_gnss_mag(imu, gnss, mag, att_mode)
 % OUTPUT
 %   nav_e, INS/GNSS navigation estimates data structure.
 %         t: Ix1 INS time vector (seconds).
-%        tg: Mx1 GNSS time vector, when Kalman filter was executed (seconds).
+%        tg: Gx1 GNSS time vector, when Kalman filter was executed (seconds).
 %      roll: Ix1 roll (radians).
 %     pitch: Ix1 pitch (radians).
 %       yaw: Ix1 yaw (radians).
+%      yawm: Mx1 magnetic yaw (radians).
 %       vel: Ix3 NED velocities (m/s).
 %       lat: Ix1 latitude (radians).
 %       lon: Ix1 longitude (radians).
 %         h: Ix1 altitude (m).
-%        xi: Mx15 Kalman filter a priori states.
-%        xp: Mx15 Kalman filter a posteriori states.
-%         z: Mx6  INS/GNSS measurements
-%         v: Mx6  Kalman filter innovations.
-%         b: Mx6 Kalman filter biases compensations, [gb_dyn ab_dyn].
-%         A: Mx225 Kalman filter transition-state matrices, one matrix per
+%        xi: Gx15 Kalman filter a priori states.
+%        xp: Gx15 Kalman filter a posteriori states.
+%         z: Gx7  INS/GNSS measurements
+%         v: Gx7  Kalman filter innovations.
+%         b: Gx6 Kalman filter biases compensations, [gb_dyn ab_dyn].
+%         A: Gx225 Kalman filter transition-state matrices, one matrix per
 %          row ordered by columns.
 %        Pp: Mx225 Kalman filter a posteriori covariance matrices, one
 %         matrix per row ordered by columns.
 %        Pi: Mx225 Kalman filter a priori covariance matrices, one matrix
 %         per row ordered by columns.
+%         K: Gx105 Kalman gain matrices
+%         S: Gx49 Innovation matrices
+%        ob: Gx1 Number of observable states after each GNSS data arriving
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -105,8 +109,8 @@ function [nav_e] = ins_gnss_mag(imu, gnss, mag, att_mode)
 %
 %   ins_gps.m, ins_gnss function is based on that previous NaveGo function.
 %
-% Version: 008
-% Date:    2020/11/23
+% Version: 001
+% Date:    2021/03/17
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
