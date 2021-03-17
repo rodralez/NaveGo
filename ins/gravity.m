@@ -28,50 +28,24 @@ function gn = gravity(lat, h)
 %
 % References:
 %
-%	Titterton, D.H. and Weston, J.L. (2004). Strapdown
-% Inertial Navigation Technology (2nd Ed.). Institution
-% of Engineering and Technology, USA. Eq. 3.89-3.91.
-%
-%	R. Gonzalez, J. Giribet, and H. Patiño. An approach to
-% benchmarking of loosely coupled low-cost navigation systems,
-% Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
-% issue 3, pp. 272-287, 2015. Eq. 16.
+%   Paul D. Groves. Principles of GNSS, Inertial, and
+% Multisensor Integrated Navigation Systems. Second Edition.
+% Eq. 2.134 to 2.140, page 70.
 %
 % Version: 004
-% Date:    2019/01/09
+% Date:    2021/03/17
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-% Set gravity uncertainty
-% a = 9.81 * 0.1;
-% b = 9.81 * 0.1;
-% g_noise = (b-a).*rand(1) + a;
-
-% h = abs(h);
-% sin1 = sin(lat);
-% sin2 = sin(2.*lat);
-% 
-% g0 = 9.780318 * ( 1 + 5.3024e-03.*(sin1).^2 - 5.9e-06.*(sin2).^2 );
-% 
-% [RM,RN] = radius(lat);
-% 
-% Ro = sqrt(RN .* RM);
-% 
-% g = (g0 ./ (1 + (h ./ Ro)).^2);
-% 
-% Z = zeros(size(lat));
-% 
-% g_n = [Z Z g];
+gn = zeros(3,1);
 
 % Parameters
-R_0 = 6378137; %WGS84 Equatorial radius in meters
-R_P = 6356752.31425; %WGS84 Polar radius in meters
-e = 0.0818191908425; %WGS84 eccentricity
-f = 1 / 298.257223563; %WGS84 flattening
-mu = 3.986004418E14; %WGS84 Earth gravitational constant (m^3 s^-2)
-omega_ie = 7.292115E-5;  % Earth rotation rate (rad/s)
-
-% Begins
+R_0 = 6378137;              % WGS84 Equatorial radius in meters
+R_P = 6356752.31425;        % WGS84 Polar radius in meters
+e = 0.0818191908425;        % WGS84 eccentricity
+f = 1 / 298.257223563;      % WGS84 flattening
+mu = 3.986004418E14;        % WGS84 Earth gravitational constant (m^3 s^-2)
+omega_ie_n = 7.292115E-5;   % Earth rotation rate (rad/s)
 
 % Calculate surface gravity using the Somigliana model, (2.134)
 sinsqL = sin(lat)^2;
@@ -85,8 +59,7 @@ gn(2,1) = 0;
 
 % Calculate down gravity using (2.139)
 gn(3,1) = g_0 * (1 - (2 / R_0) * (1 + f * (1 - 2 * sinsqL) +...
-    (omega_ie^2 * R_0^2 * R_P / mu)) * h + (3 * h^2 / R_0^2));
-
+    (omega_ie_n^2 * R_0^2 * R_P / mu)) * h + (3 * h^2 / R_0^2));
 
 end
 

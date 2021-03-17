@@ -99,8 +99,6 @@ fprintf('NaveGo: loading MPU-6000 IMU data... \n')
 
 load mpu6000_imu
 
-mpu6000_imu.ab_sta = mpu6000_imu.ab_sta - [0 0 G];
-
 %% EKINOX GNSS 
 
 fprintf('NaveGo: loading Ekinox GNSS data... \n')

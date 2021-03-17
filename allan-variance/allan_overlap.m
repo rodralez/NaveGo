@@ -96,8 +96,8 @@ function [retval, s, errorb, tau] = allan_overlap(data,tau,name,verbose)
 % *************************************************************************
 % This file has been modified for NaveGo toolbox.
 % *************************************************************************
-% Version: 002
-% Date:    2019/09/30
+% Version: 003
+% Date:    2021/03/17
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 % *************************************************************************
@@ -312,7 +312,9 @@ if isfield(data,'rate') && data.rate > 0 % if data rate was given
     for i = tau
         k=k+1;
         if verbose >= 2, fprintf(1,'%d ',i); end
-
+        
+        % Print a return on console every 10 executions
+        if (mod(k,5) == 0), fprintf('\n'); end
 
         % pad phase data set length to an even multiple of this tau value
         mphase=zeros(ceil(length(dphase)./m(k))*m(k),1);
@@ -405,7 +407,10 @@ elseif isfield(data,'time')
         k=k+1;
         fa=[];
 
-%         if verbose >= 2, fprintf(1,'%d ',i); end
+        if verbose >= 2, fprintf(1,'%d ',i); end
+        
+        % Print a return on console every 10 executions
+        if (mod(k,5) == 0), fprintf('\n'); end
         
         freq = dfreq; time = dtime;
                
