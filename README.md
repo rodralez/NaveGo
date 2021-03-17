@@ -25,6 +25,8 @@ Main features of NaveGo are:
 
 * Processing of a loosely-coupled integrated navigation system (INS/GNSS).
 
+* Processing of a loosely-coupled integrated navigation system with magnetometers (INS/GNSS/MAG).
+
 * Simulation of inertial sensors and GNSS.
 
 * Zero Velocity Update (ZUPT) detection algorithm.
@@ -54,15 +56,13 @@ NaveGo has been validated by processing real-world data from a real trajectory a
 
 Future features of NaveGo will be:
 
-* Compass heading using magnetometers.
+* Compass heading using magnetometers. DONE!.
 
 * Barometer as aiding sensor for altitude.
 
 * G-sensitivity correction for gyroscopes.
 
 * Tightly-coupled INS/GNSS integration.
-
-* RTS smoother.
 
 * Adaptive Kalman filter.
 
@@ -190,4 +190,4 @@ We would like to thank to the many people that have contributed to make NaveGo a
 
 * Dr. Paolo Zoccarato for his comments on attitude conversion.
 
-	
+* Mr. Daniel Lu, GIS Analyst at Western Heritage, for his comments on the sign of acceleration when accelerometers sens gravity.
