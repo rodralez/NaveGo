@@ -3,66 +3,66 @@ function imu = allan_imu (imu_sta, verbose)
 % coming from an IMU in order to characterize several types of IMU errors.
 %
 % INPUT
-%   imu_sta: input data structure must contains the following fields
-%   fb: Nx3 accelerations [X Y Z] (m/s^2).
-%   wb: Nx3 turn rates [X Y Z] (rad/s).
-%   t: Nx1 time vector (s).
+%   imu_sta, input data structure must contains the following fields:
+%   
+%   fb, Nx3 accelerations [X Y Z] (m/s^2).
+%   wb, Nx3 turn rates [X Y Z] (rad/s).
+%   t, Nx1 time vector (s).
 %
-%   verbose: verbose level for allan_overlap function.
-%      0 = silent & no data plots; 1 = status messages; 2 = all messages    
+%   verbose, verbose level for allan_overlap function.
+%   0 = silent & no data plots; 1 = status messages; 2 = all messages.    
 %
 % OUTPUT
-%   imu: input data structure with the following addtional fields
+%   imu, input data structure with the following addtional fields:
 %
-%   arw: 1x3 angle random walk (rad/root-s). Value is taken 
+%   arw, 1x3 angle random walk (rad/root-s). Value is taken 
 %       straightfoward from the plot at t = 1 s.
 %       Note: units of rad/s from the plot have to be transformed to 
 %       rad/root-s. This is done by multiplying (rad/s * root-s/root-s) = 
 %       (rad/s * root-s/1) = rad/root-s, since root-s = 1 for tau = 1, time 
 %       at which random walk is evaluated.     
 %
-%	vrw: 1x3 velocity random walk (m/s/root-s). Value is taken 
+%   vrw, 1x3 velocity random walk (m/s/root-s). Value is taken 
 %       straightfoward from the plot at t = 1 s.
 %       Note: units of m/s^2 from the plot have to be transformed to 
 %       m/s/root-s. This is done by multiplying (m/s^2 * root-s/root-s) = 
 %       (m/s^2 * root-s/1) = m/s/root-s, since root-s = 1 for tau = 1, time 
 %       at which random walk is evaluated.
 %
-%	gb_dyn: 1x3 gyros bias instability in rad/s. Value is taken
+%   gb_dyn: 1x3 gyros bias instability (rad/s). Value is taken
 %       from the plot at the minimun value.
 %
-%   ab_dyn: 1x3 accrs bias instability in m/s^2. Value is taken
+%   ab_dyn, 1x3 accrs bias instability (m/s^2). Value is taken
 %       from the plot at the minimun value.
+%   
+%   gb_psd, gyro dynamic bias PSD [X Y Z] (rad/s/root-Hz)
+%   ab_psd, acc dynamic bias PSD [X Y Z] (m/s^2/root-Hz)
 %
-%   ab_psd:
+%   gb_corr, 1x3 gyros correlation times (s).
+%   ab_corr, 1x3 accrs correlation times (s).
 %
-%   ab_psd:
+%   g_std, 1x3 gyros standard deviations (rad/s).
+%   a_std, 1x3 accrs standard deviations (m/s^2).
 %
-%   gb_corr: 1x3 gyros correlation times (s).
-%   ab_corr: 1x3 accrs correlation times (s).
+%   g_max, 1x3 gyros maximum values (rad/s).
+%   a_max, 1x3 accrs maximum values (m/s^2).
 %
-%   g_std: 1x3 gyros standard deviations (rad/s).
-%   a_std: 1x3 accrs standard deviations (m/s^2).
+%   g_min, 1x3 gyros minimum values (rad/s).
+%   a_min, 1x3 accrs minimum values (m/s^2).
 %
-%   g_max: 1x3 gyros maximum values (rad/s).
-%   a_max: 1x3 accrs maximum values (m/s^2).
+%   g_mean, 1x3 gyros mean values (rad/s).
+%   a_meam, 1x3 accrs mean values (m/s^2).
 %
-%   g_min: 1x3 gyros minimum values (rad/s).
-%   a_min: 1x3 accrs maximum values (m/s^2).
+%   g_median, 1x3 gyros median values (rad/s).
+%   a_median, 1x3 accrs median values (m/s^2).
 %
-%   g_mean: 1x3 gyros mean values (rad/s).
-%   a_meam: 1x3 accrs mean values (m/s^2).
+%   fb_tau,   Mx3 time vector from AV for accelerometers [X Y Z] (s).
+%   fb_allan, Mx3 AV vector for accelerometers [X Y Z] (m/s^2).
+%   fb_error, Mx3 AV errors for accelerometers [X Y Z] (m/s^2).
 %
-%   g_median: 1x3 gyros median values (rad/s).
-%   a_median: 1x3 accrs median values (m/s^2).
-%
-%   fb_tau:   Mx3 time vector from AV for accelerometers [X Y Z].
-%   fb_allan: Mx3 AV vector for accelerometers [X Y Z].
-%   fb_error: Mx3 AV errors for accelerometers [X Y Z].
-%
-%   wb_tau:   Mx3 time vector from AV for gyros [X Y Z].
-%   wb_allan: Mx3 AV vector for gyros [X Y Z].
-%   wb_error: Mx3 AV errors for gyros [X Y Z].
+%   wb_tau,   Mx3 time vector from AV for gyros [X Y Z] (s).
+%   wb_allan, Mx3 AV vector for gyros [X Y Z] (rad/s).
+%   wb_error, Mx3 AV errors for gyros [X Y Z] (rad/s).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -257,13 +257,13 @@ grid on
 title('GYROS ALLAN VARIANCES')
 legend('GYRO X','GYRO Y', 'GYRO Z' )
 
-%% Extra data
+%% EXTRA DATA
 
 % Sampling frequency
 imu.freq = data.rate;
 
 % Dynamic bias PSD
-imu.ab_psd = imu.ab_dyn .* sqrt(imu.ab_corr) / 2;  % rad/s/root-Hz;navigation
-imu.gb_psd = imu.gb_dyn .* sqrt(imu.gb_corr) / 2;  % rad/s/root-Hz;
+imu.ab_psd = imu.ab_dyn .* sqrt(imu.ab_corr) ;  % m/s^2/root-Hz
+imu.gb_psd = imu.gb_dyn .* sqrt(imu.gb_corr) ;  % rad/s/root-Hz
 
 end

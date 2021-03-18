@@ -64,7 +64,7 @@ addpath ../../simulation/
 addpath ../../conversions/
 addpath ../../performance_analysis/
 
-versionstr = 'NaveGo, release v1.2';
+versionstr = 'NaveGo, release v1.3';
 
 fprintf('\n%s.\n', versionstr)
 fprintf('\nNaveGo: starting simulation of INS/GNSS integration... \n')

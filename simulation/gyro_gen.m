@@ -38,8 +38,8 @@ function wb_sim = gyro_gen (ref, imu)
 %   Aggarwal, P. et al. MEMS-Based Integrated Navigation. Artech
 % House. 2010.
 %
-% Version: 007
-% Date:    2020/11/03
+% Version: 008
+% Date:    2021/03/17
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -95,7 +95,7 @@ end
 % -------------------------------------------------------------------------
 % Simulation of dynamic bias (bias instability) as a first-order Gauss-Markov model
 
-dt = 1/imu.freq; 
+dt = 1/ref.freq; 
 [gb_dyn] = noise_b_dyn (imu.gb_corr, imu.gb_dyn, dt, M);
 
 % -------------------------------------------------------------------------

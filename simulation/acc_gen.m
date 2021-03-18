@@ -41,8 +41,8 @@ function [fb_sim] = acc_gen (ref, imu)
 %   Thinking about accelerometers and gravity by Dave Redell
 % http://www.lunar.org/docs/LUNARclips/v5/v5n1/Accelerometers.html
 %
-% Version: 009
-% Date:    2021/03/16
+% Version: 010
+% Date:    2021/03/17
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -77,7 +77,7 @@ end
 %% SIMULATION OF GRAVITY AND CORIOLIS
 
 % Gravity and Coriolis in nav-ref
-grav_n = -gravity(ref.lat, ref.h);              % Accelerometers senses an 
+grav_n = -gravity(ref.lat, ref.h);              % Accelerometer in Z axis senses an 
                                                 % acceleration of 1.0 G straight up.
 cor_n  = coriolis(ref.lat, ref.vel, ref.h);
 
@@ -113,7 +113,7 @@ end
 % -------------------------------------------------------------------------
 % Simulation of dynamic bias (bias instability) as a first-order Gauss-Markov model
 
-dt = 1/imu.freq; 
+dt = 1/ref.freq; 
 [ab_dyn] = noise_b_dyn (imu.ab_corr, imu.ab_dyn, dt, M);
 
 % -------------------------------------------------------------------------

@@ -34,13 +34,13 @@
 % Inertial Measurement Unit for Ground Vehicle Navigation. Sensors 2019,  
 % 19(18). https://www.mdpi.com/530156.
 %
-% Version: 004
-% Date:    2020/11/23
+% Version: 005
+% Date:    2021/03/18
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
 % NOTE: NaveGo supposes that IMU is aligned with respect to body-frame as
-% X-forward, Y-right, and Z-down.
+% X-forward, Y-right and Z-down.
 %
 % NOTE: NaveGo assumes that yaw angle (heading) is positive clockwise.
 
@@ -54,7 +54,7 @@ addpath ../../ins-gnss/
 addpath ../../conversions/
 addpath ../../performance_analysis/
 
-versionstr = 'NaveGo, release v1.2';
+versionstr = 'NaveGo, release v1.3';
 
 fprintf('\n%s.\n', versionstr)
 fprintf('\nNaveGo: starting real INS/GNSS integration... \n')
@@ -97,23 +97,19 @@ load ref
 
 %% EKINOX IMU 
 
-% fprintf('NaveGo: loading Ekinox IMU data... \n')
-% 
-% load ekinox_imu
-%
-% ekinox_imu.ab_sta = ekinox_imu.ab_sta - [0 0 G];
-%
-% imu = ekinox_imu;
+fprintf('NaveGo: loading Ekinox IMU data... \n')
+
+load ekinox_imu
+
+imu = ekinox_imu;
 
 %% MPU-6000 IMU
 
-fprintf('NaveGo: loading MPU-6000 IMU data... \n')
-
-load mpu6000_imu
-
-mpu6000_imu.ab_sta = mpu6000_imu.ab_sta - [0 0 G];
-
-imu = mpu6000_imu;
+% fprintf('NaveGo: loading MPU-6000 IMU data... \n')
+% 
+% load mpu6000_imu
+% 
+% imu = mpu6000_imu;
 
 %% EKINOX GNSS
 
@@ -174,7 +170,7 @@ if strcmp(INS_GNSS, 'ON')
     
     % Execute INS/GNSS integration
     % ---------------------------------------------------------------------
-    nav_or = ins_gnss(mpu6000_imu, gnss, 'quaternion'); %
+    nav_or = ins_gnss(imu, gnss, 'quaternion'); %
     % ---------------------------------------------------------------------
     
     save nav_or.mat nav_or

@@ -29,10 +29,15 @@
 %       of Precision Measuring Technology and Instruments, Tianjin University, 
 %       Tianjin, China.
 %
-% Version: 003
-% Date:    2017/07/28
+% Version: 004
+% Date:    2021/03/18
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
+
+% NOTE: NaveGo assumes that IMU is aligned with respect to body-frame as
+% X-forward, Y-right and Z-down.
+%
+% NOTE: NaveGo assumes that yaw angle (heading) is positive clockwise.
 
 clc
 clear
@@ -44,7 +49,9 @@ addpath ../../simulation/
 addpath ../../conversions/
 addpath ../../allan-variance/
 
-versionstr = 'NaveGo, release v1.2';
+D2R = (pi/180);     % degrees to radians
+
+versionstr = 'NaveGo, release v1.3';
 
 fprintf('\n%s.\n', versionstr)
 fprintf('\nNaveGo: Allan variance analysis from real IMU STIM300... \n')
@@ -76,53 +83,18 @@ load stim300
 to = (stim300.t(end) - stim300.t(1));
 fprintf('NaveGo: dataset time span is %.2f hours or %.2f minutes or %.2f seconds. \n\n', (to/60/60), (to/60), to)
 
-stim300_allan = allan_imu (stim300, 1);
+verbose = 2;
 
-stim300_arw = stim300_allan.arw
-stim300_vrw = stim300_allan.vrw
-
-stim300_ab_dyn = stim300_allan.ab_dyn
-stim300_gb_dyn = stim300_allan.gb_dyn
-
-stim300_ab_corr = stim300_allan.ab_corr
-stim300_gb_corr = stim300_allan.gb_corr
+stim300_allan = allan_imu (stim300, verbose)
 
 %% ALLAN VARIANCE FOR SYNTHETIC IMU DATA
 
-fprintf('NaveGo: Allan variance analysis from synthetic data based on Microstrain 3DM-GX3-35 IMU... \n')
+fprintf('\nNaveGo: Allan variance analysis from synthetic data based on Microstrain 3DM-GX3-35 IMU... \n')
 
-%% SYNTHETIC STATIC DATA
-
-N = 24 * 60 * 60;   % 24 hours of simulation
-M = [N, 3];
-
-ref.freq = 100;
-
-ref.t = ((0:N-1)/ref.freq)';   
-to = (ref.t(end) - ref.t(1));
-fprintf('NaveGo: dataset time span is %.2f hours or %.2f minutes or %.2f seconds. \n', (to/60/60), (to/60), to)
-
-ref.lat = zeros(N,1);
-ref.vel = zeros(M); 
-ref.h   = zeros(N,1);
-
-ref.fb = zeros(M);
-ref.wb = zeros(M);
-
-%   DCMnb_m: Nx9 matrix with nav-to-body direct cosine matrices (DCM).
-%       Each row of DCMnb_m contains the 9 elements of a particular DCMnb_m
-%       matrix ordered as [a11 a21 a31 a12 a22 a32 a13 a23 a33].
-
-ref.DCMnb_m = zeros(N,9);
-ref.DCMnb_m(:,1) = ones(N,1);
-ref.DCMnb_m(:,5) = ones(N,1);
-ref.DCMnb_m(:,9) = ones(N,1);
-
-%% MICROSTRAIN 3DM-GX3-35 IMU
+%% ERROR IMU PROFILE FROM MICROSTRAIN 3DM-GX3-35
 
 % IMU data structure:
-%         t: Ix1 time vector (seconds).
-%        fb: Ix3 accelerations vector in body frame XYZ (m/s^2).
+%         t: Ix1 time vector (secoor in body frame XYZ (m/s^2).
 %        wb: Ix3 turn rates vector in body frame XYZ (radians/s).
 %       arw: 1x3 angle random walks (rad/s/root-Hz).
 %      arrw: 1x3 angle rate random walks (rad/s^2/root-Hz).
@@ -155,30 +127,52 @@ ustrain.gb_sta = [4.00424136983284e-14 4.98197419961447e-15 -6.5696457219509e-15
 ustrain.arrw = [8.21484738626e-05 4.54275740041735e-05 0.000103299115514897]; 
 ustrain.vrrw = [0.00031522133759985 0.000519606636158211 0.000396688807571295];      
 
-ustrain.freq = ref.freq;
-ustrain.t = ref.t;
+%% STATIC SYNTHETIC REFERENCE DATASET
+
+N = 6 * 60 * 60;   % 6 hours of simulation
+
+ref.freq = 100;     % IMU frequency
+dt = 1/ref.freq;    % IMU sampling period
+ref.t = (0:dt:N)';  % IMU time vector    
+
+to = (ref.t(end) - ref.t(1));
+fprintf('NaveGo: dataset time span is %.2f hours or %.2f minutes or %.2f seconds. \n', (to/60/60), (to/60), to)
+
+M = max(size(ref.t));
+
+ref.vel = zeros(M,3);   % Velocity is zero
+ref.lat = ones(M,1) * -32.8903 * D2R;
+ref.lon = ones(M,1) * -68.8472 * D2R;
+ref.h   = ones(M,1) * 700;
+
+% DCMnb_m: Nx9 matrix with nav-to-body direct cosine matrices (DCM).
+% Each row of DCMnb_m contains the 9 elements of a particular DCMnb_m
+% matrix ordered as [a11 a21 a31 a12 a22 a32 a13 a23 a33].
+
+ref.DCMnb_m = zeros(M,9);       % The platform is leveled
+ref.DCMnb_m(:,1) = ones(M,1);
+ref.DCMnb_m(:,5) = ones(M,1);
+ref.DCMnb_m(:,9) = ones(M,1);
+
+%% STATIC SYNTHETIC IMU DATASET
 
 fprintf('NaveGo: generating IMU ACCR synthetic data... \n')
 
 fb = acc_gen (ref, ustrain);   % Generate acc in the body frame
-ustrain.fb = fb;
+imu.fb = fb;
 
 fprintf('NaveGo: generating IMU GYRO synthetic data... \n')
 
 wb = gyro_gen (ref, ustrain);  % Generate gyro in the body frame
-ustrain.wb = wb;
+imu.wb = wb;
+
+imu.t = ref.t;
 
 clear fb wb 
 
 %% ALLAN VARIANCE
 
-ustrain_allan = allan_imu (ustrain, 1);
+verbose = 2;
 
-ustrain_allan_arw = ustrain_allan.arw
-ustrain_allan_vrw = ustrain_allan.vrw
+ustrain_allan = allan_imu (imu, verbose)
 
-ustrain_allan_ab_dyn = ustrain_allan.ab_dyn
-ustrain_allan_gb_dyn = ustrain_allan.gb_dyn
-
-ustrain_allan_ab_corr = ustrain_allan.ab_corr
-ustrain_allan_gb_corr = ustrain_allan.gb_corr

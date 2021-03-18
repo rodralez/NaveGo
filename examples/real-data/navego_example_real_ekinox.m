@@ -40,7 +40,7 @@
 % URL:     https://github.com/rodralez/navego
 
 % NOTE: NaveGo assumes that IMU is aligned with respect to body-frame as
-% X-forward, Y-right, and Z-down.
+% X-forward, Y-right and Z-down.
 %
 % NOTE: NaveGo assumes that yaw angle (heading) is positive clockwise.
 
@@ -54,7 +54,7 @@ addpath ../../ins-gnss/
 addpath ../../conversions/
 addpath ../../performance_analysis/
 
-versionstr = 'NaveGo, release v1.2';
+versionstr = 'NaveGo, release v1.3';
 
 fprintf('\n%s.\n', versionstr)
 fprintf('\nNaveGo: starting real INS/GNSS integration... \n')
@@ -119,7 +119,7 @@ if strcmp(INS_GNSS, 'ON')
     
     % Execute INS/GNSS integration
     % ---------------------------------------------------------------------
-    nav_ekinox = ins_gnss(ekinox_imu, ekinox_gnss, 'dcm'); % quaternion
+    nav_ekinox = ins_gnss(ekinox_imu, ekinox_gnss, 'dcm'); 
     % ---------------------------------------------------------------------
     
     save nav_ekinox.mat nav_ekinox
