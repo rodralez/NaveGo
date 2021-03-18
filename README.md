@@ -1,6 +1,6 @@
 # NaveGo
 
-[![Releases](https://img.shields.io/badge/release-v1.2-green.svg?style=plastic)](https://github.com/rodralez/NaveGo/releases) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2536950.svg)](https://doi.org/10.5281/zenodo.2536950)
+[![Releases](https://img.shields.io/badge/release-v1.3-green.svg?style=plastic)](https://github.com/rodralez/NaveGo/releases) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4617258.svg)](https://doi.org/10.5281/zenodo.4617258)
 
 NaveGo: an open-source MATLAB/GNU-Octave toolbox for processing integrated navigation systems and performing inertial sensors profiling analysis.
 
@@ -8,13 +8,13 @@ NaveGo (ˈnævəˈgəʊ) is an open-source MATLAB/GNU Octave toolbox for process
 
 NaveGo's motto is "to bring integrated navigation to the masses".
 
-NaveGo is supported at the moment by three academic research groups: GridTics at the National University of Technology (Argentina), Engineering School at the National University of Cuyo (Argentina), and DIATI at the Politecnico di Torino (Italy).
+NaveGo is supported at the moment by three academic research groups: GridTICs at the National University of Technology (Argentina), LabSin at the National University of Cuyo (Argentina), and DIATI at the Politecnico di Torino (Italy).
 
 ## Attention!
 
-Please, if you find a bug or error in NaveGo's code, you should open a new [issue](https://github.com/rodralez/NaveGo/issues). 
+Please, if you found a bug or error in the source code of NaveGo, you should open a new [issue](https://github.com/rodralez/NaveGo/issues). 
 
-But, if you have any question of any kind or you want to share some feedback about NaveGo, you have to use NaveGo's [discussion forum](https://github.com/rodralez/NaveGo/discussions).  
+But, if you have any question of any kind or you want to share some feedback about NaveGo, please leave a comment at the [discussion forum](https://github.com/rodralez/NaveGo/discussions). 
 
 
 ## Features
@@ -25,7 +25,9 @@ Main features of NaveGo are:
 
 * Processing of a loosely-coupled integrated navigation system (INS/GNSS).
 
-* Processing of a loosely-coupled integrated navigation system with magnetometers (INS/GNSS/MAG).
+* Processing of a loosely-coupled integrated navigation system with magnetometers (INS/GNSS/MAG) **NEW**
+
+* Compass heading using magnetometers.
 
 * Simulation of inertial sensors and GNSS.
 
@@ -56,8 +58,6 @@ NaveGo has been validated by processing real-world data from a real trajectory a
 
 Future features of NaveGo will be:
 
-* Compass heading using magnetometers. DONE!.
-
 * Barometer as aiding sensor for altitude.
 
 * G-sensitivity correction for gyroscopes.
@@ -77,7 +77,7 @@ If you are using NaveGo in your research, we kindly ask you to add the following
 
 An URL to NaveGo should be provided as the following cite:
 
-R. Gonzalez, C. Catania, and P. Dabove. NaveGo: An Open-Source MATLAB/GNU-Octave Toolbox for Processing Integrated Navigation Systems and Performing Inertial Sensors Profiling Analysis. Version 1.2. URL: https://github.com/rodralez/NaveGo. DOI: 10.5281/zenodo.2536950. January 2019.
+Gonzalez, Rodrigo. (2021, March 18). NaveGo: an open-source MATLAB/GNU-Octave toolbox for processing integrated navigation systems and performing inertial sensors profiling analysis (Version 1.3). Zenodo. http://doi.org/10.5281/zenodo.4617258
 
 
 # Donations
