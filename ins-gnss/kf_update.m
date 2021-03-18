@@ -1,21 +1,23 @@
 function  kf = kf_update(kf)
-% kalman: Measurement update part of the Kalman filter algorithm.
+% kalman: measurement update part of the Kalman filter algorithm.
 %
 % INPUT
 %   kf, data structure with at least the following fields:
 %       xi: 15x1 a priori state vector.
 %       Pi: 15x15 a priori error covariance matrix.
-%        z: 6x1 innovation vector.
-%        H: 6x15 observation matrix.
-%        R: 6x6 observation noise covariance matrix.
+%        z: Dx1 innovation vector.
+%        H: Dx15 observation matrix.
+%        R: DxD observation noise covariance matrix.
 %
 % OUTPUT
 %    kf, the following fields are updated:
 %       xp: 15x1 a posteriori state vector (updated).
 %       Pp: 15x15 a posteriori error covariance matrix (updated).  
-%		 v: 6x1 innovation vector. 
-%        K: 15x6 Kalman gain matrix matrix.
-%        S: 6x6 innovation (not residual) covariance matrix.
+%		 v: Dx1 innovation vector. 
+%        K: 15xD Kalman gain matrix matrix.
+%        S: DxD innovation (not residual) covariance matrix.
+%
+%   Note: the value of 'D' depends on the number of sensors available.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -57,13 +59,13 @@ kf.S = (kf.R + kf.H * kf.Pi * kf.H');			% Innovation covariance matrix
 kf.v =  kf.z - kf.H * kf.xi; 					% Innovation vector
 kf.K = (kf.Pi * kf.H') * (kf.S)^(-1) ;			% Kalman gain matrix
 
-% Step 4, update the a posteriori state vector xp
+% Step 4, update the a posteriori state vector, xp
 kf.xp = kf.xi + kf.K * kf.v; 
 
-% Step 5, update the a posteriori covariance matrix Pp
-kf.Pp = kf.Pi - kf.K * kf.S *  kf.K';                
+% Step 5, update the a posteriori covariance matrix, Pp
+kf.Pp = kf.Pi - kf.K * kf.S * kf.K';                
 % J = (I - S.K * S.H);                          % Joseph stabilized version     
 % S.Pp = J * S.Pi * J' + S.K * S.R * S.K';      % Alternative implementation
-kf.Pp =  0.5 .* (kf.Pp + kf.Pp');               % Force Pi to be a symmetric matrix
+kf.Pp =  0.5 .* (kf.Pp + kf.Pp');               % Force Pp to be a symmetric matrix
 
 end

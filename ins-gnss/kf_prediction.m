@@ -1,5 +1,5 @@
 function  kf = kf_prediction(kf, dt)
-% kf_prediction: Prediction update part of the Kalman filter algorithm.
+% kf_prediction: prediction update part of the Kalman filter algorithm.
 %
 % INPUT
 %   kf, data structure with at least the following fields:
@@ -15,7 +15,9 @@ function  kf = kf_prediction(kf, dt)
 %       xi: 15x1 a priori state vector (updated).
 %       Pi: 15x15 a priori error covariance matrix.
 %        A: 15x15 state transition matrix.
-%       Qd: 15x6 discrete process noise covariance matrix.
+%       Qd: 15xD discrete process noise covariance matrix.
+%
+%   Note: the value of 'D' depends on the number of sensors available.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -55,10 +57,10 @@ kf.A =  expm(kf.F * dt);          				% Exact solution for linear systems
 % S.A = I + (S.F * dt);         				% Approximated solution by Euler method 
 kf.Qd = (kf.G * kf.Q * kf.G') .* dt;            % Digitalized covariance matrix
 
-% Step 1, predict the a priori state vector xi
+% Step 1, predict the a priori state vector, xi
 kf.xi = kf.A * kf.xp;
 
-% Step 2, update the a priori covariance matrix Pi
+% Step 2, update the a priori covariance matrix, Pi
 kf.Pi = (kf.A * kf.Pp * kf.A') + kf.Qd;
 kf.Pi =  0.5 .* (kf.Pi + kf.Pi');               % Force Pi to be symmetric matrix
 

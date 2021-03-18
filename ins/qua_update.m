@@ -38,14 +38,14 @@ function qua = qua_update(qua, wb, dt)
 % mation of Dynamic Systems, 2nd Ed. Chapman and Hall/CRC, USA.
 % Eq. 7.39 and 7.40, p. 458.
 %
-% Version: 003
-% Date:    2021/03/14
+% Version: 004
+% Date:    2021/03/18
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
 wnorm = norm(wb);
 
-if wnorm == 0
+if wnorm < 1.E-8
     
     return;
 else

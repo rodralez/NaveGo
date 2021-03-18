@@ -1,12 +1,12 @@
 function pos = pos_update(pos_o, vel_o, dt)
 % pos_update: updates position in the navigation frame (lat, lon, h).
 %
-% INPUT:
-%   pos_o,    3x1 position vector [lat lon h] (rad, rad, m).
-%   vel_o,    3x1 NED velocities [n e d] (m/s).
+% INPUT
+%   pos_o,  3x1 position vector [lat lon h] (rad, rad, m).
+%   vel_o,  3x1 NED velocities [n e d] (m/s).
 %   dt,     sampling interval (s).
 %
-% OUTPUT:
+% OUTPUT
 %   pos,    3x1 updated position vector [lat lon h] (rad, rad, m).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
@@ -54,7 +54,7 @@ vd  = vel_o(3);
 
 h  = h - (vd) * dt;
 
-if h < 0
+if h < 0.0
     h = abs(h);
     warning('pos_update: altitude is negative.')
 end

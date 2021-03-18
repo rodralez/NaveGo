@@ -7,7 +7,7 @@ function yawm = mag_compass_update(m_n, dec, inc, DCMnb, roll, pitch)
 %   roll, roll angle (rad).
 %   pitch, pitch angle (rad).
 %   dec, magnetic declination angle (rad).
-%   inc, magnetic inclination angle (rad),
+%   inc, magnetic inclination angle (rad).
 %
 % OUTPUT
 %   yawm, yaw angle from magnetometer data.
@@ -47,8 +47,8 @@ D = [ cos(dec) * cos(inc); sin(dec) * cos(inc); sin(inc); ];
 
 m_b =  DCMnb * D * B;
 
-x = -m_b(2) * cos(roll)  + m_b(3) * sin(roll) ;
-y =  m_b(1) * cos(pitch) + m_b(2) * sin(roll) * sin(pitch) ...
+x =  -m_b(2) * cos(roll)  + m_b(3) * sin(roll) ;
+y =   m_b(1) * cos(pitch) + m_b(2) * sin(roll) * sin(pitch) ...
     + m_b(3) * cos(roll) * sin(pitch) ;
 
 yawm = correct_yaw (atan2(x , y) + dec);  % Four-quadrant arctangent function

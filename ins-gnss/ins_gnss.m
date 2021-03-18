@@ -109,7 +109,7 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 
 if nargin < 3, att_mode  = 'quaternion'; end
 
-%% ZUPT detection algorithm
+%% ZUPT ALGORITHM
 
 zupt_flag = false;
 
@@ -142,17 +142,17 @@ lon_e    = zeros (LI, 1);
 h_e      = zeros (LI, 1);
 
 % Preallocation of Kalman filter matrices for later performance analysis
-xi = zeros(LG, 15);        % Evolution of Kalman filter a priori states, xi
-xp = zeros(LG, 15);        % Evolution of Kalman filter a posteriori states, xp
+xi = zeros(LG, 15);        % Evolution of Kalman filter a priori states
+xp = zeros(LG, 15);        % Evolution of Kalman filter a posteriori states
 z = zeros(LG, 6);          % INS/GNSS measurements
 v = zeros(LG, 6);          % Kalman filter innovations
 b = zeros(LG, 6);          % Biases compensantions after Kalman filter correction
 
-A  = zeros(LG, 225);       % Transition-state matrices, A
-Pi = zeros(LG, 225);       % A priori covariance matrices, Pi
-Pp = zeros(LG, 225);       % A posteriori covariance matrices, Pp
-K  = zeros(LG, 90);        % Kalman gain matrices, K
-S  = zeros(LG, 36);        % Innovation matrices, S
+A  = zeros(LG, 225);       % Transition-state matrices
+Pi = zeros(LG, 225);       % A priori covariance matrices
+Pp = zeros(LG, 225);       % A posteriori covariance matrices
+K  = zeros(LG, 90);        % Kalman gain matrices
+S  = zeros(LG, 36);        % Innovation matrices
 ob = zeros(LG, 1);         % Number of observable states at each GNSS data arriving
 
 %% INITIAL VALUES AT INS TIME = 1
@@ -164,8 +164,6 @@ yaw_e(1)   = imu.ini_align(3);
 DCMnb = euler2dcm([roll_e(1); pitch_e(1); yaw_e(1);]);
 DCMbn = DCMnb';
 qua   = euler2qua([roll_e(1) pitch_e(1) yaw_e(1)]);
-
-% DEC = 0.5 * 180/pi;             % Magnetic declination (radians)
 
 % Initial velocity
 vel_e(1,:) = gnss.vel(1,:);
@@ -179,7 +177,7 @@ h_e(1)   = gnss.h(1);
 gb_dyn = imu.gb_dyn';
 ab_dyn = imu.ab_dyn';
 
-%% Initialization of Kalman filter matrices
+%% INITIALIZATION OF KALMAN FILTER MATRICES
 
 % Prior estimates
 kf.xi = [ zeros(1,9), imu.gb_dyn, imu.ab_dyn ]';  % Error vector state
@@ -220,13 +218,10 @@ v(1,:)  = kf.v';
 z(1,:)  = kf.z';
 b(1,:) = [gb_dyn', ab_dyn'];
 
-%% INS (IMU) time is the master clock
+%% INS (IMU) TIME IS THE MASTER CLOCK
 for i = 2:LI
     
     %% INERTIAL NAVIGATION SYSTEM (INS)
-    
-    % Update order according to Groves, Figure 5.8:
-    % Velocity > Position > Attitute
     
     % Print a dot on console every 10,000 INS executions
     if (mod(i,10000) == 0), fprintf('. ');  end
@@ -270,7 +265,7 @@ for i = 2:LI
     omega_ie_n = earth_rate(lat_e(i));
     omega_en_n = transport_rate(lat_e(i), vel_e(i,1), vel_e(i,2), h_e(i));
        
-    % ZUPT detection algorithm
+    %% ZUPT DETECTION ALGORITHM
     idz = floor( gnss.zupt_win / dti ); % Index to set ZUPT window time
     
     if ( i > idz )
@@ -324,11 +319,11 @@ for i = 2:LI
         % Radians-to-meters matrix
         Tpr = diag([(RM + h_e(i)), (RN + h_e(i)) * cos(lat_e(i)), -1]);
         
-        % Measurements for position in meters with lever arm correction
+        % Position innovations in meters with lever arm correction
         zp = Tpr * ([lat_e(i); lon_e(i); h_e(i);] - [gnss.lat(gdx); gnss.lon(gdx); gnss.h(gdx);]) ...
             + (DCMbn * gnss.larm);
         
-        % Measurements for velocity with lever arm correction
+        % Velocity innovations with lever arm correction
         zv = (vel_e(i,:) - gnss.vel(gdx,:) - ((omega_ie_n + omega_en_n) .* (DCMbn * gnss.larm))' ...
             + (DCMbn * skewm(wb_corrected) * gnss.larm )' )';
         
@@ -356,7 +351,7 @@ for i = 2:LI
         end
         
         % Execution of the extended Kalman filter
-        kf.xp(1:9) = 0.0;           % states 1:9 are forced to be zero (error-state approach)
+        kf.xp(1:9) = 0.0;           % states 1 to 9 are forced to be zero (error-state approach)
         kf = kalman(kf, dtg);
         
         %% OBSERVABILITY
@@ -368,7 +363,7 @@ for i = 2:LI
         
         % Quaternion corrections
         % Crassidis. Eq. 7.34 and A.174a.
-        antm = [0 qua(3) -qua(2); -qua(3) 0 qua(1); qua(2) -qua(1) 0];
+        antm = [0.0 qua(3) -qua(2); -qua(3) 0.0 qua(1); qua(2) -qua(1) 0.0];
         qua = qua + 0.5 .* [qua(4)*eye(3) + antm; -1.*[qua(1) qua(2) qua(3)]] * kf.xp(1:3);
         qua = qua / norm(qua);       % Brute-force normalization
         
@@ -404,7 +399,7 @@ for i = 2:LI
         xi(gdx,:) = kf.xi';
         xp(gdx,:) = kf.xp';
         b(gdx,:) = [gb_dyn', ab_dyn'];
-        A(gdx,:)  = reshape(kf.A, 1, 225);
+        A(gdx,:)  = reshape(kf.A,  1, 225);
         Pi(gdx,:) = reshape(kf.Pi, 1, 225);
         Pp(gdx,:) = reshape(kf.Pp, 1, 225);
         

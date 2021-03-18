@@ -1,14 +1,14 @@
 function  [F, G] = F_update(upd, DCMbn, imu)
 % F_update: updates F and G matrices before the execution of Kalman filter.
 %
-% INPUT:
+% INPUT
 %   upd, 1x8 vector with data from the INS.
 %   DCMbn, DCM body-to-nav.
 %   imu, IMU data structure.
 %
-% OUTPUT:
-%   F,  21x21 state transition matrix.
-%   G,  21x12 control-input matrix.   
+% OUTPUT
+%   F,  15x15 state transition matrix.
+%   G,  15x12 control-input matrix.   
 %
 %   Output values preserve the precision of latitude, single or double 
 %   precision.
@@ -64,15 +64,9 @@ fn =  upd(6);
 fe =  upd(7);
 fd =  upd(8);
 
-if (isa(lat,'single'))
-    Om = single(7.292115e-5);
-    I = single(eye(3));
-    Z = single(zeros(3));
-else
-    Om = 7.292115e-5;
-    I = eye(3);
-    Z = zeros(3);
-end
+Om = 7.292115e-5;
+I = eye(3);
+Z = zeros(3);
 
 [RM,RN] = radius(lat);
     
