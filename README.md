@@ -25,9 +25,9 @@ Main features of NaveGo are:
 
 * Processing of a loosely-coupled integrated navigation system (INS/GNSS).
 
-* Processing of a loosely-coupled integrated navigation system with magnetometers (INS/GNSS/MAG) **NEW**
+* Compass heading using magnetometers. **NEW**
 
-* Compass heading using magnetometers.
+* Processing of a loosely-coupled integrated navigation system with magnetometers (INS/GNSS/MAG). **NEW**
 
 * Simulation of inertial sensors and GNSS.
 
