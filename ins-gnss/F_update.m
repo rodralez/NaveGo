@@ -10,9 +10,6 @@ function  [F, G] = F_update(upd, DCMbn, imu)
 %   F,  15x15 state transition matrix.
 %   G,  15x12 control-input matrix.   
 %
-%   Output values preserve the precision of latitude, single or double 
-%   precision.
-%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
 %   This file is part of NaveGo, an open-source MATLAB toolbox for

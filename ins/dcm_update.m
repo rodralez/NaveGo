@@ -1,11 +1,11 @@
 function DCMbn = dcm_update(DCMbn, euler)
 % dcm_update: updates  body-to-nav DCM.
 %
-% INPUT:
+% INPUT
 %   DCMbn,	3x3 body-to-nav DCM.
 %   euler,	3x1 Euler angles [roll pitch yaw] (rad).
 %
-% OUTPUT:
+% OUTPUT
 %   DCMbn,  3x3 updated DCM body-to-nav.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.

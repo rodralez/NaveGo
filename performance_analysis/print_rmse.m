@@ -2,7 +2,7 @@ function rmse_v = print_rmse (ins_gnss, gnss, ref_n, ref_g, string)
 % print_rmse: print on console Root Mean Squared Errors (RMSE) between INS/GNSS
 % and a reference, and between GNSS-only and a reference as well.
 %
-% INPUT:
+% INPUT
 %   ins_gnss, INS/GNSS data structure.
 %   gnss, GNSS data structure.
 %   ref_i, Reference data structure ajusted for INS/GNSS measurements.

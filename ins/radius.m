@@ -1,15 +1,12 @@
 function [RM,RN] = radius(lat)
 % radius: calculates meridian and normal radii of curvature.
 %
-% INPUT:
+% INPUT
 %   lat, Nx1 latitude (rad).
 %
-% OUTPUT:
-%   RM, Nx1 meridian radius of curvature (m).
-%   RN, Nx1 normal radius of curvature (m).
-%
-%   Output values preserve the precision of latitude, single or double 
-%   precision.
+% OUTPUT
+%   RM, Nx1 meridian radius of curvature (North-South)(m).
+%   RN, Nx1 normal radius of curvature (East-West) (m).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -44,32 +41,21 @@ function [RM,RN] = radius(lat)
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 11.
 %
-% Version: 005
-% Date:    2019/02/19
+% Version: 006
+% Date:    2021/03/19
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-if (isa(lat,'single')) 
-    
-    a = single(6378137.0);
-    e = single(0.0818191908426);
-    
-    e2 = e^2;
-    den = 1 - e2 .* single(sin(lat)).^2;
+a = 6378137.0;                  % WGS84 Equatorial radius in meters
+e = 0.0818191908425;            % WGS84 eccentricity
 
-else
-    
-    a = (6378137.0);
-    e = (0.0818191908426);
-    
-    e2 = e^2;
-    den = 1 - e2 .* (sin(lat)).^2;
-end
+e2 = e^2;
+den = 1 - e2 .* (sin(lat)).^2;
 
 % Meridian radius of curvature: radius of curvature for North-South motion.
 RM = a .* (1-e2) ./ (den).^(3/2);
 
-% Normal radius of curvature: radius of curvature for East-West motion. 
+% Normal radius of curvature: radius of curvature for East-West motion.
 % AKA transverse radius.
 RN = a ./ sqrt(den);
 

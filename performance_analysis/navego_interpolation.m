@@ -2,7 +2,7 @@ function [nav_i, ref] = navego_interpolation (nav, ref)
 % navego_interpolation: interpolates navigation data using a reference time
 % vector.
 %
-% INPUT:
+% INPUT
 %   nav, navigation data structure to be interpolated.
 %   ref, reference data structure.
 %

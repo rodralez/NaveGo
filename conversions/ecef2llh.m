@@ -1,14 +1,14 @@
-function [lat, lon, h] = ecef2llh(ecef)
+function llh = ecef2llh(ecef)
 % ecef2llh:	converts from ECEF coordinates to navigation coordinates
-%  (latitude, longitude and altitude).
+%  (latitude, longitude and height).
 %
 % INPUTS
 %   ecef: Nx3 ECEF coordinates [X Y Z] (m, m, m).
 %
 % OUTPUTS
-%   lat: Nx1 latitude (radians).
-%   lon: Nx1 longitude (radians).
-%   h:   Nx1 altitude above ellipsoid (meters).
+%   llh, Nx3 [latitude longitude height] (rad, rad, m)
+%   
+%   Height is above ellipsoid.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -37,8 +37,8 @@ function [lat, lon, h] = ecef2llh(ecef)
 % Journal of Control Engineering and Applied Informatics}, vol. 17,
 % issue 2, pp. 110-120, 2015. Eq. 17.
 %
-% Version: 002
-% Date:    2017/11/01
+% Version: 003
+% Date:    2021/03/18
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -46,6 +46,7 @@ x = ecef(:,1);
 y = ecef(:,2);
 z = ecef(:,3);
 
+% WGS84 model
 a = 6378137.0000;	% Earth radius in meters
 % b = 6356752.3142;	% Earth semiminor in meters
 e = 0.0818191908426;% Eccentricity
@@ -73,4 +74,5 @@ lon = atan2(y , x);
 % Altitude
 h = (k + e.^2 -1) ./ k .* (sqrt(D.^2 + z.^2));
 
+llh = [lat lon h];
 end

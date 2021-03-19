@@ -190,4 +190,4 @@ We would like to thank to the many people that have contributed to make NaveGo a
 
 * Dr. Paolo Zoccarato for his comments on attitude conversion.
 
-* Mr. Daniel Lu, GIS Analyst at Western Heritage, for his comments on the sign of acceleration when accelerometers sens gravity.
+* Mr. Daniel Lu, GIS Analyst at Western Heritage (Canada), for his comments on the sign of acceleration when accelerometers sens gravity.

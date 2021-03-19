@@ -1,7 +1,7 @@
 function  navego_plot (cell_s, TYPE, ref_t, ref_var, nav_t, nav_var, gnss_t, gnss_var)
 % navego_plot: plots results from INS/GNSS integration dataset.
 %
-% INPUT:
+% INPUT
 %   cell_s,  cell with strings (cell).
 %   TYPE,    'NORMAL' or 'ERROR' (string).
 %   ref_t,   Rx1 reference time (s)

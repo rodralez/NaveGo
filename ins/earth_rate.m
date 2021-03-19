@@ -1,9 +1,8 @@
-function omega_ie_n = earth_rate(lat, precision)
+function omega_ie_n = earth_rate(lat)
 % earth_rate: turn rate of the Earth in the navigation frame.
 %
 % INPUT
 %	lat, 1x1 latitude (rad).
-%	precision, 'double' (default) or 'single' (string).
 %
 % OUTPUT
 %	omega_ie_n, earth rate (rad/s).
@@ -37,12 +36,4 @@ function omega_ie_n = earth_rate(lat, precision)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
-if nargin < 2, precision = 'double'; end
-
-if strcmp(precision, 'single')
-    
-    omega_ie_n = single((7.2921155e-5) .* [ single(cos(lat));  single(0) ; single(-sin(lat)) ]); 
-else
-    
-    omega_ie_n = (7.2921155e-5) .* [ (cos(lat));  0 ; -sin(lat) ]; 
-end
+omega_ie_n = (7.2921155e-5) .* [ (cos(lat));  0 ; -sin(lat) ]; 
