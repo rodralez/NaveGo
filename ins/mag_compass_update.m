@@ -1,13 +1,14 @@
-function yawm = mag_compass_update(m_n, dec, inc, DCMnb, roll, pitch)
+function yawm = mag_compass_update(m_n, dec, inc, DCMnb, roll, pitch, m_dyn)
 % magh_update: calculates magnetic heading angle (yaw) from magnetometer data.
 %
 % INPUT
 %   mag, 1x3 magnetic flux density (Tesla).
+%   dec, magnetic declination angle (rad).
+%   inc, magnetic inclination angle (rad).
 %   DCMnb, 3x3 DCM nav-to-body.
 %   roll, roll angle (rad).
 %   pitch, pitch angle (rad).
-%   dec, magnetic declination angle (rad).
-%   inc, magnetic inclination angle (rad).
+%   m_dyn, magnetic bias (T).
 %
 % OUTPUT
 %   yawm, yaw angle from magnetometer data.
@@ -36,21 +37,24 @@ function yawm = mag_compass_update(m_n, dec, inc, DCMnb, roll, pitch)
 % Multisensor Integrated Navigation Systems. Second Edition.
 % Eq. 6.2 to 6.6, page 219.
 %
-% Version: 001
-% Date:    2021/03/14
+%   NOAA, Magnetic Field Calculators. 
+% https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml
+%
+% Version: 002
+% Date:    2021/03/20
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
-B = norm(m_n);  % Magnitude of the flux density.
+B = norm( m_n - m_dyn );                    % Magnitude of the flux density
  
 D = [ cos(dec) * cos(inc); sin(dec) * cos(inc); sin(inc); ];
 
-m_b =  DCMnb * D * B;
+m_b = ( DCMnb * D * B ) ;
 
 x =  -m_b(2) * cos(roll)  + m_b(3) * sin(roll) ;
 y =   m_b(1) * cos(pitch) + m_b(2) * sin(roll) * sin(pitch) ...
     + m_b(3) * cos(roll) * sin(pitch) ;
 
-yawm = correct_yaw (atan2(x , y) + dec);  % Four-quadrant arctangent function
+yawm = correct_yaw (atan2(x , y) + dec);    % Four-quadrant arctangent function
 
 end

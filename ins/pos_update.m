@@ -1,10 +1,10 @@
-function pos = pos_update(pos_o, vel_o, dt)
+function pos = pos_update(pos, vel, dt)
 % pos_update: updates position in the navigation frame (lat, lon, h).
 %
 % INPUT
-%   pos_o,  3x1 position vector [lat lon h] (rad, rad, m).
-%   vel_o,  3x1 NED velocities [n e d] (m/s).
-%   dt,     sampling interval (s).
+%   pos,  3x1 position vector [lat lon h] (rad, rad, m).
+%   vel,  3x1 NED velocities [n e d] (m/s).
+%   dt,   sampling interval (s).
 %
 % OUTPUT
 %   pos,    3x1 updated position vector [lat lon h] (rad, rad, m).
@@ -43,12 +43,12 @@ function pos = pos_update(pos_o, vel_o, dt)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
-lat = pos_o(1); 
-lon = pos_o(2); 
-h   = pos_o(3);
-vn  = vel_o(1);
-ve  = vel_o(2);
-vd  = vel_o(3);
+lat = pos(1); 
+lon = pos(2); 
+h   = pos(3);
+vn  = vel(1);
+ve  = vel(2);
+vd  = vel(3);
 
 %% Altitude
 

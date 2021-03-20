@@ -1,23 +1,23 @@
 function  kf = kf_update(kf)
-% kalman: measurement update part of the Kalman filter algorithm.
+% kf_update: measurement update part of the Kalman filter algorithm.
 %
 % INPUT
-%   kf, data structure with at least the following fields:
-%       xi: 15x1 a priori state vector.
-%       Pi: 15x15 a priori error covariance matrix.
-%        z: Dx1 innovation vector.
-%        H: Dx15 observation matrix.
-%        R: DxD observation noise covariance matrix.
+%   kf, data structure with at least the following fields,
+%       xi: nx1 a priori state vector.
+%       Pi: nxn a priori error covariance matrix.
+%        z: rx1 measurement vector.
+%        H: rxn observation matrix.
+%        R: rxr observation noise covariance matrix.
 %
 % OUTPUT
-%    kf, the following fields are updated:
-%       xp: 15x1 a posteriori state vector (updated).
-%       Pp: 15x15 a posteriori error covariance matrix (updated).  
-%		 v: Dx1 innovation vector. 
-%        K: 15xD Kalman gain matrix matrix.
-%        S: DxD innovation (not residual) covariance matrix.
+%    kf, the following fields are updated,
+%       xp: nx1 a posteriori state vector (updated).
+%       Pp: nxn a posteriori error covariance matrix (updated).
+%		 v: rx1 innovation vector.
+%        K: nxr Kalman gain matrix.
+%        S: rxr innovation (not residual) covariance matrix.
 %
-%   Note: the value of 'D' depends on the number of sensors available.
+%   Note: values of 'n' and 'r' depend on the number of available sensors.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -44,11 +44,11 @@ function  kf = kf_update(kf)
 % Journal of Control Engineering and Applied Informatics, vol. 17,
 % issue 2, pp. 110-120, 2015. Alg. 1.
 %
-%   Dan Simon. Optimal State Estimation. Chapter 5. John Wiley 
-% & Sons. 2006.   
+%   Dan Simon. Optimal State Estimation. Chapter 5. John Wiley
+% & Sons. 2006.
 %
-% Version: 001
-% Date:    2019/04/19
+% Version: 002
+% Date:    2021/03/21
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -57,14 +57,20 @@ function  kf = kf_update(kf)
 % Step 3, update Kalman gain
 kf.S = (kf.R + kf.H * kf.Pi * kf.H');			% Innovation covariance matrix
 kf.v =  kf.z - kf.H * kf.xi; 					% Innovation vector
+
+r = length(kf.v);
+if rank (kf.S) < r
+    error('kf_update: S innovation covariance matrix is not invertable.')
+end
+
 kf.K = (kf.Pi * kf.H') * (kf.S)^(-1) ;			% Kalman gain matrix
 
 % Step 4, update the a posteriori state vector, xp
-kf.xp = kf.xi + kf.K * kf.v; 
+kf.xp = kf.xi + kf.K * kf.v;
 
 % Step 5, update the a posteriori covariance matrix, Pp
-kf.Pp = kf.Pi - kf.K * kf.S * kf.K';                
-% J = (I - S.K * S.H);                          % Joseph stabilized version     
+kf.Pp = kf.Pi - kf.K * kf.S * kf.K';
+% J = (I - S.K * S.H);                          % Joseph stabilized version
 % S.Pp = J * S.Pi * J' + S.K * S.R * S.K';      % Alternative implementation
 kf.Pp =  0.5 .* (kf.Pp + kf.Pp');               % Force Pp to be a symmetric matrix
 

@@ -3,29 +3,30 @@ function  kf = kalman(kf, dt)
 %
 % INPUT
 %   kf, data structure with at least the following fields:
-%       xp: 15x1 a posteriori state vector (old).
-%        z: Dx1 innovations vector.
-%        F: 15x15 state transition matrix.
-%        H: Dx15 observation matrix.
-%        Q: 12x12 process noise covariance matrix.
-%        R: DxD observation noise covariance matrix.
-%       Pp: 15x15 a posteriori error covariance matrix.
-%        G: 15x12 control-input matrix.      
+%       xp: nx1 a posteriori state vector (old).
+%        z: rx1 measurement vector.
+%        F: nxn state transition matrix.
+%        H: rxn observation matrix.
+%        Q: qxq process noise covariance matrix.
+%        R: rxr observation noise covariance matrix.
+%       Pp: nxn a posteriori error covariance matrix.
+%        G: nxq control-input matrix.      
 %   	dt: sampling interval. 
 %
 % OUTPUT
 %    kf, the following fields are updated:
-%       xi: 15x1 a priori state vector (updated).
-%       xp: 15x1 a posteriori state vector (updated).
-%		 v: Dx1 innovation vector. 
-%        A: 15x15 state transition matrix.
-%        K: 15xD Kalman gain matrix.
-%       Qd: 15xD discrete process noise covariance matrix.
-%       Pi: 15x15 a priori error covariance.
-%       Pp: 15x15 a posteriori error covariance.  
-%        S: DxD innovation (not residual) covariance matrix.
+%       xi: nx1 a priori state vector (updated).
+%       xp: nx1 a posteriori state vector (updated).
+%		 v: rx1 innovation vector. 
+%        A: nxn state transition matrix.
+%        K: nxr Kalman gain matrix.
+%       Qd: nxn discrete process noise covariance matrix.
+%       Pi: nxn a priori error covariance.
+%       Pp: nxn a posteriori error covariance.  
+%        S: rxr innovation (not residual) covariance matrix.
 %
-%   Note: the value of 'D' depends on the number of sensors available.
+%   Note: values of 'n', 'q' and 'r' depend on the number of available 
+% sensors.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %

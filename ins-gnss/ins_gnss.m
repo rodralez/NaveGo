@@ -185,11 +185,12 @@ kf.Pi = diag([imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_dyn, imu.ab_dyn].^2
 
 kf.Q  = diag([imu.arw, imu.vrw, imu.gb_psd, imu.ab_psd].^2);
 
-fb_corrected = imu.fb(1,:)' + ab_dyn - imu.ab_sta';
+fb_corrected = imu.fb(1,:)' - ab_dyn - imu.ab_sta';
 fn = DCMbn * fb_corrected;
+wn = DCMbn * imu.wb(1,:)' - gb_dyn - imu.gb_sta';
 
 % Vector to update matrix F
-upd = [gnss.vel(1,:) gnss.lat(1) gnss.h(1) fn'];
+upd = [gnss.vel(1,:) gnss.lat(1) gnss.h(1) fn' wn'];
 
 % Update matrices F and G
 [kf.F, kf.G] = F_update(upd, DCMbn, imu);
@@ -213,7 +214,6 @@ Pi(1,:) = reshape(kf.Pi, 1, 225);
 Pp(1,:) = reshape(kf.Pp, 1, 225);
 K(1,:)  = reshape(kf.K, 1, 90);
 S(1,:)  = reshape(kf.S, 1, 36);
-b(1,:)  = [imu.gb_dyn, imu.ab_dyn];
 v(1,:)  = kf.v';
 z(1,:)  = kf.z';
 b(1,:) = [gb_dyn', ab_dyn'];
@@ -242,6 +242,8 @@ for i = 2:LI
     % deterministic static biases
     wb_corrected = imu.wb(i,:)' - gb_dyn - imu.gb_sta';
     fb_corrected = imu.fb(i,:)' - ab_dyn - imu.ab_sta';
+    fn = DCMbn * fb_corrected;
+    wn = DCMbn * wb_corrected;
     
     % Attitude update
     [qua, DCMbn, euler] = att_update(wb_corrected, DCMbn, qua, ...
@@ -250,8 +252,7 @@ for i = 2:LI
     pitch_e(i)= euler(2);
     yaw_e(i)  = euler(3);
 
-    % Velocity update
-    fn = DCMbn * fb_corrected;
+    % Velocity update    
     vel = vel_update(fn, vel_e(i-1,:), omega_ie_n, omega_en_n, gn_e(i,:)', dti);
     vel_e (i,:) = vel;
      
@@ -333,7 +334,7 @@ for i = 2:LI
         dtg = gnss.t(gdx) - gnss.t(gdx-1);
         
         % Vector to update matrix F
-        upd = [vel_e(i,:) lat_e(i) h_e(i) fn'];
+        upd = [vel_e(i,:) lat_e(i) h_e(i) fn' wn'];
         
         % Matrices F and G update
         [kf.F, kf.G] = F_update(upd, DCMbn, imu);

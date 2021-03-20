@@ -1,4 +1,4 @@
-function  [F, G] = F_update(upd, DCMbn, imu)
+function  [F, G] = F_update(upd, DCMbn, imu, MAG)
 % F_update: updates F and G matrices before the execution of Kalman filter.
 %
 % INPUT
@@ -8,7 +8,7 @@ function  [F, G] = F_update(upd, DCMbn, imu)
 %
 % OUTPUT
 %   F,  15x15 state transition matrix.
-%   G,  15x12 control-input matrix.   
+%   G,  15x12 control-input matrix.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -47,26 +47,28 @@ function  [F, G] = F_update(upd, DCMbn, imu)
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 22.
 %
-% Version: 005
-% Date:    2019/01/14
+% Version: 006
+% Date:    2021/03/19
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
+
+if nargin < 4, MAG = 'OFF'; end
 
 Vn =  upd(1);
 Ve =  upd(2);
 Vd =  upd(3);
 lat = upd(4);
 h  =  upd(5);
-fn =  upd(6);
-fe =  upd(7);
-fd =  upd(8);
+
+fn =  upd(6:8);
+wn =  upd(9:11);
 
 Om = 7.292115e-5;
 I = eye(3);
 Z = zeros(3);
 
 [RM,RN] = radius(lat);
-    
+
 RO = sqrt(RN*RM);
 
 a11 = 0;
@@ -78,7 +80,10 @@ a23 = (Om * cos(lat)) + (Ve / RO) ;
 a31 = -Vn / RO;
 a32 = -Om * cos(lat) - (Ve / RO);
 a33 = 0;
-Fee = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
+F11 = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
+
+% Groves, 14.64
+% F11 = skewm(wn);
 
 a11 = 0;
 a12 = 1 / RO;
@@ -89,7 +94,7 @@ a23 = 0;
 a31 = 0;
 a32 = -tan(lat) / RO;
 a33 = 0;
-Fev = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
+F12 = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
 
 a11 = -Om * sin(lat);
 a12 = 0;
@@ -100,18 +105,9 @@ a23 = Vn / (RO^2);
 a31 =  -Om * cos(lat) - (Ve / ((RO) * (cos(lat))^2));
 a32 = 0 ;
 a33 = (Ve * tan(lat)) / (RO^2) ;
-Fep = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
+F13 = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
 
-a11 = 0 ;
-a12 = -fd ;
-a13 = fe ;
-a21 = fd ;
-a22 = 0 ;
-a23 = -fn ;
-a31 = -fe ;
-a32 = fn ;
-a33 = 0 ;
-Fve = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
+F21 = skewm(fn);
 
 a11 = Vd / RO;
 a12 = -2 * ((Om * sin(lat)) + ((Ve / RO) * tan(lat))) ;
@@ -122,7 +118,7 @@ a23 = 2 * Om * cos(lat) + (Ve / RO);
 a31 = (-2 * Vn) / RO;
 a32 = -2 * (Om * cos(lat) +  (Ve / RO)) ;
 a33 = 0;
-Fvv = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
+F22 = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
 
 a11 = -Ve * ((2 * Om * cos(lat)) + (Ve / (RO * (cos(lat))^2)));
 a12 = 0 ;
@@ -133,9 +129,9 @@ a23 = -(Ve / RO^2) * (Vn * tan(lat) + Vd);
 a31 = 2 * Om * Ve * sin(lat);
 a32 = 0;
 a33 = (1 / RO^2) * (Vn^2 + Ve^2);
-Fvp = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
+F23 = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
 
-Fpe = zeros(3);
+F31 = zeros(3);
 
 a11 = 1 / RO;
 a12 = 0;
@@ -146,7 +142,7 @@ a23 = 0;
 a31 = 0;
 a32 = 0;
 a33 = -1;
-Fpv = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
+F32 = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
 
 a11 = 0;
 a12 = 0;
@@ -157,7 +153,7 @@ a23 = -Ve / (RO^2 * cos(lat));
 a31 = 0;
 a32 = 0;
 a33 = 0;
-Fpp = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
+F33 = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
 
 if (isinf(imu.ab_corr))
     Faa = Z;
@@ -171,17 +167,36 @@ else
     Fgg = diag(-1./imu.gb_corr);
 end
 
-F = [Fee  Fev  Fep   DCMbn   Z;
-     Fve  Fvv  Fvp   Z       -DCMbn;
-     Fpe  Fpv  Fpp   Z       Z;
-     Z    Z    Z     Fgg     Z;
-     Z    Z    Z     Z       Faa;
-    ];
-
-G = [DCMbn  Z     Z    Z;
-    Z      -DCMbn 	Z    Z;
-    Z      Z     	Z    Z;
-    Z      Z     	I    Z;
-    Z      Z     	Z    I;
-    ];
+if (strcmp(MAG,'ON'))
+    
+    F = [F11  F12  F13   DCMbn   Z     zeros(3,1);
+        F21  F22  F23   Z       DCMbn  zeros(3,1);
+        F31  F32  F33   Z       Z      zeros(3,1);
+        Z    Z    Z     Fgg     Z      zeros(3,1);
+        Z    Z    Z     Z       Faa    zeros(3,1);
+        zeros(1,16);
+        ];
+    
+    G = [DCMbn  Z     Z    Z zeros(3,1);
+        Z      DCMbn  Z    Z zeros(3,1);
+        Z      Z      Z    Z zeros(3,1);
+        Z      Z      I    Z zeros(3,1);
+        Z      Z      Z    I zeros(3,1);
+        zeros(1,13);
+        ];
+else
+    
+    F = [F11  F12  F13   DCMbn   Z  ;
+        F21  F22  F23   Z       DCMbn  ;
+        F31  F32  F33   Z       Z      ;
+        Z    Z    Z     Fgg     Z      ;
+        Z    Z    Z     Z       Faa    ;
+        ];
+    
+    G = [DCMbn  Z     Z    Z ;
+        Z      DCMbn  Z    Z ;
+        Z      Z      Z    Z ;
+        Z      Z      I    Z ;
+        Z      Z      Z    I ;
+        ];
 end

@@ -2,22 +2,23 @@ function  kf = kf_prediction(kf, dt)
 % kf_prediction: prediction update part of the Kalman filter algorithm.
 %
 % INPUT
-%   kf, data structure with at least the following fields:
-%       xp: 15x1 a posteriori state vector (old).
-%       Pp: 15x15 a posteriori error covariance matrix (old).
-%        F: 15x15 state transition matrix.
-%        Q: 12x12 process noise covariance matrix.
-%        G: 15x12 control-input matrix.      
+%   kf, data structure with at least the following fields,
+%       xp: nx1 a posteriori state vector (old).
+%       Pp: nxn a posteriori error covariance matrix (old).
+%        F: nxn state transition matrix.
+%        Q: qxq process noise covariance matrix.
+%        G: nxq control-input matrix.      
 %   	dt: sampling interval. 
 %
 % OUTPUT
-%   kf, the following fields are updated:
-%       xi: 15x1 a priori state vector (updated).
-%       Pi: 15x15 a priori error covariance matrix.
-%        A: 15x15 state transition matrix.
-%       Qd: 15xD discrete process noise covariance matrix.
+%   kf, the following fields are updated,
+%       xi: nx1 a priori state vector (updated).
+%       Pi: nxn a priori error covariance matrix.
+%        A: nxn state transition matrix.
+%       Qd: nxn discrete process noise covariance matrix.
 %
-%   Note: the value of 'D' depends on the number of sensors available.
+%   Note: values of 'n', 'q' and 'r' depend on the number of available 
+% sensors.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -54,7 +55,7 @@ function  kf = kf_prediction(kf, dt)
 
 % Discretization of continous-time system
 kf.A =  expm(kf.F * dt);          				% Exact solution for linear systems
-% S.A = I + (S.F * dt);         				% Approximated solution by Euler method 
+% kf.A = I + (kf.F * dt);         				% Approximated solution by Euler method 
 kf.Qd = (kf.G * kf.Q * kf.G') .* dt;            % Digitalized covariance matrix
 
 % Step 1, predict the a priori state vector, xi
