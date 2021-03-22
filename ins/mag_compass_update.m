@@ -1,4 +1,4 @@
-function yawm = mag_compass_update(m_n, dec, inc, DCMnb, roll, pitch, m_dyn)
+function yawm = mag_compass_update(m_n, dec, inc, DCMnb, roll, pitch)
 % magh_update: calculates magnetic heading angle (yaw) from magnetometer data.
 %
 % INPUT
@@ -8,7 +8,6 @@ function yawm = mag_compass_update(m_n, dec, inc, DCMnb, roll, pitch, m_dyn)
 %   DCMnb, 3x3 DCM nav-to-body.
 %   roll, roll angle (rad).
 %   pitch, pitch angle (rad).
-%   m_dyn, magnetic bias (T).
 %
 % OUTPUT
 %   yawm, yaw angle from magnetometer data.
@@ -45,7 +44,7 @@ function yawm = mag_compass_update(m_n, dec, inc, DCMnb, roll, pitch, m_dyn)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
-B = norm( m_n - m_dyn );                    % Magnitude of the flux density
+B = norm( m_n );                    % Magnitude of the flux density
  
 D = [ cos(dec) * cos(inc); sin(dec) * cos(inc); sin(inc); ];
 

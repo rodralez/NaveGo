@@ -1,11 +1,12 @@
 function samples_s = my_sgolayfilt (samples)
-% my_sgolayfilt: Savitzky-Golay Filtering with variable frame length.
+% my_sgolayfilt: Savitzky-Golay Filtering with variable frame length. If 
+% samples is a matrix, the filtering is done on the columns of samples.
 %
 % INPUT
-%		samples: Nx1 samples to be smoothed.
+%		samples, NxM samples to be smoothed.
 %
 % OUTPUT
-%		samples_s: Nx1 smoothed samples.
+%		samples_s, NxM smoothed samples.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -45,9 +46,10 @@ end
 
 % sgo_framelen must be odd
 if ( mod(sgo_framelen, 2) == 0 )
-    sgo_framelen = sgo_framelen +1;
+    sgo_framelen = sgo_framelen + 1;
 end
 
+% sgo_order should be an integer
 sgo_order = ceil( sgo_framelen / 2);
 
 samples_s = sgolayfilt(samples, sgo_order, sgo_framelen);

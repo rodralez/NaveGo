@@ -115,6 +115,11 @@ zupt_flag = false;
 
 %% PREALLOCATION
 
+% Kalman filter dimensions
+n = 15; % number of states
+r = 6;  % number of sensors
+q = 12; % number of inputs
+
 % Constant matrices
 I = eye(3);
 O = zeros(3);
@@ -142,18 +147,19 @@ lon_e    = zeros (LI, 1);
 h_e      = zeros (LI, 1);
 
 % Preallocation of Kalman filter matrices for later performance analysis
-xi = zeros(LG, 15);        % Evolution of Kalman filter a priori states
-xp = zeros(LG, 15);        % Evolution of Kalman filter a posteriori states
-z = zeros(LG, 6);          % INS/GNSS measurements
-v = zeros(LG, 6);          % Kalman filter innovations
-b = zeros(LG, 6);          % Biases compensantions after Kalman filter correction
+xi = zeros(LG, n);      % Evolution of Kalman filter a priori states
+xp = zeros(LG, n);      % Evolution of Kalman filter a posteriori states
+z = zeros(LG, r);       % INS/GNSS measurements
+v = zeros(LG, r);       % Kalman filter innovations
 
-A  = zeros(LG, 225);       % Transition-state matrices
-Pi = zeros(LG, 225);       % A priori covariance matrices
-Pp = zeros(LG, 225);       % A posteriori covariance matrices
-K  = zeros(LG, 90);        % Kalman gain matrices
-S  = zeros(LG, 36);        % Innovation matrices
-ob = zeros(LG, 1);         % Number of observable states at each GNSS data arriving
+A  = zeros(LG, n^2);    % Transition-state matrices
+Pi = zeros(LG, n^2);    % A priori covariance matrices
+Pp = zeros(LG, n^2);    % A posteriori covariance matrices
+K  = zeros(LG, n*r);    % Kalman gain matrices
+S  = zeros(LG, r^2);    % Innovation matrices
+ob = zeros(LG, 1);      % Number of observable states at each GNSS data arriving
+
+b = zeros(LG, 6);       % Biases compensantions after Kalman filter correction
 
 %% INITIAL VALUES AT INS TIME = 1
 
@@ -210,10 +216,10 @@ kf = kf_update( kf );
 % Initial matrices for Kalman filter performance analysis
 xi(1,:) = kf.xi';
 xp(1,:) = kf.xp';
-Pi(1,:) = reshape(kf.Pi, 1, 225);
-Pp(1,:) = reshape(kf.Pp, 1, 225);
-K(1,:)  = reshape(kf.K, 1, 90);
-S(1,:)  = reshape(kf.S, 1, 36);
+Pi(1,:) = reshape(kf.Pi, 1, n^2);
+Pp(1,:) = reshape(kf.Pp, 1, n^2);
+K(1,:)  = reshape(kf.K, 1, n*r);
+S(1,:)  = reshape(kf.S, 1, r^2);
 v(1,:)  = kf.v';
 z(1,:)  = kf.z';
 b(1,:) = [gb_dyn', ab_dyn'];
@@ -400,20 +406,20 @@ for i = 2:LI
         xi(gdx,:) = kf.xi';
         xp(gdx,:) = kf.xp';
         b(gdx,:) = [gb_dyn', ab_dyn'];
-        A(gdx,:)  = reshape(kf.A,  1, 225);
-        Pi(gdx,:) = reshape(kf.Pi, 1, 225);
-        Pp(gdx,:) = reshape(kf.Pp, 1, 225);
+        A(gdx,:)  = reshape(kf.A,  1, n^2);
+        Pi(gdx,:) = reshape(kf.Pi, 1, n^2);
+        Pp(gdx,:) = reshape(kf.Pp, 1, n^2);
         
         if(zupt_flag == false)
-            z(gdx,:)  = kf.z';
             v(gdx,:)  = kf.v';
-            K(gdx,:)  = reshape(kf.K, 1, 90);
-            S(gdx,:)  = reshape(kf.S, 1, 36);
+            z(gdx,:)  = kf.z';
+            K(gdx,:)  = reshape(kf.K, 1, n*r);
+            S(gdx,:)  = reshape(kf.S, 1, r^2);
         else
             zupt_flag = false;
             z(gdx,:)  = [ kf.z' 0 0 0 ]';
             v(gdx,:)  = [ kf.v' 0 0 0 ]';
-            K(gdx,1:45)  = reshape(kf.K, 1, 45);
+            K(gdx,1:45) = reshape(kf.K, 1, n*3);
             S(gdx,1:9)  = reshape(kf.S, 1, 9);
         end
     end

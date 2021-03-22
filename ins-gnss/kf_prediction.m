@@ -17,9 +17,6 @@ function  kf = kf_prediction(kf, dt)
 %        A: nxn state transition matrix.
 %       Qd: nxn discrete process noise covariance matrix.
 %
-%   Note: values of 'n', 'q' and 'r' depend on the number of available 
-% sensors.
-%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
 %   This file is part of NaveGo, an open-source MATLAB toolbox for

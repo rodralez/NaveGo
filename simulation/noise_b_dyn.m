@@ -8,7 +8,7 @@ function [b_dyn_n] = noise_b_dyn (b_corr, b_dyn, dt, M)
 %	M: 1x2 dimension of output vector.
 %
 % OUTPUT
-%	b_dyb_n: M matrix with simulated dynamic biases [X Y Z] 
+%	b_dyb_n: M matrix with simulated dynamic biases [X Y Z]
 %     (rad/s, rad/s, rad/s).
 %
 %   Copyright (C) 2014, Rodrigo González, all rights reserved.
@@ -41,32 +41,46 @@ function [b_dyn_n] = noise_b_dyn (b_corr, b_dyn, dt, M)
 
 % If correlation time is provided...
 if (~isinf(b_corr))
-
+    
     % First-order Gauss-Markov process
     b_dyn_n = zeros(M);
     N = M(1);           % Number of rows
-
+    
+    b_dyn_n(1, :) = b_dyn;
+    
     for i=1:3
-
-        beta  = dt / ( b_corr(i) );
-        sigma = b_dyn(i);
-        a1 = exp(-beta);
         
-        % The dynamic bias noise variance is modeled as an exponentially correlated
-        % fixed-variance first-order Markov process
-        sigma_gm = sigma * sqrt(1 - exp(-2*beta) );
-
-        b_wn = sigma_gm .* randn(N,1); 
+%         Nassar, 2004. Modeling Inertial Sensor Errors UsingAutoregressive (AR) Models
+%         b_k+1 = (1 - beta*dt) * b_k + sqrt ( 2 * beta * sigma^2) ...
+%         * dt * w_k
+        
+        beta  = 1 / ( b_corr(i) );
+        sigma = b_dyn(i);
+        b_wn = randn(N,1);
+        a1 = sqrt (2* beta * sigma^2) * dt; 
         
         for j=2:N
-            b_dyn_n(j, i) = a1 * b_dyn_n(j-1, i) +  b_wn(j-1);
+            b_dyn_n(j, i) = (1 - beta*dt) * b_dyn_n(j-1, i) +  a1 *  b_wn(j-1);
         end
+        
+        %         beta  = dt / ( b_corr(i) );
+        %         sigma = b_dyn(i);
+        %         a1 = exp(-beta);
+        %
+        %         % The dynamic bias noise variance is modeled as an exponentially correlated
+        %         % fixed-variance first-order Markov process
+        %         sigma_gm = sigma * sqrt(1 - exp(-2*beta) );
+        %         b_wn = sigma_gm .* randn(N,1);
+        %
+        %         for j=2:N
+        %             b_dyn_n(j, i) = a1 * b_dyn_n(j-1, i) +  b_wn(j-1);
+        %         end
     end
     
-% If not...
+    % If not...
 else
     sigma = b_dyn;
     b_wn = randn(M);
     
-    b_dyn_n = [sigma(1).*b_wn(:,1) , sigma(2).*b_wn(:,2) , sigma(3).*b_wn(:,3)];    
+    b_dyn_n = [sigma(1).*b_wn(:,1) , sigma(2).*b_wn(:,2) , sigma(3).*b_wn(:,3)];
 end

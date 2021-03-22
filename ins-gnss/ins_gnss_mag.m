@@ -122,6 +122,11 @@ zupt_flag = false;
 
 %% PREALLOCATION
 
+% Kalman filter dimensions
+n = 15; % number of states
+r = 7;  % number of sensors
+q = 12; % number of inputs
+
 % Constant matrices
 I = eye(3);
 O = zeros(3);
@@ -150,18 +155,19 @@ lon_e    = zeros (LI, 1);
 h_e      = zeros (LI, 1);
 
 % Preallocation of Kalman filter matrices for later performance analysis
-xi = zeros(LG, 16);        % Evolution of Kalman filter a priori states
-xp = zeros(LG, 16);        % Evolution of Kalman filter a posteriori states
-z = zeros(LG, 7);          % INS/GNSS measurements
-v = zeros(LG, 7);          % Kalman filter innovations
-b = zeros(LG, 7);          % Biases compensantions after Kalman filter correction
+xi = zeros(LG, n);      % Evolution of Kalman filter a priori states
+xp = zeros(LG, n);      % Evolution of Kalman filter a posteriori states
+z = zeros(LG, r);       % INS/GNSS measurements
+v = zeros(LG, r);       % Kalman filter innovations
 
-A  = zeros(LG, 256);       % Transition-state matrices
-Pi = zeros(LG, 256);       % A priori covariance matrices
-Pp = zeros(LG, 256);       % A posteriori covariance matrices
-K  = zeros(LG, 112);       % Kalman gain matrices
-S  = zeros(LG, 49);        % Innovation matrices
-ob = zeros(LG, 1);         % Number of observable states at each GNSS data arriving
+A  = zeros(LG, n^2);    % Transition-state matrices
+Pi = zeros(LG, n^2);    % A priori covariance matrices
+Pp = zeros(LG, n^2);    % A posteriori covariance matrices
+K  = zeros(LG, n*r);    % Kalman gain matrices
+S  = zeros(LG, r^2);    % Innovation matrices
+ob = zeros(LG, 1);      % Number of observable states at each GNSS data arriving
+
+b = zeros(LG, 6);       % Biases compensantions after Kalman filter correction
 
 %% INITIAL VALUES AT INS TIME = 1
 
@@ -185,15 +191,15 @@ h_e(1)   = gnss.h(1);
 % Initial dynamic biases
 gb_dyn = imu.gb_dyn';
 ab_dyn = imu.ab_dyn';
-m_dyn = mag.b_dyn;
+% m_dyn = mag.b_dyn;
 
 %% INITIALIZATION OF KALMAN FILTER MATRICES
 
 % Prior estimates
-kf.xi = [ zeros(1,9), imu.gb_dyn, imu.ab_dyn mag.b_dyn ]';  % Error vector state
-kf.Pi = diag([imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_dyn, imu.ab_dyn, mag.b_dyn].^2);
+kf.xi = [ zeros(1,9), imu.gb_dyn, imu.ab_dyn ]';  % Error vector state
+kf.Pi = diag([imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_dyn, imu.ab_dyn].^2);
 
-kf.Q  = diag([ imu.arw, imu.vrw, imu.gb_psd, imu.ab_psd mag.psd ].^2); % mag.psd
+kf.Q  = diag([ imu.arw, imu.vrw, imu.gb_psd, imu.ab_psd ].^2); % mag.psd
 
 fb_corrected = imu.fb(1,:)' - ab_dyn - imu.ab_sta';
 fn = DCMbn * fb_corrected;
@@ -209,11 +215,11 @@ upd = [gnss.vel(1,:) gnss.lat(1) gnss.h(1) fn' wn'];
 Tpr = diag([(RM + gnss.h(1)), (RN + gnss.h(1)) * cos(gnss.lat(1)), -1]);  % radians-to-meters
 
 % Update matrix H
-kf.H = [ 0 0 1 zeros(1,13) ;
-     O I O O O zeros(3,1);
-    O O Tpr O O zeros(3,1); ];
+kf.H = [ 0 0 1 zeros(1,12) ;
+        O I O O O ;
+        O O Tpr O O ; ];
 kf.R = diag([mag.std gnss.stdv gnss.stdm]).^2;
-kf.z = [mag.std gnss.stdv, gnss.stdm ]';
+kf.z = [mag.std, gnss.stdv, gnss.stdm]';
 
 % Propagate prior estimates to get xp(1) and Pp(1)
 kf = kf_update( kf );
@@ -221,13 +227,13 @@ kf = kf_update( kf );
 % Initial matrices for Kalman filter performance analysis
 xi(1,:) = kf.xi';
 xp(1,:) = kf.xp';
-Pi(1,:) = reshape(kf.Pi, 1, 256);
-Pp(1,:) = reshape(kf.Pp, 1, 256);
-K(1,:)  = reshape(kf.K, 1, 112);
-S(1,:)  = reshape(kf.S, 1, 49);
+Pi(1,:) = reshape(kf.Pi, 1, n^2);
+Pp(1,:) = reshape(kf.Pp, 1, n^2);
+K(1,:)  = reshape(kf.K, 1, n*r);
+S(1,:)  = reshape(kf.S, 1, r^2);
 v(1,:)  = kf.v';
 z(1,:)  = kf.z';
-b(1,:) = [gb_dyn', ab_dyn', m_dyn];
+b(1,:) = [gb_dyn', ab_dyn'];
 
 %% INS (IMU) TIME IS THE MASTER CLOCK
 for i = 2:LI
@@ -279,7 +285,7 @@ for i = 2:LI
 
     % Magnetic heading update
     yawm_e(i) = mag_compass_update(mag.m(i,:), mag.dec, mag.inc, DCMbn',  ...
-        roll_e(i), pitch_e(i), m_dyn);
+        roll_e(i), pitch_e(i));
       
     %% ZUPT DETECTION ALGORITHM
     idz = floor( gnss.zupt_win / dti ); % Index to set ZUPT window time
@@ -357,17 +363,17 @@ for i = 2:LI
         upd = [vel_e(i,:) lat_e(i) h_e(i) fn' wn'];
         
         % Matrices F and G update
-        [kf.F, kf.G] = F_update(upd, DCMbn, imu, 'ON');
+        [kf.F, kf.G] = F_update(upd, DCMbn, imu);
         
         % Matrix H update
         if(zupt_flag == false)
-            kf.H = [ 0 0 1 zeros(1,13) 
-                     O I O O O zeros(3,1);
-                     O O Tpr O O zeros(3,1); ];
+            kf.H = [ 0 0 1 zeros(1,12) ;
+                     O I O O O ;
+                     O O Tpr O O ; ];
             kf.R = diag([mag.std gnss.stdv gnss.stdm]).^2;
             kf.z = [ zy zv' zp' ]'; % 
         else
-            kf.H = [ O I O O O zeros(3,1); ];
+            kf.H = [ O I O O O ; ];
             kf.R = diag([gnss.stdv]).^2;
             kf.z =  zv;
         end
@@ -416,26 +422,26 @@ for i = 2:LI
         % Biases estimation
         gb_dyn   = -kf.xp(10:12);
         ab_dyn   = -kf.xp(13:15);
-        m_dyn    = -kf.xp(16);
+%         m_dyn    = -kf.xp(16);
         
         % Matrices for later Kalman filter performance analysis
         xi(gdx,:) = kf.xi';
         xp(gdx,:) = kf.xp';
-        b(gdx,:) = [gb_dyn', ab_dyn', m_dyn];
-        A(gdx,:)  = reshape(kf.A,  1, 256);
-        Pi(gdx,:) = reshape(kf.Pi, 1, 256);
-        Pp(gdx,:) = reshape(kf.Pp, 1, 256);
+        b(gdx,:) = [gb_dyn', ab_dyn'];
+        A(gdx,:)  = reshape(kf.A,  1, n^2);
+        Pi(gdx,:) = reshape(kf.Pi, 1, n^2);
+        Pp(gdx,:) = reshape(kf.Pp, 1, n^2);
         
         if(zupt_flag == false)
             v(gdx,:)  = kf.v';
             z(gdx,:)  = kf.z';
-            K(gdx,:)  = reshape(kf.K, 1, 112);
-            S(gdx,:)  = reshape(kf.S, 1, 49);
+            K(gdx,:)  = reshape(kf.K, 1, n*r);
+            S(gdx,:)  = reshape(kf.S, 1, r^2);
         else
             zupt_flag = false;
             z(gdx,:)  = [ kf.z' 0 0 0 0]';
             v(gdx,:)  = [ kf.v' 0 0 0 0]';
-            K(gdx,1:48) = reshape(kf.K, 1, 48);
+            K(gdx,1:45) = reshape(kf.K, 1, n*3);
             S(gdx,1:9)  = reshape(kf.S, 1, 9);
         end
     end

@@ -17,8 +17,6 @@ function  kf = kf_update(kf)
 %        K: nxr Kalman gain matrix.
 %        S: rxr innovation (not residual) covariance matrix.
 %
-%   Note: values of 'n' and 'r' depend on the number of available sensors.
-%
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
 %   This file is part of NaveGo, an open-source MATLAB toolbox for
