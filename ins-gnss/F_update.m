@@ -196,7 +196,7 @@ else
     G = [DCMbn  Z     Z    Z ;
         Z      DCMbn  Z    Z ;
         Z      Z      Z    Z ;
-        Z      Z      I    Z ;
-        Z      Z      Z    I ;
+        Z      Z      Fgg    Z ;
+        Z      Z      Z    Faa ;
         ];
 end

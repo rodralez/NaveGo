@@ -57,10 +57,10 @@ if (~isinf(b_corr))
         beta  = 1 / ( b_corr(i) );
         sigma = b_dyn(i);
         b_wn = randn(N,1);
-        a1 = sqrt (2* beta * sigma^2) * dt; 
+        a1 = sqrt (2* beta * sigma^2); 
         
         for j=2:N
-            b_dyn_n(j, i) = (1 - beta*dt) * b_dyn_n(j-1, i) +  a1 *  b_wn(j-1);
+            b_dyn_n(j, i) = (1 - beta*dt) * b_dyn_n(j-1, i) +  a1 * dt * b_wn(j-1);
         end
         
         %         beta  = dt / ( b_corr(i) );
