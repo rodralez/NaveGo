@@ -29,13 +29,17 @@ function [b_dyn_n] = noise_b_dyn (b_corr, b_dyn, dt, M)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% Reference:
+% References:
 %
 %   Aggarwal, P. et al. MEMS-Based Integrated Navigation. Artech
-% House. 2010. Eq. 3.33, page 57.
+% House. 2010. 
 %
-% Version: 003
-% Date:    2020/11/26
+%    Sameh Nassar, Klaus-Peter Schwarz, and Aboelmagd Noureldin. "Modeling 
+% inertial sensor errors using autoregressive (AR) models." NAVIGATION, 
+% Journal of the Institute of Navigation 51.4 (2004): 259-268.
+%
+% Version: 004
+% Date:    2021/03/23
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -50,19 +54,19 @@ if (~isinf(b_corr))
     
     for i=1:3
         
-%         Nassar, 2004. Modeling Inertial Sensor Errors UsingAutoregressive (AR) Models
-%         b_k+1 = (1 - beta*dt) * b_k + sqrt ( 2 * beta * sigma^2) ...
-%         * dt * w_k
+        % Method from Nassar, Eq. 2.
+        % b_k+1 = (1 - beta*dt) * b_k + sqrt ( 2 * beta * sigma^2) * dt * w_k
         
         beta  = 1 / ( b_corr(i) );
         sigma = b_dyn(i);
         b_wn = randn(N,1);
-        a1 = sqrt (2* beta * sigma^2); 
+        a1 = sqrt (2* beta * sigma^2);
         
         for j=2:N
             b_dyn_n(j, i) = (1 - beta*dt) * b_dyn_n(j-1, i) +  a1 * dt * b_wn(j-1);
         end
         
+        % Method from Aggarwal, Eq. 3.33, page 57.
         %         beta  = dt / ( b_corr(i) );
         %         sigma = b_dyn(i);
         %         a1 = exp(-beta);
