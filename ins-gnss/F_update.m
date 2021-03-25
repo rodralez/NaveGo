@@ -169,7 +169,7 @@ end
 
 if (strcmp(MAG,'ON'))
     
-    F = [F11  F12  F13   DCMbn   Z     zeros(3,1);
+    F = [F11  F12  F13  DCMbn   Z      zeros(3,1);
         F21  F22  F23   Z       DCMbn  zeros(3,1);
         F31  F32  F33   Z       Z      zeros(3,1);
         Z    Z    Z     Fgg     Z      zeros(3,1);
@@ -186,7 +186,7 @@ if (strcmp(MAG,'ON'))
         ];
 else
     
-    F = [F11  F12  F13   DCMbn   Z  ;
+    F = [F11  F12  F13  DCMbn   Z  ;
         F21  F22  F23   Z       DCMbn  ;
         F31  F32  F33   Z       Z      ;
         Z    Z    Z     Fgg     Z      ;
@@ -196,7 +196,7 @@ else
     G = [DCMbn  Z     Z    Z ;
         Z      DCMbn  Z    Z ;
         Z      Z      Z    Z ;
-        Z      Z      Fgg    Z ;
-        Z      Z      Z    Faa ;
+        Z      Z      I    Z ;
+        Z      Z      Z    I ;
         ];
 end

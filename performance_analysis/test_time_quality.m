@@ -31,8 +31,8 @@ function [hk, pk, rmse_err ] = test_time_quality(time_v)
 % Reference:
 %
 %
-% Version: 001
-% Date:    2021/03/02
+% Version: 002
+% Date:    2021/03/23
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -45,7 +45,7 @@ dt2 = median(time_d);
 dt3 = mode(time_d);
 sd = std(time_d);
 
-dt = dt2;                   % sampling time is taken from median
+dt = dt1;                   % sampling time is taken from mean
     
 ln = time_d < 0.0;
 neg_n = sum(ln);
@@ -78,7 +78,7 @@ fprintf('test_time_quality: time vector frequency is %.2f. \n', freq)
 if (all(time_d))
     fprintf('test_time_quality: all contiguous elements in time vector are different. \n')
 else
-    fprintf('test_time_quality: not all contiguous elements in time vector are different. \n')
+    fprintf('test_time_quality: some contiguous elements in time vector are equal. \n')
 end
 
 tu = unique(time_v);
@@ -88,7 +88,7 @@ tu = unique(time_v);
 if (n == nu && m == mu)
     fprintf('test_time_quality: all elements in time vector are unique. \n')
 else
-    fprintf('test_time_quality: all elements in time vector are not unique. \n')
+    fprintf('test_time_quality: some elements in time vector are not unique. \n')
 end
 
 %% Check if size of time vector is coherence 

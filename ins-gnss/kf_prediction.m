@@ -60,6 +60,6 @@ kf.xi = kf.A * kf.xp;
 
 % Step 2, update the a priori covariance matrix, Pi
 kf.Pi = (kf.A * kf.Pp * kf.A') + kf.Qd;
-kf.Pi =  0.5 .* (kf.Pi + kf.Pi');               % Force Pi to be symmetric matrix
+kf.Pi =  0.5 .* (kf.Pi + kf.Pi');               % Force Pi to be a symmetric matrix
 
 end

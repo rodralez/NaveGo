@@ -58,7 +58,7 @@ kf.v =  kf.z - kf.H * kf.xi; 					% Innovation vector
 
 r = length(kf.v);
 if rank (kf.S) < r
-    error('kf_update: S innovation covariance matrix is not invertable.')
+    error('kf_update: innovation covariance matrix S is not invertable.')
 end
 
 kf.K = (kf.Pi * kf.H') * (kf.S)^(-1) ;			% Kalman gain matrix
