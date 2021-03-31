@@ -6,7 +6,7 @@ function gn = gravity(lat, h)
 %         h, Mx1 altitude (m).
 %
 % OUTPUT
-%		g_n, Mx3 gravity vector in the nav-frame (m/s^2).
+%		g_n, Mx3 gravity vector in the nav-frame [m/s^2 m/s^2 m/s^2].
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %

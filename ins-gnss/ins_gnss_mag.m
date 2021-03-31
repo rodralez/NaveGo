@@ -41,9 +41,9 @@ function [nav_e] = ins_gnss_mag(imu, gnss, mag, att_mode)
 %
 %	mag, magnetometer data structure.
 %		m: Mx3 magnetometers measurements (Tesla).
-%	  dec: local magnetic declination (rad). 
-%	  inc: local magnetic inclination (rad). 
-%     std: standard deviation (rad). 
+%	  dec: local magnetic declination (rad).
+%	  inc: local magnetic inclination (rad).
+%     std: standard deviation (rad).
 %
 %  att_mode: attitude mode string.
 %      'quaternion': attitude updated in quaternion format. Default value.
@@ -60,20 +60,20 @@ function [nav_e] = ins_gnss_mag(imu, gnss, mag, att_mode)
 %       vel: Ix3 NED velocities (m/s).
 %       lat: Ix1 latitude (radians).
 %       lon: Ix1 longitude (radians).
-%         h: Ix1 altitude (m).
-%        xi: Gx15 Kalman filter a priori states.
-%        xp: Gx15 Kalman filter a posteriori states.
-%         z: Gx7  INS/GNSS measurements
-%         v: Gx7  Kalman filter innovations.
-%         b: Gx6 Kalman filter biases compensations, [gb_dyn ab_dyn].
-%         A: Gx225 Kalman filter transition-state matrices, one matrix per
-%          row ordered by columns.
-%        Pp: Mx225 Kalman filter a posteriori covariance matrices, one
+%         h: Ix1 altitude (m).n
+%        xi: Gxn Kalman filter a priori states.
+%        xp: Gxn Kalman filter a posteriori states.
+%         z: Gxr INS/GNSS measurements
+%         v: Gxr Kalman filter innovations.
+%         b: Gxr Kalman filter biases compensations, [gb_dyn ab_dyn].
+%         A: Gxn^2 Kalman filter transition-state matrices, one matrix per
+%            row ordered by columns.
+%        Pp: Gxn^2 Kalman filter a posteriori covariance matrices, one
 %         matrix per row ordered by columns.
-%        Pi: Mx225 Kalman filter a priori covariance matrices, one matrix
-%         per row ordered by columns.
-%         K: Gx105 Kalman gain matrices
-%         S: Gx49 Innovation matrices
+%        Pi: Gxn^2 Kalman filter a priori covariance matrices, one matrix
+%            per row ordered by columns.
+%         K: Gx(n*r) Kalman gain matrices
+%         S: Gxr^2 Innovation matrices
 %        ob: Gx1 Number of observable states after each GNSS data arriving
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -197,27 +197,27 @@ ab_dyn = imu.ab_dyn';
 
 % Prior estimates
 kf.xi = [ zeros(1,9), imu.gb_dyn, imu.ab_dyn ]';  % Error vector state
-kf.Pi = diag([imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_dyn, imu.ab_dyn].^2);
+kf.Pi = diag([ imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_dyn, imu.ab_dyn ].^2);
 
 kf.Q  = diag([ imu.arw, imu.vrw, imu.gb_psd, imu.ab_psd ].^2); % mag.psd
 
-fb_corrected = imu.fb(1,:)' - ab_dyn - imu.ab_sta';
-fn = DCMbn * fb_corrected;
+fn = DCMbn * imu.fb(1,:)' - ab_dyn - imu.ab_sta';
 wn = DCMbn * imu.wb(1,:)' - gb_dyn - imu.gb_sta';
 
 % Vector to update matrix F
 upd = [gnss.vel(1,:) gnss.lat(1) gnss.h(1) fn' wn'];
 
 % Update matrices F and G
-[kf.F, kf.G] = F_update(upd, DCMbn, imu);
+[kf.F, kf.G] = F_update(upd, DCMbn, imu, 'OFF');
 
 [RM,RN] = radius(gnss.lat(1));
 Tpr = diag([(RM + gnss.h(1)), (RN + gnss.h(1)) * cos(gnss.lat(1)), -1]);  % radians-to-meters
 
 % Update matrix H
-kf.H = [ 0 0 1 zeros(1,12) ;
-        O I O O O ;
-        O O Tpr O O ; ];
+kf.H = [ %0 0 norm(mag.m(1,:)) zeros(1,13) ;
+    [0 0 1]*DCMbn zeros(1,12) ;
+    O I O O O ;
+    O O Tpr O O ; ];
 kf.R = diag([mag.std gnss.stdv gnss.stdm]).^2;
 kf.z = [mag.std, gnss.stdv, gnss.stdm]';
 
@@ -268,11 +268,11 @@ for i = 2:LI
     roll_e(i) = euler(1);
     pitch_e(i)= euler(2);
     yaw_e(i)  = euler(3);
-
+    
     % Velocity update
     vel = vel_update(fn, vel_e(i-1,:), omega_ie_n, omega_en_n, gn_e(i,:)', dti);
     vel_e (i,:) = vel;
-     
+    
     % Position update
     pos = pos_update([lat_e(i-1) lon_e(i-1) h_e(i-1)], vel_e(i,:), dti);
     lat_e(i) = pos(1);
@@ -282,11 +282,11 @@ for i = 2:LI
     % Turn-rates update with both updated velocity and position
     omega_ie_n = earth_rate(lat_e(i));
     omega_en_n = transport_rate(lat_e(i), vel_e(i,1), vel_e(i,2), h_e(i));
-
+    
     % Magnetic heading update
     yawm_e(i) = mag_compass_update(mag.m(i,:), mag.dec, mag.inc, DCMbn',  ...
         roll_e(i), pitch_e(i));
-      
+    
     %% ZUPT DETECTION ALGORITHM
     idz = floor( gnss.zupt_win / dti ); % Index to set ZUPT window time
     
@@ -320,7 +320,7 @@ for i = 2:LI
             
             zupt_flag = true;
             
-%             fprintf(' z\n')       % DEBUG
+            %             fprintf(' z\n')       % DEBUG
         end
     end
     
@@ -331,7 +331,7 @@ for i = 2:LI
     
     if ( ~isempty(gdx) && gdx > 1)
         
-%                 gdx   % DEBUG
+        %                 gdx   % DEBUG
         
         %% MEASUREMENTS
         
@@ -350,9 +350,9 @@ for i = 2:LI
             + (DCMbn * skewm(wb_corrected) * gnss.larm )' )';
         
         % Heading innovation
-%         zy = correct_yaw ( yaw_e(i) - yawm_e(i)) ;
+        zy = correct_yaw ( yaw_e(i) - yawm_e(i)) ;
         % Groves, Eq. 6.8
-        zy = correct_yaw ( ( pitch_e(i) * sin(yawm_e(i)) - roll_e(i) * cos(yawm_e(i)) ) * tan(mag.inc) );
+%         zy = correct_yaw ( ( pitch_e(i) * sin(yawm_e(i)) - roll_e(i) * cos(yawm_e(i)) ) * tan(mag.inc) );
         
         %% KALMAN FILTER
         
@@ -363,15 +363,16 @@ for i = 2:LI
         upd = [vel_e(i,:) lat_e(i) h_e(i) fn' wn'];
         
         % Matrices F and G update
-        [kf.F, kf.G] = F_update(upd, DCMbn, imu);
+        [kf.F, kf.G] = F_update(upd, DCMbn, imu, 'OFF');
         
         % Matrix H update
         if(zupt_flag == false)
-            kf.H = [ 0 0 1 zeros(1,12) ;
-                     O I O O O ;
-                     O O Tpr O O ; ];
+            kf.H = [ %0 0 norm(mag.m(1,:)) zeros(1,13) ;
+                [0 0 1]*DCMbn zeros(1,12) ; % 
+                O I O O O ;
+                O O Tpr O O ; ];
             kf.R = diag([mag.std gnss.stdv gnss.stdm]).^2;
-            kf.z = [ zy zv' zp' ]'; % 
+            kf.z = [ zy zv' zp' ]'; %
         else
             kf.H = [ O I O O O ; ];
             kf.R = diag([gnss.stdv]).^2;
@@ -399,10 +400,10 @@ for i = 2:LI
         DCMbn = qua2dcm(qua);
         
         % Attitude correction, method 1
-%         euler = qua2euler(qua);
-%         roll_e(i) = euler(1);
-%         pitch_e(i)= euler(2);
-%         yaw_e(i)  = euler(3);
+        %         euler = qua2euler(qua);
+        %         roll_e(i) = euler(1);
+        %         pitch_e(i)= euler(2);
+        %         yaw_e(i)  = euler(3);
         
         % Attitude correction, method 2
         roll_e(i)  = roll_e(i)  - kf.xp(1);
@@ -439,9 +440,9 @@ for i = 2:LI
             S(gdx,:)  = reshape(kf.S, 1, r^2);
         else
             zupt_flag = false;
-            z(gdx,:)  = [ kf.z' 0 0 0 0]';
-            v(gdx,:)  = [ kf.v' 0 0 0 0]';
-            K(gdx,1:45) = reshape(kf.K, 1, n*3);
+            z(gdx,:)  = [ 0 kf.z' 0 0 0 ]';
+            v(gdx,:)  = [ 0 kf.v' 0 0 0 ]';
+            K(gdx,1:n*3) = reshape(kf.K, 1, n*3);
             S(gdx,1:9)  = reshape(kf.S, 1, 9);
         end
     end

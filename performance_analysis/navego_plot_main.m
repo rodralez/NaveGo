@@ -31,8 +31,8 @@ function  navego_plot_main (ref, gnss, nav_e, gnss_i, nav_i, ref_g, ref_n)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% Version: 013
-% Date:    2021/03/15
+% Version: 014
+% Date:    2021/03/26
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -219,15 +219,15 @@ navego_plot(cell_s, 'ERROR', nav_e.tg, sig3_v(:,9), ...
 figure;
 
 subplot(311)
-cell_s = {'KF BIAS GYRO X ESTIMATION', 'Time [s]', '[deg]', '3\sigma', 'BIAS'};
+cell_s = {'KF BIAS GYRO X ESTIMATION', 'Time [s]', '[rad/s]', '3\sigma', 'BIAS'};
 navego_plot(cell_s, 'ERROR', nav_e.tg, R2D.*sig3_v(:,10), nav_e.tg, R2D.*nav_e.b(:, 1));
 
 subplot(312)
-cell_s = {'KF BIAS GYRO Y ESTIMATION', 'Time [s]', '[deg]', '3\sigma', 'BIAS'};
+cell_s = {'KF BIAS GYRO Y ESTIMATION', 'Time [s]', '[rad/s]', '3\sigma', 'BIAS'};
 navego_plot(cell_s, 'ERROR', nav_e.tg, R2D.*sig3_v(:,11), nav_e.tg, R2D.*nav_e.b(:, 2));
 
 subplot(313)
-cell_s = {'KF BIAS GYRO Z ESTIMATION', 'Time [s]', '[deg]', '3\sigma', 'BIAS'};
+cell_s = {'KF BIAS GYRO Z ESTIMATION', 'Time [s]', '[rad/s]', '3\sigma', 'BIAS'};
 navego_plot(cell_s, 'ERROR', nav_e.tg, R2D.*sig3_v(:,12), nav_e.tg, R2D.*nav_e.b(:, 3));
 
 figure;

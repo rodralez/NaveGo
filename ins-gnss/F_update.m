@@ -47,8 +47,8 @@ function  [F, G] = F_update(upd, DCMbn, imu, MAG)
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 22.
 %
-% Version: 006
-% Date:    2021/03/19
+% Version: 007
+% Date:    2021/03/26
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -69,7 +69,9 @@ Z = zeros(3);
 
 [RM,RN] = radius(lat);
 
-RO = sqrt(RN*RM);
+RO = sqrt(RN*RM) + h;
+
+%% ATTITUDE MATRICES
 
 a11 = 0;
 a12 = -( (Om * sin(lat)) + (Ve / RO * tan(lat)) );
@@ -107,6 +109,8 @@ a32 = 0 ;
 a33 = (Ve * tan(lat)) / (RO^2) ;
 F13 = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
 
+%% VELOCITY MATRICES
+
 F21 = skewm(fn);
 
 a11 = Vd / RO;
@@ -120,6 +124,11 @@ a32 = -2 * (Om * cos(lat) +  (Ve / RO)) ;
 a33 = 0;
 F22 = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
 
+e = 0.0818191908425;        % WGS84 eccentricity
+res = RN * sqrt( cos(lat)^2 + (1-e^2)^2 * sin(lat)^2);
+g = gravity(lat,h);
+g0 = g(3);
+
 a11 = -Ve * ((2 * Om * cos(lat)) + (Ve / (RO * (cos(lat))^2)));
 a12 = 0 ;
 a13 = (1 / RO^2) * ( (Ve^2 * tan(lat)) - (Vn * Vd) );
@@ -128,8 +137,11 @@ a22 = 0 ;
 a23 = -(Ve / RO^2) * (Vn * tan(lat) + Vd);
 a31 = 2 * Om * Ve * sin(lat);
 a32 = 0;
-a33 = (1 / RO^2) * (Vn^2 + Ve^2);
+% a33 = (1 / RO^2) * (Vn^2 + Ve^2);
+a33 = Ve^2 / (RN+h)^2 + Vn^2 / (RM+h)^2 - 2 * g0 / res;
 F23 = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
+
+%% POSITIONING MATRICES
 
 F31 = zeros(3);
 
@@ -155,19 +167,40 @@ a32 = 0;
 a33 = 0;
 F33 = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
 
-if (isinf(imu.ab_corr))
-    Faa = Z;
-else
-    Faa = diag(-1./imu.ab_corr);
-end
-
 if (isinf(imu.gb_corr))
     Fgg = Z;
 else
-    Fgg = diag(-1./imu.gb_corr);
+    Fgg = -diag( 1./ imu.gb_corr);
+    Fbg = I;
+%     Fbg = -diag(sqrt (2 ./ imu.gb_corr .* imu.gb_dyn.^2));
 end
 
-if (strcmp(MAG,'ON'))
+if (isinf(imu.ab_corr))
+    Faa = Z;
+else
+    Faa = -diag(1 ./ imu.ab_corr);
+    Fba = I;
+%     Fba = -diag(sqrt (2 ./ imu.ab_corr .* imu.ab_dyn.^2));
+end
+
+if (strcmp(MAG,'OFF'))
+    
+    
+    F = [F11  F12  F13  DCMbn   Z  ;
+        F21  F22  F23   Z       DCMbn  ;
+        F31  F32  F33   Z       Z      ;
+        Z    Z    Z     Fgg     Z      ;
+        Z    Z    Z     Z       Faa    ;
+        ];
+    
+    G = [DCMbn  Z     Z    Z ;
+        Z      DCMbn  Z    Z ;
+        Z      Z      Z    Z ;
+        Z      Z      Fbg    Z ;
+        Z      Z      Z    Fba ;
+        ];
+    
+else
     
     F = [F11  F12  F13  DCMbn   Z      zeros(3,1);
         F21  F22  F23   Z       DCMbn  zeros(3,1);
@@ -182,21 +215,6 @@ if (strcmp(MAG,'ON'))
         Z      Z      Z    Z zeros(3,1);
         Z      Z      I    Z zeros(3,1);
         Z      Z      Z    I zeros(3,1);
-        zeros(1,13);
-        ];
-else
-    
-    F = [F11  F12  F13  DCMbn   Z  ;
-        F21  F22  F23   Z       DCMbn  ;
-        F31  F32  F33   Z       Z      ;
-        Z    Z    Z     Fgg     Z      ;
-        Z    Z    Z     Z       Faa    ;
-        ];
-    
-    G = [DCMbn  Z     Z    Z ;
-        Z      DCMbn  Z    Z ;
-        Z      Z      Z    Z ;
-        Z      Z      I    Z ;
-        Z      Z      Z    I ;
+        zeros(1,12)  1;
         ];
 end

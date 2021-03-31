@@ -54,19 +54,19 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %       lat: Ix1 latitude (radians).
 %       lon: Ix1 longitude (radians).
 %         h: Ix1 altitude (m).
-%        xi: Gx15 Kalman filter a priori states.
-%        xp: Gx15 Kalman filter a posteriori states.
-%         z: Gx6  INS/GNSS measurements
-%         v: Gx6  Kalman filter innovations.
-%         b: Gx6 Kalman filter biases compensations, [gb_dyn ab_dyn].
-%         A: Gx225 Kalman filter transition-state matrices, one matrix per
-%          row ordered by columns.
-%        Pp: Gx225 Kalman filter a posteriori covariance matrices, one
+%        xi: Gxn Kalman filter a priori states.
+%        xp: Gxn Kalman filter a posteriori states.
+%         z: Gxr INS/GNSS measurements
+%         v: Gxr Kalman filter innovations.
+%         b: Gxr Kalman filter biases compensations, [gb_dyn ab_dyn].
+%         A: Gxn^2 Kalman filter transition-state matrices, one matrix per
+%            row ordered by columns.
+%        Pp: Gxn^2 Kalman filter a posteriori covariance matrices, one
 %         matrix per row ordered by columns.
-%        Pi: Gx225 Kalman filter a priori covariance matrices, one matrix
-%         per row ordered by columns.
-%         K: Gx90 Kalman gain matrices
-%         S: Gx36 Innovation matrices
+%        Pi: Gxn^2 Kalman filter a priori covariance matrices, one matrix
+%            per row ordered by columns.
+%         K: Gx(n*r) Kalman gain matrices
+%         S: Gxr^2 Innovation matrices
 %        ob: Gx1 Number of observable states after each GNSS data arriving
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -159,7 +159,7 @@ K  = zeros(LG, n*r);    % Kalman gain matrices
 S  = zeros(LG, r^2);    % Innovation matrices
 ob = zeros(LG, 1);      % Number of observable states at each GNSS data arriving
 
-b = zeros(LG, 6);       % Biases compensantions after Kalman filter correction
+b = zeros(LG, r);       % Biases compensantions after Kalman filter correction
 
 %% INITIAL VALUES AT INS TIME = 1
 
@@ -257,11 +257,11 @@ for i = 2:LI
     roll_e(i) = euler(1);
     pitch_e(i)= euler(2);
     yaw_e(i)  = euler(3);
-
-    % Velocity update    
+    
+    % Velocity update
     vel = vel_update(fn, vel_e(i-1,:), omega_ie_n, omega_en_n, gn_e(i,:)', dti);
     vel_e (i,:) = vel;
-     
+    
     % Position update
     pos = pos_update([lat_e(i-1) lon_e(i-1) h_e(i-1)], vel_e(i,:), dti);
     lat_e(i) = pos(1);
@@ -271,7 +271,7 @@ for i = 2:LI
     % Turn-rates update with both updated velocity and position
     omega_ie_n = earth_rate(lat_e(i));
     omega_en_n = transport_rate(lat_e(i), vel_e(i,1), vel_e(i,2), h_e(i));
-       
+    
     %% ZUPT DETECTION ALGORITHM
     idz = floor( gnss.zupt_win / dti ); % Index to set ZUPT window time
     
@@ -305,7 +305,7 @@ for i = 2:LI
             
             zupt_flag = true;
             
-%             fprintf(' z\n')       % DEBUG
+            %             fprintf(' z\n')       % DEBUG
         end
     end
     
@@ -316,7 +316,7 @@ for i = 2:LI
     
     if ( ~isempty(gdx) && gdx > 1)
         
-%                 gdx   % DEBUG
+        %                 gdx   % DEBUG
         
         %% MEASUREMENTS
         
@@ -378,10 +378,10 @@ for i = 2:LI
         DCMbn = qua2dcm(qua);
         
         % Attitude correction, method 1
-%         euler = qua2euler(qua);
-%         roll_e(i) = euler(1);
-%         pitch_e(i)= euler(2);
-%         yaw_e(i)  = euler(3);
+        %         euler = qua2euler(qua);
+        %         roll_e(i) = euler(1);
+        %         pitch_e(i)= euler(2);
+        %         yaw_e(i)  = euler(3);
         
         % Attitude correction, method 2
         roll_e(i)  = roll_e(i)  - kf.xp(1);
@@ -419,8 +419,8 @@ for i = 2:LI
             zupt_flag = false;
             z(gdx,:)  = [ kf.z' 0 0 0 ]';
             v(gdx,:)  = [ kf.v' 0 0 0 ]';
-            K(gdx,1:45) = reshape(kf.K, 1, n*3);
-            S(gdx,1:9)  = reshape(kf.S, 1, 9);
+            K(gdx,1:n*3) = reshape(kf.K, 1, n*3);
+            S(gdx,1:9)  = reshape(kf.S, 1, 3^2);
         end
     end
 end

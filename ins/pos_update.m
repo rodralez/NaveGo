@@ -52,7 +52,7 @@ vd  = vel(3);
 
 %% Altitude
 
-h  = h - (vd) * dt;
+h  = h - vd * dt;
 
 if h < 0.0
     h = abs(h);
@@ -61,11 +61,11 @@ end
 
 %% Latitude
 
-[RM,~] = radius(lat);
+[RM, ~] = radius(lat);
 
 vn = vn / (RM + h);
 
-lat = lat + (vn) * dt;
+lat = lat + vn * dt;
 
 %% Longitude
 
@@ -73,7 +73,7 @@ lat = lat + (vn) * dt;
 
 ve  = ve / ((RN + h) * cos (lat));
 
-lon = lon + (ve) * dt;
+lon = lon + ve * dt;
 
 %% Position update
 

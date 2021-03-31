@@ -74,7 +74,7 @@ fprintf('\nNaveGo: starting simulation of INS/GNSS integration... \n')
 % Please, comment any of the following parameters in order to NOT execute a
 % particular portion of code
 
-GNSS_DATA = 'ON';   % Generation of synthetic GNSS data
+GNSS_DATA = 'OFF';   % Generation of synthetic GNSS data
 IMU1_DATA = 'ON';   % Generation of synthetic ADIS16405 IMU data
 IMU2_DATA = 'ON';   % Generation of synthetic ADIS16488 IMU data
 
@@ -169,7 +169,7 @@ dt = mean(diff(ADIS16405.t));              % IMU sampling interval
 
 imu1 = imu_si_errors(ADIS16405, dt);       % IMU manufacturer error units to SI units.
 
-imu1.ini_align_err = [3 3 10] .* D2R;                   % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)
+imu1.ini_align_err = [1 1 2] .* D2R;                % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)
 imu1.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)]; % Initial attitude align at t(1) (radians).
 
 %% ADIS16488 IMU ERROR PROFILE
@@ -193,7 +193,7 @@ dt = mean(diff(ADIS16488.t));               % IMU sampling interval
 
 imu2 = imu_si_errors(ADIS16488, dt);        % Transform IMU manufacturer error units to SI units.
 
-imu2.ini_align_err = [1 1 5] .* D2R;                     % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)
+imu2.ini_align_err = [0.5 0.5 1] .* D2R;                 % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)
 imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude align at t(1) (radians)
 
 %% GARMIN 5-18 Hz GPS ERROR PROFILE
