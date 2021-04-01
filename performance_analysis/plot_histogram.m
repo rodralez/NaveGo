@@ -36,7 +36,7 @@ function plot_histogram (samples, pd, x_label, x_title)
 % Version: 004
 % Date:    2021/03/02
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
-% URL:     https://github.com/rodralez/navego
+% URL:     https://github.com/rodralez/navego`
 
 N = length(samples);
 
