@@ -213,7 +213,12 @@ if verbose >= 1 && any(abs(medianfreq) > 5*MAD)
     
     odl = (abs(medianfreq) > 5*MAD);
     outliers = data.freq(odl);
-    fprintf(1, 'allan_overlap: OUTLIERS: There appear to be %d outliers in the frequency data.\n', length(outliers));       
+    fprintf(1, 'allan_overlap: there appear to be %d OUTLIERS in the frequency data.\n', length(outliers)); 
+    outliers_perc = length(outliers) / length(data.freq);
+%     If outliers are more than 5% of data..
+    if  outliers_perc > 0.05
+        warning('allan_overlap: %.2f%% of frequency data are outlines.', (outliers_perc*100));
+    end
   
     % ELIMINATE OUTLIERS FROM DATA
     fit_line = polyval(s.linear, (1/data.rate:1/data.rate:length(data.freq)/data.rate)') - s.median;    
@@ -485,8 +490,6 @@ elseif isfield(data,'time')
     sm(sm==0)=[];
     sme(sme==0)=[];
 
-
-
 else
     error('allan_overlap: WARNING: no DATA.rate or DATA.time! Type "help allan" for more information. [err2]');
 end
@@ -516,8 +519,10 @@ if verbose >= 1 % show all data
     plot([fx(1) fx(2)],[0 0],':k');
     
     % show 5x Median Absolute deviation (MAD) values
-    hm=plot([fx(1) fx(2)],[5*MAD 5*MAD],'-r');
-    plot([fx(1) fx(2)],[-5*MAD -5*MAD],'-r');
+    if MAD ~= 0.0
+        hm=plot([fx(1) fx(2)],[5*MAD 5*MAD],'-r');
+        plot([fx(1) fx(2)],[-5*MAD -5*MAD],'-r');
+    end
     
     % show linear fit line
     hf=plot(xlim,polyval(s.linear,xlim)-s.median,'-g');    
@@ -534,7 +539,15 @@ if verbose >= 1 % show all data
         ylabel('freq - median(freq)','FontSize',FontSize,'FontName',FontName);
     end
     set(gca,'FontSize',FontSize,'FontName',FontName);
-    legend([hd hm hf],{'data (centered on median)','5x MAD outliers',['Linear Fit (' num2str(s.linear(1),'%g') ')']},'FontSize',max(10,FontSize-2));
+    
+    if MAD ~= 0.0
+        legend([hd hm hf],{'data (centered on median)','5x MAD outliers', ...
+            ['Linear Fit (' num2str(s.linear(1),'%g') ')']},'FontSize',max(10,FontSize-2));
+    else
+        legend([hd hf],{'data (centered on median)', ...
+            ['Linear Fit (' num2str(s.linear(1),'%g') ')']},'FontSize',max(10,FontSize-2));
+    end    
+    
     % tighten up
     xlim([dtime(1) dtime(end)]);
     

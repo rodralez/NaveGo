@@ -78,7 +78,7 @@ orange_new = [0.8500 0.3250 0.0980];
 
 figure
 
-% Plot histogram from data
+% Plot histogram from dataquiq
 histogram(samples, bins, 'Normalization', 'pdf', 'FaceColor', [.9 .9 .9]);
 hold on
 

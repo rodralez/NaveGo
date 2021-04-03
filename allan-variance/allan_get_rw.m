@@ -35,7 +35,7 @@ function rw = allan_get_rw (tau, allan, dt)
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-fprintf('allan_get_rw: Random angle value is valid ONLY if Allan variance curve presents a -0.5 slope\n')
+fprintf('\nallan_get_rw: Random angle value is valid ONLY if Allan variance curve presents a -0.5 slope\n')
 
 idx = find ( tau == 1 );    % Index for tau = 1 s
 

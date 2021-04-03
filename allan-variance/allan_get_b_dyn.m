@@ -30,12 +30,12 @@ function [b_dyn, t_corr] = allan_get_b_dyn (tau, allan)
 % Reference:
 %
 %
-% Version: 001
-% Date:    2016/11/02
+% Version: 002
+% Date:    2021/04/03
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-idx = find (allan == min(allan));   % Index for minimun value of AV.
+idx = find (allan == min(allan), 1, 'first');   % Index for minimun value of AV.
 
 b_dyn = allan(idx) ;                % BI. For gyro, rad-per-sec.
 % BI. For acc,  meters-per-sec^2.
