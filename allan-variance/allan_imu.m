@@ -148,9 +148,15 @@ imu.g_linear = zeros(3,2);
 dt = median(diff(imu_sta.t));
 
 % Frequency must be rounded to an integer number for allan_overlap function
-real_freq = ceil(1/dt);
-real_freq_frac = round(real_freq / 10);
-data.rate = real_freq_frac * 10;
+real_freq = (1/dt);
+
+if (mod(real_freq,1) ~= 0.0 )           % If real_freq is not an integer...
+    real_freq = round(real_freq / 10);
+    data.rate = real_freq * 10;
+    
+else
+    data.rate = real_freq;
+end
 
 % From allan_overlap:
 %   For rate-based data, ADEV is computed only for tau values greater than the

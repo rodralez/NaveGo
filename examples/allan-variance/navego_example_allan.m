@@ -45,6 +45,7 @@ close all
 matlabrc
 
 addpath ../../.
+addpath ../../ins/
 addpath ../../simulation/
 addpath ../../conversions/
 addpath ../../allan-variance/
@@ -129,7 +130,7 @@ ustrain.vrrw = [0.00031522133759985 0.000519606636158211 0.000396688807571295];
 
 %% STATIC SYNTHETIC REFERENCE DATASET
 
-N = 6 * 60 * 60;   % 6 hours of simulation
+N = 6 * 60 * 60;    % 6 hours of simulation
 
 ref.freq = 100;     % IMU frequency
 dt = 1/ref.freq;    % IMU sampling period

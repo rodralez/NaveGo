@@ -581,7 +581,7 @@ if verbose >= 2 % show analysis results
 %         axis([adax(1)*0.9 adax(2)*1.1 adax(3) adax(4)]);
         
         % display the minimum value
-        fprintf(1,'allan: Minimum overlapping ADEV value: %g at tau = %g seconds\n',min(sm),tau(sm==min(sm)));        
+        fprintf(1,'allan_overlap: Minimum overlapping ADEV value: %g at tau = %g seconds\n',min(sm),tau(sm==min(sm)));        
         
     elseif verbose >= 1
         fprintf(1,'allan_overlap: WARNING: no values calculated.\n');
