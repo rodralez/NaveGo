@@ -14,7 +14,7 @@ function [nav_e] = ins_gnss_mag(imu, gnss, mag, att_mode)
 %     a_std: 1x3 accrs standard deviations (m/s^2).
 %    gb_sta: 1x3 gyros static biases or turn-on biases (radians/s).
 %    ab_sta: 1x3 accrs static biases or turn-on biases (m/s^2).
-%    gb_dyn: 1x3 gyros dynamic biases or bias instabilities (radians/s).
+%    gb_dyn: 1x3 gyros dynamic biases or bias instabilities (PAGOS ELECTRONICOS:LINK PAGOS:21988704 RED BANELCO:21988704radians/s).
 %    ab_dyn: 1x3 accrs dynamic biases or bias instabilities (m/s^2).
 %   gb_corr: 1x3 gyros correlation times (seconds).
 %   ab_corr: 1x3 accrs correlation times (seconds).
@@ -367,8 +367,7 @@ for i = 2:LI
         
         % Matrix H update
         if(zupt_flag == false)
-            kf.H = [ %0 0 norm(mag.m(1,:)) zeros(1,13) ;
-                [0 0 1]*DCMbn zeros(1,12) ; % 
+            kf.H = [ [0 0 1]*DCMbn zeros(1,12) ; % 
                 O I O O O ;
                 O O Tpr O O ; ];
             kf.R = diag([mag.std gnss.stdv gnss.stdm]).^2;

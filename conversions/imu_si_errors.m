@@ -59,8 +59,8 @@ function imu_si = imu_si_errors(imu, dt)
 % Journal of Control Engineering and Applied Informatics, vol. 17, 
 % issue 2, pp. 110-120, 2015. Eq. 9, 14, and 30.
 %
-% Version: 009
-% Date:    2021/03/18
+% Version: 010
+% Date:    2021/04/27
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
@@ -93,13 +93,13 @@ imu_si.gb_dyn = imu.gb_dyn .* D2R;          % deg/s -> rad/s;
 if (isinf(imu.gb_corr))
     imu_si.gb_psd = imu_si.gb_dyn;          % rad/s (approximation)
 else
-    imu_si.gb_psd = imu_si.gb_dyn .* sqrt(imu.gb_corr);  % rad/s/root-Hz
+    imu_si.gb_psd = imu_si.gb_dyn ./ sqrt(imu.gb_corr);  % rad/s/root-Hz
 end
 
 if (isinf(imu.ab_corr))
     imu_si.ab_psd = imu_si.ab_dyn;          % m/s^2 (approximation)
 else
-    imu_si.ab_psd = imu_si.ab_dyn .* sqrt(imu.ab_corr);  % m/s^2/root-Hz
+    imu_si.ab_psd = imu_si.ab_dyn ./ sqrt(imu.ab_corr);  % m/s^2/root-Hz
 end
 
 % Correlation time
