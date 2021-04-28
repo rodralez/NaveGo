@@ -64,8 +64,9 @@ Future features of NaveGo will be:
 
 * Tightly-coupled INS/GNSS integration.
 
+<!---
 * Adaptive Kalman filter.
-
+-->
 
 # Please, cite our work!
 
