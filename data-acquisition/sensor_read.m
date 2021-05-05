@@ -2,17 +2,17 @@ function sensor_data = sensor_read(file_name, head_lines, fields_line, specific_
 % sensor_read: tries to read .cvs files from any type of sensor.
 %
 % INPUT
-%   file_name, path where .cvs file is located (string).
-%   head_lines, number of lines for the header of the file.
-%   fields_line, number of the line in the file where the label of each 
-%       column data is provided. field_line has to be part of the file 
+%   file_name, name of the .cvs file (string).
+%   head_lines, number of lines for the file header.
+%   fields_line, number of the particular line in the file where the label 
+%       of each column data is provided. field_line has to be inside the file 
 %       header.
 %   specific_delimiter, character delimiter used in the .csv file. Default 
 %       value is a comma (char).
 %
 % OUTPUT
-%   sensor_data, data structure where each field is a column found in the file.
-%
+%   sensor_data, data structure where each field is a column found in the 
+%       provide .csv file.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
@@ -34,7 +34,8 @@ function sensor_data = sensor_read(file_name, head_lines, fields_line, specific_
 %
 % Reference: 
 %
-% Version: 001
+%
+% Version: 002
 % Date:    2021/05/05
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
@@ -58,7 +59,7 @@ sensor_f = fopen(file_name, 'r');
 if sensor_f == -1
     error('sensor_read: file %s not found', file_name)
 else
-    fprintf('sensor_read: reading header from file %s. \n', file_name)
+    fprintf('sensor_read: reading data from file %s. \n', file_name)
 end
 
 sensor_header = cell(head_lines, 1);
@@ -70,7 +71,8 @@ end
 
 %% FIELDS
 
-sensor_fields_raw = textscan(sensor_header{fields_line, :}, '%s', 'EmptyValue', 0, 'Delimiter', specific_delimiter);
+sensor_fields_raw = textscan(sensor_header{fields_line, :}, '%s', ... 
+    'EmptyValue', 0, 'Delimiter', specific_delimiter);
 
 sensors_fields = sensor_fields_raw{1,:};
 
@@ -83,7 +85,7 @@ reg_pattern = sprintf( '^[^%s]?', legal_init_char);
 sensors_fields = regexprep(sensors_fields, reg_pattern, 'NC_');
 
 % Any illegal character in fields is changed by an underscore
-legal_char = '\W'; %' [^a-zA-Z0-9_]
+legal_char = '\W';              % \W equals to [^a-zA-Z0-9_]
 reg_pattern = sprintf( '[%s]', legal_char);
 sensors_fields = regexprep(sensors_fields, reg_pattern, '_');
 
@@ -109,16 +111,19 @@ sensor_data = struct;
 
 % Data
 for i=1:columns
+    
     sensor_data.(sensors_fields{i}) = data_raw(:, i);
 end
 
 % Header
 sensor_data.header = sensor_header;
 
-% Fields
+% Raw names of fields
 sensor_data.raw_fields = sensor_fields_raw{1,:};
 
 %%
+
+fclose(sensor_f);
 
 disp('sensor_read: processing is finished.')
 
