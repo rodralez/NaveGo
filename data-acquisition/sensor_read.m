@@ -101,7 +101,13 @@ data_raw = data_cell{1,1};
 
 M = max(size(data_raw));
 
-data_raw = reshape (data_raw, columns, M/columns);
+% NaN values are forced to be zero
+inx = isnan(data_raw);
+data_raw(inx) = 0.0;
+
+rows = M/columns;
+
+data_raw = reshape (data_raw, columns, rows);
 
 data_raw = data_raw';
 
