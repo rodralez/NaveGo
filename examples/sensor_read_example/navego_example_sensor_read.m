@@ -1,7 +1,7 @@
 % navego_example_sensor_read.m is an example of how to use NaveGo function
 % sensor_read.m. This functions tries to be a standard method to extract 
 % data from text files that contains a particular sensor's measurements. 
-% Typically, this file will has .csv extension.
+% Typically, this file will have .csv extension.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
