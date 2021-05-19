@@ -37,7 +37,7 @@ addpath ../../data-acquisition/
 
 fprintf('navego_example_sensor_read: processing data from a Microstrain IMU... \n')
 
-%% GET DATA FILE
+%% GET DATA FROM FILE
 
 file_name = 'miscrostrain.csv';
 head_lines = 16;
