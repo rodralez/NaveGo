@@ -12,9 +12,9 @@ NaveGo is supported at the moment by three academic research groups: GridTICs at
 
 ## Attention!
 
-Please, if you found a bug or error in the source code of NaveGo, you should open a new [issue](https://github.com/rodralez/NaveGo/issues). 
+Please, if you found a bug or error in the source code of NaveGo, you should open a new [issue](https://github.com/rodralez/NaveGo/issues).
 
-But, if you have any question of any kind or you want to share some feedback about NaveGo, please leave a comment at the [discussion forum](https://github.com/rodralez/NaveGo/discussions). 
+But, if you have any question of any kind or you want to share some feedback about NaveGo, please leave a comment at the [discussion forum](https://github.com/rodralez/NaveGo/discussions).
 
 
 ## Features
@@ -25,7 +25,7 @@ Main features of NaveGo are:
 
 * Processing of a loosely-coupled integrated navigation system (INS/GNSS).
 
-* ***NEW*** Compass heading using magnetometers. 
+* ***NEW*** Compass heading using magnetometers.
 
 * ***NEW*** Processing of a loosely-coupled integrated navigation system with magnetometers (INS/GNSS/MAG).
 
@@ -85,10 +85,10 @@ Gonzalez, Rodrigo. (2021, March 18). NaveGo: an open-source MATLAB/GNU-Octave to
 
 Your donation helps us to improve NaveGo. You can make a donation to support our work using:
 
+* BITCOIN public key: 13fgM1MmyPc1nnVj5HTdvj2x7J1BoZTdvx (BTC network).
+* Ethereum public key: 0x623da89dec612118b6d64f2df907deefec32371e (ERC20 network).
+* USDT public key: TMsdKrwrDKyf9RvqfQNKcKtUQbhZiBegDM (TRC20 network).
 * PAYPAL: [paypal.me/supportnavego](https://www.paypal.com/paypalme/supportnavego).
-
-* BITCOIN public key: 13fgM1MmyPc1nnVj5HTdvj2x7J1BoZTdvx	
-
 
 # Contributions
 
@@ -152,9 +152,9 @@ These two real examples are part of the data collection used in the article (Gon
 
 The following 13 papers have expressed the use of NaveGo for research:
 
-1. Canhui Tao, Zhiping Song, and Zhenping Weng. MCTLS-Assisted Completed SINS/GPS Integrated and Applied to Low-Cost Attitude and Heading Reference System. Mathematical Problems in Engineering 2021 (2021). [Link](https://www.hindawi.com/journals/mpe/2021/4260162/). NaveGo is used as a benchmark for comparing a proposed heading determination approach. 
+1. Canhui Tao, Zhiping Song, and Zhenping Weng. MCTLS-Assisted Completed SINS/GPS Integrated and Applied to Low-Cost Attitude and Heading Reference System. Mathematical Problems in Engineering 2021 (2021). [Link](https://www.hindawi.com/journals/mpe/2021/4260162/). NaveGo is used as a benchmark for comparing a proposed heading determination approach.
 
-2. Nagui, N., Attallah, O., Zaghloul, M.S. et al. Improved GPS/IMU Loosely Coupled Integration Scheme Using Two Kalman Filter-based Cascaded Stages. Arab J Sci Eng 46, 1345–1367 (2021).[Link](https://doi.org/10.1007/s13369-020-05144-8). They use NaveGo as a benchmark for their proposed integrated navigation scheme. 
+2. Nagui, N., Attallah, O., Zaghloul, M.S. et al. Improved GPS/IMU Loosely Coupled Integration Scheme Using Two Kalman Filter-based Cascaded Stages. Arab J Sci Eng 46, 1345–1367 (2021).[Link](https://doi.org/10.1007/s13369-020-05144-8). They use NaveGo as a benchmark for their proposed integrated navigation scheme.
 
 3. Benjamin Noack, Christopher Funk, Susanne Radtke,and Uwe D. Hanebeck. State Estimation with Event-Based InputsUsing Stochastic Triggers. 1st Virtual IFAC World Congress (IFAC-V 2020). Germany, July 11-17, 2020 [Link](https://isas.iar.kit.edu/pdf/IFAC20_Noack.pdf).
 
@@ -172,7 +172,7 @@ The following 13 papers have expressed the use of NaveGo for research:
 
 10. M. Pachwicewicz and J. Weremczuk, "Accuracy Estimation of the Sounding Rocket Navigation System," 2018 XV International Scientific Conference on Optoelectronic and Electronic Sensors (COE), Warsaw, June 2018, pp. 1-4. doi: 10.1109/COE.2018.8435180. [Link](https://ieeexplore.ieee.org/abstract/document/8435180). In this paper NaveGo is used as a simulation framework for three types of IMUs.
 
-11. M.G. Deepika and A. Arun, "Analysis of INS Parameters and Error Reduction by Integrating GPS and INS Signals," 2018 International Conference on Design Innovations for 3Cs Compute Communicate Control (ICDI3C), Bangalore, April 2018, pp. 18-23. doi: 10.1109/ICDI3C.2018.00013. [Link](https://ieeexplore.ieee.org/abstract/document/8436621). This work is completely based on the synthetic data example provided by NaveGo. It is not clear what is the contribution of this paper.
+11. M.G. Deepika and A. Arun, "Analysis of INS Parameters and Error Reduction by Integrating GPS and INS Signals," 2018 International Conference on Design Innovations for 3Cs Compute Communicate Control (ICDI3C), Bangalore, April 2018, pp. 18-23. doi: 10.1109/ICDI3C.2018.00013. [Link](https://ieeexplore.ieee.org/abstract/document/8436621). This work is completely based on the synthetic data example provided by NaveGo. It is not clear what the contribution of this paper is.
 
 12. P.K. Diamantidis, ‘Attitude Navigation using a Sigma-Point Kalman Filter in an Error State Formulation’, Dissertation for Master degree. Department of Space and Plasma Physics, School of Electrical Engineering, KTH Royal Institute of Technology, Stockholm, Sweden. 2017. [Link](http://www.diva-portal.org/smash/get/diva2:1141205/FULLTEXT01.pdf). A 30-minutes static measurement of a gyroscope was made with and its Allan Variance plot is presented by using the NaveGo functions.
 
@@ -183,7 +183,7 @@ The following 13 papers have expressed the use of NaveGo for research:
 
 We would like to thank to the many people that have contributed to make NaveGo a better tool:
 
-* Dr. Juan Ignacio Giribet (National University of Buenos Aires, Argentina) for this continuous support on theory aspects of INS/GNSS systems.
+* Dr. Juan Ignacio Giribet (National University of Buenos Aires, Argentina) for his continuous support on theory aspects of INS/GNSS systems.
 
 * Dr. Charles K. Toth (The Ohio State University, USA), Dr. Allison Kealy, and M.Sc. Azmir Hasnur-Rabiain (both from The University of Melbourne, Australia) for generously sharing IMU and GNSS datasets, and in particular, for Azmir's unselfish support and help.
 
@@ -193,4 +193,4 @@ We would like to thank to the many people that have contributed to make NaveGo a
 
 * Dr. Paolo Zoccarato for his comments on attitude conversion.
 
-* Mr. Daniel Lu, GIS Analyst at Western Heritage (Canada), for his comments on the sign of acceleration when accelerometers sens gravity.
+* Mr. Daniel Lu, GIS Analyst at Western Heritage (Canada), for his comments on the sign of acceleration when accelerometers sense gravity.
