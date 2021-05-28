@@ -7,7 +7,7 @@
 % synthetic ADIS16488 IMU and the same synthetic GNSS.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
-%
+%`
 %   This file is part of NaveGo, an open-source MATLAB toolbox ford
 %   simulation of integrated navigation systems.
 %
@@ -213,9 +213,9 @@ imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude alig
 %  zupt_win: 1x1 ZUPT time window (seconds).
 %       eps: 1x1 time interval to compare IMU time vector to GNSS time vector (seconds).
 
-gnss.stdm = [5 5 10];                   % GNSS positions standard deviations [lat lon h] (meters)
-gnss.stdv = 0.1 * KT2MS .* ones(1,3);   % GNSS velocities standard deviations [Vn Ve Vd] (meters/s)
-gnss.larm = zeros(3,1);                 % GNSS lever arm from IMU to GNSS antenna (x-fwd, y-right, z-down) (m).
+gnss.stdm = [1 1 3];                    % GNSS positions standard deviations [lat lon h] (meters)
+gnss.stdv = 0.10 * KT2MS .* ones(1,3);  % GNSS velocities standard deviations [Vn Ve Vd] (meters/s)
+gnss.larm = zeros(3,1);                 % GNSS lever arm from IMU to GNSS antenna (x-fwd, y-right, z-down) (meters).
 gnss.freq = 5;                          % GNSS operation frequency (Hz)
 
 % Parameters for ZUPT detection algorithm

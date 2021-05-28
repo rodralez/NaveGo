@@ -56,7 +56,7 @@ if (isfield(ref, 'fb'))
     
     acc_b = ref.fb;
     
-% If not, acceleration are obtained from velocity
+% If not, accelerations are obtained from velocity
 elseif (isfield(ref, 'vel'))
     
     acc_raw = (diff(ref.vel)) ./ [diff(ref.t) diff(ref.t) diff(ref.t)];
@@ -66,7 +66,7 @@ elseif (isfield(ref, 'vel'))
     acc_ned = my_sgolayfilt(acc_raw);
     acc_b = acc_nav2body(acc_ned, ref.DCMnb_m);
     
-% If not, acceleration are obtained from position
+% If not, accelerations are obtained from position
 else
     
     % Method: LLH > ECEF > NED
@@ -78,8 +78,8 @@ end
 
 % Gravity and Coriolis in nav-ref
 grav_n = -gravity(ref.lat, ref.h);              % Accelerometer in Z axis senses an 
-                                                % acceleration of 1.0 G straight up.
-cor_n  = coriolis(ref.lat, ref.vel, ref.h);
+                                                % acceleration of 1.0 G straight up
+cor_n = coriolis(ref.lat, ref.vel, ref.h);
 
 % Gravity and Coriolis from nav-ref to body-ref
 grav_b = zeros(M);
@@ -97,7 +97,7 @@ end
 % -------------------------------------------------------------------------
 % Simulation of static bias as a constant random variable
 
-[ab_sta] = noise_b_sta (imu.ab_sta, N);
+ab_sta = noise_b_sta (imu.ab_sta, N);
 
 % -------------------------------------------------------------------------
 % Simulation of white noise
@@ -114,12 +114,12 @@ end
 % Simulation of dynamic bias (bias instability) as a first-order Gauss-Markov model
 
 dt = 1/ref.freq; 
-[ab_dyn] = noise_b_dyn (imu.ab_corr, imu.ab_dyn, dt, M);
+ab_dyn = noise_b_dyn (imu.ab_corr, imu.ab_dyn, dt, M);
 
 % -------------------------------------------------------------------------
 % Simulation of rate random walk
 
-[a_rrw] = noise_rrw (imu.vrrw, dt, M);
+a_rrw = noise_rrw (imu.vrrw, dt, M);
 
 % -------------------------------------------------------------------------
 
