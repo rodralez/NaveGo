@@ -154,7 +154,7 @@ The following 13 papers have expressed the use of NaveGo for research:
 
 1. Canhui Tao, Zhiping Song, and Zhenping Weng. MCTLS-Assisted Completed SINS/GPS Integrated and Applied to Low-Cost Attitude and Heading Reference System. Mathematical Problems in Engineering 2021 (2021). [Link](https://www.hindawi.com/journals/mpe/2021/4260162/). NaveGo is used as a benchmark for comparing a proposed heading determination approach.
 
-2. Nagui, N., Attallah, O., Zaghloul, M.S. et al. Improved GPS/IMU Loosely Coupled Integration Scheme Using Two Kalman Filter-based Cascaded Stages. Arab J Sci Eng 46, 1345–1367 (2021).[Link](https://doi.org/10.1007/s13369-020-05144-8). Authors use NaveGo as a benchmark for a new proposed integrated navigation scheme.
+2. Nagui, N., Attallah, O., Zaghloul, M.S. et al. Improved GPS/IMU Loosely Coupled Integration Scheme Using Two Kalman Filter-based Cascaded Stages. Arab J Sci Eng 46, 1345–1367 (2021). [Link](https://doi.org/10.1007/s13369-020-05144-8). Authors use NaveGo as a benchmark for a new proposed integrated navigation scheme.
 
 3. Benjamin Noack, Christopher Funk, Susanne Radtke,and Uwe D. Hanebeck. State Estimation with Event-Based Inputs Using Stochastic Triggers. First Virtual IFAC World Congress (IFAC-V 2020). Germany, July 11-17, 2020 [Link](https://isas.iar.kit.edu/pdf/IFAC20_Noack.pdf).
 
