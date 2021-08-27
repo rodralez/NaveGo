@@ -47,8 +47,8 @@ function  [F, G] = F_update(upd, DCMbn, imu, MAG)
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 22.
 %
-% Version: 007
-% Date:    2021/03/26
+% Version: 008
+% Date:    2021/08/27
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -187,14 +187,14 @@ if (strcmp(MAG,'OFF'))
     
     
     F = [F11  F12  F13  DCMbn   Z  ;
-        F21  F22  F23   Z       DCMbn  ;
+        F21  F22  F23   Z       -DCMbn  ;
         F31  F32  F33   Z       Z      ;
         Z    Z    Z     Fgg     Z      ;
         Z    Z    Z     Z       Faa    ;
         ];
     
     G = [DCMbn  Z     Z    Z ;
-        Z      DCMbn  Z    Z ;
+        Z      -DCMbn  Z    Z ;
         Z      Z      Z    Z ;
         Z      Z      Fbg    Z ;
         Z      Z      Z    Fba ;

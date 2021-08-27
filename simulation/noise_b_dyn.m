@@ -37,8 +37,8 @@ function [b_dyn_n] = noise_b_dyn (b_corr, b_dyn, dt, M)
 % inertial sensor errors using autoregressive (AR) models." NAVIGATION, 
 % Journal of the Institute of Navigation 51.4 (2004): 259-268.
 %
-% Version: 004
-% Date:    2021/03/23
+% Version: 005
+% Date:    2021/08/27
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -56,28 +56,28 @@ if (~isinf(b_corr))
         % Method from Nassar, Eq. 2.
         % b_k+1 = (1 - beta*dt) * b_k + sqrt ( 2 * beta * sigma^2) * dt * w_k
         
-        beta  = dt / ( b_corr(i) );
-        sigma = b_dyn(i);
-        b_wn = randn(N,1);
-        a1 = sqrt (2* beta * sigma^2);
-        
-        for j=2:N
-            b_dyn_n(j, i) = (1 - beta) * b_dyn_n(j-1, i) +  a1 * dt * b_wn(j-1);
-        end
-        
-        % Method from Aggarwal, Eq. 3.33, page 57.
 %         beta  = dt / ( b_corr(i) );
 %         sigma = b_dyn(i);
-%         a1 = exp(-beta);
-%         
-%         % The dynamic bias noise variance is modeled as an exponentially correlated
-%         % fixed-variance first-order Markov process
-%         sigma_gm = sigma * sqrt(1 - exp(-2*beta) );
-%         b_wn = sigma_gm .* randn(N,1);
+%         b_wn = randn(N,1);
+%         a1 = sqrt (2* beta * sigma^2);
 %         
 %         for j=2:N
-%             b_dyn_n(j, i) = a1 * b_dyn_n(j-1, i) +  b_wn(j-1);
+%             b_dyn_n(j, i) = (1 - beta) * b_dyn_n(j-1, i) +  a1 * dt * b_wn(j-1);
 %         end
+        
+        % Method from Aggarwal, Eq. 3.33, page 57.
+        beta  = dt / ( b_corr(i) );
+        sigma = b_dyn(i);
+        a1 = exp(-beta);
+        
+        % The dynamic bias noise variance is modeled as an exponentially correlated
+        % fixed-variance first-order Markov process
+        sigma_gm = sigma * sqrt(1 - exp(-2*beta) );
+        b_wn = sigma_gm .* randn(N,1);
+        
+        for j=2:N
+            b_dyn_n(j, i) = a1 * b_dyn_n(j-1, i) +  b_wn(j-1);
+        end
     end
     
     % If not...
