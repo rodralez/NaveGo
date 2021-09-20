@@ -1,6 +1,6 @@
 function [distance, delta_pos] = gnss_distance (lat, lon)
 % gnss_distance: provides the distance distance traveled by a vehicle based 
-% on haversine function.
+% on haversine function and the WGS 84 Earth model.
 %
 % INPUT
 %   lat, Mx1 latitudes (radians).
@@ -33,12 +33,21 @@ function [distance, delta_pos] = gnss_distance (lat, lon)
 %	Ritchie Smith. Harversine function in Mathworks File Exchange. 
 % URL: https://www.mathworks.com/matlabcentral/fileexchange/32883-haversine
 %
-% Version: 004
-% Date:    2021/02/03
+% Version: 005
+% Date:    2021/09/17
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-R = 6.3781 * 10^6;              % Earth's radius in meters
+% referenceEllipsoid('WGS 84')
+%                 Code: 7030
+%                  Name: 'WGS 84'
+%            LengthUnit: 'meter'
+%         SemimajorAxis: 6378137
+%         SemiminorAxis: 6356752.31424518
+%     InverseFlattening: 298.257223563
+%          Eccentricity: 0.0818191908426215        
+
+R = sqrt(6378137 * 6356752.31424518); 
 
 delta_lat = [ 0; diff(lat) ];
 
@@ -46,6 +55,10 @@ delta_lon = [ 0; diff(lon) ];
 
 a = sin( delta_lat ./ 2 ).^2 + cos( lat ).* cos( lon ) .* ...
         sin( delta_lon ./ 2 ).^2;
+
+% Ensure that a falls in the closed interval [0 1].
+a(a < 0) = 0;
+a(a > 1) = 1;
 
 c = 2 .* atan2 ( real(sqrt(a)), real(sqrt(1-a)) );
 
