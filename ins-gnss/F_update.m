@@ -1,4 +1,4 @@
-function  [F, G] = F_update(upd, DCMbn, imu, MAG)
+function  [F, G] = F_update(upd, DCMbn, imu)
 % F_update: updates F and G matrices before the execution of Kalman filter.
 %
 % INPUT
@@ -47,12 +47,10 @@ function  [F, G] = F_update(upd, DCMbn, imu, MAG)
 % Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
 % issue 3, pp. 272-287, 2015. Eq. 22.
 %
-% Version: 008
-% Date:    2021/08/27
+% Version: 009
+% Date:    2021/09/21
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
-
-if nargin < 4, MAG = 'OFF'; end
 
 Vn =  upd(1);
 Ve =  upd(2);
@@ -61,7 +59,7 @@ lat = upd(4);
 h  =  upd(5);
 
 fn =  upd(6:8);
-wn =  upd(9:11);
+% wn =  upd(9:11);
 
 Om = 7.292115e-5;
 I = eye(3);
@@ -172,7 +170,7 @@ if (isinf(imu.gb_corr))
 else
     Fgg = -diag( 1./ imu.gb_corr);
     Fbg = I;
-%     Fbg = -diag(sqrt (2 ./ imu.gb_corr .* imu.gb_dyn.^2));
+    %     Fbg = -diag(sqrt (2 ./ imu.gb_corr .* imu.gb_dyn.^2));
 end
 
 if (isinf(imu.ab_corr))
@@ -180,41 +178,22 @@ if (isinf(imu.ab_corr))
 else
     Faa = -diag(1 ./ imu.ab_corr);
     Fba = I;
-%     Fba = -diag(sqrt (2 ./ imu.ab_corr .* imu.ab_dyn.^2));
+    %     Fba = -diag(sqrt (2 ./ imu.ab_corr .* imu.ab_dyn.^2));
 end
 
-if (strcmp(MAG,'OFF'))
-    
-    
-    F = [F11  F12  F13  DCMbn   Z  ;
-        F21  F22  F23   Z       -DCMbn  ;
-        F31  F32  F33   Z       Z      ;
-        Z    Z    Z     Fgg     Z      ;
-        Z    Z    Z     Z       Faa    ;
-        ];
-    
-    G = [DCMbn  Z     Z    Z ;
-        Z      -DCMbn  Z    Z ;
-        Z      Z      Z    Z ;
-        Z      Z      Fbg    Z ;
-        Z      Z      Z    Fba ;
-        ];
-    
-else
-    
-    F = [F11  F12  F13  DCMbn   Z      zeros(3,1);
-        F21  F22  F23   Z       DCMbn  zeros(3,1);
-        F31  F32  F33   Z       Z      zeros(3,1);
-        Z    Z    Z     Fgg     Z      zeros(3,1);
-        Z    Z    Z     Z       Faa    zeros(3,1);
-        zeros(1,16);
-        ];
-    
-    G = [DCMbn  Z     Z    Z zeros(3,1);
-        Z      DCMbn  Z    Z zeros(3,1);
-        Z      Z      Z    Z zeros(3,1);
-        Z      Z      I    Z zeros(3,1);
-        Z      Z      Z    I zeros(3,1);
-        zeros(1,12)  1;
-        ];
+F = [F11  F12  F13  DCMbn   Z  ;
+    F21  F22  F23  Z       -DCMbn  ;
+    F31  F32  F33  Z       Z      ;
+    Z    Z    Z    Fgg     Z      ;
+    Z    Z    Z    Z       Faa    ;
+    ];
+
+G = [DCMbn Z      Z    Z ;
+    Z      -DCMbn Z    Z ;
+    Z      Z      Z    Z ;
+    Z      Z      Fbg    Z ;
+    Z      Z      Z    Fba ;
+    ];
+
+
 end

@@ -109,8 +109,8 @@ function [nav_e] = ins_gnss_mag(imu, gnss, mag, att_mode)
 %
 %   ins_gps.m, ins_gnss function is based on that previous NaveGo function.
 %
-% Version: 001
-% Date:    2021/03/17
+% Version: 002
+% Date:    2021/09/21
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -208,7 +208,7 @@ wn = DCMbn * imu.wb(1,:)' - gb_dyn - imu.gb_sta';
 upd = [gnss.vel(1,:) gnss.lat(1) gnss.h(1) fn' wn'];
 
 % Update matrices F and G
-[kf.F, kf.G] = F_update(upd, DCMbn, imu, 'OFF');
+[kf.F, kf.G] = F_update(upd, DCMbn, imu);
 
 [RM,RN] = radius(gnss.lat(1));
 Tpr = diag([(RM + gnss.h(1)), (RN + gnss.h(1)) * cos(gnss.lat(1)), -1]);  % radians-to-meters
@@ -350,9 +350,9 @@ for i = 2:LI
             + (DCMbn * skewm(wb_corrected) * gnss.larm )' )';
         
         % Heading innovation
-        zy = correct_yaw ( yaw_e(i) - yawm_e(i)) ;
+%         zy = correct_yaw ( yaw_e(i) - yawm_e(i)) ;
         % Groves, Eq. 6.8
-%         zy = correct_yaw ( ( pitch_e(i) * sin(yawm_e(i)) - roll_e(i) * cos(yawm_e(i)) ) * tan(mag.inc) );
+        zy = correct_yaw ( ( pitch_e(i) * sin(yawm_e(i)) - roll_e(i) * cos(yawm_e(i)) ) * tan(mag.inc) );
         
         %% KALMAN FILTER
         
@@ -363,7 +363,7 @@ for i = 2:LI
         upd = [vel_e(i,:) lat_e(i) h_e(i) fn' wn'];
         
         % Matrices F and G update
-        [kf.F, kf.G] = F_update(upd, DCMbn, imu, 'OFF');
+        [kf.F, kf.G] = F_update(upd, DCMbn, imu);
         
         % Matrix H update
         if(zupt_flag == false)
