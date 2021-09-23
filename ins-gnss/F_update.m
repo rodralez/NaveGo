@@ -165,11 +165,13 @@ a32 = 0;
 a33 = 0;
 F33 = [a11 a12 a13; a21 a22 a23; a31 a32 a33;];
 
+Fbg = I;
+Fba = I;
+
 if (isinf(imu.gb_corr))
     Fgg = Z;
 else
     Fgg = -diag( 1./ imu.gb_corr);
-    Fbg = I;
     %     Fbg = -diag(sqrt (2 ./ imu.gb_corr .* imu.gb_dyn.^2));
 end
 
@@ -177,7 +179,6 @@ if (isinf(imu.ab_corr))
     Faa = Z;
 else
     Faa = -diag(1 ./ imu.ab_corr);
-    Fba = I;
     %     Fba = -diag(sqrt (2 ./ imu.ab_corr .* imu.ab_dyn.^2));
 end
 
@@ -194,6 +195,5 @@ G = [DCMbn Z      Z    Z ;
     Z      Z      Fbg    Z ;
     Z      Z      Z    Fba ;
     ];
-
 
 end
