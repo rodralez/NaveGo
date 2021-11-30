@@ -1,14 +1,11 @@
-function [hk, pk, rmse_err ] = test_time_quality(time_v)
+function [idx_zero] = test_time_quality(time_v)
 % test_time_quality: 
 %
 % INPUT
 %   time_v: Nx1 time vector.
 %
 % OUTPUT
-%   hk: = 0, samples come from a normal distribution.
-%       = 1, samples do not come from a normal distribution.
-%   pd: probality distribution object from ProbabilityDistribution class.
-%   rmse_err: RMSE between the two curves.
+%   idx_zero: (N-1)x1 logical index where time difference is equal to zero
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -31,8 +28,8 @@ function [hk, pk, rmse_err ] = test_time_quality(time_v)
 % Reference:
 %
 %
-% Version: 002
-% Date:    2021/03/23
+% Version: 003
+% Date:    2021/11/29
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -45,10 +42,15 @@ dt2 = median(time_d);
 dt3 = mode(time_d);
 sd = std(time_d);
 
-dt = dt1;                   % sampling time is taken from mean
-    
-ln = time_d < 0.0;
-neg_n = sum(ln);
+dt = dt2;                   % sampling time is taken from median
+
+% Negative diff
+idx_neg = time_d < 0.0;
+neg_n = sum(idx_neg);
+
+% Diff equals to zero
+idx_zero = time_d == 0.0;
+zero_n = sum(idx_zero);
 
 lp = time_d > 2 * dt2;     % Outliers greater than 2 times the median.
 pos_numbers = sum(lp);
@@ -60,6 +62,7 @@ fprintf('test_time_quality: time vector difference min is %e. \n', min(time_d))
 fprintf('test_time_quality: time vector difference max is %e. \n', max(time_d))
 fprintf('test_time_quality: time vector difference \x03C3 is %e. \n', sd)
 fprintf('test_time_quality: time vector difference has %d negative numbers. \n', neg_n)
+fprintf('test_time_quality: time vector difference has %d numbers equal to zero. \n', zero_n)
 fprintf('test_time_quality: time vector difference has %d numbers greater than 2 \x002A median. \n', pos_numbers)
 
 % Histogram
@@ -108,9 +111,20 @@ to = (time_v(end) - time_v(1));
 
 fprintf('test_time_quality: vector time is %.2f hours or %.2f minutes or %.2f seconds. \n', (to/60/60), (to/60), to)
 
-%% Plots
+%% PLOTS
 
 orange_new = [0.8500 0.3250 0.0980];
+
+figure
+
+plot (time_v(~idx_zero), time_d(~idx_zero), 'xb')
+hold on
+plot (time_v(idx_zero), time_d(idx_zero), '+r')
+line ( [time_v(2), time_v(end)], [dt, dt] , 'color', orange_new, 'linewidth', 2, 'LineStyle','--')
+title('TIME DIFFERENCES')
+legend('time diff', 'Sampling time')
+grid on
+
 
 time_d_s = sort(time_d);
 
@@ -121,6 +135,13 @@ hold on
 line ( [time_v(2), time_v(end)], [dt, dt] , 'color', orange_new, 'linewidth', 2, 'LineStyle','--')
 title('SORTED TIME DIFFERENCES')
 legend('Sorted time diff', 'Sampling time')
+grid on
+
+
+figure
+
+plot (time_v, 'x-')
+title('TIME REGULARITY')
 grid on
 
 end
