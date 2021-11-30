@@ -47,7 +47,7 @@
 clc
 close all
 clear
-matlabrc
+##matlabrc
 
 addpath ../../ins/
 addpath ../../ins-gnss/
