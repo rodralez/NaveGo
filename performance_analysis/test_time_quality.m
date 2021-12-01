@@ -30,7 +30,7 @@ function [idx_zero] = test_time_quality(time_v, verbose)
 % Reference:
 %
 %
-% Version: 004
+% Version: 005
 % Date:    2021/11/30
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
@@ -118,42 +118,86 @@ fprintf('test_time_quality: timespan is %.2f hours or %.2f minutes or %.2f secon
 
 if (verbose == 1)
     
-    orange_new = [0.8500 0.3250 0.0980];
+    blue    = [0, 0.4470, 0.7410];
+    orange  = [0.8500, 0.3250, 0.0980];
+    green   = [0.4660, 0.6740, 0.1880];
+    yellow  = [0.9290, 0.6940, 0.1250];
+    light_blue = [0.3010, 0.7450, 0.9330];
     
+    % Text size
+    font_title  = 50;
+    font_tick   = 15;
+    font_label  = 20;
+    font_legend = 15;
+    
+    % Line width
+    lw = 3;
+
     % Histogram
     figure
     histogram(time_d, 'BinMethod', 'sturges', 'Normalization', 'count', 'FaceColor', [.9 .9 .9]);
-    title('TIME DIFFERENCE HISTOGRAM')
+    t1 = title('TIME DIFFERENCE HISTOGRAM');
+    x1 = xlabel('\Delta time [s]'); 
+    y1 = ylabel('Samples');
+    
+    set(t1,'FontSize', font_title);
+    set(x1,'FontSize', font_label);
+    set(y1,'FontSize', font_label);
+    set(gca, 'YTickMode', 'auto', 'FontSize', font_tick);
     
     % Time differences
     figure
     
-    plot (time_v(~idx_zero), time_d(~idx_zero), 'xb')
+    plot (time_v(~idx_zero), time_d(~idx_zero), 'x', 'LineWidth', lw);
     hold on
-    plot (time_v(idx_zero), time_d(idx_zero), '+r')
-    line ( [time_v(2), time_v(end)], [dt, dt] , 'color', orange_new, 'linewidth', 2, 'LineStyle','--')
-    title('TIME DIFFERENCES')
-    legend('time diff', 'Sampling time')
+    plot (time_v(idx_zero), time_d(idx_zero), '+r', 'LineWidth', lw);
+    line ( [time_v(2), time_v(end)], [dt, dt] , 'color', orange, 'linewidth', lw, 'LineStyle','--')
+    x1 = xlabel('Time [s]');
+    y1 = ylabel('\Delta time [s]'); 
+    t1 = title('TIME DIFFERENCES');
+    l1 = legend('Time differences', 'Median sampling time');
     grid on
+    
+    set(t1,'FontSize', font_title);
+    set(x1,'FontSize', font_label);
+    set(y1,'FontSize', font_label);   
+    set(l1,'FontSize', font_legend);
+    set(gca, 'YTickMode', 'auto', 'FontSize', font_tick);
     
     % Sorted time differences
     time_d_s = sort(time_d);
+    M = max(size(time_d_s));
     
     figure
     
-    plot (time_v(2:end), time_d_s, 'o-')
+    plot (1:M, time_d_s, 'x', 'LineWidth', lw);
     hold on
-    line ( [time_v(2), time_v(end)], [dt, dt] , 'color', orange_new, 'linewidth', 2, 'LineStyle','--')
-    title('SORTED TIME DIFFERENCES')
-    legend('Sorted time diff', 'Sampling time')
+    line ( [1 M], [dt, dt] , 'color', orange, 'linewidth', lw, 'LineStyle','--')
+    x1 = xlabel('Samples');
+    y1 = ylabel('\Delta time [s]');
+    t1 = title('SORTED TIME DIFFERENCES');
+    l1 = legend('Sorted time diff', 'Median sampling time');
     grid on
+    
+    set(t1,'FontSize', font_title);
+    set(x1,'FontSize', font_label);
+    set(y1,'FontSize', font_label);    
+    set(l1,'FontSize', font_legend);
+    set(gca, 'YTickMode', 'auto', 'FontSize', font_tick);
     
     % Time regularity
     figure
     
-    plot (time_v, 'x-')
-    title('TIME REGULARITY')
+    plot (time_v, 'x-', 'LineWidth', lw);
+    t1 = title('TIME REGULARITY');
+    x1 = xlabel('Samples');
+    y1 = ylabel('Time [s]');
     grid on
+    
+    set(t1,'FontSize', font_title);
+    set(x1,'FontSize', font_label);
+    set(y1,'FontSize', font_label);
+    set(gca, 'YTickMode', 'auto', 'FontSize', font_tick);
     
 end
 end
