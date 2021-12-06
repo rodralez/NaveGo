@@ -1,4 +1,4 @@
-function imu = allan_imu (imu_sta, verbose)
+function imu_allan = allan_imu (imu)
 % allan_imu: performs Allan variance analysis on inertial measurements
 % coming from an IMU in order to characterize several types of IMU errors.
 %
@@ -7,62 +7,35 @@ function imu = allan_imu (imu_sta, verbose)
 %   
 %   fb, Nx3 accelerations [X Y Z] (m/s^2).
 %   wb, Nx3 turn rates [X Y Z] (rad/s).
-%   t, Nx1 time vector (s).
-%
-%   verbose, verbose level for allan_overlap function.
-%   0 = silent & no data plots; 1 = status messages; 2 = all messages.    
+%   t,  Nx1 time vector (s).
 %
 % OUTPUT
 %   imu, input data structure with the following addtional fields:
 %
-%   arw, 1x3 angle random walk (rad/root-s). Value is taken 
-%       straightfoward from the plot at t = 1 s.
-%       Note: units of rad/s from the plot have to be transformed to 
-%       rad/root-s. This is done by multiplying (rad/s * root-s/root-s) = 
-%       (rad/s * root-s/1) = rad/root-s, since root-s = 1 for tau = 1, time 
-%       at which random walk is evaluated.     
+%   vrw, 1x3 velocity random walk (m/s^2/root(Hz)). 
+%       Note: m/s^2/root(Hz) = m/(s^2*(1/s)^(1/2)) = m*(1/s)^(3/2) =
+%           = m/s/root(s).
 %
-%   vrw, 1x3 velocity random walk (m/s/root-s). Value is taken 
-%       straightfoward from the plot at t = 1 s.
-%       Note: units of m/s^2 from the plot have to be transformed to 
-%       m/s/root-s. This is done by multiplying (m/s^2 * root-s/root-s) = 
-%       (m/s^2 * root-s/1) = m/s/root-s, since root-s = 1 for tau = 1, time 
-%       at which random walk is evaluated.
+%   arw, 1x3 angle random walk (rad/s^2/root(Hz)). 
+%       Note: rad/s/root(Hz) = rad/(s*(1/s)^(1/2)) = rad*(1/s)^(1/2) =
+%           = rad/root(s).
 %
-%   gb_dyn: 1x3 gyros bias instability (rad/s). Value is taken
-%       from the plot at the minimun value.
+%   vrrw, 1x3 velocity rate random walk (m/s^3/root(Hz)). 
+%
+%   arrw, 1x3 angle rate random walk (rad/s^2/root(Hz)). 
 %
 %   ab_dyn, 1x3 accrs bias instability (m/s^2). Value is taken
 %       from the plot at the minimun value.
-%   
-%   gb_psd, gyro dynamic bias PSD [X Y Z] (rad/s/root-Hz)
-%   ab_psd, acc dynamic bias PSD [X Y Z] (m/s^2/root-Hz)
 %
+%   gb_dyn: 1x3 gyros bias instability (rad/s). Value is taken
+%       from the plot at the minimun value.
+%   
 %   gb_corr, 1x3 gyros correlation times (s).
 %   ab_corr, 1x3 accrs correlation times (s).
 %
-%   g_std, 1x3 gyros standard deviations (rad/s).
-%   a_std, 1x3 accrs standard deviations (m/s^2).
+%   gb_psd, gyro dynamic bias PSD [X Y Z] (rad/s/root(Hz))
+%   ab_psd, acc dynamic bias PSD [X Y Z] (m/s^2/root(Hz))
 %
-%   g_max, 1x3 gyros maximum values (rad/s).
-%   a_max, 1x3 accrs maximum values (m/s^2).
-%
-%   g_min, 1x3 gyros minimum values (rad/s).
-%   a_min, 1x3 accrs minimum values (m/s^2).
-%
-%   g_mean, 1x3 gyros mean values (rad/s).
-%   a_meam, 1x3 accrs mean values (m/s^2).
-%
-%   g_median, 1x3 gyros median values (rad/s).
-%   a_median, 1x3 accrs median values (m/s^2).
-%
-%   fb_tau,   Mx3 time vector from AV for accelerometers [X Y Z] (s).
-%   fb_allan, Mx3 AV vector for accelerometers [X Y Z] (m/s^2).
-%   fb_error, Mx3 AV errors for accelerometers [X Y Z] (m/s^2).
-%
-%   wb_tau,   Mx3 time vector from AV for gyros [X Y Z] (s).
-%   wb_allan, Mx3 AV vector for gyros [X Y Z] (rad/s).
-%   wb_error, Mx3 AV errors for gyros [X Y Z] (rad/s).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -99,8 +72,8 @@ function imu = allan_imu (imu_sta, verbose)
 %   M.A. Hopcroft. Allan overlap MATLAB function v2.24.
 % https://www.mathworks.com/matlabcentral/fileexchange/13246-allan
 %
-% Version: 008
-% Date:    2021/03/07
+% Version: 009
+% Date:    2021/12/03
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -108,168 +81,71 @@ function imu = allan_imu (imu_sta, verbose)
 if (nargin < 2), verbose = 2; end
 
 %% PREALLOCATION
+%%
 
 % Random walk
-imu.vrw = zeros(1,3);
-imu.arw = zeros(1,3);
+imu_allan.vrw = zeros(1,3);
+imu_allan.arw = zeros(1,3);
+
+% Rate random walk
+imu_allan.vrrw = zeros(1,3);
+imu_allan.arrw = zeros(1,3);
 
 % Bias instability
-imu.ab_dyn = zeros(1,3);
-imu.gb_dyn = zeros(1,3);
+imu_allan.ab_dyn = zeros(1,3);
+imu_allan.gb_dyn = zeros(1,3);
 
 % Bias instability correlation time
-imu.ab_corr = zeros(1,3);
-imu.gb_corr = zeros(1,3);
+imu_allan.ab_corr = zeros(1,3);
+imu_allan.gb_corr = zeros(1,3);
 
-% Static bias 
-imu.ab_sta = zeros(1,3);
-imu.gb_sta = zeros(1,3);
+%% TIMESPAN
 
-% Statistics
-imu.a_std    = zeros(1,3);
-imu.a_max    = zeros(1,3);
-imu.a_min    = zeros(1,3);
-imu.a_mean   = zeros(1,3);
-imu.a_median = zeros(1,3);    
-imu.a_outliers = zeros(1,3);    
-imu.a_linear = zeros(3,2);  
+T = imu.t(end) - imu.t(1);
 
-imu.g_std    = zeros(1,3);
-imu.g_max    = zeros(1,3);
-imu.g_min    = zeros(1,3);
-imu.g_mean   = zeros(1,3);
-imu.g_median = zeros(1,3);   
-imu.g_outliers = zeros(1,3); 
-imu.g_linear = zeros(3,2);  
-
-%% TIME VECTOR FOR ALLAN VARIANCE
-
-% Sampling time and data frequency
-dt = median(diff(imu_sta.t));
-
-% Frequency must be rounded to an integer number for allan_overlap function
-real_freq = (1/dt);
-
-if (mod(real_freq,1) ~= 0.0 )           % If real_freq is not an integer...
-    real_freq = round(real_freq / 10);
-    data.rate = real_freq * 10;
-    
-else
-    data.rate = real_freq;
-end
-
-% From allan_overlap:
-%   For rate-based data, ADEV is computed only for tau values greater than the
-%   minimum time between samples and less than the half of total time.
-T = (imu_sta.t(end) - imu_sta.t(1)) ;
-exp_min = floor( log10( dt ) );
-exp_max = floor( log10( T /2 ) );
-
-TAU = 10.^(exp_min:exp_max);
-
-tau_v = [];
-for i = 1:length(TAU)-1
-    
-    tau_v = [tau_v TAU(i):TAU(i):TAU(i+1) ];
-end
-
-% Deleting repeated elements
-dd = diff (tau_v);
-idl = dd ~= 0;
-idl = [idl true];
-tau_v = tau_v(idl);
-
-fprintf('allan_imu: length of time vector is %02.3d hours or %.2f minutes or %.2f seconds. \n', (T/60/60), (T/60), T)
+fprintf('allan_imu: duration of time vector is %.2f hours or %.2f minutes or %.2f seconds. \n', (T/60/60), (T/60), T)
 
 %% ACCELEROMETERS
+%%
+text_st = {'ACCR X', 'ACCR Y', 'ACCR Z'};
 
 for i=1:3
     
-    fprintf('\n')
+    fprintf('allan_imu: Allan variance for ACCR %d \n', i)   
     
-    fprintf('allan_imu: Allan variance for FB %d \n', i)   
+    plot_imu_sta(imu.fb(:,i), imu.freq, text_st(i));
     
-    data.freq = imu_sta.fb(:,i);
+    [N, K, B, tauB] = allan_matlab (imu.fb(:,i), imu.freq, text_st(i));
     
-    [allan_o, s, error, tau] = allan_overlap(data, tau_v ,'allan_overlap', verbose);
+    imu_allan.vrw(i) = N;
+    imu_allan.vrrw(i) = K;    
+    imu_allan.ab_dyn(i) = B;
+    imu_allan.ab_corr(i) = tauB;
     
-    imu.fb_tau  (:,i) = tau';
-    imu.fb_allan(:,i) = allan_o';
-    imu.fb_error(:,i) = error';
-    
-    vrw = allan_get_rw (tau, allan_o, dt);
-    imu.vrw(i) = vrw;
-    
-    [b_dyn, t_corr] = allan_get_b_dyn (tau, allan_o);
-    imu.ab_dyn(i)   = b_dyn;
-    imu.ab_corr(i)  = t_corr;
-    
-    imu.ab_sta(i)    = s.mean; 
-        
-    imu.a_std(i)    = s.std;
-    imu.a_mean(i)   = s.mean;    
-    imu.a_max(i)    = s.max;
-    imu.a_min(i)    = s.min;
-    imu.a_median(i) = s.median;
-    imu.a_outliers(i) = s.outliers;
-    imu.a_linear(i,:) = s.linear;
 end
-
-% Plot ACCRS
-figure
-loglog(imu.fb_tau, imu.fb_allan, '-o');    
-grid on
-title('ACCRS ALLAN VARIANCES')
-legend('ACC X','ACC Y', 'ACC Z' )
 
 %% GYROSCOPES
+%%
+text_st = {'GYRO X', 'GYRO Y', 'GYRO Z'};
 
 for i=1:3
     
-    fprintf('\n')
+    fprintf('allan_imu: Allan variance for GYRO %d \n', i)   
     
-    fprintf('allan_imu: Allan variance for WB %d \n', i)
+    plot_imu_sta(imu.wb(:,i), imu.freq, text_st(i));
     
-    data.freq = imu_sta.wb(:,i);
+    [N, K, B, tauB] = allan_matlab (imu.wb(:,i), imu.freq, text_st(i));
     
-    [allan_o, s, error, tau] = allan_overlap(data, tau_v ,'allan_overlap', verbose);
-    
-    imu.wb_tau  (:,i) = tau;
-    imu.wb_allan(:,i) = allan_o;
-    imu.wb_error(:,i) = error;
-    
-    arw = allan_get_rw (tau, allan_o, dt);
-    imu.arw(i) = arw;
-    
-    [b_dyn, t_corr] = allan_get_b_dyn (tau, allan_o);
-    imu.gb_dyn(i)   = b_dyn;
-    imu.gb_corr(i)  = t_corr;
-    
-    imu.gb_sta(i) = s.mean;
-    
-    imu.g_std(i)    = s.std;
-    imu.g_mean(i)   = s.mean;     
-    imu.g_max(i)    = s.max;
-    imu.g_min(i)    = s.min;
-    imu.g_median(i) = s.median;
-    imu.g_outliers(i) = s.outliers;
-    imu.g_linear(i,:) = s.linear;
+    imu_allan.arw(i) = N;
+    imu_allan.arrw(i) = K;    
+    imu_allan.gb_dyn(i) = B;
+    imu_allan.gb_corr(i) = tauB;
 end
 
-% Plot GYROS
-figure
-loglog(imu.wb_tau, imu.wb_allan, '-o');
-grid on
-title('GYROS ALLAN VARIANCES')
-legend('GYRO X','GYRO Y', 'GYRO Z' )
+%% Dynamic bias PSD
+%%
 
-%% EXTRA DATA
-
-% Sampling frequency
-imu.freq = data.rate;
-
-% Dynamic bias PSD
-imu.ab_psd = imu.ab_dyn .* sqrt(imu.ab_corr) ;  % m/s^2/root-Hz
-imu.gb_psd = imu.gb_dyn .* sqrt(imu.gb_corr) ;  % rad/s/root-Hz
+imu_allan.ab_psd = imu_allan.ab_dyn .* sqrt(imu_allan.ab_corr) ;  % m/s^2/root(Hz)
+imu_allan.gb_psd = imu_allan.gb_dyn .* sqrt(imu_allan.gb_corr) ;  % rad/s/root(Hz)
 
 end

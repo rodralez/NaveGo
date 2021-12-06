@@ -35,8 +35,8 @@ function pd = imu_test_normality(imu_sta, dec, cdf)
 % References:
 %
 %
-% Version: 002
-% Date:    2021/04/01
+% Version: 003
+% Date:    2021/12/02
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -62,13 +62,13 @@ for i=1:3
     
     pd(i) = test_normality (data);
     
-    x_label = sprintf('FB %d SAMPLES', i);
-    x_title = sprintf('FB %d HISTOGRAM', i);
+    x_label = sprintf('ACCR %d SAMPLES', i);
+    x_title = sprintf('ACCR %d HISTOGRAM', i);
     plot_histogram (data, pd(i), x_label, x_title);
     
     if ( strcmp(cdf, 'ON') )
-        x_label = sprintf('FB %d SAMPLES', i);
-        x_title = sprintf('FB %d NORMAL CUMULATIVE DISTRIBUTION', i);
+        x_label = sprintf('ACCR %d SAMPLES', i);
+        x_title = sprintf('ACCR %d NORMAL CUMULATIVE DISTRIBUTION', i);
         plot_cdf (data, pd(i), x_label, x_title);
     end
 end
@@ -79,13 +79,13 @@ for i=1:3
     
     pd(i+3) = test_normality (data);
     
-    x_label = sprintf('WB %d SAMPLES', i);
-    x_title = sprintf('WB %d HISTOGRAM', i);
+    x_label = sprintf('GYRO %d SAMPLES', i);
+    x_title = sprintf('GYRO %d HISTOGRAM', i);
     plot_histogram (data, pd(i+3), x_label, x_title);
     
     if ( strcmp(cdf, 'ON') )
-        x_label = sprintf('WB %d SAMPLES', i);
-        x_title = sprintf('WB %d NORMAL CUMULATIVE DISTRIBUTION', i);
+        x_label = sprintf('GYRO %d SAMPLES', i);
+        x_title = sprintf('GYRO %d NORMAL CUMULATIVE DISTRIBUTION', i);
         plot_cdf (data, pd(i+3), x_label, x_title);
     end
 end

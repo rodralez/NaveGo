@@ -86,7 +86,7 @@ fprintf('NaveGo: dataset time span is %.2f hours or %.2f minutes or %.2f seconds
 
 verbose = 2;
 
-stim300_allan = allan_imu (stim300, verbose)
+stim300_allan = allan_imu (stim300)
 
 %% ALLAN VARIANCE FOR SYNTHETIC IMU DATA
 
@@ -168,12 +168,11 @@ wb = gyro_gen (ref, ustrain);  % Generate gyro in the body frame
 imu.wb = wb;
 
 imu.t = ref.t;
+imu.freq = get_freq(ref.t);
 
-clear fb wb 
+clear fb wb verbose = 2;
 
 %% ALLAN VARIANCE
 
-verbose = 2;
-
-ustrain_allan = allan_imu (imu, verbose)
+ustrain_allan = allan_imu (imu)
 
