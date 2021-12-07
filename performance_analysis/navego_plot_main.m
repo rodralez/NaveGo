@@ -61,7 +61,7 @@ sig3_v = abs(nav_e.Pp(:, 1:16:end).^(0.5)) .* 3; %  Taking only diagonal element
 figure;
 plot3(ref_n.lon.*R2D, ref_n.lat.*R2D, ref_n.h, '--k');
 hold on
-plot3(nav_i.lon.*R2D, nav_i.lat.*R2D, nav_i.h, '-o', 'Color', blue, 'LineWidth', lw);
+plot3(nav_i.lon.*R2D, nav_i.lat.*R2D, nav_i.h, '-', 'Color', blue, 'LineWidth', lw);
 plot3(ref_n.lon(1).*R2D, ref_n.lat(1).*R2D, ref_n.h(1), 'or', 'MarkerSize', 10, 'LineWidth', lw);
 hold off
 axis tight
@@ -70,7 +70,7 @@ x1 = xlabel('Longitude [deg]');
 y1 = ylabel('Latitude [deg]');
 z1 = zlabel('Altitude [m]');
 view(45, 45)
-l1 = legend('REF', 'INS/GNSS', 'Starting point', 'Location', 'NorthEast');
+l1 = legend('REF', 'INS/GNSS', 'Starting point', 'Location', 'SouthEast');
 grid
 
 set(t1,'FontSize', font_title);
@@ -91,7 +91,7 @@ t1 = title('2D TRAJECTORY');
 x1 = xlabel('Longitude [deg]');
 y1 = ylabel('Latitude [deg]');
 
-l1 = legend('REF', 'INS/GNSS', 'Starting point', 'Location', 'NorthEast');
+l1 = legend('REF', 'INS/GNSS', 'Starting point', 'Location', 'SouthEast');
 grid
 
 set(t1,'FontSize', font_title);
@@ -243,3 +243,8 @@ navego_plot(cell_s, 'ERROR', nav_e.tg, sig3_v(:,14), nav_e.tg, nav_e.b(:, 5));
 subplot(313)
 cell_s = {'KF BIAS ACCR Z ESTIMATION', 'Time [s]', '[m/s]', '3\sigma', 'BIAS'};
 navego_plot(cell_s, 'ERROR', nav_e.tg, sig3_v(:,15), nav_e.tg, nav_e.b(:, 6));
+
+% STATES OBSERVABILITY
+figure
+cell_s = {'STATES OBSERVABILITY', 'Time [s]', 'STATES', 'REF', 'INS/GNSS'};
+navego_plot(cell_s, 'NORMAL', nav_e.tg(1), 0, nav_e.tg, nav_e.ob);
