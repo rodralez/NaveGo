@@ -29,8 +29,8 @@
 %       of Precision Measuring Technology and Instruments, Tianjin University, 
 %       Tianjin, China.
 %
-% Version: 004
-% Date:    2021/03/18
+% Version: 005
+% Date:    2021/12/07
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -52,9 +52,8 @@ addpath ../../allan-variance/
 
 D2R = (pi/180);     % degrees to radians
 
-versionstr = 'NaveGo, release v1.3';
-
-fprintf('\n%s.\n', versionstr)
+navego_print_version;
+ 
 fprintf('\nNaveGo: Allan variance analysis from real IMU STIM300... \n')
 
 load stim300
@@ -170,7 +169,7 @@ imu.wb = wb;
 imu.t = ref.t;
 imu.freq = get_freq(ref.t);
 
-clear fb wb verbose = 2;
+clear fb wb;
 
 %% ALLAN VARIANCE
 

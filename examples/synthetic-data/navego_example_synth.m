@@ -43,8 +43,8 @@
 % Revision D. October 2011.
 % http://static.garmin.com/pumac/GPS_18x_Tech_Specs.pdf
 %
-% Version: 021
-% Date:    2020/11/28
+% Version: 022
+% Date:    2021/12/07
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -64,9 +64,8 @@ addpath ../../simulation/
 addpath ../../conversions/
 addpath ../../performance_analysis/
 
-versionstr = 'NaveGo, release v1.3';
+navego_print_version;
 
-fprintf('\n%s.\n', versionstr)
 fprintf('\nNaveGo: starting simulation of INS/GNSS integration... \n')
 
 %% CODE EXECUTION PARAMETERS
@@ -171,6 +170,7 @@ imu1 = imu_si_errors(ADIS16405, dt);       % IMU manufacturer error units to SI 
 
 imu1.ini_align_err = [1 1 2] .* D2R;                % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)
 imu1.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)]; % Initial attitude align at t(1) (radians).
+imu1.t = ADIS16405.t;
 
 %% ADIS16488 IMU ERROR PROFILE
 
@@ -195,6 +195,7 @@ imu2 = imu_si_errors(ADIS16488, dt);        % Transform IMU manufacturer error u
 
 imu2.ini_align_err = [0.5 0.5 1] .* D2R;                 % Initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)
 imu2.ini_align = [ref.roll(1) ref.pitch(1) ref.yaw(1)];  % Initial attitude align at t(1) (radians)
+imu2.t = ADIS16488.t;
 
 %% GARMIN 5-18 Hz GPS ERROR PROFILE
 

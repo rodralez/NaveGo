@@ -35,7 +35,7 @@
 % 19(18). https://www.mdpi.com/530156.
 %
 % Version: 005
-% Date:    2021/03/18
+% Date:    2021/12/07
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -54,9 +54,8 @@ addpath ../../ins-gnss/
 addpath ../../conversions/
 addpath ../../performance_analysis/
 
-versionstr = 'NaveGo, release v1.3';
+navego_print_version;
 
-fprintf('\n%s.\n', versionstr)
 fprintf('\nNaveGo: starting real INS/GNSS integration... \n')
 
 %% PARAMETERS

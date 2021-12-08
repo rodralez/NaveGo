@@ -31,9 +31,10 @@
 clc
 close all
 clear
-matlabrc
 
 addpath ../../data-acquisition/
+
+navego_print_version;
 
 fprintf('navego_example_sensor_read: processing data from a Microstrain IMU... \n')
 
