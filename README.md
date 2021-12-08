@@ -66,7 +66,7 @@ More branches would be created to develop particular features for NaveGo. These 
 ## Roadmap
 
 Future features of NaveGo will be:
-
+	
 * Barometer as aiding sensor for altitude.
 
 * G-sensitivity correction for gyroscopes.
