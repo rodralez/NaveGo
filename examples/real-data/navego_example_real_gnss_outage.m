@@ -1,4 +1,4 @@
-% navego_example_real_gnss_outage: post-processing integration of MPU-6000 
+% navego_example_real_gnss_outage: post-processing integration of Ekinox 
 % IMU and Ekinox GNSS data. Two GNSS outages are forced.
 %
 % The main goal is to integrate MPU-6000 IMU and Ekinox-D GNSS measurements  
@@ -169,19 +169,19 @@ if strcmp(INS_GNSS, 'ON')
     
     % Execute INS/GNSS integration
     % ---------------------------------------------------------------------
-    nav_or = ins_gnss(imu, gnss, 'quaternion'); %
+    nav_outage = ins_gnss(imu, gnss, 'quaternion'); %
     % ---------------------------------------------------------------------
     
-    save nav_or.mat nav_or
+    save nav_outage nav_outage
     
 else
     
-    load nav_or
+    load nav_outage
 end
 
 %% TRAVELED DISTANCE
 
-distance = gnss_distance (nav_or.lat, nav_or.lon);
+distance = gnss_distance (nav_outage.lat, nav_outage.lon);
 
 fprintf('NaveGo: distance traveled by the vehicle is %.2f meters or %.2f km. \n', distance, distance/1000)
 
@@ -212,7 +212,7 @@ ref.vel     = ref.vel  (idx:fdx, :);
 % INS/GNSS estimates and GNSS data are interpolated according to the
 % reference dataset.
 
-[nav_i,  ref_n] = navego_interpolation (nav_or, ref);
+[nav_i,  ref_n] = navego_interpolation (nav_outage, ref);
 [gnss_i, ref_g] = navego_interpolation (gnss,  ref);
 
 %% NAVIGATION RMSE 
@@ -221,11 +221,16 @@ rmse_v = print_rmse (nav_i, gnss_i, ref_n, ref_g, 'Ekinox IMU/GNSS');
 
 %% RMSE TO CVS FILE
 
-csvwrite('nav_ekinox_or.csv', rmse_v);
+csvwrite('nav_ekinox_outage.csv', rmse_v);
+
+%% NAVIGATION DATA TO CSV FILE
+
+fprintf('\n');
+navego_nav2csv(nav_outage); 
 
 %% PLOTS
 
 if (strcmp(PLOT,'ON'))
     
-    navego_plot_main (ref, gnss, nav_or, gnss_i, nav_i, ref_g, ref_n)
+    navego_plot_main (ref, gnss, nav_outage, gnss_i, nav_i, ref_g, ref_n)
 end

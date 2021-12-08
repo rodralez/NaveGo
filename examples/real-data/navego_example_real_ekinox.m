@@ -34,8 +34,8 @@
 % Inertial Measurement Unit for Ground Vehicle Navigation. Sensors 2019,  
 % 19(18). https://www.mdpi.com/530156.
 %
-% Version: 005
-% Date:    2021/12/07
+% Version: 006
+% Date:    2021/12/08
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -170,6 +170,11 @@ rmse_v = print_rmse (nav_i, gnss_i, ref_n, ref_g, 'Ekinox INS/GNSS');
 %% RMSE TO CVS FILE
 
 csvwrite('ekinox.csv', rmse_v);
+
+%% NAVIGATION DATA TO CSV FILE
+
+fprintf('\n');
+navego_nav2csv(nav_ekinox); 
 
 %% PLOTS
 
