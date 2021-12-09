@@ -219,15 +219,15 @@ navego_plot(cell_s, 'ERROR', nav_e.tg, sig3_v(:,9), ...
 figure;
 
 subplot(311)
-cell_s = {'KF BIAS GYRO X ESTIMATION', 'Time [s]', '[rad/s]', '3\sigma', 'BIAS'};
+cell_s = {'KF BIAS GYRO X ESTIMATION', 'Time [s]', '[deg/s]', '3\sigma', 'BIAS'};
 navego_plot(cell_s, 'ERROR', nav_e.tg, R2D.*sig3_v(:,10), nav_e.tg, R2D.*nav_e.b(:, 1));
 
 subplot(312)
-cell_s = {'KF BIAS GYRO Y ESTIMATION', 'Time [s]', '[rad/s]', '3\sigma', 'BIAS'};
+cell_s = {'KF BIAS GYRO Y ESTIMATION', 'Time [s]', '[deg/s]', '3\sigma', 'BIAS'};
 navego_plot(cell_s, 'ERROR', nav_e.tg, R2D.*sig3_v(:,11), nav_e.tg, R2D.*nav_e.b(:, 2));
 
 subplot(313)
-cell_s = {'KF BIAS GYRO Z ESTIMATION', 'Time [s]', '[rad/s]', '3\sigma', 'BIAS'};
+cell_s = {'KF BIAS GYRO Z ESTIMATION', 'Time [s]', '[deg/s]', '3\sigma', 'BIAS'};
 navego_plot(cell_s, 'ERROR', nav_e.tg, R2D.*sig3_v(:,12), nav_e.tg, R2D.*nav_e.b(:, 3));
 
 figure;
