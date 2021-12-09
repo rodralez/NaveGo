@@ -104,6 +104,10 @@ fprintf('NaveGo: loading Ekinox GNSS data... \n')
 
 load ekinox_gnss
 
+% ekinox_gnss contains the lever arm with respect to Ekinox IMU.
+% ekinox_gnss.larm has to be changed for MPU-6000 IMU
+ekinox_gnss.larm = [-0.369, 0.0, -0.219]' - [0.0 0.0 7.0]'; 
+
 % ekinox_gnss.eps = mean(diff(mpu6000_imu.t)) / 2; %  A rule of thumb for choosing eps.
 
 %% NAVIGATION TIME
