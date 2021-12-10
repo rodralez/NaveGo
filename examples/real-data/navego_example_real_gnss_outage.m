@@ -96,19 +96,19 @@ load ref
 
 %% EKINOX IMU 
 
-fprintf('NaveGo: loading Ekinox IMU data... \n')
-
-load ekinox_imu
-
-imu = ekinox_imu;
+% fprintf('NaveGo: loading Ekinox IMU data... \n')
+% 
+% load ekinox_imu
+% 
+% imu = ekinox_imu;
 
 %% MPU-6000 IMU
 
-% fprintf('NaveGo: loading MPU-6000 IMU data... \n')
-% 
-% load mpu6000_imu
-% 
-% imu = mpu6000_imu;
+fprintf('NaveGo: loading MPU-6000 IMU data... \n')
+
+load mpu6000_imu
+
+imu = mpu6000_imu;
 
 %% EKINOX GNSS
 
@@ -124,11 +124,11 @@ gnss.eps = mean(diff(imu.t)) / 2; %  A rule of thumb for choosing eps.
 
 % GNSS OUTAGE 1, TIME INTERVAL
 gout_sta_1 = 138906;          % (seconds)
-gout_end_1 = 138906 + 32;     % (seconds)
+gout_end_1 = gout_sta_1 + 10;     % (seconds)
 
 % GNSS OUTAGE 2, TIME INTERVAL
 gout_sta_2 = 139170;          % (seconds)
-gout_end_2 = 139170 + 32;     % (seconds)
+gout_end_2 = gout_sta_2 + 10;     % (seconds)
 
 if (strcmp(GNSS_OUTAGE, 'ON'))
     

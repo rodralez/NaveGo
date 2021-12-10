@@ -38,7 +38,11 @@ function navego_nav2csv(nav)
 R2D = (180/pi);     % Radians to degrees
 
 % File name
-dtime = datestr(date, 'yyMMdd-HHmm' );
+if(is_octave)
+    dtime = datestr(date, 'yymmdd_HHMMSS' ); 
+else
+    dtime = datetime('now','TimeZone','local','Format','yyMMdd-HHmm');
+end
 
 file_name = sprintf('navego_%s.csv', dtime);
   

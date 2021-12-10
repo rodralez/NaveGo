@@ -1,13 +1,14 @@
-function line_ctr = line_counter(file, verbose)
-% line_counter: counter the number of lines in file.
+function [pd, hk, pk] = test_normality (samples)
+% test_normality: checks if samples come from a normal distribution.
 %
 % INPUT
-%   file: file name (string).
-%   verbose: 0, silence output.
-%            1, verbose output.
+%   samples: Nx1 samples to test.
 %
 % OUTPUT
-%   line_ctr: number of lines in file.
+%    pd: probality distribution object from ProbabilityDistribution class.
+%    hk: = 0 => samples come from a normal distribution.
+%        = 1 => samples do not come from a normal distribution.
+%    pk: p-value.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -30,42 +31,31 @@ function line_ctr = line_counter(file, verbose)
 % Reference:
 %
 %
-% Version: 001
-% Date:    2020/11/25
+% Version: 002
+% Date:    2020/11/19
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-if nargin < 2, verbose = 0; end
+%% Fit data to a normal disribution
 
-fid = fopen(file, 'r');
+pd = fitdist(samples, 'normal');
 
-if fid == -1
-    error('line_counter: %s not found', file)
-else
-    if verbose == 1
-        fprintf('line_counter: processing %s...\n', file)
-    end
-end
+sig = pd.sigma;
+mu = pd.mu;
 
-line_ctr = 0;
+ref = randn (1000,1) * sig + mu;
 
-while ~feof(fid)
-    
-    fgets(fid);
-    line_ctr = line_ctr + 1;
-    
-    if verbose == 1
-        % Print a dot on console every 10,000 executions
-        if (mod(line_ctr, 10000) == 0), fprintf('. ');  end
-        % Print a return on console every 200,000 executions
-        if (mod(line_ctr, 200000) == 0), fprintf('\n'); end
-    end
-end
+%% Test normality
 
-fclose(fid);
+% Kolmogorov–Smirnov test
+[hk , pk] = kstest2 (samples, ref, 'alpha', 0.001);
 
-if verbose == 1
-    fprintf('\nline_counter: %d lines in %s\n', line_ctr, file);
-end
+% Others normality tests
+% [hz , pz] = ztest  (samples, mu, sig)
+% [ht , pt] = ttest  (samples, mu)
+% [hc , pc] = chi2gof(samples)
+% [hj , pj] = jbtest (samples)
+% [hk , pk] = kstest (samples, 'CDF', pd, 'Alpha',0.5)
+% [ha, pa, adstat, cv] = adtest (samples,'Distribution', pd)
 
 end
