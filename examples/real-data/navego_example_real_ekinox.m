@@ -52,7 +52,8 @@ matlabrc
 addpath ../../ins/
 addpath ../../ins-gnss/
 addpath ../../conversions/
-addpath ../../performance_analysis/
+addpath ../../performance-analysis/
+addpath ../../misc/
 
 navego_print_version;
 

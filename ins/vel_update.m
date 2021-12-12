@@ -1,4 +1,4 @@
-function vel = vel_update(fn, vel_o, omega_ie_n, omega_en_n, gn, dt)
+function vel_n = vel_update(fn, vel_o, omega_ie_n, omega_en_n, gn, dt)
 % vel_update: updates velocity vector in the NED frame.
 %
 % INPUT
@@ -10,7 +10,7 @@ function vel = vel_update(fn, vel_o, omega_ie_n, omega_en_n, gn, dt)
 %   dt, 1x1 integration time step.
 %
 % OUTPUT
-%   vel, 3x1 velocity vector in the nav-frame.    
+%   vel_n, 3x1 updated velocity vector in the nav-frame.    
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -32,26 +32,20 @@ function vel = vel_update(fn, vel_o, omega_ie_n, omega_en_n, gn, dt)
 %
 % References:
 %
-%	Titterton, D.H. and Weston, J.L. (2004). Strapdown
-% Inertial Navigation Technology (2nd Ed.). Institution
-% of Engineering and Technology, USA. Eq 3.69.
+%   Paul D. Groves. Principles of GNSS, Inertial, and
+% Multisensor Integrated Navigation Systems. Second Edition.
+% Eq. 5.53, page 179.
 %
-%	R. Gonzalez, J. Giribet, and H. Patiño. An approach to
-% benchmarking of loosely coupled low-cost navigation systems,
-% Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
-% issue 3, pp. 272-287, 2015. Eq. 17.
-%
-% Version: 004
-% Date:    2021/03/16
+% Version: 005
+% Date:    2021/12/12
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-S = skewm(vel_o);                               % Skew matrix with velocities
  
-coriolis = S * (omega_en_n + 2 * omega_ie_n);   % Coriolis 
+coriolis = (omega_en_n + 2 * omega_ie_n);   % Coriolis 
 
-fn_c = fn - coriolis + gn;                      % Corrected specific force in nav-frame
+fn_c = fn - coriolis + gn;                  % Corrected specific force in nav-frame
 
-vel = vel_o + (fn_c' * dt);
+vel_n = vel_o + (fn_c' * dt);               % Velocity update
 
 end

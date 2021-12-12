@@ -60,9 +60,10 @@ matlabrc
 
 addpath ../../ins/
 addpath ../../ins-gnss/
-addpath ../../simulation/
 addpath ../../conversions/
-addpath ../../performance_analysis/
+addpath ../../performance-analysis/
+addpath ../../misc/
+addpath ../../simulation/
 
 navego_print_version;
 
@@ -73,7 +74,7 @@ fprintf('\nNaveGo: starting simulation of INS/GNSS integration... \n')
 % Please, comment any of the following parameters in order to NOT execute a
 % particular portion of code
 
-GNSS_DATA = 'OFF';   % Generation of synthetic GNSS data
+GNSS_DATA = 'ON';   % Generation of synthetic GNSS data
 IMU1_DATA = 'ON';   % Generation of synthetic ADIS16405 IMU data
 IMU2_DATA = 'ON';   % Generation of synthetic ADIS16488 IMU data
 
