@@ -40,7 +40,6 @@ function vel_n = vel_update(fn, vel_o, omega_ie_n, omega_en_n, gn, dt)
 % Date:    2021/12/12
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
-
  
 coriolis = (omega_en_n + 2 * omega_ie_n);   % Coriolis 
 

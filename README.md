@@ -57,9 +57,9 @@ NaveGo has been validated by processing real-world data from a real trajectory a
 
 NaveGo has two main branches:
 
-1. `master`: which contains the stable releases of NaveGo.
+1. `master`: contains the stable releases of NaveGo.
 
-2. `develop`: every new feature of NaveGo will be implemented in this branch first. `develop` will be merged to `master` from time to time.
+2. `develop`: every new feature of NaveGo will be implemented in this branch . `develop` will be merged to `master` from time to time.
 
 More branches would be created to develop particular features for NaveGo. These extra branches will be eventually merged to `develop`. 
 
