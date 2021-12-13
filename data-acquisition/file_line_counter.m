@@ -1,12 +1,13 @@
-function line_ctr = file_line_counter(filename)
-% file_line_counter: counts the lines (rows) in a text file.
+function line_ctr = line_counter(file, verbose)
+% line_counter: counter the number of lines in file.
 %
 % INPUT
-%   filename: name or complete path to the text file under analysis
-%   (string).
+%   file: file name (string).
+%   verbose: 0, silence output.
+%            1, verbose output.
 %
 % OUTPUT
-%   line_ctr: number of lines (rows) in the file.
+%   line_ctr: number of lines in file.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -30,28 +31,41 @@ function line_ctr = file_line_counter(filename)
 %
 %
 % Version: 001
-% Date:    2020/11/03
+% Date:    2020/11/25
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-fid = fopen(filename, 'r');
+if nargin < 2, verbose = 0; end
+
+fid = fopen(file, 'r');
 
 if fid == -1
-    error('file_line_counter: %s is not found', fid)
+    error('line_counter: %s not found', file)
+else
+    if verbose == 1
+        fprintf('line_counter: processing %s...\n', file)
+    end
 end
 
 line_ctr = 0;
 
 while ~feof(fid)
-    fgetl(fid);
+    
+    fgets(fid);
     line_ctr = line_ctr + 1;
+    
+    if verbose == 1
+        % Print a dot on console every 10,000 executions
+        if (mod(line_ctr, 10000) == 0), fprintf('. ');  end
+        % Print a return on console every 200,000 executions
+        if (mod(line_ctr, 200000) == 0), fprintf('\n'); end
+    end
 end
-
-% Set pointer back to the beginning of file
-% fseek(fid,0,'bof');
 
 fclose(fid);
 
-fprintf('file_line_counter: lines in %s: %d', file, line_ctr));
+if verbose == 1
+    fprintf('\nline_counter: %d lines in %s\n', line_ctr, file);
+end
 
 end

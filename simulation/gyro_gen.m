@@ -46,7 +46,7 @@ function wb_sim = gyro_gen (ref, imu)
 N = max(size(ref.t));
 M = [N, 3];
 
-%% SIMULATION OF GYROS
+%% SIMULATION OF TURN RATES
 
 % If true, turn rates are provided...
 if (isfield(ref, 'wb'))

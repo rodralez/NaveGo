@@ -36,8 +36,8 @@
 % Inertial Measurement Unit for Ground Vehicle Navigation. Sensors 2019,  
 % 19(18). https://www.mdpi.com/530156.
 %
-% Version: 004
-% Date:    2020/11/23
+% Version: 006
+% Date:    2021/12/08
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -54,11 +54,11 @@ matlabrc
 addpath ../../ins/
 addpath ../../ins-gnss/
 addpath ../../conversions/
-addpath ../../performance_analysis/
+addpath ../../performance-analysis/
+addpath ../../misc/
 
-versionstr = 'NaveGo, release v1.3';
+navego_print_version;
 
-fprintf('\n%s.\n', versionstr)
 fprintf('\nNaveGo: starting real INS/GNSS integration... \n')
 
 %% PARAMETERS
@@ -104,6 +104,10 @@ load mpu6000_imu
 fprintf('NaveGo: loading Ekinox GNSS data... \n')
 
 load ekinox_gnss
+
+% ekinox_gnss contains the lever arm with respect to Ekinox IMU.
+% ekinox_gnss.larm has to be changed for MPU-6000 IMU
+ekinox_gnss.larm = [-0.369, 0.0, -0.219]' - [0.0 0.0 7.0]'; 
 
 % ekinox_gnss.eps = mean(diff(mpu6000_imu.t)) / 2; %  A rule of thumb for choosing eps.
 
@@ -171,7 +175,12 @@ rmse_v = print_rmse (nav_i, gnss_i, ref_n, ref_g, 'MPU-6000 INS/GNSS');
 
 %% RMSE TO CVS FILE
 
-csvwrite('ekinox.csv', rmse_v);
+csvwrite('mpu6000.csv', rmse_v);
+
+%% NAVIGATION DATA TO CSV FILE
+
+fprintf('\n');
+navego_nav2csv(nav_mpu6000); 
 
 %% PLOTS
 
