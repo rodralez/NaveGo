@@ -31,6 +31,7 @@
 clc
 close all
 clear
+matlabrc
 
 addpath ../../data-acquisition/
 

@@ -1,7 +1,7 @@
-% navego_example_real_gnss_outage: post-processing integration of Ekinox 
+% navego_example_real_gnss_outage: post-processing integration of Ekinox
 % IMU and Ekinox GNSS data. Two GNSS outages are forced.
 %
-% The main goal is to integrate MPU-6000 IMU and Ekinox-D GNSS measurements  
+% The main goal is to integrate MPU-6000 IMU and Ekinox-D GNSS measurements
 % and test INS/GNSS systems performance under two GNSS outages.
 %
 % Sensors dataset was generated driving a car through the streets of
@@ -30,12 +30,12 @@
 %   SBG Systems. SBG Ekinox-D High Accuracy Inertial System Brochure,
 % Tactical grade MEMS Inertial Systems, v1.0. February 2014.
 %
-%   R. Gonzalez and P. Dabove. Performance Assessment of an Ultra Low-Cost 
-% Inertial Measurement Unit for Ground Vehicle Navigation. Sensors 2019,  
+%   R. Gonzalez and P. Dabove. Performance Assessment of an Ultra Low-Cost
+% Inertial Measurement Unit for Ground Vehicle Navigation. Sensors 2019,
 % 19(18). https://www.mdpi.com/530156.
 %
-% Version: 005
-% Date:    2021/12/07
+% Version: 006
+% Date:    2021/12/15
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -54,6 +54,8 @@ addpath ../../ins-gnss/
 addpath ../../conversions/
 addpath ../../performance-analysis/
 addpath ../../misc/
+addpath ../../plot/
+addpath ../../simulation/
 
 navego_print_version;
 
@@ -95,12 +97,12 @@ fprintf('NaveGo: loading reference data... \n')
 
 load ref
 
-%% EKINOX IMU 
+%% EKINOX IMU
 
 % fprintf('NaveGo: loading Ekinox IMU data... \n')
-% 
+%
 % load ekinox_imu
-% 
+%
 % imu = ekinox_imu;
 
 %% MPU-6000 IMU
@@ -121,39 +123,25 @@ gnss = ekinox_gnss;
 
 gnss.eps = mean(diff(imu.t)) / 2; %  A rule of thumb for choosing eps.
 
-% Force two GNSS outage paths
-
-% GNSS OUTAGE 1, TIME INTERVAL
-gout_sta_1 = 138906;          % (seconds)
-gout_end_1 = gout_sta_1 + 10;     % (seconds)
-
-% GNSS OUTAGE 2, TIME INTERVAL
-gout_sta_2 = 139170;          % (seconds)
-gout_end_2 = gout_sta_2 + 10;     % (seconds)
+%% GNSS OUTAGE
 
 if (strcmp(GNSS_OUTAGE, 'ON'))
     
-    fprintf('NaveGo: two GNSS outages are forced... \n')
+    % Force two GNSS outage paths
     
-    % GNSS OUTAGE 1
-    idx  = find(gnss.t > gout_sta_1, 1, 'first' );
-    fdx  = find(gnss.t < gout_end_1, 1, 'last' );
+    % GNSS OUTAGE 1, TIME INTERVAL
+    gout_sta_1 = 138906;          % (seconds)
+    gout_end_1 = gout_sta_1 + 10;     % (seconds)
     
-    gnss.t(idx:fdx) = [];
-    gnss.lat(idx:fdx) = [];
-    gnss.lon(idx:fdx) = [];
-    gnss.h(idx:fdx)   = [];
-    gnss.vel(idx:fdx, :) = [];
+    % GNSS OUTAGE 2, TIME INTERVAL
+    gout_sta_2 = 139170;          % (seconds)
+    gout_end_2 = gout_sta_2 + 10;     % (seconds)
     
-    % GNSS OUTAGE 2
-    idx  = find(gnss.t > gout_sta_2, 1, 'first' );
-    fdx  = find(gnss.t < gout_end_2, 1, 'last' );
+    times_out = [gout_sta_1, gout_end_1, ...
+        gout_sta_2, gout_end_2];
     
-    gnss.t(idx:fdx) = [];
-    gnss.lat(idx:fdx) = [];
-    gnss.lon(idx:fdx) = [];
-    gnss.h(idx:fdx)   = [];
-    gnss.vel(idx:fdx, :) = [];
+    gnss = gnss_outage(gnss, times_out);
+    
 end
 
 %% NAVIGATION TIME
@@ -216,7 +204,14 @@ ref.vel     = ref.vel  (idx:fdx, :);
 [nav_i,  ref_n] = navego_interpolation (nav_outage, ref);
 [gnss_i, ref_g] = navego_interpolation (gnss,  ref);
 
-%% NAVIGATION RMSE 
+% Force GNSS OUTAGE in GNSS interpotated data
+if (strcmp(GNSS_OUTAGE, 'ON'))
+    
+    gnss_i = gnss_outage(gnss_i, times_out);
+    ref_g  = gnss_outage(ref_g,  times_out);
+end
+
+%% NAVIGATION RMSE
 
 rmse_v = print_rmse (nav_i, gnss_i, ref_n, ref_g, 'Ekinox IMU/GNSS');
 
@@ -227,11 +222,12 @@ csvwrite('nav_ekinox_outage.csv', rmse_v);
 %% NAVIGATION DATA TO CSV FILE
 
 fprintf('\n');
-navego_nav2csv(nav_outage); 
+navego_nav2csv(nav_outage);
 
 %% PLOTS
 
 if (strcmp(PLOT,'ON'))
     
-    navego_plot_main (ref, gnss, nav_outage, gnss_i, nav_i, ref_g, ref_n)
+    navego_plot_main (ref, gnss, nav_outage, gnss_i, nav_i, ref_g, ref_n, ...
+        GNSS_OUTAGE, times_out );
 end

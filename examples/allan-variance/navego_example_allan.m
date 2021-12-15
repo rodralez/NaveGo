@@ -49,6 +49,7 @@ addpath ../../ins/
 addpath ../../simulation/
 addpath ../../conversions/
 addpath ../../allan-variance/
+addpath ../../plot/
 
 D2R = (pi/180);     % degrees to radians
 
