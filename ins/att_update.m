@@ -70,7 +70,7 @@ elseif strcmp(att_mode, 'dcm')
     qua   = qua / norm(qua);                % Brute-force normalization
     
 else
-    error('att_update: no attitude update mode defined.')
+    error('att_update: no attitude update mode defined. Check the attitude update mode selected.')
 end
 
 end

@@ -1,16 +1,10 @@
-function vel_n = vel_update(fn, vel_o, omega_ie_n, omega_en_n, gn, dt)
-% vel_update: updates velocity vector in the NED frame.
+% plot_parameters: script to set globally plot parameters
 %
 % INPUT
-%   fn, 3x1 specific forces in the nav-frame.    
-%   vel_o, 3x1 previous (old) velocity vector in the nav-frame. 
-%   omega_ie_n, 3x1 Earth rate in the nav-frame.
-%   omega_en_n, 3x1 transport rate in the nav-frame.
-%   gn, 3x1 gravity in the nav-frame.
-%   dt, 1x1 integration time step.
+%   None.
 %
 % OUTPUT
-%   vel_n, 3x1 updated velocity vector in the nav-frame.    
+%   None.
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
@@ -30,21 +24,32 @@ function vel_n = vel_update(fn, vel_o, omega_ie_n, omega_en_n, gn, dt)
 %   License along with this program. If not, see
 %   <http://www.gnu.org/licenses/>.
 %
-% References:
-%
-%   Paul D. Groves. Principles of GNSS, Inertial, and
-% Multisensor Integrated Navigation Systems. Second Edition.
-% Eq. 5.53 and 5.54, page 179.
-%
-% Version: 006
-% Date:    2022/01/25
+% Version: 001
+% Date:    2021/12/14
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
- 
-coriolis = (omega_en_n + 2 * omega_ie_n);   % Coriolis 
 
-fn_c = fn + gn - (coriolis * vel_o');      % Corrected specific force in nav-frame
+%% COLORS
 
-vel_n = vel_o + (fn_c' * dt) ;              % Velocity update
+blue    = [0, 0.4470, 0.7410];
+orange  = [0.8500, 0.3250, 0.0980];
+green   = [0.4660, 0.6740, 0.1880];
+yellow  = [0.9290, 0.6940, 0.1250];
+light_blue = [0.3010, 0.7450, 0.9330];
 
-end
+%% TEXT SIZES
+
+font_title  = 25;
+font_label  = 15;
+font_tick   = 10;
+font_legend = 10;
+
+%% LINE WIDTH
+
+lw = 1.75;
+
+%% MARKER SIZE
+
+ms = 10;
+
+

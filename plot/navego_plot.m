@@ -2,14 +2,14 @@ function  navego_plot (cell_s, TYPE, ref_t, ref_var, nav_t, nav_var, gnss_t, gns
 % navego_plot: plots results from INS/GNSS integration dataset.
 %
 % INPUT
-%   cell_s,  cell with strings (cell).
-%   TYPE,    'NORMAL' or 'ERROR' (string).
-%   ref_t,   Rx1 reference time (s)
-%   ref_var, Rx1reference variable
-%   nav_t,   Nx1 INS/GNSS time vector.
-%   nav_var, Nx1 INS/GNSS variable.
-%   gnss_t,  Gx1 GNSS time vector.
-%   gnss_var, Gx1 GNSS time variable.
+%   cell_s,   cell with strings (cell).
+%   TYPE,     'NORMAL' or 'ERROR' (string).
+%   ref_t,    Rx1 reference time (s)
+%   ref_var,  Rx1 reference variable
+%   nav_t,    Nx1 INS/GNSS time (s)
+%   nav_var,  Nx1 INS/GNSS variable
+%   gnss_t,   Gx1 GNSS time (s)
+%   gnss_var, Gx1 GNSS variable
 %
 % OUTPUT
 %   One figure.
@@ -40,25 +40,7 @@ function  navego_plot (cell_s, TYPE, ref_t, ref_var, nav_t, nav_var, gnss_t, gns
 %% PARAMETERS
 %%
 
-% Colors
-blue    = [0, 0.4470, 0.7410];
-orange  = [0.8500, 0.3250, 0.0980];
-% green   = [0.4660, 0.6740, 0.1880];
-% yellow  = [0.9290, 0.6940, 0.1250];
-% light_blue = [0.3010, 0.7450, 0.9330];
-
-% Text size
-% font_title  = 50;
-% font_label  = 25;
-% font_tick   = 15;
-% font_legend = 15;
-font_title  = 25;
-font_label  = 15;
-font_tick   = 10;
-font_legend = 10;
-
-% Line width
-lw = 2;
+plot_parameters;
 
 %% PLOT
 %%
@@ -74,15 +56,15 @@ end
 % If GNSS data is available...
 if nargin > 7
     
-    p2 = plot(gnss_t, gnss_var, '-.', 'Color', orange, 'Linewidth', lw);
+    p2 = plot(gnss_t, gnss_var, 'o', 'Color', orange, 'Linewidth', lw, 'MarkerSize', ms/2);
 end
 
-p3 = plot(nav_t, nav_var, '-.', 'Color', blue, 'Linewidth', lw);
+p3 = plot(nav_t, nav_var, '--.', 'Color', blue, 'Linewidth', lw, 'MarkerSize', ms);
 
-hold off
+% hold off
 grid on
 
-%% Legend rules
+%% LEGEND RULES
 %%
 
 % If GNSS data is not available...
@@ -105,7 +87,7 @@ else
     end
 end
 
-%%
+%% STRINGS
 
 t1 = title (cell_s{1});
 x1 = xlabel(cell_s{2});

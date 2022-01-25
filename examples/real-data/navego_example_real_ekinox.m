@@ -54,6 +54,7 @@ addpath ../../ins-gnss/
 addpath ../../conversions/
 addpath ../../performance-analysis/
 addpath ../../misc/
+addpath ../../plot/
 
 navego_print_version;
 

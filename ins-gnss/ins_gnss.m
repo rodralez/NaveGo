@@ -331,7 +331,7 @@ for i = 2:LI
             + (DCMbn * gnss.larm);
         
         % Velocity innovations with lever arm correction
-        zv = (vel_e(i,:) - gnss.vel(gdx,:) - ((omega_ie_n + omega_en_n) .* (DCMbn * gnss.larm))' ...
+        zv = (vel_e(i,:) - gnss.vel(gdx,:) - ((omega_ie_n + omega_en_n) * (DCMbn * gnss.larm ))' ...
             + (DCMbn * skewm(wb_corrected) * gnss.larm )' )';
         
         %% KALMAN FILTER

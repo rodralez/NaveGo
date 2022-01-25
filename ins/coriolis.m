@@ -7,7 +7,7 @@ function cor_n = coriolis(lat, vel, h)
 %         h, Mx1 altitude (m).
 %
 % OUTPUT
-%		cor_n, Mx1 Coriolis forces vector in the nav-frame (m/s^2).
+%		cor_n, Mx3 Coriolis forces vector in the nav-frame (m/s^2).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
@@ -34,8 +34,8 @@ function cor_n = coriolis(lat, vel, h)
 % Journal of Control Engineering and Applied Informatics}, vol. 17, 
 % issue 2, pp. 110-120, 2015. Eq. 11.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2022/01/25
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
@@ -48,6 +48,5 @@ for i = 1:M
     omega_en_n = transport_rate(lat(i), vel(i,1), vel(i,2), h(i));
     omega_ie_n = earth_rate(lat(i));
 
-    S = skewm(vel(i,:));
-    cor_n(i,:) = (S * (omega_en_n + 2*omega_ie_n))'; 
+    cor_n(i,:) = (omega_en_n + 2*omega_ie_n) * vel(i,:)';       
 end
