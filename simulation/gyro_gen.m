@@ -38,8 +38,8 @@ function wb_sim = gyro_gen (ref, imu)
 %   Aggarwal, P. et al. MEMS-Based Integrated Navigation. Artech
 % House. 2010.
 %
-% Version: 008
-% Date:    2021/03/17
+% Version: 009
+% Date:    2022/01/25
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -71,7 +71,7 @@ for i = 1:N
     omega_ie_n = earth_rate(ref.lat(i));
     omega_en_n = transport_rate(ref.lat(i), ref.vel(i,1), ref.vel(i,2), ref.h(i));
     omega_in_b = dcmnb * (omega_en_n + omega_ie_n );
-    g_err_b(i,:) = ( omega_in_b )';
+    g_err_b(i,:) = ( omega_in_b * gyro_b (i,:)' )';
 end
 
 %% SIMULATION OF NOISES

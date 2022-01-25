@@ -41,8 +41,8 @@ function [fb_sim] = acc_gen (ref, imu)
 %   Thinking about accelerometers and gravity by Dave Redell
 % http://www.lunar.org/docs/LUNARclips/v5/v5n1/Accelerometers.html
 %
-% Version: 010
-% Date:    2021/03/17
+% Version: 011
+% Date:    2022/01/25
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -123,6 +123,6 @@ a_rrw = noise_rrw (imu.vrrw, dt, M);
 
 % -------------------------------------------------------------------------
 
-fb_sim = acc_b - cor_b + grav_b + a_wn + ab_sta + ab_dyn + a_rrw;
+fb_sim = acc_b + cor_b + grav_b + a_wn + ab_sta + ab_dyn + a_rrw;
 
 end

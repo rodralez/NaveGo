@@ -55,7 +55,6 @@ addpath ../../conversions/
 addpath ../../performance-analysis/
 addpath ../../misc/
 addpath ../../plot/
-addpath ../../simulation/
 
 navego_print_version;
 

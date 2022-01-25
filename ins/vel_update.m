@@ -34,17 +34,17 @@ function vel_n = vel_update(fn, vel_o, omega_ie_n, omega_en_n, gn, dt)
 %
 %   Paul D. Groves. Principles of GNSS, Inertial, and
 % Multisensor Integrated Navigation Systems. Second Edition.
-% Eq. 5.53, page 179.
+% Eq. 5.53 and 5.54, page 179.
 %
-% Version: 005
-% Date:    2021/12/12
+% Version: 006
+% Date:    2022/01/25
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
  
 coriolis = (omega_en_n + 2 * omega_ie_n);   % Coriolis 
 
-fn_c = fn - coriolis + gn;                  % Corrected specific force in nav-frame
+fn_c = fn + gn - (coriolis * vel_o');      % Corrected specific force in nav-frame
 
-vel_n = vel_o + (fn_c' * dt);               % Velocity update
+vel_n = vel_o + (fn_c' * dt) ;              % Velocity update
 
 end
