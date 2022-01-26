@@ -5,8 +5,8 @@ function [qua, DCMbn, euler] = att_update(wb, DCMbn, qua, omega_ie_n, omega_en_n
 %   wb,         3x1 incremental turn-rates in body-frame (rad/s).
 %   DCMbn,      3x3 body-to-nav DCM.
 %   qua,        4x1 quaternion.
-%   omega_ie_n, 3x1 Earth rate (rad/s).
-%   omega_en_n, 3x1 Transport rate (rad/s).
+%   omega_ie_n, 3x3 Earth rate (rad/s).
+%   omega_en_n, 3x3 Transport rate (rad/s).
 %   dt,         1x1 IMU sampling interval (s).
 %	att_mode,   attitude mode string.
 %      'quaternion': attitude updated as quaternion. Default value.
