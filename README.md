@@ -106,7 +106,7 @@ If you are interested in joining NaveGo, please feel free to contact Dr. Rodrigo
 
 # Examples
 
-The `example` folder contains several types of examples which try to be a kind of user manual for NaveGo.
+The `examples` folder contains several types of examples which try to be a kind of user manual for NaveGo.
 
 ## Allan variance example
 
@@ -147,6 +147,7 @@ These two real examples are part of the data collection used in the article (Gon
 * SBG Systems. SBG Ekinox-D High Accuracy Inertial System Brochure, Tactical grade MEMS Inertial Systems, v1.0. February 2014.
 
 * InvenSense Inc. MPU-6000/MPU-6050 Product Specification. Document Number: PS-MPU-6000A-00. Revision: 3.4. Release Date: 08/19/2013.
+
 
 # Researchers who are using NaveGo
 
