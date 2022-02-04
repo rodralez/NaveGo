@@ -25,15 +25,17 @@ Main features of NaveGo are:
 
 * Processing of a loosely-coupled integrated navigation system (INS/GNSS).
 
-* ***NEW*** Compass heading using magnetometers.
+* Compass heading using magnetometers.
 
-* ***NEW*** Processing of a loosely-coupled integrated navigation system with magnetometers (INS/GNSS/MAG).
+* Processing of a loosely-coupled integrated navigation system with magnetometers (INS/GNSS/MAG).
 
 * Simulation of inertial sensors and GNSS.
 
 * Zero Velocity Update (ZUPT) detection algorithm.
 
 * Allan variance technique to characterize inertial sensors' both deterministic and stochastic errors.
+
+* ***NEW*** Better visualization of GNSS outages.
 
 
 ## NaveGo Mathematical Model
@@ -63,9 +65,10 @@ NaveGo has two main branches:
 
 More branches would be created to develop particular features for NaveGo. These extra branches will be eventually merged to `develop`. 
 
+
 ## Roadmap
 
-Future features of NaveGo will be:
+Hopefully, these three future features will be added to NaveGo:
 	
 * Barometer as aiding sensor for altitude.
 
@@ -73,9 +76,6 @@ Future features of NaveGo will be:
 
 * Tightly-coupled INS/GNSS integration.
 
-<!---
-* Adaptive Kalman filter.
--->
 
 # Please, cite our work!
 
@@ -88,7 +88,6 @@ If you are using NaveGo in your research, we kindly ask you to add the following
 An URL to NaveGo should be provided as the following cite:
 
 Gonzalez, Rodrigo. (2021, March 18). NaveGo: an open-source MATLAB/GNU-Octave toolbox for processing integrated navigation systems and performing inertial sensors profiling analysis (Version 1.3). Zenodo. http://doi.org/10.5281/zenodo.4617258
-
 
 # Donations
 
@@ -108,10 +107,8 @@ You can contribute in many ways:
 * Writing code.
 * Writing a manual.
 * Reporting bugs.
-* Suggesting new features.
 
 If you are interested in joining NaveGo, please feel free to contact Dr. Rodrigo Gonzalez at rodralez [at] frm [dot] utn [dot] edu [dot] ar.
-
 
 # Examples
 
