@@ -114,7 +114,6 @@ dlogadev = diff(logadev) ./ diff(logtau);
 % Find the y-intercept of the line.
 b = logadev(i) - slope*logtau(i);% Find the index where the slope of the log-scaled Allan deviation is equal
 
-
 % Determine the angle random walk coefficient from the line.
 logN = slope*log(1) + b;
 N = 10^logN;

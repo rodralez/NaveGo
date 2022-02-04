@@ -1,4 +1,4 @@
-function imu_allan = allan_imu (imu)
+function imu_allan = allan_imu (imu_sta)
 % allan_imu: performs Allan variance analysis on inertial measurements
 % coming from an IMU in order to characterize several types of IMU errors.
 %
@@ -10,7 +10,7 @@ function imu_allan = allan_imu (imu)
 %   t,  Nx1 time vector (s).
 %
 % OUTPUT
-%   imu, input data structure with the following addtional fields:
+%   imu_allan, input data structure with the following addtional fields:
 %
 %   vrw, 1x3 velocity random walk (m/s^2/root(Hz)). 
 %       Note: m/s^2/root(Hz) = m/(s^2*(1/s)^(1/2)) = m*(1/s)^(3/2) =
@@ -101,9 +101,9 @@ imu_allan.gb_corr = zeros(1,3);
 
 %% TIMESPAN
 
-T = imu.t(end) - imu.t(1);
+T = imu_sta.t(end) - imu_sta.t(1);
 
-fprintf('allan_imu: duration of time vector is %.2f hours or %.2f minutes or %.2f seconds. \n', (T/60/60), (T/60), T)
+fprintf('allan_imu: time vector is %.2f hours or %.2f minutes or %.2f seconds long. \n', (T/60/60), (T/60), T)
 
 %% ACCELEROMETERS
 %%
@@ -113,9 +113,9 @@ for i=1:3
     
     fprintf('allan_imu: Allan variance for ACCR %d \n', i)   
     
-    plot_imu_sta(imu.fb(:,i), imu.freq, text_st(i));
+    plot_imu_sta(imu_sta.fb(:,i), imu_sta.freq, text_st(i));
     
-    [N, K, B, tauB] = allan_matlab (imu.fb(:,i), imu.freq, text_st(i));
+    [N, K, B, tauB] = allan_matlab (imu_sta.fb(:,i), imu_sta.freq, text_st(i));
     
     imu_allan.vrw(i) = N;
     imu_allan.vrrw(i) = K;    
@@ -132,9 +132,9 @@ for i=1:3
     
     fprintf('allan_imu: Allan variance for GYRO %d \n', i)   
     
-    plot_imu_sta(imu.wb(:,i), imu.freq, text_st(i));
+    plot_imu_sta(imu_sta.wb(:,i), imu_sta.freq, text_st(i));
     
-    [N, K, B, tauB] = allan_matlab (imu.wb(:,i), imu.freq, text_st(i));
+    [N, K, B, tauB] = allan_matlab (imu_sta.wb(:,i), imu_sta.freq, text_st(i));
     
     imu_allan.arw(i) = N;
     imu_allan.arrw(i) = K;    

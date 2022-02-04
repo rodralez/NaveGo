@@ -5,7 +5,7 @@ function omega_ie_n = earth_rate(lat)
 %	lat, 1x1 latitude (rad).
 %
 % OUTPUT
-%	omega_ie_n, earth rate (rad/s).
+%	omega_ie_n, 3x3 earth rate (rad/s).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
@@ -27,13 +27,15 @@ function omega_ie_n = earth_rate(lat)
 %
 % Reference: 
 %			
-%   Titterton, D.H. and Weston, J.L. (2004). Strapdown
-% Inertial Navigation Technology (2nd Ed.). Institution
-% of Engineering and Technology, USA. Eq. 3.72.
+%   Paul D. Groves. Principles of GNSS, Inertial, and
+% Multisensor Integrated Navigation Systems. Second Edition.
+% Eq. 5.41, page 177.
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2022/01/25
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego 
 
-omega_ie_n = (7.2921155e-5) .* [ (cos(lat));  0 ; -sin(lat) ]; 
+omega_ie_n = (7.2921155e-5) .* [0 sin(lat) 0; ...
+                                -sin(lat) 0  -cos(lat); ...
+                                0 cos(lat) 0 ; ]; 
