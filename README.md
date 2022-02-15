@@ -40,14 +40,19 @@ Main features of NaveGo are:
 
 ## NaveGo Mathematical Model
 
-The underlying mathematical model of NaveGo is based on the two following articles:
+The underlying mathematical model of NaveGo is based on several books, mostly on:
+
+* Paul D. Groves (2013). Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (2nd Ed.). Artech House, USA.
+
+* D.H. Titterton and J.L. Weston (2004). Strapdown Inertial Navigation Technology (2nd Ed.). Institution of Engineering and Technology, USA. 
+
+Two older articles used to expose NaveGo Mathematical Model, but this documents are partially outdated:
 
 * R. Gonzalez, J.I. Giribet, and H.D. Patiño. NaveGo: a simulation framework for low-cost integrated navigation systems, Journal of Control Engineering and Applied Informatics, vol. 17, issue 2, pp. 110-120, 2015. [Download](http://ceai.srait.ro/index.php?journal=ceai&page=article&op=view&path%5B%5D=2478).
 
 * R. Gonzalez, J.I. Giribet, and H.D. Patiño. An approach to benchmarking of loosely coupled low-cost navigation systems. Mathematical and Computer Modelling of Dynamical Systems, vol. 21, issue 3, pp. 272-287, 2015. [Download](http://www.tandfonline.com/doi/abs/10.1080/13873954.2014.952642).
 
-Be aware that the original Kalman filter state vector has been reduced from 21 to 15 states.
-
+For example, the original Kalman filter state vector has been reduced from 21 to 15 states.
 
 ##  NaveGo Model Validation
 
