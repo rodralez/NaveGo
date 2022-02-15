@@ -8,7 +8,7 @@ function [fb_sim] = acc_gen (ref, imu)
 %
 % OUTPUT
 %	fb_sim: Nx3 matrix with simulated accelerations in the
-%	body frame [X Y Z] (m/s^2, m/s^2, m/s^2).
+%		body frame [X Y Z] (m/s^2, m/s^2, m/s^2).
 %
 %   Copyright (C) 2014, Rodrigo González, all rights reserved.
 %

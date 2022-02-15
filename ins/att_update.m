@@ -5,10 +5,10 @@ function [qua, DCMbn, euler] = att_update(wb, DCMbn, qua, omega_ie_n, omega_en_n
 %   wb,         3x1 incremental turn-rates in body-frame (rad/s).
 %   DCMbn,      3x3 body-to-nav DCM.
 %   qua,        4x1 quaternion.
-%   omega_ie_n, 3x3 Earth rate (rad/s).
-%   omega_en_n, 3x3 Transport rate (rad/s).
+%   omega_ie_n, 3x3 skew-symmetric Earth rate matrix (rad/s).
+%   omega_en_n, 3x3 skew-symmetric transport rate (rad/s).
 %   dt,         1x1 IMU sampling interval (s).
-%	att_mode,   attitude mode string.
+%	att_mode,   attitude mode (string).
 %      'quaternion': attitude updated as quaternion. Default value.
 %             'dcm': attitude updated as Direct Cosine Matrix.
 %
@@ -65,7 +65,7 @@ elseif strcmp(att_mode, 'dcm')
     
     delta_theta = wb * dt;                  % Incremental Euler angles 
     DCMbn = dcm_update(DCMbn, delta_theta); % DCM update
-    euler = dcm2euler(DCMbn);               % Euler anglesupdate
+    euler = dcm2euler(DCMbn);               % Euler angles update
     qua   = euler2qua(euler);               % Quaternion update
     qua   = qua / norm(qua);                % Brute-force normalization
     
