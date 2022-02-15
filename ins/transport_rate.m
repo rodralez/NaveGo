@@ -8,7 +8,7 @@ function omega_en_n = transport_rate(lat, Vn, Ve, h)
 %   h, altitude (m).
 %
 % OUTPUT
-%	omega_en_n, 3x3 transport rate (rad/s).
+%	omega_en_n, 3x3 skew-symmetric transport rate matrix (rad/s).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
