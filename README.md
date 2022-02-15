@@ -117,11 +117,7 @@ If you are interested in joining NaveGo, please feel free to contact Dr. Rodrigo
 
 # Examples
 
-<<<<<<< HEAD
-The `examples` folder contains several types of examples which try to be a kind of user manual for NaveGo.
-=======
 The `example` folder contains several types of examples which try to be a kind introducción to the use of NaveGo.
->>>>>>> 35f39c5fce094410824eec966f81d5a986f008eb
 
 ## Allan variance example
 
