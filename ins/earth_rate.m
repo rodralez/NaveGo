@@ -5,7 +5,7 @@ function omega_ie_n = earth_rate(lat)
 %	lat, 1x1 latitude (rad).
 %
 % OUTPUT
-%	omega_ie_n, 3x3 earth rate (rad/s).
+%	omega_ie_n, 3x3 skew-symmetric Earth rate matrix (rad/s).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved. 
 %     
