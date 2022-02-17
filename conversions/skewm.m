@@ -2,7 +2,7 @@ function S = skewm(v)
 % skewm: forms a skew-symmetric matrix from a 3-elements vector.
 %
 % INPUT
-%   v: vector.
+%    v: 3x1 vector.
 %
 %	OUTPUT
 %	  S: 3x3 skew-symmetric matrix.

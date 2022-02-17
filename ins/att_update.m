@@ -37,12 +37,16 @@ function [qua, DCMbn, euler] = att_update(wb, DCMbn, qua, omega_ie_n, omega_en_n
 %
 % Reference:
 %
+%	Titterton, D.H. and Weston, J.L. (2004). Strapdown
+% Inertial Navigation Technology (2nd Ed.). Institution
+% of Engineering and Technology, USA.
+%
 %	Crassidis, J.L. and Junkins, J.L. (2011). Optimal Esti-
 % mation of Dynamic Systems, 2nd Ed. Chapman and Hall/CRC, USA.
 % Eq. 7.39, p. 458.
 %
-% Version: 003
-% Date:    2016/11/26
+% Version: 004
+% Date:    2022/02/17
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -50,7 +54,9 @@ if nargin < 7, att_mode  = 'quaternion'; end
 
 %% Gyros output correction for Earth and transport rates
 
-wb = ( wb - DCMbn' * (omega_ie_n + omega_en_n));
+om_ie_n = [omega_ie_n(3,2) omega_ie_n(1,3) omega_ie_n(2,1)]';
+om_en_n = [omega_en_n(3,2) omega_en_n(1,3) omega_en_n(2,1)]';
+wb = (wb - DCMbn' * (om_ie_n + om_en_n));                       % Titterton, Eq. 3.29, p. 32
 
 if strcmp(att_mode, 'quaternion')
 %% Quaternion update   

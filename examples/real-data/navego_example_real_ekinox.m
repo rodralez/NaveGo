@@ -120,7 +120,7 @@ if strcmp(INS_GNSS, 'ON')
     
     % Execute INS/GNSS integration
     % ---------------------------------------------------------------------
-    nav_ekinox = ins_gnss(ekinox_imu, ekinox_gnss, 'dcm'); 
+    nav_ekinox = ins_gnss(ekinox_imu, ekinox_gnss, 'quaternion'); 
     % ---------------------------------------------------------------------
     
     save nav_ekinox.mat nav_ekinox
