@@ -4,7 +4,7 @@
 
 NaveGo: an open-source MATLAB/GNU-Octave toolbox for processing integrated navigation systems and performing inertial sensors profiling analysis.
 
-NaveGo (ˈnævəˈgəʊ) is an open-source MATLAB/GNU Octave toolbox for processing integrated navigation systems and simulating inertial sensors and a GNSS receiver. It also performs inertial sensors analysis using the Allan variance. It is freely available online. It is developed under MATLAB/GNU-Octave due to this programming language has become a *de facto* standard for simulation and mathematical computing.
+NaveGo (ˈnævəˈgəʊ) is an open-source MATLAB/GNU Octave toolbox for processing integrated navigation systems and simulating inertial sensors and a GNSS receiver. It also performs analysis of an inertial sensor using the Allan variance. It is freely available online. It is developed under MATLAB/GNU-Octave due to this programming language has become a *de facto* standard for simulation and mathematical computing.
 
 NaveGo's motto is "to bring integrated navigation to the masses".
 
@@ -15,7 +15,6 @@ NaveGo is supported at the moment by three academic research groups: GridTICs at
 Please, if you found a bug or error in the source code of NaveGo, you should open a new [issue](https://github.com/rodralez/NaveGo/issues).
 
 But, if you have any question of any kind or you want to share some feedback about NaveGo, please leave a comment at the [discussion forum](https://github.com/rodralez/NaveGo/discussions).
-
 
 ## Features
 
@@ -37,22 +36,21 @@ Main features of NaveGo are:
 
 * ***NEW*** Better visualization of GNSS outages.
 
-
 ## NaveGo Mathematical Model
 
 The underlying mathematical model of NaveGo is based on several books, mostly on:
 
 * Paul D. Groves (2013). Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (2nd Ed.). Artech House, USA.
 
-* D.H. Titterton and J.L. Weston (2004). Strapdown Inertial Navigation Technology (2nd Ed.). Institution of Engineering and Technology, USA. 
+* D.H. Titterton and J.L. Weston (2004). Strapdown Inertial Navigation Technology (2nd Ed.). Institution of Engineering and Technology, USA.
 
-Two older articles used to expose NaveGo Mathematical Model, but this documents are partially outdated:
+Two previous articles used to expose NaveGo mathematical model, but currently these two documents are partially outdated:
 
 * R. Gonzalez, J.I. Giribet, and H.D. Patiño. NaveGo: a simulation framework for low-cost integrated navigation systems, Journal of Control Engineering and Applied Informatics, vol. 17, issue 2, pp. 110-120, 2015. [Download](http://ceai.srait.ro/index.php?journal=ceai&page=article&op=view&path%5B%5D=2478).
 
 * R. Gonzalez, J.I. Giribet, and H.D. Patiño. An approach to benchmarking of loosely coupled low-cost navigation systems. Mathematical and Computer Modelling of Dynamical Systems, vol. 21, issue 3, pp. 272-287, 2015. [Download](http://www.tandfonline.com/doi/abs/10.1080/13873954.2014.952642).
 
-For example, the original Kalman filter state vector has been reduced from 21 to 15 states.
+For example, the original Kalman filter state vector has been reduced from 21 to 15 states. Therefore, please take these two articles just to have a glimpse of NaveGo structure.
 
 ##  NaveGo Model Validation
 
@@ -68,13 +66,12 @@ NaveGo has two main branches:
 
 2. `develop`: every new feature of NaveGo will be implemented in this branch . `develop` will be merged to `master` from time to time.
 
-More branches would be created to develop particular features for NaveGo. These extra branches will be eventually merged to `develop`. 
-
+More branches would be created to develop particular features for NaveGo. These extra branches will be eventually merged to `develop`.
 
 ## Roadmap
 
 Hopefully, these three future features will be added to NaveGo:
-	
+   
 * Barometer as aiding sensor for altitude.
 
 * G-sensitivity correction for gyroscopes.

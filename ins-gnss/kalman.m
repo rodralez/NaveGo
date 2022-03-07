@@ -3,7 +3,7 @@ function  kf = kalman(kf, dt)
 %
 % INPUT
 %   kf, data structure with at least the following fields:
-%       xp: nx1 a posteriori state vector (old).
+%       xp: nx1 a posteriori state vector.
 %        z: rx1 measurement vector.
 %        F: nxn state transition matrix.
 %        H: rxn observation matrix.
@@ -15,8 +15,8 @@ function  kf = kalman(kf, dt)
 %
 % OUTPUT
 %    kf, the following fields are updated:
-%       xi: nx1 a priori state vector (updated).
-%       xp: nx1 a posteriori state vector (updated).
+%       xi: nx1 a priori state vector.
+%       xp: nx1 a posteriori state vector.
 %		 v: rx1 innovation vector. 
 %        A: nxn state transition matrix.
 %        K: nxr Kalman gain matrix.
@@ -45,13 +45,8 @@ function  kf = kalman(kf, dt)
 %
 % Reference:
 %
-%   R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
-% simulation framework for low-cost integrated navigation systems,
-% Journal of Control Engineering and Applied Informatics, vol. 17,
-% issue 2, pp. 110-120, 2015. Alg. 1.
-%
-%   Dan Simon. Optimal State Estimation. Chapter 5. John Wiley 
-% & Sons. 2006.   
+%   Simo Särkkä (2013). Bayesian Filtering and Smoothing. Cambridge 
+%     University Press.  
 %
 % Version: 007
 % Date:    2019/04/19
