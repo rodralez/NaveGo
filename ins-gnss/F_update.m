@@ -30,25 +30,15 @@ function  [F, G] = F_update(upd, DCMbn, imu)
 %
 % References:
 %
-%	Titterton, D.H. and Weston, J.L. (2004). Strapdown
-% Inertial Navigation Technology (2nd Ed.). Institution
-% of Engineering and Technology, USA. Eq. 12.18, p. 345, matrix F.
+%   Groves, P.D. (2013), Principles of GNSS, Inertial, and
+% Multisensor Integrated Navigation Systems (2nd Ed.). Artech House. 
+% Matrix F from Eq. 14.63.
 %
 % 	Farrell, J. (2008). Aided Navigation: GPS With High Rate
-% Sensors. McGraw-Hill Professional, USA. Eq. 11.108, p. 407, matrix G.
+% Sensors. McGraw-Hill Professional, USA. Matrix G from Eq. 11.108.
 %
-%	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
-% simulation framework for low-cost integrated navigation systems,
-% Journal of Control Engineering and Applied Informatics, vol. 17,
-% issue 2, pp. 110-120, 2015. Eq. 26.
-%
-%  	R. Gonzalez, J. Giribet, and H. Patiño. An approach to
-% benchmarking of loosely coupled low-cost navigation systems,
-% Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
-% issue 3, pp. 272-287, 2015. Eq. 22.
-%
-% Version: 009
-% Date:    2021/09/21
+% Version: 010
+% Date:    2022/03/06
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -182,15 +172,17 @@ else
     %     Fba = -diag(sqrt (2 ./ imu.ab_corr .* imu.ab_dyn.^2));
 end
 
+% Eq. 14.63 from Groves
 F = [F11 F12 F13 DCMbn Z  ;
-    F21  F22 F23 Z     DCMbn  ;
+    F21  F22 F23 Z     -DCMbn  ;
     F31  F32 F33 Z     Z      ;
     Z    Z   Z   Fgg   Z      ;
     Z    Z   Z   Z     Faa    ;
     ];
 
+% Eq. Eq. 11.108 from Farrell
 G = [DCMbn Z     Z   Z ;
-    Z      DCMbn Z   Z ;
+    Z      -DCMbn Z   Z ;
     Z      Z     Z   Z ;
     Z      Z     Fbg Z ;
     Z      Z     Z   Fba ;

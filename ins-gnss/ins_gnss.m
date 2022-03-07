@@ -102,8 +102,8 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %
 %   ins_gps.m, ins_gnss function is based on that previous NaveGo function.
 %
-% Version: 009
-% Date:    2021/03/16
+% Version: 010
+% Date:    2022/03/06
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -191,9 +191,8 @@ kf.Pi = diag([imu.ini_align_err, gnss.stdv, gnss.std, imu.gb_dyn, imu.ab_dyn].^2
 
 kf.Q  = diag([imu.arw, imu.vrw, imu.gb_psd, imu.ab_psd].^2);
 
-fb_corrected = imu.fb(1,:)' - ab_dyn - imu.ab_sta';
-fn = DCMbn * fb_corrected;
-wn = DCMbn * imu.wb(1,:)' - gb_dyn - imu.gb_sta';
+fn = DCMbn * (imu.fb(1,:)' - ab_dyn - imu.ab_sta');
+wn = DCMbn * (imu.wb(1,:)' - gb_dyn - imu.gb_sta');
 
 % Vector to update matrix F
 upd = [gnss.vel(1,:) gnss.lat(1) gnss.h(1) fn' wn'];
