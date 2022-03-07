@@ -96,7 +96,7 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %
 %   Groves, P.D. (2013), Principles of GNSS, Inertial, and
 % Multisensor Integrated Navigation Systems (2nd Ed.). Artech House.
-
+%
 %   ZUPT algothim based on Groves, Chapter 15, "INS Alignment, Zero Updates,
 % and Motion Constraints".
 %

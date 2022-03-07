@@ -2,7 +2,7 @@ function  kf = kf_update(kf)
 % kf_update: measurement update part of the Kalman filter algorithm.
 %
 % INPUT
-%   kf, data structure with at least the following fields,
+%   kf, data structure with at least the following fields:
 %       xi: nx1 a priori state vector.
 %       Pi: nxn a priori error covariance matrix.
 %        z: rx1 measurement vector.
@@ -10,9 +10,9 @@ function  kf = kf_update(kf)
 %        R: rxr observation noise covariance matrix.
 %
 % OUTPUT
-%    kf, the following fields are updated,
-%       xp: nx1 a posteriori state vector (updated).
-%       Pp: nxn a posteriori error covariance matrix (updated).
+%    kf, the following fields are updated:
+%       xp: nx1 a posteriori state vector.
+%       Pp: nxn a posteriori error covariance matrix.
 %		 v: rx1 innovation vector.
 %        K: nxr Kalman gain matrix.
 %        S: rxr innovation (not residual) covariance matrix.
@@ -37,16 +37,11 @@ function  kf = kf_update(kf)
 %
 % Reference:
 %
-%   R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
-% simulation framework for low-cost integrated navigation systems,
-% Journal of Control Engineering and Applied Informatics, vol. 17,
-% issue 2, pp. 110-120, 2015. Alg. 1.
-%
-%   Dan Simon. Optimal State Estimation. Chapter 5. John Wiley
-% & Sons. 2006.
+%   Simo Särkkä (2013). Bayesian Filtering and Smoothing. Cambridge 
+%     University Press.
 %
 % Version: 002
-% Date:    2021/03/21
+% Date:    2022/03/06
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -67,7 +62,7 @@ kf.K = (kf.Pi * kf.H') * (kf.S)^(-1) ;			% Kalman gain matrix
 kf.xp = kf.xi + kf.K * kf.v;
 
 % Step 5, update the a posteriori covariance matrix, Pp
-kf.Pp = kf.Pi - kf.K * kf.S * kf.K';
+kf.Pp = kf.Pi - kf.K * kf.S * kf.K';            % Eq. 3.10 from Särkkä
 % J = (I - S.K * S.H);                          % Joseph stabilized version
 % S.Pp = J * S.Pi * J' + S.K * S.R * S.K';      % Alternative implementation
 kf.Pp =  0.5 .* (kf.Pp + kf.Pp');               % Force Pp to be a symmetric matrix

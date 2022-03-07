@@ -46,7 +46,7 @@ function [qua, DCMbn, euler] = att_update(wb, DCMbn, qua, omega_ie_n, omega_en_n
 % Eq. 7.39, p. 458.
 %
 % Version: 004
-% Date:    2022/02/17
+% Date:    2022/03/06
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 

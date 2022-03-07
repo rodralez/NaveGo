@@ -2,17 +2,17 @@ function  kf = kf_prediction(kf, dt)
 % kf_prediction: prediction update part of the Kalman filter algorithm.
 %
 % INPUT
-%   kf, data structure with at least the following fields,
-%       xp: nx1 a posteriori state vector (old).
-%       Pp: nxn a posteriori error covariance matrix (old).
+%   kf, data structure with at least the following fields:
+%       xp: nx1 a posteriori state vector.
+%       Pp: nxn a posteriori error covariance matrix.
 %        F: nxn state transition matrix.
 %        Q: qxq process noise covariance matrix.
 %        G: nxq control-input matrix.      
 %   	dt: sampling interval. 
 %
 % OUTPUT
-%   kf, the following fields are updated,
-%       xi: nx1 a priori state vector (updated).
+%   kf, the following fields are updated:
+%       xi: nx1 a priori state vector.
 %       Pi: nxn a priori error covariance matrix.
 %        A: nxn state transition matrix.
 %       Qd: nxn discrete process noise covariance matrix.
@@ -37,16 +37,11 @@ function  kf = kf_prediction(kf, dt)
 %
 % Reference:
 %
-%   R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
-% simulation framework for low-cost integrated navigation systems,
-% Journal of Control Engineering and Applied Informatics, vol. 17,
-% issue 2, pp. 110-120, 2015. Alg. 1.
-%
-%   Dan Simon. Optimal State Estimation. Chapter 5. John Wiley 
-% & Sons. 2006.   
+%   Simo Särkkä (2013). Bayesian Filtering and Smoothing. Cambridge 
+%     University Press.  
 %
 % Version: 001
-% Date:    2019/04/19
+% Date:    2022/03/06
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
