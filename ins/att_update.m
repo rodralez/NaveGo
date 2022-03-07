@@ -54,8 +54,8 @@ if nargin < 7, att_mode  = 'quaternion'; end
 
 %% Gyros output correction for Earth and transport rates
 
-om_ie_n = [omega_ie_n(3,2) omega_ie_n(1,3) omega_ie_n(2,1)]';
-om_en_n = [omega_en_n(3,2) omega_en_n(1,3) omega_en_n(2,1)]';
+om_ie_n = skewm_inv(omega_ie_n);
+om_en_n = skewm_inv(omega_en_n);
 wb = (wb - DCMbn' * (om_ie_n + om_en_n));                       % Titterton, Eq. 3.29, p. 32
 
 if strcmp(att_mode, 'quaternion')
