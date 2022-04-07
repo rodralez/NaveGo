@@ -174,15 +174,15 @@ end
 
 % Eq. 14.63 from Groves
 F = [F11 F12 F13 DCMbn Z  ;
-    F21  F22 F23 Z     -DCMbn  ;
+    F21  F22 F23 Z     DCMbn  ;
     F31  F32 F33 Z     Z      ;
     Z    Z   Z   Fgg   Z      ;
     Z    Z   Z   Z     Faa    ;
     ];
 
-% Eq. Eq. 11.108 from Farrell
+% Eq. 11.108 from Farrell
 G = [DCMbn Z     Z   Z ;
-    Z      -DCMbn Z   Z ;
+    Z      DCMbn Z   Z ;
     Z      Z     Z   Z ;
     Z      Z     Fbg Z ;
     Z      Z     Z   Fba ;

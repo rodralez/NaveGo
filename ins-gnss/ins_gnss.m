@@ -97,13 +97,16 @@ function [nav_e] = ins_gnss(imu, gnss, att_mode)
 %   Groves, P.D. (2013), Principles of GNSS, Inertial, and
 % Multisensor Integrated Navigation Systems (2nd Ed.). Artech House.
 %
+%   Crassidis, J.L. and Junkins, J.L. (2011). Optimal Esti-
+% mation of Dynamic Systems, 2nd Ed. Chapman and Hall/CRC, USA.
+%
 %   ZUPT algothim based on Groves, Chapter 15, "INS Alignment, Zero Updates,
 % and Motion Constraints".
 %
 %   ins_gps.m, ins_gnss function is based on that previous NaveGo function.
 %
-% Version: 010
-% Date:    2022/03/06
+% Version: 011
+% Date:    2022/04/0
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -367,11 +370,15 @@ for i = 2:LI
         
         %% INS/GNSS CORRECTIONS
         
-        % Quaternion corrections
-        % Crassidis. Eq. 7.34 and A.174a.
-        antm = [0.0 qua(3) -qua(2); -qua(3) 0.0 qua(1); qua(2) -qua(1) 0.0];
-        qua = qua + 0.5 .* [qua(4)*eye(3) + antm; -1.*[qua(1) qua(2) qua(3)]] * kf.xp(1:3);
-        qua = qua / norm(qua);       % Brute-force normalization
+        % Quaternion correction
+        qua_skew = -skewm(qua(1:3));    % According to Crassidis, qua_skew should be 
+                                        % positive, but if positive NaveGo diverges.   
+        % Crassidis A.174a
+        Xi = [qua(4)*eye(3) + qua_skew; -qua(1:3)'];
+		
+        % Crassidis. Eq. 7.34
+        qua = qua + 0.5 .* Xi * kf.xp(1:3);
+        qua = qua / norm(qua);          % Brute-force normalization
         
         % DCM correction
         DCMbn = qua2dcm(qua);
