@@ -1,6 +1,6 @@
 % navego_example_synth: example of how to use NaveGo to generate
-% both IMU and GNSS synthetic (simulated) data. Then, synthetic data is
-% fused.
+% both IMU and GNSS synthetic (simulated) data. Then, sensors synthetic 
+% data is fused.
 %
 % The main goal is to compare two INS/GNSS systems performances, one using 
 % a synthetic ADIS16405 IMU and synthetic GNSS, and another using a
