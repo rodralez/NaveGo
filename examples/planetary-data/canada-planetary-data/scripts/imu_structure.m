@@ -37,7 +37,7 @@ function imu_planetary = imu_structure()
 
     %% IMU ERROR PROFILE
 
-    imu_data_planetary = readtable('Data/Canada/IMU/imu.txt');
+    imu_data_planetary = readtable('../../external-data/Canada/IMU/imu.txt');
 
     % IMU data structure:
     %         t: Ix1 time vector (seconds).
@@ -105,5 +105,5 @@ function imu_planetary = imu_structure()
 
     %% Saving
 
-    save('NaveGo-master/examples/planetary-data/canada-planetary-data/data/imu_planetary.mat','imu_planetary');
+    save('../data/imu_planetary.mat','imu_planetary');
 end

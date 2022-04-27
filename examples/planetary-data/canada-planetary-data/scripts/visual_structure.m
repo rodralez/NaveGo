@@ -16,13 +16,13 @@ MS2KMH = 3.6;       % m/s to km/h
 
 %% OpenVINS PLANETARY DATASET ERROR PROFILE
 
-load('gnss_planetary_r.mat');
-load('imu_planetary.mat');
+load('../data/gnss_planetary_r.mat');
+load('../imu_planetary.mat');
 
-visual_data_planetary_pose = readtable('Data/Canada/pose_data.csv');
-visual_data_planetary_twist = readtable('Data/Canada/twist_data.csv');
-visual_data_planetary_posecov = readtable('Data/Canada/posecov_data.csv');
-visual_data_planetary_twistcov = readtable('Data/Canada/twistcov_data.csv');
+visual_data_planetary_pose = readtable('../../external-data/Canada/pose_data.csv');
+visual_data_planetary_twist = readtable('../../external-data/Canada/twist_data.csv');
+visual_data_planetary_posecov = readtable('../../external-data/Canada/posecov_data.csv');
+visual_data_planetary_twistcov = readtable('../../external-data/Canada/twistcov_data.csv');
 
 %   visual, visual data structure
 %         t: Vx1 time vector (seconds)
@@ -97,4 +97,4 @@ visual_planetary.covvm = downsample(visual_planetary.covvm,33);
 
 visual_planetary.freq = 1/mean(diff(visual_planetary.t)); % estimating the frequency
 
-save('NaveGo-master/examples/planetary-data/canada-planetary-data/data/visual_planetary.mat','visual_planetary');
+save('../data/visual_planetary.mat','visual_planetary');

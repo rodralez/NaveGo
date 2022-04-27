@@ -16,8 +16,8 @@ MS2KMH = 3.6;       % m/s to km/h
 
 %% GNSS ERROR PROFILE
 
-gnss_data_planetary = readtable('Data/Canada/GNSS/global-pose-utm.txt');
-load('NaveGo-master/examples/planetary-data/canada-planetary-data/data/imu_planetary.mat');
+gnss_data_planetary = readtable('../../external-data/Canada/GNSS/global-pose-utm.txt');
+load('../data/imu_planetary.mat');
 
 % GNSS data structure:
 %         t: Mx1 time vector (seconds).
@@ -79,5 +79,5 @@ gnss_planetary_r = gnss_planetary; % reference
 
 %% Saving 
 
-save('NaveGo-master/examples/planetary-data/canada-planetary-data/data/gnss_planetary_r.mat','gnss_planetary_r');
-save('NaveGo-master/examples/planetary-data/canada-planetary-data/data/gnss_planetary.mat','gnss_planetary');
+save('../data/gnss_planetary_r.mat','gnss_planetary_r');
+save('../data/gnss_planetary.mat','gnss_planetary');
