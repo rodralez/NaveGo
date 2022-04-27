@@ -91,17 +91,17 @@ function imu_planetary = imu_structure()
     imu_planetary.m_psd    = [m_psd,m_psd,m_psd];
 
     % time 
-    timestamps = table2array(imu_data_planetary(:,1));
-    timestamps = (timestamps - timestamps(1));
-    dt = mean(diff(timestamps));
-    imu_planetary.t = (timestamps(1):dt:timestamps(end))';
-    imu_planetary.freq = 1/dt; 
+%     timestamps = table2array(imu_data_planetary(:,1));
+%     timestamps = (timestamps - timestamps(1));
+%     dt = mean(diff(timestamps));
+%     imu_planetary.t = (timestamps(1):dt:timestamps(end))';
+%     imu_planetary.freq = 1/dt; 
 
     imu_planetary.ini_align_err = [10 10 10] .* D2R; % initial attitude align errors for matrix P in Kalman filter, [roll pitch yaw] (radians)
     imu_planetary.ini_align = [0 0 0] .* D2R; % Initial attitude align at t(1) (radians)
 
-    imu_planetary.fb = table2array(imu_data_planetary(:,2:4)); % acceleration measurements
-    imu_planetary.wb = table2array(imu_data_planetary(:,5:7)); % gyroscopic measurements
+%     imu_planetary.fb = table2array(imu_data_planetary(:,2:4)); % acceleration measurements
+%     imu_planetary.wb = table2array(imu_data_planetary(:,5:7)); % gyroscopic measurements
 
     %% Saving
 
