@@ -12,30 +12,19 @@ Sparse = "true";
 %% Generating Data
 
 if FusionCase == "inertial_gnss"
-%     imu_structure;
-    load ../data/imu_planetary.mat
+    imu_structure;
     if Sparse == "true"
-        %         gnss_sparse_structure;
-        load ../data/gnss_planetary_sparse_r.mat
-        gnss_planetary = gnss_planetary_r_sparse;
+        gnss_sparse_structure;
     else
-        %         gnss_structure;
-        load ../data/gnss_planetary_r.mat
-        gnss_planetary = gnss_planetary_r;
+        gnss_structure;
     end
 else
-    %     imu_structure;
-    load ../data/imu_planetary.mat
-    %     visual_structure;
-    load ../data/visual_planetary.mat
+    imu_structure;
+    visual_structure;
     if Sparse == "true"
-        %         gnss_sparse_structure;
-        load ../data/gnss_planetary_sparse_r.mat
-        gnss_planetary = gnss_planetary_r_sparse;
+        gnss_sparse_structure;
     else
-        %         gnss_structure;
-        load ../data/gnss_planetary_r.mat
-        gnss_planetary = gnss_planetary_r;
+        gnss_structure;
     end
 end
 
