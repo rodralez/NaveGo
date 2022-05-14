@@ -1,0 +1,32 @@
+conversions/ecef2llh.m:%  	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+conversions/ecef2ned.m:%	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
+conversions/dcm2euler.m:%   R. Gonzalez, J. Giribet, and H.D. Patiño,. An approach to
+conversions/qua2dcm.m:%  	R. Gonzalez, J. Giribet, and H. Patiño. An approach to
+conversions/dcm2euler_m.m:%   R. Gonzalez, J. Giribet, and H.D. Patiño,. An approach to
+conversions/gnss_m2r.m:%   R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
+conversions/gnss_m2r.m:%  	R. Gonzalez, J. Giribet, and H. Patiño. An approach to 
+conversions/imu_si_errors.m:%	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
+examples/real-data/navego_example_real_mpu6000.m:%   R. Gonzalez and P. Dabove. Performance Assessment of an Ultra Low-Cost 
+examples/real-data/navego_example_real_gnss_outage.m:%   R. Gonzalez and P. Dabove. Performance Assessment of an Ultra Low-Cost
+examples/real-data/navego_example_real_ekinox.m:%   R. Gonzalez and P. Dabove. Performance Assessment of an Ultra Low-Cost 
+examples/synthetic-data/navego_example_synth.m:%   R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+simulation/coriolis_b.m:%  R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
+simulation/acc_nav2body.m:%   R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+simulation/noise_b_sta.m:%	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+simulation/gravity_b.m:%	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+simulation/gyro_gen_delta.m:%	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+simulation/acc_gen.m:%	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+simulation/gnss_gen.m:%   R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
+simulation/gyro_gen.m:%  	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+ins/coriolis.m:%	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
+ins/qua_update.m:%	R. Gonzalez, J. Giribet, and H. Patiño. An approach to
+ins/pos_update.m:%	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
+ins/radius.m:%  	R. Gonzalez, J. Giribet, and H. Patiño. An approach to
+ins/imu_si_errors.m:%	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a 
+ins-gnss/kalman.m:%   R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+ins-gnss/F_update.m:%	R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+ins-gnss/F_update.m:%  	R. Gonzalez, J. Giribet, and H. Patiño. An approach to
+ins-gnss/ins_gnss.m:%   R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+ins-gnss/ins_gnss_mag.m:%   R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+ins-gnss/kf_update.m:%   R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
+ins-gnss/kf_prediction.m:%   R. Gonzalez, J. Giribet, and H. Patiño. NaveGo: a
