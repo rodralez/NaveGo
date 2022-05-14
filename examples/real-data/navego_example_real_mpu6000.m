@@ -107,7 +107,7 @@ fprintf('NaveGo: loading Ekinox GNSS data... \n')
 load ekinox_gnss
 
 % ekinox_gnss contains the lever arm with respect to Ekinox IMU.
-% ekinox_gnss.larm has to be changed for MPU-6000 IMU
+% ekinox_gnss.larm has to be changed for MPU-6000 IMU.
 ekinox_gnss.larm = [-0.369, 0.0, -0.219]'; 
 
 ekinox_gnss.eps = mean(diff(mpu6000_imu.t)) / 2; %  A rule of thumb for choosing eps.
@@ -126,7 +126,7 @@ if strcmp(INS_GNSS, 'ON')
     
     % Execute INS/GNSS integration
     % ---------------------------------------------------------------------
-    nav_mpu6000 = ins_gnss(mpu6000_imu, ekinox_gnss, 'quaternion');
+    nav_mpu6000 = ins_gnss(mpu6000_imu, ekinox_gnss, 'dcm');
     % ---------------------------------------------------------------------
     
     save nav_mpu6000.mat nav_mpu6000    

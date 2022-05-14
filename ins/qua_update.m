@@ -29,17 +29,12 @@ function qua = qua_update(qua, wb, dt)
 
 % References:
 %
-%	R. Gonzalez, J. Giribet, and H. Patiño. An approach to
-% benchmarking of loosely coupled low-cost navigation systems,
-% Mathematical and Computer Modelling of Dynamical Systems, vol. 21,
-% issue 3, pp. 272-287, 2015. Eq. 13.
-%
 %   Crassidis, J.L. and Junkins, J.L. (2011). Optimal Esti-
 % mation of Dynamic Systems, 2nd Ed. Chapman and Hall/CRC, USA.
-% Eq. 7.39 and 7.40, p. 458.
+% Eq. 7.39 to 7.41, p. 458.
 %
-% Version: 004
-% Date:    2021/03/18
+% Version: 005
+% Date:    2022/04/07
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -53,20 +48,14 @@ else
     co = cos(0.5*wnorm*dt);
     si = sin(0.5*wnorm*dt);
     
-    n1 = wb(1) / wnorm;
-    n2 = wb(2) / wnorm;
-    n3 = wb(3) / wnorm;
+    % Eq. 7.41
+    psi = (si / wnorm) * wb;  
     
-    qw1 = n1*si;
-    qw2 = n2*si;
-    qw3 = n3*si;
-    qw4 = co;
+    % Eq. 7.40
+    Om = [ (co*eye(3)-skewm(psi))  psi; % 3x4
+           -psi'                   co]; % 1x4
     
-    Om=[ qw4  qw3 -qw2 qw1;
-        -qw3  qw4  qw1 qw2;
-         qw2 -qw1  qw4 qw3;
-        -qw1 -qw2 -qw3 qw4];
-    
+    % Eq. 7.39
     qua = Om * qua;
 end
 
