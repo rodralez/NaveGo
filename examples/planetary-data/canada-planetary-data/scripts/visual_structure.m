@@ -16,8 +16,9 @@ MS2KMH = 3.6;       % m/s to km/h
 
 %% OpenVINS PLANETARY DATASET ERROR PROFILE
 
+
 load('../data/gnss_planetary_r.mat');
-load('../imu_planetary.mat');
+load('../data/imu_planetary.mat');
 
 visual_data_planetary_pose = readtable('../../external-data/Canada/pose_data.csv');
 visual_data_planetary_twist = readtable('../../external-data/Canada/twist_data.csv');

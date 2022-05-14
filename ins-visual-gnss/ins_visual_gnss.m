@@ -496,7 +496,7 @@ for i = 2:LI
             kf.H = [ O I O O O ;
                 O O Tpr O O ; ];
             kf.R = 0.001*diag([gnss.stdv gnss.stdm]).^2;
-            kf.z = [ zv' zp' ]';
+            kf.z = [ zv zp ]';
         else
             kf.H = [ O I O O O ; ];
             kf.R = 0.001*diag([gnss.stdv]).^2;
