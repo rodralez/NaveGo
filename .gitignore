@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 *.csv
 *.m~
 examples/synthetic-data/*.mat
 examples/real-data/nav_*.mat
+=======
+*.m~
+>>>>>>> 031a2a8fc6f36c71c50c6fb3bff271b79f65c1c1

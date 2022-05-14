@@ -16,17 +16,13 @@ MS2KMH = 3.6;       % m/s to km/h
 
 %% OpenVINS PLANETARY DATASET ERROR PROFILE
 
-load('gnss_planetary_r.mat'); % loading GNSS struct
-load('imu_planetary.mat'); % loading inertial struct
+load('../data/gnss_planetary_r.mat'); % loading GNSS struct
+load('../data/imu_planetary.mat'); % loading inertial struct
 
-% visual_data_planetary_pose = readtable('Data/Katwijk/1/pose_data.csv'); % read timestamps, position and attitude data
-% visual_data_planetary_twist = readtable('Data/Katwijk/1/twist_data.csv'); % read linear and angular velocity data
-% visual_data_planetary_posecov = readtable('Data/Katwijk/1/posecov_data.csv'); % read position and attitude covariance data
-% visual_data_planetary_twistcov = readtable('Data/Katwijk/1/twistcov_data.csv'); % read linear and angular velocity covariance data
-visual_data_planetary_pose = readtable('Data/Canada/pose_data.csv'); % read timestamps, position and attitude data
-visual_data_planetary_twist = readtable('Data/Canada/twist_data.csv'); % read linear and angular velocity data
-visual_data_planetary_posecov = readtable('Data/Canada/posecov_data.csv'); % read position and attitude covariance data
-visual_data_planetary_twistcov = readtable('Data/Canada/twistcov_data.csv'); % read linear and angular velocity covariance data
+visual_data_planetary_pose = readtable('../../external-data/Katwijk/pose_data.csv'); % read timestamps, position and attitude data
+visual_data_planetary_twist = readtable('../../external-data/Katwijk/twist_data.csv'); % read linear and angular velocity data
+visual_data_planetary_posecov = readtable('../../external-data/Katwijk/posecov_data.csv'); % read position and attitude covariance data
+visual_data_planetary_twistcov = readtable('../../external-data/Katwijk/twistcov_data.csv'); % read linear and angular velocity covariance data
 
 %   visual, visual data structure
 %         t: Vx1 time vector (seconds)
@@ -93,5 +89,5 @@ visual_planetary.covvm = downsample(visual_planetary.covvm,20);
 
 visual_planetary.freq = 1/mean(diff(visual_planetary.t)); % estimating the frequency
 
-%save('NaveGo-master/examples/planetary-data/katwijk-planetary-data/visual_planetary.mat','visual_planetary');
-save('NaveGo-master/examples/planetary-data/canada-planetary-data/visual_planetary.mat','visual_planetary');
+%save('../data/visual_planetary.mat','visual_planetary');
+save('../data/visual_planetary.mat','visual_planetary');

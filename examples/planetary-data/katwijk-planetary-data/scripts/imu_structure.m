@@ -14,7 +14,7 @@ MS2KMH = 3.6;       % m/s to km/h
 
 %% IMU ERROR PROFILE
 
-imu_data_planetary = readtable('Data/Katwijk/IMU/imu0.csv'); % read planetary IMU data
+imu_data_planetary = readtable('../../external-data/Katwijk/IMU/imu0.csv'); % read planetary IMU data
 
 % IMU data structure:
 %         t: Ix1 time vector (seconds).
@@ -69,4 +69,4 @@ imu_planetary.wb = table2array(imu_data_planetary(:,2:4)); % gyroscope measureme
 
 %% Saving
 
-save('NaveGo-master/examples/planetary-data/katwijk-planetary-data/data/imu_planetary.mat','imu_planetary');
+save('../data/imu_planetary.mat','imu_planetary');
