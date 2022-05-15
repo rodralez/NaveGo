@@ -1,6 +1,7 @@
 # NaveGo
 
-[![Releases](https://img.shields.io/badge/release-v1.3-green.svg?style=plastic)](https://github.com/rodralez/NaveGo/releases) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4617258.svg)](https://doi.org/10.5281/zenodo.4617258)
+[![Releases](https://img.shields.io/badge/release-v1.4-green.svg?style=plastic)](https://github.com/rodralez/NaveGo/releases) 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6549626.svg)](https://doi.org/10.5281/zenodo.6549626)
 
 NaveGo: an open-source MATLAB/GNU-Octave toolbox for processing integrated navigation systems and performing inertial sensors profiling analysis.
 
@@ -156,6 +157,10 @@ These two real examples are part of the data collection used in the article (Gon
 
 * InvenSense Inc. MPU-6000/MPU-6050 Product Specification. Document Number: PS-MPU-6000A-00. Revision: 3.4. Release Date: 08/19/2013.
 
+## VISUAL/INS/GNSS integration example using real data
+
+Two examples are provided for VISUAL/INS/GNSS integration. Please, check the folders `examples/planetary-data/`.
+
 
 # Researchers who are using NaveGo
 
@@ -192,14 +197,26 @@ The following 13 papers have expressed the use of NaveGo for research:
 
 We would like to thank to the many people that have contributed to make NaveGo a better tool:
 
-* Dr. Juan Ignacio Giribet (National University of Buenos Aires, Argentina) for his continuous support on theory aspects of INS/GNSS systems.
+* Mr. Johann Diep for contributing with code and examples for VISUAL/INS/GNSS integration.
 
-* Dr. Charles K. Toth (The Ohio State University, USA), Dr. Allison Kealy, and M.Sc. Azmir Hasnur-Rabiain (both from The University of Melbourne, Australia) for generously sharing IMU and GNSS datasets, and in particular, for Azmir's unselfish support and help.
-
-* Prof. Zhu, Dr. Yang, and Mr. Bo Sun, all from the Laboratory of Precision Measuring Technology and Instruments, Tianjin University, Tianjin, China, for contributing with IMU static measurements to test Allan variance routines.
-
-* Dr. Paolo Dabove and Dr. Marco Piras (both from DIATI, Politecnico di Torino, Italy) for helping to debug NaveGo and suggesting new features.
+* Mr. Daniel Lu, GIS Analyst at Western Heritage (Canada), for his comments on the sign of acceleration when accelerometers sense gravity.
 
 * Dr. Paolo Zoccarato for his comments on attitude conversion.
 
-* Mr. Daniel Lu, GIS Analyst at Western Heritage (Canada), for his comments on the sign of acceleration when accelerometers sense gravity.
+* Dr. Paolo Dabove and Dr. Marco Piras (both from DIATI, Politecnico di Torino, Italy) for helping to debug NaveGo and suggesting new features.
+
+* Prof. Zhu, Dr. Yang, and Mr. Bo Sun, all from the Laboratory of Precision Measuring Technology and Instruments, Tianjin University, Tianjin, China, for contributing with IMU static measurements to test Allan variance routines.
+
+* Dr. Charles K. Toth (The Ohio State University, USA), Dr. Allison Kealy, and M.Sc. Azmir Hasnur-Rabiain (both from The University of Melbourne, Australia) for generously sharing IMU and GNSS datasets, and in particular, for Azmir's unselfish support and help.
+
+* Dr. Juan Ignacio Giribet (National University of Buenos Aires, Argentina) for his continuous support on theory aspects of INS/GNSS systems.
+
+
+
+
+
+
+
+
+
+
