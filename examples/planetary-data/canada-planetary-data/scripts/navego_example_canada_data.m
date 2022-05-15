@@ -1,5 +1,5 @@
 % navego_example_canada_data: post-processing integration of
-% IMU, GNSS and visual data.
+% IMU, GNSS and visual data for the Canada dataset.
 %
 % The main goal is to integrate IMU and GNSS measurements from Ekinox-D
 % sensor which includes both IMU and GNSS sensors.
@@ -37,9 +37,6 @@
 % X-forward, Y-right and Z-down.
 %
 % NOTE: NaveGo assumes that yaw angle (heading) is positive clockwise.
-%  - November 2021
-%
-% This script runs the fusion of all sensor parameters.
 
 clc
 close all
@@ -66,15 +63,16 @@ fprintf('\nNaveGo: starting Canada planetary data integration... \n')
 % Comment any of the following parameters in order to NOT execute a
 % particular portion of code
 
-% GEN_DATA     = 'ON';
+GEN_DATA     = 'ON';
 
 if (~exist('GEN_DATA','var')), GEN_DATA = 'OFF'; end
-if (~exist('PLOT','var')),     PLOT     = 'OFF'; end
 
 % FusionCase = "inertial_gnss";
 % FusionCase = "inertial_visual";
 FusionCase = "inertial_visual_gnss";
+
 Sparse = "true";
+% Sparse = "false";
 
 fprintf('NaveGo: parameter FusionCase = %s \n', FusionCase)
 fprintf('NaveGo: parameter Sparse = %s \n', Sparse)
@@ -83,11 +81,10 @@ fprintf('NaveGo: parameter Sparse = %s \n', Sparse)
 
 if strcmp(GEN_DATA, 'ON')
 
-    fprintf('NaveGo: generating data... \n')
-
     if FusionCase == "inertial_gnss"
         fprintf('NaveGo: generating IMU data... \n')
         imu_structure;
+
         fprintf('NaveGo: generating GNSS data... \n')
         if Sparse == "true"
             gnss_sparse_structure;
@@ -141,8 +138,6 @@ else
 end
 %% Estimation
 
-fprintf('NaveGo: integration... \n')
-
 switch FusionCase
     case "inertial_gnss"
         fprintf('NaveGo: processing INS/GNSS integration... \n')
@@ -155,12 +150,12 @@ switch FusionCase
         nav_e = ins_visual_gnss(imu_planetary,gnss_planetary,visual_planetary,'dcm');
 end
 
-[nav_i,gnss_planetary_r] = navego_interpolation (nav_e, gnss_planetary_r);
+[nav_i, nav_ref] = navego_interpolation (nav_e, gnss_planetary_r);
 
 if Sparse == "true"
-    [gnss_i,gnss_planetary_r_sparse] = navego_interpolation(gnss_planetary,gnss_planetary_r_sparse);
+    [gnss_i,gnss_ref] = navego_interpolation(gnss_planetary,gnss_planetary_sparse_r);
 else
-    [gnss_i,gnss_planetary_r] = navego_interpolation(gnss_planetary,gnss_planetary_r);
+    [gnss_i,gnss_ref] = navego_interpolation(gnss_planetary,gnss_planetary_r);
 end
 
 %% Plotting
@@ -194,8 +189,8 @@ switch FusionCase
         figure();
         subplot(2,1,1);
         hold on;
-        plot(gnss_i.t,  LAT2M_GR.*(gnss_i.lat - gnss_planetary_r.lat), '.', 'Color', ones(1,3) * 0.75, 'LineWidth', 1.5)
-        plot(nav_i.t, LAT2M.*(nav_i.lat - gnss_planetary_r.lat),'Color', [0, 0, 0], 'LineWidth', 1.5)
+        plot(gnss_i.t,LAT2M_GR.*(gnss_i.lat - gnss_ref.lat), '.', 'Color', ones(1,3) * 0.75, 'LineWidth', 1.5)
+        plot(nav_i.t, LAT2M.*(nav_i.lat - nav_ref.lat),'Color', [0, 0, 0], 'LineWidth', 1.5)
         grid on;
         xlabel('Time [s]')
         ylabel('[m]')
@@ -204,8 +199,8 @@ switch FusionCase
         xlim([0,max(gnss_planetary.t)]);
         subplot(2,1,2);
         hold on;
-        plot(gnss_i.t, LON2M_GR.*(gnss_i.lon - gnss_planetary_r.lon), '.', 'Color', ones(1,3) * 0.75, 'LineWidth', 1.5)
-        plot(nav_i.t, LON2M.*(nav_i.lon - gnss_planetary_r.lon),'Color', [0, 0, 0], 'LineWidth', 1.5)
+        plot(gnss_i.t, LON2M_GR.*(gnss_i.lon - gnss_ref.lon), '.', 'Color', ones(1,3) * 0.75, 'LineWidth', 1.5)
+        plot(nav_i.t, LON2M.*(nav_i.lon - nav_ref.lon),'Color', [0, 0, 0], 'LineWidth', 1.5)
         grid on;
         xlabel('Time [s]')
         ylabel('[m]')
@@ -239,8 +234,8 @@ switch FusionCase
         figure();
         subplot(2,1,1);
         hold on;
-        plot(gnss_i.t,  LAT2M_GR.*(gnss_i.lat - gnss_planetary_r.lat), '.', 'Color', ones(1,3) * 0.75, 'LineWidth', 1.5)
-        plot(nav_i.t, LAT2M.*(nav_i.lat - gnss_planetary_r.lat),'Color', [0, 0, 0], 'LineWidth', 1.5)
+        plot(gnss_i.t,  LAT2M_GR.*(gnss_i.lat - gnss_ref.lat), '.', 'Color', ones(1,3) * 0.75, 'LineWidth', 1.5)
+        plot(nav_i.t, LAT2M.*(nav_i.lat - nav_ref.lat),'Color', [0, 0, 0], 'LineWidth', 1.5)
         grid on;
         xlabel('Time [s]')
         ylabel('[m]')
@@ -249,8 +244,8 @@ switch FusionCase
         xlim([0,max(gnss_planetary.t)]);
         subplot(2,1,2);
         hold on;
-        plot(gnss_i.t, LON2M_GR.*(gnss_i.lon - gnss_planetary_r.lon), '.', 'Color', ones(1,3) * 0.75, 'LineWidth', 1.5)
-        plot(nav_i.t, LON2M.*(nav_i.lon - gnss_planetary_r.lon),'Color', [0, 0, 0], 'LineWidth', 1.5)
+        plot(gnss_i.t, LON2M_GR.*(gnss_i.lon - gnss_ref.lon), '.', 'Color', ones(1,3) * 0.75, 'LineWidth', 1.5)
+        plot(nav_i.t, LON2M.*(nav_i.lon - nav_ref.lon),'Color', [0, 0, 0], 'LineWidth', 1.5)
         grid on;
         xlabel('Time [s]')
         ylabel('[m]')
@@ -285,8 +280,8 @@ switch FusionCase
         figure();
         subplot(2,1,1);
         hold on;
-        plot(gnss_i.t,  LAT2M_GR.*(gnss_i.lat - gnss_planetary_r.lat), '.', 'Color', ones(1,3) * 0.75, 'LineWidth', 1.5)
-        plot(nav_i.t, LAT2M.*(nav_i.lat - gnss_planetary_r.lat),'Color', [0, 0, 0], 'LineWidth', 1.5)
+        plot(gnss_i.t,  LAT2M_GR.*(gnss_i.lat - gnss_ref.lat), '.', 'Color', ones(1,3) * 0.75, 'LineWidth', 1.5)
+        plot(nav_i.t, LAT2M.*(nav_i.lat - nav_ref.lat),'Color', [0, 0, 0], 'LineWidth', 1.5)
         grid on;
         xlabel('Time [s]')
         ylabel('[m]')
@@ -295,8 +290,8 @@ switch FusionCase
         xlim([0,max(gnss_planetary.t)]);
         subplot(2,1,2);
         hold on;
-        plot(gnss_i.t, LON2M_GR.*(gnss_i.lon - gnss_planetary_r.lon), '.', 'Color', ones(1,3) * 0.75, 'LineWidth', 1.5)
-        plot(nav_i.t, LON2M.*(nav_i.lon - gnss_planetary_r.lon),'Color', [0, 0, 0], 'LineWidth', 1.5)
+        plot(gnss_i.t, LON2M_GR.*(gnss_i.lon - gnss_ref.lon), '.', 'Color', ones(1,3) * 0.75, 'LineWidth', 1.5)
+        plot(nav_i.t, LON2M.*(nav_i.lon - nav_ref.lon),'Color', [0, 0, 0], 'LineWidth', 1.5)
         grid on;
         xlabel('Time [s]')
         ylabel('[m]')

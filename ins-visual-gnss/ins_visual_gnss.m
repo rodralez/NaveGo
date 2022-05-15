@@ -348,7 +348,7 @@ for i = 2:LI
                 + (DCMbn * visual.larm);
 
             % Velocity innovations with lever arm correction
-            zv = (vel_e(i,:) - visual.vel(gdx(index),:) - ((omega_ie_n + omega_en_n) .* (DCMbn * visual.larm))' ...
+            zv = (vel_e(i,:) - visual.vel(gdx(index),:) - ((omega_ie_n + omega_en_n) * (DCMbn * visual.larm))' ...
                 + (DCMbn * skewm(wb_corrected) * visual.larm )' )';
 
             %% KALMAN FILTER
@@ -477,7 +477,7 @@ for i = 2:LI
             + (DCMbn * gnss.larm);
         
         % Velocity innovations with lever arm correction
-        zv = (vel_e(i,:) - gnss.vel(gdx,:) - ((omega_ie_n + omega_en_n) .* (DCMbn * gnss.larm))' ...
+        zv = (vel_e(i,:) - gnss.vel(gdx,:) - ((omega_ie_n + omega_en_n) * (DCMbn * gnss.larm))' ...
             + (DCMbn * skewm(wb_corrected) * gnss.larm )' )';
         
         %% KALMAN FILTER
@@ -496,7 +496,7 @@ for i = 2:LI
             kf.H = [ O I O O O ;
                 O O Tpr O O ; ];
             kf.R = 0.001*diag([gnss.stdv gnss.stdm]).^2;
-            kf.z = [ zv zp ]';
+            kf.z = [ zv' zp' ]';
         else
             kf.H = [ O I O O O ; ];
             kf.R = 0.001*diag([gnss.stdv]).^2;

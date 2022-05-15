@@ -345,7 +345,7 @@ for i = 2:LI
                 + (DCMbn * visual.larm);
 
             % Velocity innovations with lever arm correction
-            zv = (vel_e(i,:) - visual.vel(gdx(index),:) - ((omega_ie_n + omega_en_n) .* (DCMbn * visual.larm))' ...
+            zv = (vel_e(i,:) - visual.vel(gdx(index),:) - ((omega_ie_n + omega_en_n) * (DCMbn * visual.larm))' ...
                 + (DCMbn * skewm(wb_corrected) * visual.larm )' )';
 
             %% KALMAN FILTER

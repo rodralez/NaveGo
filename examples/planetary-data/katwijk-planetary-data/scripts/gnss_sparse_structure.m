@@ -91,11 +91,11 @@ gnss_planetary.lat(2000:4000) = [];
 gnss_planetary.h(2000:4000) = [];
 gnss_planetary.vel(2000:4000,:) = [];
 
-gnss_planetary_r_sparse = gnss_planetary; % reference
-[gnss_planetary,~] = gnss_gen(gnss_planetary_r_sparse, gnss_planetary); % degredation
+gnss_planetary_sparse_r = gnss_planetary; % reference
+[gnss_planetary,~] = gnss_gen(gnss_planetary_sparse_r, gnss_planetary); % degredation
 
 %% Saving 
 
 save('../data/gnss_planetary_r.mat','gnss_planetary_r');
-save('../data/gnss_planetary_sparse_r.mat','gnss_planetary_r_sparse');
+save('../data/gnss_planetary_sparse_r.mat','gnss_planetary_sparse_r');
 save('../data/gnss_sparse_planetary.mat','gnss_planetary');

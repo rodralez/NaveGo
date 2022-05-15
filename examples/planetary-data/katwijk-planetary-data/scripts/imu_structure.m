@@ -56,7 +56,7 @@ imu_planetary.m_psd    = [0 0 0];
 
 % time 
 timestamps = table2array(imu_data_planetary(:,1));
-timestamps = (timestamps - timestamps(1));
+timestamps = (timestamps - timestamps(1)) / 1e9;
 dt = mean(diff(timestamps));
 imu_planetary.t = (timestamps(1):dt:timestamps(end))';
 imu_planetary.freq = 1/dt; 
