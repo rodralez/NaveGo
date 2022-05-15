@@ -197,7 +197,7 @@ The following 13 papers have expressed the use of NaveGo for research:
 
 We would like to thank to the many people that have contributed to make NaveGo a better tool:
 
-* Mr. Johann Diep for contributing with code and examples for VISUAL/INS/GNSS integration.
+* Mr. Johann Diep for contributing with code and examples for VISUAL/INS/GNSS integration as part of his research at the European Space Agency. You can learn more about his research by watching [this video](https://youtu.be/sPnPMBs1gSU).
 
 * Mr. Daniel Lu, GIS Analyst at Western Heritage (Canada), for his comments on the sign of acceleration when accelerometers sense gravity.
 
