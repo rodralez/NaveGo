@@ -1,6 +1,6 @@
 function [vel_ned, acc_ned] = pllh2vned (ref)
 % pllh2vned: generates NED accelerations and velocities from
-% navigation position.
+% positions in the navigation frame.
 %
 % INPUT
 %		ref: data structure with true trajectory.
@@ -9,7 +9,7 @@ function [vel_ned, acc_ned] = pllh2vned (ref)
 %		vel_ned: Nx3 matrix with velocities in the NED frame [VN VE VD] (m/s, m/s, m/s).
 %		acc_ned: Nx3 matrix with accelerations in the NED frame [AN AE AD] (m/s^2, m/s^2, m/s^2).
 %
-%   Copyright (C) 2014, Rodrigo González, all rights reserved.
+%   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
 %
 %   This file is part of NaveGo, an open-source MATLAB toolbox for
 %   simulation of integrated navigation systems.
@@ -30,23 +30,22 @@ function [vel_ned, acc_ned] = pllh2vned (ref)
 % Reference:
 %
 %
-% Version: 001
-% Date:    2014/09/11
+% Version: 002
+% Date:    2022/05/15
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
-
 % Method: LLH > ECEF > NED
 
-ecef=llh2ecef([ref.lat ref.lon ref.h]);
+ecef = llh2ecef([ref.lat ref.lon ref.h]);
 eceforg = ecef(1,:);
 
 [N,M] = size(ecef);
 ned = zeros(N,M);
 
 for i=1:N
-    dif_ecef  = ecef(i,:)  - eceforg;
-    ned(i,:)  = ecef2ned( dif_ecef ,[ref.lat(1) ref.lon(1) ref.h(1)]);
+    d_ecef  = ecef(i,:) - eceforg;
+    ned(i,:)  = ecef2ned(d_ecef , [ref.lat(1) ref.lon(1) ref.h(1)]);
 end
 
 % Method: LLH > > NED
@@ -63,12 +62,14 @@ end
 % VEL
 vel_raw =  diff(ned) ./ [diff(ref.t) diff(ref.t) diff(ref.t);];
 vel_raw = [ 0 0 0; vel_raw; ];
+% Smooth the noise from previous diff
 vel_ned = my_sgolayfilt(vel_raw);
 vel_ned = my_sgolayfilt(vel_ned);
 
 % ACC
 acc_raw = (diff(vel_ned)) ./ [diff(ref.t) diff(ref.t) diff(ref.t)];
 acc_raw = [ 0 0 0; acc_raw; ];
+% Smooth the noise from previous diff
 acc_ned = my_sgolayfilt(acc_raw);
 acc_ned = my_sgolayfilt(acc_ned);
 
