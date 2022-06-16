@@ -27,6 +27,13 @@
 %
 % References:
 %
+%  Johann Diep et al. (2022). Investigating the Performance of LCNS with 
+% Visual-Inertial Odometry for Lunar Rover Navigation. NAVITEC 2022, April 
+% 2022.
+% 
+%  Johann Diep (2022). Investigating the Performance of LCNS with 
+% Visual-Inertial Odometry for Lunar Rover Navigation. Youtube video.
+% https://youtu.be/sPnPMBs1gSU
 %
 % Version: 001
 % Date:    2021/11/01
@@ -46,7 +53,6 @@ matlabrc
 addpath ../../../../ins/
 addpath ../../../../ins-gnss/
 addpath ../../../../ins-visual/
-addpath ../../../../ins-visual-gnss/
 addpath ../../../../conversions/
 addpath ../../../../performance-analysis/
 addpath ../../../../plot/
@@ -71,8 +77,11 @@ if (~exist('GEN_DATA','var')), GEN_DATA = 'OFF'; end
 % FusionCase = "inertial_visual";
 FusionCase = "inertial_visual_gnss";
 
-Sparse = "true";
-% Sparse = "false";
+% Method to remove GNSS measurements for a certain time window. This is 
+% done to showcase that visual measurements provide a failsafe option in 
+% case satellite data is not available.
+% Sparse = "true";
+Sparse = "false";
 
 fprintf('NaveGo: parameter FusionCase = %s \n', FusionCase)
 fprintf('NaveGo: parameter Sparse = %s \n', Sparse)

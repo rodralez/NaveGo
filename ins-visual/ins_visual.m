@@ -46,7 +46,7 @@ function [nav_e] = ins_visual(imu, gnss, visual, att_mode)
 %         h: Vx1 altitude (m).
 %       vel: Vx3 NED velocities (m/s).
 %     covvm: Vx36 velocity and position covariance matrices (m^2 and m^2/s^2).
-%      covv: Vx9 velocity covariance matrices (m^2/s^2). 
+%      covv: Vx9 velocity covariance matrices (m^2/s^2).
 %      larm: 3x1 lever arm (m).
 %      freq: 1x1 sampling frequency (Hz).
 %       eps: 1x1 time interval to compare current IMU time to current visual time vector (s).
@@ -108,7 +108,7 @@ function [nav_e] = ins_visual(imu, gnss, visual, att_mode)
 %
 %   Groves, P.D. (2013), Principles of GNSS, Inertial, and
 % Multisensor Integrated Navigation Systems (2nd Ed.). Artech House.
-
+%
 %   ZUPT algothim based on Groves, Chapter 15, "INS Alignment, Zero Updates,
 % and Motion Constraints".
 %
@@ -239,76 +239,76 @@ b(1,:) = [gb_dyn', ab_dyn'];
 
 %% INS (IMU) TIME IS THE MASTER CLOCK
 for i = 2:LI
-    
+
     %% INERTIAL NAVIGATION SYSTEM (INS)
-    
+
     % Print a dot on console every 10,000 INS executions
     if (mod(i,10000) == 0), fprintf('. ');  end
     % Print a return on console every 200,000 INS executions
     if (mod(i,200000) == 0), fprintf('\n'); end
-    
+
     % IMU sampling interval
     dti = imu.t(i) - imu.t(i-1);
-    
+
     % Turn-rates update
     omega_ie_n = earth_rate(lat_e(i-1));
     omega_en_n = transport_rate(lat_e(i-1), vel_e(i-1,1), vel_e(i-1,2), h_e(i-1));
-    
+
     % Gravity update
     gn_e(i,:) = gravity(lat_e(i-1), h_e(i-1));
-    
+
     % Inertial sensors corrected with a posteriori KF biases estimation and
     % deterministic static biases
     wb_corrected = imu.wb(i,:)' - gb_dyn - imu.gb_sta';
     fb_corrected = imu.fb(i,:)' - ab_dyn - imu.ab_sta';
     fn = DCMbn * fb_corrected;
     wn = DCMbn * wb_corrected;
-    
+
     % Attitude update
     [qua, DCMbn, euler] = att_update(wb_corrected, DCMbn, qua, ...
         omega_ie_n, omega_en_n, dti, att_mode);
     roll_e(i) = euler(1);
     pitch_e(i)= euler(2);
     yaw_e(i)  = euler(3);
-    
+
     % Velocity update
     vel = vel_update(fn, vel_e(i-1,:), omega_ie_n, omega_en_n, gn_e(i,:)', dti);
     vel_e (i,:) = vel;
-    
+
     % Position update
     pos = pos_update([lat_e(i-1) lon_e(i-1) h_e(i-1)], vel_e(i,:), dti);
     lat_e(i) = pos(1);
     lon_e(i) = pos(2);
     h_e(i)   = pos(3);
-    
+
     % Turn-rates update with both updated velocity and position
     omega_ie_n = earth_rate(lat_e(i));
     omega_en_n = transport_rate(lat_e(i), vel_e(i,1), vel_e(i,2), h_e(i));
-    
+
     %% ZUPT DETECTION ALGORITHM
     idz = floor( gnss.zupt_win / dti ); % Index to set ZUPT window time
-    
+
     if ( i > idz )
-        
+
         % Mean velocity value for the ZUPT window time
         vel_m = mean (vel_e(i-idz:i , :));
-        
+
         % If mean velocity value is under the ZUPT threshold velocity...
         if (abs(vel_m) < gnss.zupt_th)
             disp("ZUPT condition applied");
-            
+
             % Current attitude is equal to the mean of previous attitudes
             % inside the ZUPT window time
             roll_e(i)  = mean (roll_e(i-idz:i , :));
             pitch_e(i) = mean (pitch_e(i-idz:i , :));
             yaw_e(i)   = mean (yaw_e(i-idz:i , :));
-            
+
             % Current position is equal to the mean of previous positions
             % inside the ZUPT window time
             lat_e(i) = mean (lat_e(i-idz:i , :));
             lon_e(i) = mean (lon_e(i-idz:i , :));
             h_e(i)   = mean (h_e(i-idz:i , :));
-            
+
             % Alternative attitude ZUPT correction
             % roll_e(i)  = (roll_e(i-idz , :));
             % pitch_e(i) = (pitch_e(i-idz , :));
@@ -316,20 +316,20 @@ for i = 2:LI
             % lat_e(i) = (lat_e(i-idz:i , :));
             % lon_e(i) = (lon_e(i-idz:i , :));
             % h_e(i)   = (h_e(i-idz:i , :));
-            
+
             zupt_flag = true;
-            
+
             %             fprintf(' z\n')       % DEBUG
         end
     end
-    
+
     %% KALMAN FILTER UPDATE
-    
+
     % Check if there is a new visual measurement to process at current INS time
     gdx =  find (visual.t >= (imu.t(i) - visual.eps) & visual.t < (imu.t(i) + visual.eps));
 
     if (~isempty(gdx) && gdx(1) > 1)
-        for index = 1:size(gdx,1)  
+        for index = 1:size(gdx,1)
             % disp("updated with visual measurements");
 
             %% MEASUREMENTS
@@ -371,22 +371,27 @@ for i = 2:LI
                 kf.z = zv;
             end
 
+            % a posteriori states are forced to be zero (error-state approach)
+            kf.xp = zeros(n , 1);
             % Execution of the extended Kalman filter
-            kf.xp(1:9) = 0.0;           % states 1 to 9 are forced to be zero (error-state approach)
             kf = kalman(kf, dtg);
 
             %% OBSERVABILITY
 
-            % Number the observable states at current visual time
-            ob(gdx(index)) = rank(obsv(kf.F, kf.H));
+            % Number the observable states at current GNSS time
+            ob(gdx) = rank(obsv(kf.F, kf.H));
 
-            %% INS/visual CORRECTIONS
+            %% INS/GNSS CORRECTIONS
 
-            % Quaternion corrections
-            % Crassidis. Eq. 7.34 and A.174a.
-            antm = [0.0 qua(3) -qua(2); -qua(3) 0.0 qua(1); qua(2) -qua(1) 0.0];
-            qua = qua + 0.5 .* [qua(4)*eye(3) + antm; -1.*[qua(1) qua(2) qua(3)]] * kf.xp(1:3);
-            qua = qua / norm(qua);       % Brute-force normalization
+            % Quaternion correction
+            qua_skew = -skewm(qua(1:3));    % According to Crassidis, qua_skew should be
+            % positive, but if positive NaveGo diverges.
+            % Crassidis, Eq. A.174a
+            Xi = [qua(4)*eye(3) + qua_skew; -qua(1:3)'];
+
+            % Crassidis, Eq. 7.34
+            qua = qua + 0.5 .* Xi * kf.xp(1:3);
+            qua = qua / norm(qua);          % Brute-force normalization
 
             % DCM correction
             DCMbn = qua2dcm(qua);
@@ -438,7 +443,7 @@ for i = 2:LI
             end
         end
     end
-    
+
     if imu.t(i) > max(visual.t)
         break;
     end
