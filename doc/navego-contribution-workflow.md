@@ -1,10 +1,7 @@
 
+# NaveGo contribution workflow
 
-# The Github workflow
-
-The main idea is to follow the [github worflow](https://docs.github.com/en/get-started/quickstart/github-flow).
-
-There is nothing new about our methodology, but since the github doc is large, following it is a summary about it.
+The main idea is to follow the [github worflow](https://docs.github.com/en/get-started/quickstart/github-flow). There is nothing new about our methodology, but since the Github worflow document is large, next a summary is provided.
 
 1. We work hierarchically with 2 branches simultaneously:
 
@@ -12,7 +9,7 @@ There is nothing new about our methodology, but since the github doc is large, f
 
     `develop`: it is the integration branch used by all the branches to merge particular changes.
 
-2. For each new feature we need to create a new topic branch. These branches should always be created from `develop`. The process is the following:
+2. For each new feature you need to create a new topic branch. These branches should always be created from `develop`. The process is the following:
 
     a. Download the complete repository: `git clone htpp://github.com/<user>/<repository>.git`
 
@@ -20,7 +17,7 @@ There is nothing new about our methodology, but since the github doc is large, f
 
     c. Get the last version from origin: `git pull origin develop`.
 
-    d.  Create a new branch from develop and change to that new branch: `git checkout -b <branch-name> develop`. You can change to any branch just doing `git checkout <branch-name>`.
+    d.  Create a new branch from develop and change to that new branch: `git checkout -b <branch-name> develop`. 
 
     e. Then you work on the new branch adding a new feature or fixing a bug.
 
@@ -58,4 +55,6 @@ Then, the version history is usually keeped by adding tags in `main` (you can ad
 ### Unstage a file (uncommit)
 `git restore --staged <file>...`
 
+### Change to any branch 
+`git checkout <branch-name>`.
  
