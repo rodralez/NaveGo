@@ -56,7 +56,7 @@ if nargin < 7, att_mode  = 'quaternion'; end
 
 om_ie_n = skewm_inv(omega_ie_n);
 om_en_n = skewm_inv(omega_en_n);
-wb = (wb - DCMbn' * (om_ie_n + om_en_n));                       % Titterton, Eq. 3.29, p. 32
+wb = (wb - DCMbn' * (om_ie_n + om_en_n));  % Titterton, Eq. 3.29, p. 32
 
 if strcmp(att_mode, 'quaternion')
 %% Quaternion update   
