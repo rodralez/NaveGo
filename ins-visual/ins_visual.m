@@ -114,8 +114,8 @@ function [nav_e] = ins_visual(imu, gnss, visual, att_mode)
 %
 %   ins_gps.m, ins_gnss function is based on that previous NaveGo function.
 %
-% Version: 009
-% Date:    2021/03/16
+% Version: 002
+% Date:    2022/07/19
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -195,6 +195,13 @@ h_e(1)   = gnss.h(1);
 gb_dyn = imu.gb_dyn';
 ab_dyn = imu.ab_dyn';
 
+% Turn-rates update with both updated velocity and position
+omega_ie_n = earth_rate(lat_e(1));
+omega_en_n = transport_rate(lat_e(1), vel_e(1,1), vel_e(1,2), h_e(1));
+
+% Gravity update
+gn_e(1,:) = gravity(lat_e(1), h_e(1));
+
 %% INITIALIZATION OF KALMAN FILTER MATRICES
 
 % Prior estimates
@@ -250,26 +257,12 @@ for i = 2:LI
     % IMU sampling interval
     dti = imu.t(i) - imu.t(i-1);
 
-    % Turn-rates update
-    omega_ie_n = earth_rate(lat_e(i-1));
-    omega_en_n = transport_rate(lat_e(i-1), vel_e(i-1,1), vel_e(i-1,2), h_e(i-1));
-
-    % Gravity update
-    gn_e(i,:) = gravity(lat_e(i-1), h_e(i-1));
-
     % Inertial sensors corrected with a posteriori KF biases estimation and
     % deterministic static biases
     wb_corrected = imu.wb(i,:)' - gb_dyn - imu.gb_sta';
     fb_corrected = imu.fb(i,:)' - ab_dyn - imu.ab_sta';
     fn = DCMbn * fb_corrected;
     wn = DCMbn * wb_corrected;
-
-    % Attitude update
-    [qua, DCMbn, euler] = att_update(wb_corrected, DCMbn, qua, ...
-        omega_ie_n, omega_en_n, dti, att_mode);
-    roll_e(i) = euler(1);
-    pitch_e(i)= euler(2);
-    yaw_e(i)  = euler(3);
 
     % Velocity update
     vel = vel_update(fn, vel_e(i-1,:), omega_ie_n, omega_en_n, gn_e(i,:)', dti);
@@ -284,6 +277,16 @@ for i = 2:LI
     % Turn-rates update with both updated velocity and position
     omega_ie_n = earth_rate(lat_e(i));
     omega_en_n = transport_rate(lat_e(i), vel_e(i,1), vel_e(i,2), h_e(i));
+
+    % Gravity update
+    gn_e(i,:) = gravity(lat_e(i), h_e(i));
+    
+    % Attitude update
+    [qua, DCMbn, euler] = att_update(wb_corrected, DCMbn, qua, ...
+        omega_ie_n, omega_en_n, dti, att_mode);
+    roll_e(i) = euler(1);
+    pitch_e(i)= euler(2);
+    yaw_e(i)  = euler(3);
 
     %% ZUPT DETECTION ALGORITHM
     idz = floor( gnss.zupt_win / dti ); % Index to set ZUPT window time
