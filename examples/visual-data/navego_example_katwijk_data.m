@@ -104,10 +104,10 @@ if strcmp(GEN_DATA, 'ON')
             gnss_structure;
         end
     else
-        imu_structure;
         fprintf('NaveGo: generating IMU data... \n')
-        visual_structure;
+        imu_structure;
         fprintf('NaveGo: generating VISUAL data... \n')
+        visual_structure;
         if Sparse == "true"
             fprintf('NaveGo: generating GNSS data... \n')
             gnss_sparse_structure;

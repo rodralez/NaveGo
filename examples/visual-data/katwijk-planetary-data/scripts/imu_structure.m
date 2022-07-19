@@ -69,4 +69,4 @@ imu_planetary.wb = table2array(imu_data_planetary(:,2:4)); % gyroscope measureme
 
 %% Saving
 
-save('./katwijk-planetary-data/imu_planetary.mat','imu_planetary');
+save('./katwijk-planetary-data/data/imu_planetary.mat','imu_planetary');

@@ -3,3 +3,6 @@
 examples/synthetic-data/nav*.mat
 examples/real-data/nav_*.mat
 examples/real-data/*.asv
+examples/visual-data/canada-planetary-data/data/*.mat
+examples/visual-data/canada-planetary-data/data/*.mat
+examples/visual-data/katwijk-planetary-data/data/*.mat

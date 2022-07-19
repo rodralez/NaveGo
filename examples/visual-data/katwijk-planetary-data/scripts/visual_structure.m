@@ -90,4 +90,4 @@ visual_planetary.covvm = downsample(visual_planetary.covvm,20);
 visual_planetary.freq = 1/mean(diff(visual_planetary.t)); % estimating the frequency
 
 %save('../data/visual_planetary.mat','visual_planetary');
-save('./katwijk-planetary-data/visual_planetary.mat','visual_planetary');
+save('./katwijk-planetary-data/data/visual_planetary.mat','visual_planetary');
