@@ -4,9 +4,9 @@ function vel_n = vel_update(fn, vel_o, omega_ie_n, omega_en_n, gn, dt)
 % INPUT
 %   fn, 3x1 specific forces in the nav-frame (m/s^2).    
 %   vel_o, 3x1 previous (old) velocity vector in the nav-frame (m/s). 
-%   omega_ie_n, 3x3 skew-symmetric Earth rate matrix in the nav-frame (rad/s).
-%   omega_en_n, 3x3 skew-symmetric transport rate matrix in the nav-frame (rad/s).
-%   gn, 3x1 gravity in the nav-frame (m/s^2).
+%   omega_ie_n, 3x3 previous skew-symmetric Earth rate matrix in the nav-frame (rad/s).
+%   omega_en_n, 3x3 previous skew-symmetric transport rate matrix in the nav-frame (rad/s).
+%   gn, 3x1 previous gravity in the nav-frame (m/s^2).
 %   dt, 1x1 integration time step (s).
 %
 % OUTPUT
