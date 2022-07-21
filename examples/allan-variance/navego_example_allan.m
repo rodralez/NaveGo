@@ -77,8 +77,8 @@ load stim300
 %    ab_dyn: 1x3 accrs dynamic biases or bias instabilities (m/s^2).
 %   gb_corr: 1x3 gyros correlation times (seconds).
 %   ab_corr: 1x3 accrs correlation times (seconds).
-%    gb_psd: 1x3 gyros dynamic biases PSD (rad/s/root-Hz).
-%    ab_psd: 1x3 accrs dynamic biases PSD (m/s^2/root-Hz);
+%    gb_psd: 1x3 gyros dynamic biases root-PSD (rad/s/root-Hz).
+%    ab_psd: 1x3 accrs dynamic biases root-PSD (m/s^2/root-Hz);
 %      freq: 1x1 sampling frequency (Hz).
 
 to = (stim300.t(end) - stim300.t(1));
@@ -109,8 +109,8 @@ fprintf('\nNaveGo: Allan variance analysis from synthetic data based on Microstr
 %  ab_dyn: 1x3 accrs dynamic biases or bias instabilities (m/s^2).
 %   gb_corr: 1x3 gyros correlation times (seconds).
 %   ab_corr: 1x3 accrs correlation times (seconds).
-%    gb_psd: 1x3 gyros dynamic biases PSD (rad/s/root-Hz).
-%    ab_psd: 1x3 accrs dynamic biases PSD (m/s^2/root-Hz);
+%    gb_psd: 1x3 gyros dynamic biases root-PSD (rad/s/root-Hz).
+%    ab_psd: 1x3 accrs dynamic biases root-PSD (m/s^2/root-Hz);
 %      freq: 1x1 sampling frequency (Hz).
 
 ustrain.a_std = [0.00643187932253599  0.00661386698561032  0.00673225201283004];

@@ -145,8 +145,8 @@ load ref.mat
 %    ab_dyn: 1x3 accrs dynamic biases or bias instabilities (m/s^2).
 %   gb_corr: 1x3 gyros correlation times (seconds).
 %   ab_corr: 1x3 accrs correlation times (seconds).
-%    gb_psd: 1x3 gyros dynamic biases PSD (rad/s/root-Hz).
-%    ab_psd: 1x3 accrs dynamic biases PSD (m/s^2/root-Hz);
+%    gb_psd: 1x3 gyros dynamic biases root-PSD (rad/s/root-Hz).
+%    ab_psd: 1x3 accrs dynamic biases root-PSD (m/s^2/root-Hz);
 %      freq: 1x1 sampling frequency (Hz).
 % ini_align: 1x3 initial attitude at t(1), [roll pitch yaw] (rad).
 % ini_align_err: 1x3 initial attitude errors at t(1), [roll pitch yaw] (rad).
