@@ -26,8 +26,8 @@ function imu_si = imu_si_errors(imu, dt)
 %       imu_si.gb_dyn:   gyro dynamic biases [X Y Z] (rad/s).
 %       imu_si.ab_corr:  acc correlation times [X Y Z] (seconds)
 %       imu_si.gb_corr:  gyro correlation times [X Y Z] (seconds).
-%       imu_si.ab_psd:   acc dynamic bias PSD [X Y Z] (m/s^2/root(Hz)).
-%       imu_si.gb_psd:   gyro dynamic bias PSD [X Y Z] (rad/s/root(Hz)).
+%       imu_si.ab_psd:   acc dynamic bias root-PSD [X Y Z] (m/s^2/root(Hz)).
+%       imu_si.gb_psd:   gyro dynamic bias root-PSD [X Y Z] (rad/s/root(Hz)).
 %       imu_si.ab_sta:   acc static biases [X Y Z] (m/s^2).
 %       imu_si.gb_sta:   gyro static biases [X Y Z] (rad/s).
 %       imu_si.m_std:    magnetometer noise [X Y Z] (tesla). 
@@ -72,11 +72,11 @@ G2T = 1E-4;         % Gauss to Tesla
 % Copy previous fields
 % imu_si = imu;
 
-% PSD noise
+% root-PSD noise
 imu_si.vrw = (imu.vrw ./ 60);           % m/s/root(hour) -> m/s^2/root(Hz)
 imu_si.arw = (imu.arw ./ 60) .* D2R;    % deg/root(hour) -> rad/s/root(Hz)
 
-% PSD rate noise
+% root-PSD rate noise
 imu_si.vrrw = (imu.vrrw ./ 60); 
 imu_si.arrw = (imu.arrw ./ 60) .* D2R;   % deg/root(hour) -> rad/s/root(Hz)
 
@@ -88,7 +88,7 @@ imu_si.gb_dyn = imu.gb_dyn .* D2R;          % deg/s -> rad/s;
 imu_si.ab_corr = imu.ab_corr;
 imu_si.gb_corr = imu.gb_corr;
 
-% Dynamic bias PSD
+% Dynamic bias root-PSD
 if (isinf(imu.ab_corr))
     imu_si.ab_psd = imu_si.ab_dyn;          % m/s^2 (approximation)
 else

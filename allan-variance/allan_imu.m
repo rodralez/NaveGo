@@ -33,8 +33,8 @@ function imu_allan = allan_imu (imu_sta)
 %   gb_corr, 1x3 gyros correlation times (s).
 %   ab_corr, 1x3 accrs correlation times (s).
 %
-%   gb_psd, gyro dynamic bias PSD [X Y Z] (rad/s/root(Hz))
-%   ab_psd, acc dynamic bias PSD [X Y Z] (m/s^2/root(Hz))
+%   gb_psd, gyro dynamic bias root-PSD [X Y Z] (rad/s/root(Hz))
+%   ab_psd, acc dynamic bias root-PSD [X Y Z] (m/s^2/root(Hz))
 %
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -142,7 +142,7 @@ for i=1:3
     imu_allan.gb_corr(i) = tauB;
 end
 
-%% Dynamic bias PSD
+%% Dynamic bias root-PSD
 %%
 
 imu_allan.ab_psd = imu_allan.ab_dyn .* sqrt(imu_allan.ab_corr) ;  % m/s^2/root(Hz)
