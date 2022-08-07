@@ -27,6 +27,9 @@
 %
 % References:
 %
+%  Katwijk Beach Planetary Rover Dataset. 
+% https://robotics.estec.esa.int/datasets/katwijk-beach-11-2015/
+%
 %  Johann Diep et al. (2022). Investigating the Performance of LCNS with 
 % Visual-Inertial Odometry for Lunar Rover Navigation. NAVITEC 2022, April 
 % 2022.

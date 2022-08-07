@@ -14,7 +14,7 @@ NaveGo's motto is "to bring integrated navigation to the masses".
 Please, you should open a new [issue](https://github.com/rodralez/NaveGo/issues) only if:
 
 1. You found a bug or error in the source code of NaveGo,
-2. You want to ask for new features. Maybe some contributor will gently take that issue and code your suggested feature.
+2. You want to ask for new features. Maybe some contributor will gently take this issue and code your suggested feature.
 
 But, if you have any question of any kind or you want to share some feedback about NaveGo, please leave a comment at the [discussion forum](https://github.com/rodralez/NaveGo/discussions).
 
@@ -28,7 +28,7 @@ Main features of NaveGo are:
 
 * Processing of a loosely-coupled integrated navigation system with magnetometers (INS/GNSS/MAG).
 
-* ***NEW*** Processing of a loosely-coupled integrated visual navigation system (VISUAL/INS/GNSS) (branch `development` only so far). 
+* ***NEW*** Processing of a loosely-coupled integrated visual navigation system (VISUAL/INS/GNSS). 
 
 * Compass heading using magnetometers.
 
@@ -82,7 +82,7 @@ You can contribute in many ways:
 * Writing a manual.
 * Reporting bugs.
 
-If you want to contribute to the NaveGo project, you should follow the Github Workflow methodology resumed at `./doc/github-workflow.md`.
+If you want to contribute to the NaveGo project, you should follow the Github Workflow methodology summarized at `./doc/github-workflow.md`.
 
 If you are interested in joining NaveGo, please feel free to contact Dr. Rodrigo Gonzalez at rodralez [at] frm [dot] utn [dot] edu [dot] ar.
 
@@ -165,7 +165,12 @@ These two real examples are part of the data collection used in the article (Gon
 
 ## VISUAL/INS/GNSS integration example using real data
 
-Two examples are provided for VISUAL/INS/GNSS integration. Please, check the folders `examples/planetary-data/`.
+Two examples are provided for VISUAL/INS/GNSS integration:
+
+1. `navego_example_canada_data.m`.
+2. `navego_example_katwijk_data.m`.
+
+Please, check the folder `examples/visual-data/`.
 
 ### References
  

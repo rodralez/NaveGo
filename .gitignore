@@ -1,4 +1,3 @@
-*.csv
 *.m~
 examples/synthetic-data/nav*.mat
 examples/real-data/nav_*.mat
