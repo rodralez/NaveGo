@@ -26,6 +26,9 @@
 %   <http://www.gnu.org/licenses/>.
 %
 % References:
+%
+%  The Canadian Planetary Emulation Terrain Energy-Aware Rover Navigation 
+% Dataset, Run 3. https://starslab.ca/enav-planetary-dataset/ 
 % 
 %  Johann Diep et al. (2022). Investigating the Performance of LCNS with 
 % Visual-Inertial Odometry for Lunar Rover Navigation. NAVITEC 2022, April 
@@ -81,8 +84,8 @@ FusionCase = "inertial_visual_gnss";
 % Method to remove GNSS measurements for a certain time window. This is 
 % done to showcase that visual measurements provide a failsafe option in 
 % case satellite data is not available.
-% Sparse = "true";
-Sparse = "false";
+Sparse = "true";
+% Sparse = "false";
 
 fprintf('NaveGo: parameter FusionCase = %s \n', FusionCase)
 fprintf('NaveGo: parameter Sparse = %s \n', Sparse)
