@@ -7,7 +7,7 @@ function wb_sim = gyro_gen (ref, imu)
 %	imu, data structure with IMU error profile.
 %
 % OUTPUT
-%	wb_sim, Nx3 matrix with simulated gryos in the body frame [X Y Z] 
+%	wb_sim, Nx3 matrix with simulated gyros in the body frame [X Y Z] 
 %     (rad, rad, rad).
 %
 %   Copyright (C) 2014, Rodrigo Gonzalez, all rights reserved.
@@ -38,8 +38,8 @@ function wb_sim = gyro_gen (ref, imu)
 %   Aggarwal, P. et al. MEMS-Based Integrated Navigation. Artech
 % House. 2010.
 %
-% Version: 009
-% Date:    2022/01/25
+% Version: 010
+% Date:    2022/08/22
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -64,14 +64,15 @@ end
 
 %% SIMULATION OF TRANSPORTE AND EARTH RATES
 
-g_err_b = zeros(M);
+om_b = zeros(M);
 for i = 1:N
     
     dcmnb = reshape(ref.DCMnb_m(i,:), 3, 3);
     omega_ie_n = earth_rate(ref.lat(i));
     omega_en_n = transport_rate(ref.lat(i), ref.vel(i,1), ref.vel(i,2), ref.h(i));
-    omega_in_b = dcmnb * (omega_en_n + omega_ie_n );
-    g_err_b(i,:) = ( omega_in_b * gyro_b (i,:)' )';
+    om_ie_n = skewm_inv(omega_ie_n);
+    om_en_n = skewm_inv(omega_en_n);
+    om_b(i,:)  = (dcmnb * (om_ie_n + om_en_n))';
 end
 
 %% SIMULATION OF NOISES
@@ -85,11 +86,11 @@ gb_sta = noise_b_sta (imu.gb_sta, N);
 % Simulation of white noise
 
 wn = randn(M);
-g_wn = zeros(M);
+gyro_wn = zeros(M);
 
 for i=1:3
 
-    g_wn(:, i) = imu.g_std(i) .*  wn(:,i);
+    gyro_wn(:, i) = imu.g_std(i) .*  wn(:,i);
 end
 
 % -------------------------------------------------------------------------
@@ -101,10 +102,10 @@ gb_dyn = noise_b_dyn (imu.gb_corr, imu.gb_dyn, dt, M);
 % -------------------------------------------------------------------------
 % Simulation of rate random walk
 
-g_rrw = noise_rrw (imu.arrw, dt, M);
+gyro_rrw = noise_rrw (imu.arrw, dt, M);
 
 % -------------------------------------------------------------------------
 
-wb_sim = gyro_b + g_err_b + g_wn + gb_sta + gb_dyn + g_rrw;
+wb_sim = gyro_b + om_b + gyro_wn + gb_sta + gb_dyn + gyro_rrw;
 
 end
