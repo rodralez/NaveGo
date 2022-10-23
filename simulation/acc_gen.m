@@ -41,8 +41,8 @@ function [fb_sim] = acc_gen (ref, imu)
 %   Thinking about accelerometers and gravity by Dave Redell
 % http://www.lunar.org/docs/LUNARclips/v5/v5n1/Accelerometers.html
 %
-% Version: 011
-% Date:    2022/01/25
+% Version: 012
+% Date:    2022/08/22
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -77,18 +77,18 @@ end
 %% SIMULATION OF GRAVITY AND CORIOLIS
 
 % Gravity and Coriolis in nav-ref
-grav_n = -gravity(ref.lat, ref.h);              % Accelerometer in Z axis senses an 
+g_n = -gravity(ref.lat, ref.h);              % Accelerometer in Z axis senses an 
                                                 % acceleration of 1.0 G straight up
 cor_n = coriolis(ref.lat, ref.vel, ref.h);
 
 % Gravity and Coriolis from nav-ref to body-ref
-grav_b = zeros(M);
+g_b = zeros(M);
 cor_b = zeros(M);
 for i = 1:N
-    dcm_nb = reshape(ref.DCMnb_m(i,:), 3, 3);
-    gb = dcm_nb * grav_n(i,:)';
-    corb =  dcm_nb * cor_n(i,:)';
-    grav_b(i,:) = gb';
+    dcmnb = reshape(ref.DCMnb_m(i,:), 3, 3);
+    gb = dcmnb * g_n(i,:)';
+    corb =  dcmnb * cor_n(i,:)';
+    g_b(i,:) = gb';
     cor_b(i,:) = corb';
 end
 
@@ -103,11 +103,11 @@ ab_sta = noise_b_sta (imu.ab_sta, N);
 % Simulation of white noise
 
 wn = randn(M);
-a_wn = zeros(M);
+acc_wn = zeros(M);
 
 for i=1:3
 
-    a_wn(:, i) = imu.a_std(i).* wn(:,i);
+    acc_wn(:, i) = imu.a_std(i).* wn(:,i);
 end
 
 % -------------------------------------------------------------------------
@@ -119,10 +119,10 @@ ab_dyn = noise_b_dyn (imu.ab_corr, imu.ab_dyn, dt, M);
 % -------------------------------------------------------------------------
 % Simulation of rate random walk
 
-a_rrw = noise_rrw (imu.vrrw, dt, M);
+acc_rrw = noise_rrw (imu.vrrw, dt, M);
 
 % -------------------------------------------------------------------------
 
-fb_sim = acc_b + cor_b + grav_b + a_wn + ab_sta + ab_dyn + a_rrw;
+fb_sim = acc_b + cor_b + g_b + acc_wn + ab_sta + ab_dyn + acc_rrw;
 
 end
