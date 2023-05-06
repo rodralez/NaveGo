@@ -1,9 +1,6 @@
 % navego_example_real_ins_ekinox: post-processing inertial navigation 
 % system using an Ekinox IMU.
 %
-% The main goal is to integrate IMU and GNSS measurements from Ekinox-D 
-% sensor which includes both IMU and GNSS sensors.
-%
 % Sensors dataset was generated driving a car through the streets of 
 % Turin city (Italy).
 %
@@ -34,8 +31,8 @@
 % Inertial Measurement Unit for Ground Vehicle Navigation. Sensors 2019,  
 % 19(18). https://www.mdpi.com/530156.
 %
-% Version: 006
-% Date:    2021/12/08
+% Version: 001
+% Date:    2022/12/17
 % Author:  Rodrigo Gonzalez <rodralez@frm.utn.edu.ar>
 % URL:     https://github.com/rodralez/navego
 
@@ -106,6 +103,13 @@ load ekinox_gnss
 
 % ekinox_gnss.eps = mean(diff(ekinox_imu.t)) / 2; %  A rule of thumb for choosing eps
 
+%% WARNING SUPRESSION
+% Supressing 'pos_update: altitude is negative.' warning at file
+% pos_update.m to avoid the delay introduced by the print warning at the 
+% console
+    
+warning('off','all');
+     
 %% NAVIGATION TIME
 
 to = (ref.t(end) - ref.t(1));
@@ -116,11 +120,11 @@ fprintf('NaveGo: navigation time is %.2f minutes or %.2f seconds. \n', (to/60), 
 
 if strcmp(INS_GNSS, 'ON')
     
-    fprintf('NaveGo: processing INS/GNSS integration... \n')
-    
-    % Execute INS/GNSS integration
+    fprintf('NaveGo: processing INS ... \n')
+
+    % Execute INS
     % ---------------------------------------------------------------------
-    nav_ekinox = ins_gnss(ekinox_imu, ekinox_gnss, 'quaternion'); 
+    nav_ekinox = ins(ekinox_imu, ekinox_gnss, 'quaternion'); 
     % ---------------------------------------------------------------------
     
     save nav_ekinox.mat nav_ekinox
