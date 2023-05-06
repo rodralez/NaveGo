@@ -113,9 +113,9 @@ Gonzalez, Rodrigo (2022). NaveGo: an open-source MATLAB/GNU-Octave toolbox for p
 
 Your donation helps us to improve NaveGo. You can make a donation to support our work using:
 
-* BITCOIN public key: 13fgM1MmyPc1nnVj5HTdvj2x7J1BoZTdvx (BTC network).
-* Ethereum public key: 0x623da89dec612118b6d64f2df907deefec32371e (ERC20 network).
-* USDT public key: TMsdKrwrDKyf9RvqfQNKcKtUQbhZiBegDM (TRC20 network).
+* BITCOIN public key:  bc1q8uehhf0y36jtwyua29z0xhqxvd7q2thuuwys28 (BTC network).
+* Ethereum public key: 0x97aae6533AaeD1ba38D1863B4a8C35e7Cc5261E8 (ERC20 network).
+* USDT public key:     0x97aae6533AaeD1ba38D1863B4a8C35e7Cc5261E8 (ERC20 network).
 * PAYPAL: [paypal.me/supportnavego](https://www.paypal.com/paypalme/supportnavego).
 
 

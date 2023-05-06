@@ -1,5 +1,5 @@
-% navego_example_real_ekinox: post-processing integration of both Ekinox 
-% IMU and Ekinox GNSS data.
+% navego_example_real_ins_ekinox: post-processing inertial navigation 
+% system using an Ekinox IMU.
 %
 % The main goal is to integrate IMU and GNSS measurements from Ekinox-D 
 % sensor which includes both IMU and GNSS sensors.
