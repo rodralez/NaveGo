@@ -9,6 +9,24 @@ NaveGo (ˈnævəˈgəʊ) is an open-source MATLAB/GNU Octave toolbox for process
 
 NaveGo's motto is "to bring integrated navigation to the masses".
 
+## Important Update for the NaveGo Community
+
+Dear NaveGo Community,
+
+I am reaching out to share an important update regarding the NaveGo project. Due to a shift in both my professional career and personal interests away from navigation systems, I have made the difficult decision to step down from my role as the lead developer of NaveGo.
+
+Effective immediately, NaveGo will transition to a community-driven project. This change opens up new opportunities for collaboration, innovation, and leadership within our vibrant community. I encourage each of you to actively participate, whether by answering questions in the discussion forum, contributing to the development of new features, or sharing your unique insights and expertise.
+
+This project has always thrived on the enthusiasm, creativity, and dedication of its community members, and I have every confidence that NaveGo will continue to grow and evolve in exciting ways. If you or someone you know is passionate about taking on a leadership role within the NaveGo project, please do not hesitate to contact me. Your involvement could make a significant impact on the direction and success of NaveGo.
+
+I want to express my deepest gratitude to all of you for your support and contributions to NaveGo. It has been an honor to work alongside such a talented and dedicated group of individuals. I look forward to witnessing the future achievements of this project and the community that has been its backbone.
+
+Thank you for your understanding and continued support.
+
+Warm regards,
+
+Dr. Rodrigo Gonzalez
+
 ## Attention!
 
 Please, you should open a new [issue](https://github.com/rodralez/NaveGo/issues) only if:
